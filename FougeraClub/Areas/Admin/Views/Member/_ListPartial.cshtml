@@ -1,0 +1,201 @@
+﻿@model PaginatedList<MemberVM>
+@{
+    ViewData["Title"] = Resource2.Members ?? " ";
+
+    var editPermission = PermissionScanner.ValidatePermission("Member", "Edit");
+    var suspendPermission = PermissionScanner.ValidatePermission("Member", "Suspend");
+    var deletePermission = PermissionScanner.ValidatePermission("Member", "Delete");
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+<input type="hidden" id="NewCountRecords" value="@Model.Count" />
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>@* @Resource2.Code *@ St No.</th>
+                <th>@Resource1.Name</th>
+                <th>@Resource2.IdNumber</th>
+                <th style="font-size: 13px;">@Resource2.IdExpiryDate</th>
+                <th>@Resource1.Phone</th>
+                <th>@Resource2.Nationality</th>
+                <th>@Resource2.Age</th>
+                <th>@Resource2.RegistrationDate</th>
+                <th>@Resource2.Type</th>
+                <th>@Resource2.Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Items.Any())
+            {
+                foreach (var member in Model.Items)
+                {
+                    <tr data-id="@member?.Id">
+                        <td data-label="@Resource2.Code">
+                            <span class="fw-medium">@member?.Code</span>
+                        </td>
+                        <td data-label="@Resource2.FullName" onclick="window.location.href='/Admin/Member/MemberDetails/@member?.Id'" style="cursor:pointer">
+                            <span class="text-decoration-underline">@(SessionHelper.GetCurrentLanguage() == "ar" ? member?.FullNameAr : member?.FullNameEn)</span>
+                        </td>
+                        <td data-label="@Resource2.IdNumber">
+                            <span>@member?.IdNumber</span>
+                        </td>
+                        <td data-label="@Resource2.IdExpiryDate" class="expiryDate">
+                            <span>@member?.IdExpiryDate?.ToString("d")?.Replace("/","-")</span>
+                        </td>
+                        <td data-label="@Resource1.PhoneNumber">
+                            <span>@member?.PhoneNumber</span>
+                        </td>
+                        <td data-label="@Resource2.Nationality">
+                            <span>@(SessionHelper.GetCurrentLanguage() == "ar" ? member?.Nationality?.NameAr : member?.Nationality?.NameEn)</span>
+                        </td>
+                        <td data-label="@Resource2.Age">
+                            <span>@member?.Age</span>
+                        </td>
+                        <td data-label="@Resource2.RegistrationDate">
+                            <span>@member?.RegistrationDate.ToString("d")?.Replace("/","-")</span>
+                        </td>
+                        <td data-label="@Resource2.Type">
+                            <span>@(lang == "ar" ? member?.MemberType?.NameAr : member?.MemberType?.NameEn)</span>
+                        </td>
+                        <td data-label="@Resource2.Actions">
+                            <!-- Edit Member -->
+                            @if (editPermission)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Edit">
+                                    <a asp-action="AddEdit"
+                                       asp-route-id="@member?.Id"
+                                       class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-pen-to-square fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+                            <!-- Courses -->
+                            @if (member!= null && member.HasCourses){
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource1.Courses">
+                                    <a asp-action="MemberCourses"
+                                       asp-route-memberId="@member?.Id"
+                                       class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-book fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+                            else
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource1.Courses">
+                                    <a action="#" disabled
+                                       class="btn-control disabled btn-control-dis btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-book fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+                            
+
+                            <!-- Suspend/Activate -->
+                            @if (suspendPermission && member != null)
+                            {
+                                @if (member.Suspended)
+                                {
+                                    <span data-bs-toggle="tooltip" data-bs-title="@Resource2.CancelSuspend">
+                                        <button class="btn-control btn-icon btn-sm rounded-circle toggle-suspend suspend-btn"
+                                                data-id="@member.Id"
+                                                data-suspend="false">
+                                            <i class="fa-solid fa-play fs-5"></i>
+                                        </button>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Suspend">
+                                        <button class="btn-control btn-icon btn-sm rounded-circle toggle-suspend suspend-btn"
+                                                data-id="@member.Id"
+                                                data-suspend="true">
+                                            <i class="fa-solid fa-pause fs-5"></i>
+                                        </button>
+                                    </span>
+                                }
+                            }
+
+                            <!-- Delete Member -->
+                            @if (deletePermission && member != null && !member.HasCourses)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Delete">
+                                    <form asp-action="Delete"
+                                          asp-route-id="@member?.Id" data-swal="delete" data-message="@member?.FullNameAr"
+                                          method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('@Resource2.ConfirmDelete');">
+                                        <button type="submit"
+                                                class="btn-control btn-icon btn-sm rounded-circle">
+                                            <i class="fa-solid fa-trash fs-5"></i>
+                                        </button>
+                                    </form>
+                                </span>
+                            }
+                            else
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Delete">
+                                    <button asp-action="#" disabled class="disabled btn btn-control-dis  btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-trash fs-5"></i>
+                                    </button>
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="9" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoMembers</h5>
+                            <p class="mb-0">@Resource1.NoMembersMessage</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.PageIndex - 1)">
+                @Resource2.Previous
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.PageIndex + 1)">
+                @Resource2.Next
+            </a>
+        </li>
+    </ul>
+</nav>

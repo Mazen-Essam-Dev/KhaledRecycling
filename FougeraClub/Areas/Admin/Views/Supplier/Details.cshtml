@@ -1,0 +1,68 @@
+﻿@model SupplierVM
+@{
+    //ViewData["Title"] = @Resource1.Supplier ?? " ";
+    ViewData["Title pakage"] = @Resource1.SuppliersManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.SuppliersList ?? " ";
+    ViewData["Title Single"] = @Resource1.SupplierDetails ?? " ";
+}
+
+
+<!-- Breadcrumb & Record Count -->
+<div class="row my-3 flex-nowrap gap-4" style="margin-top:-5px!important;">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-6">
+        <nav aria-label="breadcrumb" class="ms-2">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Supplier/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="content-inner">
+    <div class="data-part">
+        <h2 class="home-second-title">@Resource1.SupplierDetails</h2>
+
+        <div class="card shadow-sm p-4">
+            <dl class="row">
+                <dt class="col-sm-3">@Resource1.SupplierNameAr</dt>
+                <dd class="col-sm-9">@Model.SupplierNameAr</dd>
+
+                <dt class="col-sm-3">@Resource1.SupplierNameEn</dt>
+                <dd class="col-sm-9">@Model.SupplierNameEn</dd>
+
+                <dt class="col-sm-3">@Resource1.Email</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+
+                <dt class="col-sm-3">@Resource1.PhoneNumber</dt>
+                <dd class="col-sm-9">@Model.Phone</dd>
+
+                <dt class="col-sm-3">@Resource1.MobileNumber</dt>
+                <dd class="col-sm-9">@Model.Mobile</dd>
+
+                <dt class="col-sm-3">@Resource1.VATNumber</dt>
+                <dd class="col-sm-9">@Model.VATNumber</dd>
+
+                <dt class="col-sm-3">@Resource1.Address</dt>
+                <dd class="col-sm-9">@Model.Address</dd>
+
+                <dt class="col-sm-3">@Resource1.Description2</dt>
+                <dd class="col-sm-9">@Model.Description</dd>
+            </dl>
+        </div>
+
+        <div class="mt-3 d-flex justify-content-end">
+            <a asp-action="Index" class="btn btn-secondary me-2">@Resource1.BackToList</a>
+            @* <a asp-action="AddEdit" asp-route-id="@Model.Id" class="btn btn-warning"></a> *@
+        </div>
+    </div>
+</div>

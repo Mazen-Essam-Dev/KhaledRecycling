@@ -1,0 +1,323 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Member
+@model PaginatedList<MemberVM>
+
+@{
+    ViewData["Title"] = "SMS";
+    ViewData["Title pakage"] = @Resource2.SMSNotificationUnit ?? " ";
+    ViewData["Title ListIndex"] = "SMS";
+
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="#">@ViewData["Title ListIndex"]</a> </li>
+
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col d-flex justify-content-end align-items-center text-nowrap me-3">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="recordsCount">@Model.Count</span>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <span class="fa-solid fa-users me-1 text-ico"></span>
+                            @ViewData["Title"]
+                        </h4>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap" style="margin-left: 4px;">
+                    <a asp-action="MessagesLogs" type="button" class="btn btn-success btn-sm">
+                        @Resource2.MessageLog
+                    </a>
+                </div>
+            </div>
+            <div class="rounded shadow-sm p-3">
+                <!-- Search Panel -->
+                <form method="get" id="studentFilterForm">
+                    <div class="filterImg rounded p-3 mb-3">
+                        <div class="row">
+                            <div class="filter-dropdown col-md-10">
+                                <label for="searchTermInput" class="fw-bold mb-1">@Resource2.Search:</label>
+                                <div class="search-box position-relative">
+                                    <i
+                                        class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                                    <input type="text" name="searchTerm" id="searchTermInput" value="@Model.SearchTerm"
+                                        class="form-control form-control-sm filter-bordered ps-4"
+                                           placeholder="@Resource1.subscriberName @Resource2.Or @Resource2.IdNumber @Resource2.Or @Resource1.PhoneNumber ..." />
+                                </div>
+                            </div>
+                            <div class="col-md-2 gap-1 d-flex justify-content-end align-items-end">
+                                <button type="button" onclick="$('#searchTermInput').val('');$('#searchbtn').click()"
+                                    class="btn btn-cancel-search btn-sm coustom-min-w me-1">
+                                    <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                                </button>
+                                <button type="submit" id="searchbtn" class="btn btn-sm btn-success coustom-min-w">
+                                    <i class="ri-filter-line me-1"></i> @Resource1.Search
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="c-edit-form rounded p-3 mb-3">
+                        <div class="col-md-12">
+                            <textarea id="MessageText" name="MessageText" class="form-control" rows="3"
+                                placeholder="@Resource2.WriteYourMessageHere"></textarea>
+                        </div>
+                        <div class="row align-items-center mt-1 mb-1 p-2">
+                            <div class="col-md-6">
+                                <div class="d-flex flex-wrap gap-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="SendMessageToAll"
+                                            name="selectionType" onchange="checkAllMembers()" />
+                                        <label class="form-check-label" for="SendMessageToAll">
+                                            @Resource2.SendMessageToAll
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" id="SendMessageToSpecifiedOnly"
+                                            name="selectionType" onchange="unCheckAllMembers()" />
+                                        <label class="form-check-label" for="SendMessageToSpecifiedOnly">
+                                            @Resource2.SendMessageToSpecifiedOnly
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Buttons on the right -->
+                            <div class="col-md-6 d-flex justify-content-end gap-2">
+                                <a id="sendBtn" class="btn btn-success btn-sm disabled">
+                                    @Resource2.Send
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </form>
+
+
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_MembersListPartial", Model)
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="successfullySendingModal" tabindex="-1" aria-labelledby="successfullySendingModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="successfullySendingModalLabel">@Resource2.SendingStatus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="suspendModalBody">
+                @Resource1.SentDone
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn-sm px-2"
+                    data-bs-dismiss="modal">@Resource2.Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="failedSendingModal" tabindex="-1" aria-labelledby="failedSendingModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="failedSendingModalLabel">@Resource2.SendingStatus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center" id="suspendModalBody">
+                @Resource2.SendingFailed
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn-sm px-2"
+                    data-bs-dismiss="modal">@Resource2.Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        function checkAllMembers() {
+            $('#membersTable .member-checkbox')
+                .prop('checked', true)   // check all
+                .prop('disabled', true); // disable so user can't uncheck
+        }
+        function unCheckAllMembers() {
+            $('#membersTable .member-checkbox')
+                .prop('checked', false)   // check all
+                .prop('disabled', false); // disable so user can't uncheck
+        }
+
+        function updateSendButtonState() {
+            const sendMessageToAll = $('#SendMessageToAll').is(':checked');
+            const sendMessageToSpecifiedOnly = $('#SendMessageToSpecifiedOnly').is(':checked');
+            const hasMessage = $('#MessageText').val().trim().length > 0;
+            const selectedMembers = $('#membersTable .member-checkbox:checked').map(function () {
+                return $(this).data('member-id');
+            }).get();
+
+            if ((sendMessageToAll || (sendMessageToSpecifiedOnly && selectedMembers.length > 0)) && hasMessage) {
+                $('#sendBtn').removeClass('disabled'); // ✅ enable
+            } else {
+                $('#sendBtn').addClass('disabled'); // 🚫 disable
+            }
+        }
+
+        // 🔁 Run check when typing or changing radio buttons
+        $('#MessageText').on('keyup change', updateSendButtonState);
+        $('#SendMessageToAll, #SendMessageToSpecifiedOnly').on('change', updateSendButtonState);
+
+        $(document).on('click', '#sendBtn', function () {
+            const message = $('#MessageText').val().trim();
+            const sendMessageToSpecifiedOnly = $('#SendMessageToSpecifiedOnly').is(':checked');
+            let receiversIds = [];
+
+            if (sendMessageToSpecifiedOnly) {
+                receiversIds = $('.member-checkbox:checked').map(function () {
+                    return $(this).data('member-id');
+                }).get();
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Send", "SMS", new { area = "Admin" })',
+                data: {
+                    ReceiverIds: receiversIds,
+                    Message: message
+                },
+                success: function (response) {
+                    if (response.success) {
+                        const modal = new bootstrap.Modal(document.getElementById('successfullySendingModal'));
+                        modal.show();
+                    } else {
+                        const modal = new bootstrap.Modal(document.getElementById('failedSendingModal'));
+                        modal.show();
+                    }
+                },
+                error: function () {
+                    const modal = new bootstrap.Modal(document.getElementById('suspendModal'));
+                    $('#suspendModalBody').text("Something went wrong.");
+                    modal.show();
+                }
+            });
+        });
+
+
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            $('#SendMessageToSpecifiedOnly').prop('checked', true);
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#pageSizeSelect').val(filters.pageSize);
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var searchTerm = $('#searchTermInput').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/SMS/Members',
+                    type: 'GET',
+                    data: { searchTerm, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

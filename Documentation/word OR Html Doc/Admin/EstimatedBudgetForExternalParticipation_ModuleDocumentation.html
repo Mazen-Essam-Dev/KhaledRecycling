@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Estimated Budget For External Participation - Full Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Estimated Budget For External Participation – Documentation</h1>
+
+<!-- Controller Overview -->
+<h2>Controller Overview</h2>
+<table>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td>Controller Name</td><td>EstimatedBudgetForExternalParticipationController</td></tr>
+    <tr><td>Area</td><td>Admin</td></tr>
+    <tr><td>Authorization</td><td>AdminAuthorize</td></tr>
+    <tr><td>Dependencies</td><td>IEstimatedBudgetForExternalParticipationService, IMapper</td></tr>
+</table>
+
+<!-- Controller Actions -->
+<h2>Controller Actions</h2>
+<table>
+    <tr>
+        <th>Action</th>
+        <th>Purpose</th>
+        <th>Notes</th>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>List all estimated budgets with search and date filters</td>
+        <td>AJAX partial support, pagination (50/page)</td>
+    </tr>
+    <tr>
+        <td>AddEdit (GET)</td>
+        <td>Display create or edit form</td>
+        <td>Maps entity to VM if editing</td>
+    </tr>
+    <tr>
+        <td>AddEdit (POST)</td>
+        <td>Create or update budget with details</td>
+        <td>Handles child detail records</td>
+    </tr>
+    <tr>
+        <td>Delete</td>
+        <td>Delete budget record</td>
+        <td>POST only for security</td>
+    </tr>
+    <tr>
+        <td>SendOtp</td>
+        <td>Initiate OTP approval</td>
+        <td>NoLogging attribute</td>
+    </tr>
+    <tr>
+        <td>ValidateOtp</td>
+        <td>Validate OTP and approve budget</td>
+        <td>Returns JSON response</td>
+    </tr>
+    <tr>
+        <td>Details</td>
+        <td>Read-only budget view</td>
+        <td>IgnoreAction</td>
+    </tr>
+    <tr>
+        <td>PrintDetails</td>
+        <td>Printable detailed view</td>
+        <td>IgnoreAction</td>
+    </tr>
+    <tr>
+        <td>Print</td>
+        <td>Printable list view</td>
+        <td>No pagination</td>
+    </tr>
+    <tr>
+        <td>createExcelReport_Download</td>
+        <td>Export filtered data to Excel</td>
+        <td>Timestamped XLSX file</td>
+    </tr>
+</table>
+
+<!-- Service Overview -->
+<h2>Service Overview</h2>
+<table>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td>Service Name</td><td>EstimatedBudgetForExternalParticipationService</td></tr>
+    <tr><td>Dependencies</td><td>IUnitOfWork, IHttpContextAccessor</td></tr>
+    <tr><td>File Name Constant</td><td>EstimatedBudgetForExternalParticipations</td></tr>
+</table>
+
+<!-- Service Methods -->
+<h2>Service Methods</h2>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>SendOtpAsync</td>
+        <td>Generate OTP</td>
+        <td>Creates and stores OTP for approval</td>
+    </tr>
+    <tr>
+        <td>ValidateOtpAsync</td>
+        <td>Approve budget</td>
+        <td>Validates OTP and attaches user signature</td>
+    </tr>
+    <tr>
+        <td>CRUD Operations</td>
+        <td>Manage budgets</td>
+        <td>Create, Update, Delete, Retrieve budgets and details</td>
+    </tr>
+</table>
+
+<!-- Main ViewModel -->
+<h2>Main ViewModel – EstimatedBudgetForExternalParticipationVM</h2>
+<table>
+    <tr><th>Category</th><th>Properties</th></tr>
+    <tr>
+        <td>Identification</td>
+        <td>Id, SignatureIdApproved, Signature</td>
+    </tr>
+    <tr>
+        <td>Participation Info</td>
+        <td>ParticipatingTitle, ParticipatingDate, Regulator, ParticipatingCountry</td>
+    </tr>
+    <tr>
+        <td>Team Composition</td>
+        <td>ManagersCount, TechnicalSupervisorsCount, ActivitiesSupervisorsCount, MembersCount</td>
+    </tr>
+    <tr>
+        <td>Participation Fees</td>
+        <td>ParticipationFeesHeadOfDelegation, ParticipationFeesForEntireTeam, Subsidies</td>
+    </tr>
+    <tr>
+        <td>Travel & Accommodation</td>
+        <td>TravelTicketValue, HotelAccommodationFees, MembersAllowance</td>
+    </tr>
+    <tr>
+        <td>Totals</td>
+        <td>TotalBudgetRequired1, TotalBudgetRequired2</td>
+    </tr>
+    <tr>
+        <td>Other</td>
+        <td>Notes, CreationDate</td>
+    </tr>
+</table>
+
+<!-- Detail ViewModel -->
+<h2>Detail ViewModel – EstimatedBudgetForExternalParticipationDetailVM</h2>
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>Name</td><td>Participant full name</td></tr>
+    <tr><td>Adj</td><td>Additional designation</td></tr>
+    <tr><td>Profession</td><td>Participant profession</td></tr>
+</table>
+
+<!-- Entities -->
+<h2>Entities</h2>
+<table>
+    <tr>
+        <th>Entity</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>EstimatedBudgetForExternalParticipation</td>
+        <td>Main budget entity with financial and participation details</td>
+    </tr>
+    <tr>
+        <td>EstimatedBudgetForExternalParticipationDetail</td>
+        <td>Individual participant details linked to main budget</td>
+    </tr>
+</table>
+
+<!-- Views -->
+<h2>Views Overview</h2>
+<table>
+    <tr>
+        <th>View</th>
+        <th>Purpose</th>
+        <th>Key Features</th>
+    </tr>
+    <tr>
+        <td>AddEdit</td>
+        <td>Create / Edit budget</td>
+        <td>Dynamic sections, validation, date pickers</td>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>List budgets</td>
+        <td>Search, filters, print, excel, permissions</td>
+    </tr>
+    <tr>
+        <td>_ListPartial</td>
+        <td>Table rendering</td>
+        <td>AJAX pagination, action buttons</td>
+    </tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

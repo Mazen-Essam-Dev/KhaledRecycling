@@ -1,0 +1,382 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.AnnualSchedule
+@model PaginatedList<AnnualScheduleVM>
+@{
+    ViewData["Title"] = @Resource1.InventoryList;
+    ViewData["Title pakage"] = @Resource1.AnnualInventoryManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.InventoryList ?? " ";
+
+    var allyears = ViewBag.allYears as List<string?>;
+
+    var addPermission = PermissionScanner.ValidatePermission("AnnualSchedule", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("AnnualSchedule", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("AnnualSchedule", "Delete");
+}
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="recordsCount">@Model.Count</span>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <!-- Main card container for services data -->
+        <div class="card">
+            <div class="card-header border-bottom d-flex flex-wrap align-items-start gap-3">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <i class="fa-solid fa-calculator me-1 text-ico"></i>
+                            @Resource1.InventoryList
+                        </h4>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    @if (addPermission)
+                    {
+                        <a asp-action="AddEdit" class="btn btn-outline-success btn-sm">
+                            <i class="fa fa-plus me-1"></i> @Resource2.CreateNew
+                        </a>
+                    }
+                    <button type="button" class="btn btn-success btn-sm"
+                        onclick="event.preventDefault(); openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.PrintReport
+                    </button>
+                    <!-- Print Export As Excel -->
+                    <a class="btn btn-success Excelbtn" onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-2"
+                            style="font-size:17px;"></i>@Resource1.createExcelReport_Download
+                    </a>
+                    <script>
+                        function openPrintPage() {
+                            const get = id => document.getElementById(id)?.value || '';
+                            const searchTerm = encodeURIComponent(get('searchTermInput'));
+                            const selectedYear = encodeURIComponent(get('selectedYear'));
+                            const selectedCategory = encodeURIComponent(get('selectedCategory'));
+                            var countRecords = document.getElementById('recordsCount')?.textContent || '';
+                            if (countRecords && parseInt(countRecords) > 3999) {
+                                alert('Cannot print more than 3999 records.');
+                            } else {
+                                const url = `/Admin/AnnualSchedule/Print?searchTerm=${searchTerm}&selectedYear=${selectedYear}&selectedCategory=${selectedCategory}`;
+                                window.open(url, 'printWindow', 'width=1000,height=800,noopener,noreferrer');
+                            }
+                        }
+                        function openExcelPage() {
+                            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput')?.value || '');
+                            const selectedYear = encodeURIComponent(document.getElementById('selectedYear')?.value || '');
+                            const selectedCategory = encodeURIComponent(document.getElementById('selectedCategory')?.value || '');
+                            const url = `/Admin/AnnualSchedule/createExcelReport_Download?searchTerm=${searchTerm}&selectedYear=${selectedYear}&selectedCategory=${selectedCategory}`;
+                            window.open(url, '_self');
+                        }
+                    </script>
+                </div>
+            </div>
+
+            <div class="rounded shadow-sm p-3">
+                <!-- Filter Panel -->
+                <form method="get" asp-action="Index" class="filterImg rounded">
+                    <div class="row p-3">
+                        <div class="col-md-5">
+                            <div class="filter-dropdown">
+                                <label for="searchTermInput" class="fw-bold mb-1">@Resource2.Search:</label>
+                                <div class="search-box position-relative">
+                                    <i
+                                        class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                                    <input type="text" name="searchTerm" id="searchTermInput" value="@Model.SearchTerm"
+                                        class="form-control form-control-sm filter-bordered ps-4"
+                                        placeholder="@Resource1.SearchByItemOrDescription" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="filter-dropdown col-md-3 ">
+                            @if (allyears != null && allyears.Any())
+                            {
+                                <label for="dateTo" class="fw-bold mb-1">@Resource1.InventoryYear:</label>
+                                <div class="input-icon-left">
+                                    <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+                                    <select id="selectedYear" name="selectedYear"
+                                        class="form-select green-border form-select-sm filter-bordered">
+                                        <option value="" selected>@Resource2.ShowAll</option>
+                                        @foreach (var year in allyears)
+                                        {
+                                            if (year == ViewBag.selectedYear)
+                                            {
+                                                <option value="@year" selected>@year</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@year">@year</option>
+                                            }
+
+                                        }
+                                    </select>
+                                </div>
+                            }
+
+                        </div>
+
+                        <div class="filter-dropdown col-md-2 ">
+                            <label for="selectedCategory" class="fw-bold mb-1">التصنيف: </label>
+                            <select id="selectedCategory" name="selectedCategory"
+                                class="form-select green-border form-select-sm filter-bordered">
+                                <option value="" selected>@Resource2.ShowAll</option>
+                                @if (ViewBag.Categories != null)
+                                {
+                                    @foreach (var category in ViewBag.Categories)
+                                    {
+                                        if (category.Value == ViewBag.selectedCategory?.ToString())
+                                        {
+                                            <option value="@category.Value" selected>@category.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@category.Value">@category.Text</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <!-- Filter Action Buttons -->
+                        <div class=" col-md-2 gap-1 d-flex justify-content-end align-items-end">
+                            <button type="button" id="btnClearFilters"
+                                class="btn-cancel-search btn-sm btn coustom-min-w">
+                                <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                            </button>
+                            <button type="submit" class="btn btn-success btn-sm coustom-min-w">
+                                <i class="ri-filter-line me-1"></i> @Resource1.Search
+                            </button>
+                        </div>
+                    </div>
+
+                </form>
+
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Attachments Modal (unchanged logic) -->
+<div class="modal fade" id="uploadFilesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div id="attachmentsContent"></div>
+    </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Resource1.DeleteInventory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                @Resource1.ConfirmDelete <strong id="itemName"></strong> ؟
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" name="id" id="itemId" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Resource1.Cancel</button>
+                    <button type="submit" class="btn btn-danger">@Resource1.Yes_delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (ViewBag.ReopenModal != null && (bool)ViewBag.ReopenModal)
+    {
+        <script>
+            var myModal = new bootstrap.Modal(document.getElementById('uploadFilesModal'));
+            myModal.show();
+        </script>
+    }
+    <script>
+        $(document).on("click", ".show-delete-info", function () {
+            var message = $(this).data("message"); // take message from data-attribute
+            $("#deleteInfoMessage").text(message);
+
+            var modal = new bootstrap.Modal(document.getElementById("deleteInfoModal"));
+            modal.show();
+        });
+
+    </script>
+    <script>
+
+        // Expiry highlighting (kept your logic)
+        $(document).ready(function () {
+            $('.expiryDate').each(function () {
+                const endDateStr = $(this).text().trim();
+                if (!endDateStr) return;
+
+                const expiryDate = new Date(endDateStr);
+                if (isNaN(expiryDate.getTime())) return;
+
+                const today = new Date();
+                const in30Days = new Date();
+
+                today.setHours(0, 0, 0, 0);
+                in30Days.setDate(today.getDate() + 30);
+                in30Days.setHours(0, 0, 0, 0);
+                expiryDate.setHours(0, 0, 0, 0);
+
+                if (expiryDate < today) {
+                    $(this).closest('tr').addClass('badge-expired');
+                } else if (expiryDate <= in30Days) {
+                    $(this).closest('tr').addClass('badge-warning');
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var name = button.getAttribute('data-name');
+            document.getElementById('itemId').value = id;
+            document.getElementById('itemName').textContent = name;
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#selectedYear').val(filters.selectedYear);
+                $('#selectedCategory').val(filters.selectedCategory);
+                $('#pageSizeSelect').val(filters.pageSize);
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#selectedYear').val('');
+                $('#selectedCategory').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    selectedYear: $('#selectedYear').val(),
+                    selectedCategory: $('#selectedCategory').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var searchTerm = $('#searchTermInput').val();
+                var selectedYear = $('#selectedYear').val();
+                var selectedCategory = $('#selectedCategory').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/AnnualSchedule/Index',
+                    type: 'GET',
+                    data: { searchTerm, selectedYear, selectedCategory, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#recordsCount').text(newCountRecords);
+
+                        $('.expiryDate').each(function () {
+                            const endDateStr = $(this).text().trim();
+                            if (!endDateStr) return;
+
+                            const expiryDate = new Date(endDateStr);
+                            if (isNaN(expiryDate.getTime())) return;
+
+                            const today = new Date();
+                            const in30Days = new Date();
+
+                            today.setHours(0, 0, 0, 0);
+                            in30Days.setDate(today.getDate() + 30);
+                            in30Days.setHours(0, 0, 0, 0);
+                            expiryDate.setHours(0, 0, 0, 0);
+
+                            if (expiryDate < today) {
+                                $(this).closest('tr').addClass('badge-expired');
+                            } else if (expiryDate <= in30Days) {
+                                $(this).closest('tr').addClass('badge-warning');
+                            }
+                        });
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

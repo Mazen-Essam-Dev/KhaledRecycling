@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Supplier Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h2>Index</h2>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<h1>Supplier Module Documentation</h1>
+
+<!-- ================= SupplierController ================= -->
+
+<h2>SupplierController</h2>
+
+<table>
+    <tr><th>Aspect</th><th>Description</th></tr>
+    <tr><td>Overview</td><td>ASP.NET Core controller for managing suppliers with bilingual support, search, pagination, and export features.</td></tr>
+    <tr><td>Area</td><td>Admin</td></tr>
+    <tr><td>Authorization</td><td>AdminAuthorize attribute</td></tr>
+    <tr>
+        <td>Dependencies</td>
+        <td>
+            • ISupplierService<br>
+            • IMapper
+        </td>
+    </tr>
+</table>
+
+<h2>Controller Actions</h2>
+
+<table>
+    <tr><th>Action</th><th>Purpose</th><th>Notes</th></tr>
+    <tr>
+        <td>Index</td>
+        <td>Main suppliers listing</td>
+        <td>
+            • Search (Arabic / English / Email / Phone)<br>
+            • Pagination (50 items)<br>
+            • AJAX partial loading
+        </td>
+    </tr>
+    <tr>
+        <td>AddEdit (GET)</td>
+        <td>Load create/edit form</td>
+        <td>Maps entity to ViewModel when editing</td>
+    </tr>
+    <tr>
+        <td>AddEdit (POST)</td>
+        <td>Save supplier</td>
+        <td>ModelState validation and redirect logic</td>
+    </tr>
+    <tr>
+        <td>Delete</td>
+        <td>Delete supplier</td>
+        <td>HTTP POST with redirect</td>
+    </tr>
+    <tr>
+        <td>Print</td>
+        <td>Printable supplier list</td>
+        <td>No pagination – same filters as Index</td>
+    </tr>
+    <tr>
+        <td>createExcelReport_Download</td>
+        <td>Excel export</td>
+        <td>Localized bilingual XLSX output</td>
+    </tr>
+</table>
+
+<h2>Search Logic</h2>
+
+<table>
+    <tr><th>Implementation</th></tr>
+    <tr>
+        <td>
+            <code>
+supplierVMs = supplierVMs.Where(s =>
+    (!string.IsNullOrEmpty(s.SupplierNameAr) && s.SupplierNameAr.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+    (!string.IsNullOrEmpty(s.SupplierNameEn) && s.SupplierNameEn.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+    (!string.IsNullOrEmpty(s.Email) && s.Email.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) ||
+    (!string.IsNullOrEmpty(s.Phone) && s.Phone.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+);
+            </code>
+        </td>
+    </tr>
+</table>
+
+<!-- ================= SupplierService ================= -->
+
+<h2>SupplierService</h2>
+
+<table>
+    <tr><th>Aspect</th><th>Description</th></tr>
+    <tr><td>Overview</td><td>Service layer handling supplier CRUD with relationship integrity and attachment handling.</td></tr>
+    <tr>
+        <td>Dependencies</td>
+        <td>
+            • IUnitOfWork<br>
+            • IWebHostEnvironment
+        </td>
+    </tr>
+</table>
+
+<h2>Service Methods</h2>
+
+<table>
+    <tr><th>Method</th><th>Purpose</th><th>Notes</th></tr>
+    <tr>
+        <td>GetAllAsync()</td>
+        <td>Retrieve suppliers</td>
+        <td>AsNoTracking + HasRelatedData check</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync()</td>
+        <td>Get supplier by ID</td>
+        <td>Nullable return</td>
+    </tr>
+    <tr>
+        <td>AddAsync()</td>
+        <td>Create supplier</td>
+        <td>Returns created ID</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync()</td>
+        <td>Update supplier</td>
+        <td>Null-safe update</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync()</td>
+        <td>Delete supplier</td>
+        <td>Null-safe delete</td>
+    </tr>
+</table>
+
+<h2>Relationship Integrity</h2>
+
+<table>
+    <tr><th>Logic</th></tr>
+    <tr>
+        <td>
+            <code>
+HasRelatedData =
+    context.Expenses.Any(e => e.SupplierId == s.Id) ||
+    context.Receipts.Any(r => r.SupplierId == s.Id) ||
+    context.PurchaseOrders.Any(po => po.SupplierId == s.Id);
+            </code>
+        </td>
+    </tr>
+</table>
+
+<!-- ================= Supplier Entity ================= -->
+
+<h2>Supplier Entity</h2>
+
+<table>
+    <tr><th>Property</th><th>Description</th></tr>
+    <tr><td>Id</td><td>Primary key</td></tr>
+    <tr><td>SupplierNameAr</td><td>Arabic supplier name (max 200)</td></tr>
+    <tr><td>SupplierNameEn</td><td>English supplier name</td></tr>
+    <tr><td>VATNumber</td><td>VAT registration number</td></tr>
+    <tr><td>Phone</td><td>Landline phone with validation</td></tr>
+    <tr><td>Mobile</td><td>Mobile phone with validation</td></tr>
+    <tr><td>Email</td><td>Email address with validation</td></tr>
+    <tr><td>Address</td><td>Business address</td></tr>
+    <tr><td>Description</td><td>Additional notes</td></tr>
+    <tr><td>HasRelatedData</td><td>Business logic flag (NotMapped)</td></tr>
+</table>
+
+<!-- ================= Supplier ViewModel ================= -->
+
+<h2>Supplier ViewModel (SupplierVM)</h2>
+
+<table>
+    <tr><th>Property</th><th>Validation & Rules</th></tr>
+    <tr><td>SupplierNameAr</td><td>Required, localized validation</td></tr>
+    <tr><td>VATNumber</td><td>Required</td></tr>
+    <tr><td>Phone</td><td>Required, unique, phone format</td></tr>
+    <tr><td>Mobile</td><td>Required, unique, phone format</td></tr>
+    <tr><td>Email</td><td>Required, unique, email format</td></tr>
+    <tr><td>Address</td><td>Required</td></tr>
+    <tr><td>Description</td><td>Optional notes</td></tr>
+    <tr><td>HasRelatedData</td><td>Used to block deletion</td></tr>
+</table>
+
+<!-- ================= Supplier Views ================= -->
+
+<h2>Supplier Management Views</h2>
+
+<table>
+    <tr><th>View</th><th>Purpose</th></tr>
+    <tr><td>Index.cshtml</td><td>Listing, search, pagination, export</td></tr>
+    <tr><td>_ListPartial.cshtml</td><td>Suppliers table rendering</td></tr>
+    <tr><td>AddEdit.cshtml</td><td>Create/Edit supplier form</td></tr>
+    <tr><td>Details.cshtml</td><td>Read-only supplier details</td></tr>
+    <tr><td>Print.cshtml</td><td>Printable supplier report</td></tr>
+</table>
+
+<h2>Business Logic Summary</h2>
+
+<table>
+    <tr><th>Stage</th><th>Description</th></tr>
+    <tr><td>Create</td><td>Validated supplier entry</td></tr>
+    <tr><td>Manage</td><td>Edit with integrity checks</td></tr>
+    <tr><td>Delete</td><td>Blocked if related data exists</td></tr>
+    <tr><td>Export</td><td>Print & Excel reporting</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

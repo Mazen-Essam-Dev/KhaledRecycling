@@ -1,0 +1,122 @@
+﻿@model MembersCourseVM
+
+@{
+    ViewData["Title"] = Resource2.ParticipantsInCourse;
+    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
+    ViewData["Title Single"] = @Resource2.ParticipantsInCourse ?? " ";
+    var lang = SessionHelper.GetCurrentLanguage();
+    var AttendancePermission = PermissionScanner.ValidatePermission("Course", "Attendance");
+}
+
+<input type="hidden" id="NewCountRecords" value="@Model.Members_Paginated.Count" />
+<input type="hidden" id="NewCourseId" value="@Model.Course?.Id" />
+
+<!-- Page Size Selector -->
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect" style="width: 100px;">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width: 100px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.Members_Paginated.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>@Resource1.subscriberName</th>
+                <th>@Resource1.NationalityId</th>
+                <th>@Resource1.Mobile</th>
+                <th style="width: 30%;">@Resource1.Email</th>
+                @if (AttendancePermission)
+                {
+                    <th style="width: 5%;">@Resource2.Attendance2</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Members_Paginated != null && Model.Members_Paginated.Items.Any())
+            {
+                @foreach (var member in Model.Members_Paginated.Items)
+                {
+                    <tr>
+                        @if (SessionHelper.GetCurrentLanguage() == "ar")
+                        {
+                            <td>@member.FullNameAr</td>
+                            <td>@member.Nationality?.NameAr</td>
+                        }
+                        else
+                        {
+                            <td>@member.FullNameEn</td>
+                            <td>@member.Nationality?.NameEn</td>
+                        }
+                        <td>@member.PhoneNumber</td>
+                        <td>@member.Email</td>
+                        @{
+                            var courseEndDate = Model.Course.EndDate; // adjust path if needed
+                            var attendanceAllowed = courseEndDate.HasValue && DateOnly.FromDateTime(DateTime.Now) <= courseEndDate.Value.AddDays(1);
+                        }
+
+                        @if (AttendancePermission)
+                        {
+                            <td class="text-center">
+                                <input type="checkbox"
+                                       class="attendance-checkbox form-check-input"
+                                       data-member-id="@member.Id"
+                                       data-course-id="@Model.Subscriptions?.FirstOrDefault(x => x.MemberId == member.Id)?.SubscribedInId"
+                                       @(Model.Subscriptions?.FirstOrDefault(x => x.MemberId == member.Id)?.Attendance == true ? "checked" : "")
+                                       @(attendanceAllowed ? "" : "disabled") />
+                            </td>
+                        }
+
+                    </tr>
+                }
+            }else
+            {
+                <tr>
+                    <td colspan="20" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoData</h5>
+                            <p class="mb-0">@Resource2.GoToCreatePage</p>
+                        </div>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.Members_Paginated.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.Members_Paginated.PageIndex - 1)">
+                @Resource2.Previous
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.Members_Paginated.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Members_Paginated.PageIndex ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.Members_Paginated.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.Members_Paginated.PageIndex + 1)">
+                @Resource2.Next
+            </a>
+        </li>
+    </ul>
+</nav>

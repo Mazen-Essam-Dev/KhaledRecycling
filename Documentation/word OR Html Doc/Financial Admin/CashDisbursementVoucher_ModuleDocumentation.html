@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Cash Disbursement Voucher Module</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Cash Disbursement Voucher (CDV) Module</h1>
+
+<div class="section">
+    <h2>Namespace</h2>
+    <table>
+        <tr><th>Layer</th><th>Namespace</th></tr>
+        <tr><td>Controller</td><td>FougeraClub.Areas.Admin.Controllers</td></tr>
+        <tr><td>Domain</td><td>Domain.Entities.CashDisbursementVoucher</td></tr>
+        <tr><td>Service</td><td>Application.Services.Admin</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Enum: CashDisbursementVoucherType</h2>
+    <table>
+        <tr><th>Value</th><th>Name</th><th>Description</th></tr>
+        <tr><td>1</td><td>Cash</td><td>Cash payment</td></tr>
+        <tr><td>2</td><td>Checks</td><td>Payment by check</td></tr>
+        <tr><td>3</td><td>Transfer</td><td>Bank transfer</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Entity: CashDisbursementVoucher</h2>
+    <h3>Properties</h3>
+    <table>
+        <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Id</td><td>int</td><td>Primary key</td></tr>
+        <tr><td>Type</td><td>CashDisbursementVoucherType?</td><td>Voucher payment type</td></tr>
+        <tr><td>Date</td><td>DateOnly?</td><td>Voucher date</td></tr>
+        <tr><td>Month</td><td>string?</td><td>Month reference</td></tr>
+        <tr><td>DocumentNo</td><td>string?</td><td>Voucher number</td></tr>
+        <tr><td>Description</td><td>string?</td><td>Disbursement description</td></tr>
+        <tr><td>TotalAmount</td><td>decimal?</td><td>Total amount</td></tr>
+    </table>
+
+    <h3>Relationships</h3>
+    <table>
+        <tr><th>Related Entity</th><th>Relation</th></tr>
+        <tr><td>CashDisbursementVoucherDetail</td><td>One-to-Many</td></tr>
+        <tr><td>CashDisbursementVoucherAttachment</td><td>One-to-Many</td></tr>
+        <tr><td>Accountant / Manager Signatures</td><td>One-to-One</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Entity: CashDisbursementVoucherDetail</h2>
+    <table>
+        <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Id</td><td>int</td><td>Primary key</td></tr>
+        <tr><td>CashDisbursementVoucherId</td><td>int</td><td>Foreign key</td></tr>
+        <tr><td>DocumentNo</td><td>string?</td><td>Supporting document</td></tr>
+        <tr><td>DocumentDate</td><td>DateOnly?</td><td>Document date</td></tr>
+        <tr><td>Notes</td><td>string?</td><td>Description</td></tr>
+        <tr><td>Amount</td><td>decimal?</td><td>Line amount</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Entity: CashDisbursementVoucherAttachment</h2>
+    <table>
+        <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Id</td><td>int</td><td>Primary key</td></tr>
+        <tr><td>Name</td><td>string</td><td>File name</td></tr>
+        <tr><td>Path</td><td>string</td><td>File path</td></tr>
+        <tr><td>File</td><td>IFormFile?</td><td>Not mapped</td></tr>
+        <tr><td>CashDisbursementVoucherId</td><td>int</td><td>Foreign key</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Entity: AcknowledgmentReceipt</h2>
+    <table>
+        <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Id</td><td>int</td><td>Primary key</td></tr>
+        <tr><td>CashDisbursementVoucherId</td><td>int</td><td>Foreign key</td></tr>
+        <tr><td>Title</td><td>string?</td><td>Receipt title</td></tr>
+        <tr><td>Recived</td><td>string?</td><td>Receiver name</td></tr>
+        <tr><td>Amount</td><td>string?</td><td>Amount text</td></tr>
+        <tr><td>Date</td><td>DateOnly?</td><td>Receipt date</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Entity: ExchangeProof</h2>
+    <table>
+        <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Id</td><td>int</td><td>Primary key</td></tr>
+        <tr><td>CashDisbursementVoucherId</td><td>int</td><td>Foreign key</td></tr>
+        <tr><td>DocumentNo</td><td>string?</td><td>Document number</td></tr>
+        <tr><td>Amount</td><td>decimal?</td><td>Amount</td></tr>
+        <tr><td>Date</td><td>DateOnly?</td><td>Exchange date</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Entity: ExchangeProofDetail</h2>
+    <table>
+        <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+        <tr><td>Id</td><td>int</td><td>Primary key</td></tr>
+        <tr><td>ExchangeProofId</td><td>int</td><td>Foreign key</td></tr>
+        <tr><td>AccountNo</td><td>string?</td><td>Account number</td></tr>
+        <tr><td>CurrentBalance</td><td>decimal(18,2)?</td><td>Balance before</td></tr>
+        <tr><td>Amount</td><td>decimal(18,2)?</td><td>Transaction amount</td></tr>
+        <tr><td>Balance</td><td>decimal(18,2)?</td><td>Balance after</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>CashDisbursementVoucherController</h2>
+
+    <h3>Attributes</h3>
+    <table>
+        <tr><th>Attribute</th><th>Description</th></tr>
+        <tr><td>[AdminAuthorize]</td><td>Restricts access to admin users</td></tr>
+        <tr><td>[Area("Admin")]</td><td>Defines Admin routing scope</td></tr>
+    </table>
+
+    <h3>Dependencies</h3>
+    <table>
+        <tr><th>Dependency</th><th>Purpose</th></tr>
+        <tr><td>ICashDisbursementVoucherService</td><td>Business logic for CDV</td></tr>
+        <tr><td>IMapper</td><td>Entity ↔ ViewModel mapping</td></tr>
+        <tr><td>IHubContext</td><td>SignalR real-time notifications</td></tr>
+        <tr><td>INotificationService</td><td>Role-based notifications</td></tr>
+        <tr><td>IHttpContextAccessor</td><td>Session & HTTP context</td></tr>
+        <tr><td>UserManager</td><td>User and role management</td></tr>
+    </table>
+
+    <h3>Core Actions</h3>
+    <table>
+        <tr><th>Action</th><th>Description</th></tr>
+        <tr><td>Index</td><td>List CDVs with search, date filters & pagination</td></tr>
+        <tr><td>AddEdit (GET)</td><td>Load Add/Edit CDV form with enum values</td></tr>
+        <tr><td>AddEdit (POST)</td><td>Create or update CDV and send notifications</td></tr>
+        <tr><td>Delete</td><td>Delete CDV record</td></tr>
+        <tr><td>ExchangeProof</td><td>Add/Edit exchange proof with OTP validation</td></tr>
+        <tr><td>AcknowledgmentReceipt</td><td>Add/Edit acknowledgment receipt</td></tr>
+        <tr><td>Print</td><td>Generate printable CDV list</td></tr>
+        <tr><td>createExcelReport_Download</td><td>Export CDVs to Excel (AR/EN)</td></tr>
+        <tr><td>UploadCashDisbursementVoucherFiles</td><td>Upload and manage attachments</td></tr>
+    </table>
+
+    <h2>OTP Workflow</h2>
+    <table>
+        <tr><th>Step</th><th>Behavior</th></tr>
+        <tr><td>1</td><td>On add, notify Activity Monitor</td></tr>
+        <tr><td>2</td><td>First OTP sign locks edit except Manager</td></tr>
+        <tr><td>3</td><td>Notify Manager and open OTP</td></tr>
+        <tr><td>4</td><td>Manager edit resets first signature</td></tr>
+        <tr><td>5</td><td>Manager OTP validation locks all editing and enables printing</td></tr>
+        <tr><td>6</td><td>After first sign, delete is disabled</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>CashDisbursementVoucherService</h2>
+
+    <h3>Dependencies</h3>
+    <table>
+        <tr><th>Dependency</th><th>Purpose</th></tr>
+        <tr><td>IUnitOfWork</td><td>Transactional database access</td></tr>
+        <tr><td>IHttpContextAccessor</td><td>Access HTTP context</td></tr>
+        <tr><td>ISMSService</td><td>Send SMS notifications</td></tr>
+        <tr><td>ISMSForSendingOTPService</td><td>Send OTP codes</td></tr>
+    </table>
+
+    <h3>CDV Operations</h3>
+    <table>
+        <tr><th>Method</th><th>Description</th></tr>
+        <tr><td>GetAllAsync</td><td>Retrieve all CDVs</td></tr>
+        <tr><td>GetByIdAsync</td><td>Get CDV with details & signatures</td></tr>
+        <tr><td>AddAsync</td><td>Create new CDV</td></tr>
+        <tr><td>UpdateAsync</td><td>Update CDV and child entities</td></tr>
+        <tr><td>DeleteAsync</td><td>Delete CDV and related data</td></tr>
+    </table>
+
+    <h3>Exchange Proof Operations</h3>
+    <table>
+        <tr><th>Method</th><th>Description</th></tr>
+        <tr><td>GetExchangeProofByIdAsync</td><td>Get exchange proof with details</td></tr>
+        <tr><td>AddAsync</td><td>Add exchange proof</td></tr>
+        <tr><td>UpdateAsync</td><td>Replace exchange proof details</td></tr>
+    </table>
+
+    <h3>Acknowledgment Receipt Operations</h3>
+    <table>
+        <tr><th>Method</th><th>Description</th></tr>
+        <tr><td>GetAcknowledgmentReceiptByIdAsync</td><td>Retrieve receipt</td></tr>
+        <tr><td>AddAsync</td><td>Create receipt</td></tr>
+        <tr><td>UpdateAsync</td><td>Update receipt</td></tr>
+    </table>
+
+    <h2>OTP & Attachments</h2>
+    <table>
+        <tr><th>Feature</th><th>Description</th></tr>
+        <tr><td>SendOtpAsync</td><td>Send OTP via SMS</td></tr>
+        <tr><td>ValidateOtpAsync</td><td>Validate OTP for roles</td></tr>
+        <tr><td>UploadAttachmentsAsync</td><td>Save and delete files</td></tr>
+        <tr><td>GetAttachmentsAsync</td><td>Retrieve attachments</td></tr>
+    </table>
+</div>
+
+<div class="note">
+    This HTML document represents a full, structured, and printable documentation page for the Cash Disbursement Voucher module.
+</div>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

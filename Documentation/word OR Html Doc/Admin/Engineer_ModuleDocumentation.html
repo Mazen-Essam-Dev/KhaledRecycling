@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Engineer Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>🧑‍💼 Engineer Module Documentation</h1>
+
+<h2>Dependencies</h2>
+<pre>
+using Application.Helpers;
+using Application.Interfaces.Admin;
+using Application.Services.Admin;
+using AutoMapper;
+using Domain.DTOs;
+using Domain.Entities;
+using Domain.Resources;
+using FougeraClub.Areas.Admin.ViewModels.Engineer;
+using FougeraClub.Attributes;
+using FougeraClub.Helpers;
+using Infrastructure.Repositories.InterfacesDB;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+</pre>
+
+<h2>Helper Classes Used</h2>
+<table>
+    <tr><th>Helper</th><th>Purpose</th></tr>
+    <tr><td>SessionHelper</td><td>Retrieves current language (used for multilingual UI)</td></tr>
+    <tr><td>SelectListHelper</td><td>Generates dropdown lists for nationalities</td></tr>
+    <tr><td>FileHelper</td><td>Validates uploaded images (type & size)</td></tr>
+    <tr><td>PaginatedList&lt;T&gt;</td><td>Handles pagination logic for large datasets</td></tr>
+    <tr><td>ExcelStaticReport</td><td>Generates Excel reports for export</td></tr>
+</table>
+
+<h2>Attributes</h2>
+<table>
+    <tr><th>Attribute</th><th>Description</th></tr>
+    <tr><td>[AdminAuthorize]</td><td>Restricts access to Admin users only</td></tr>
+    <tr><td>[Area("Admin")]</td><td>Declares this controller belongs to the Admin area</td></tr>
+    <tr><td>[IgnoreAction]</td><td>Marks actions that should be excluded from permission scanning</td></tr>
+</table>
+
+<h2>Views Used</h2>
+<table>
+    <tr><th>Action</th><th>View Name</th><th>Partial View</th></tr>
+    <tr><td>Index</td><td>Index.cshtml</td><td>_ListPartial.cshtml</td></tr>
+    <tr><td>AddEdit</td><td>AddEdit.cshtml</td><td>—</td></tr>
+    <tr><td>Details</td><td>Details.cshtml</td><td>—</td></tr>
+    <tr><td>Print</td><td>Print.cshtml</td><td>—</td></tr>
+    <tr><td>PrintDetails</td><td>PrintDetails.cshtml</td><td>—</td></tr>
+</table>
+
+<h2>Summary of Responsibilities</h2>
+<table>
+    <tr><th>Feature</th><th>Description</th></tr>
+    <tr><td>Listing & Filtering</td><td>Displays paginated engineers with filtering options</td></tr>
+    <tr><td>CRUD Operations</td><td>Add, Edit, Delete engineers</td></tr>
+    <tr><td>File Upload</td><td>Validates and uploads profile image</td></tr>
+    <tr><td>Localization</td><td>Adjusts displayed data according to current language</td></tr>
+    <tr><td>Reports</td><td>Generates printable and Excel reports</td></tr>
+    <tr><td>Dropdown Management</td><td>Dynamically populates Nationalities and Graduation Years</td></tr>
+</table>
+
+<h2>Controller Summary</h2>
+<table>
+    <tr><th>Method</th><th>Type</th><th>Description</th></tr>
+    <tr><td>Index</td><td>GET</td><td>List engineers with filtering & pagination</td></tr>
+    <tr><td>AddEdit</td><td>GET</td><td>Display form for Add/Edit</td></tr>
+    <tr><td>AddEdit</td><td>POST</td><td>Save new or updated engineer</td></tr>
+    <tr><td>Delete</td><td>POST</td><td>Delete engineer</td></tr>
+    <tr><td>Print</td><td>GET</td><td>Generate printable list</td></tr>
+    <tr><td>createExcelReport_Download</td><td>GET</td><td>Generate Excel file</td></tr>
+    <tr><td>Details</td><td>GET</td><td>View engineer details</td></tr>
+    <tr><td>PrintDetails</td><td>GET</td><td>Printable detail page</td></tr>
+</table>
+
+<h2>Engineer Model Properties</h2>
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Constraints / Notes</th>
+    </tr>
+    <tr><td>Id</td><td>int</td><td>Unique identifier for the engineer</td><td>Primary key 🔑</td></tr>
+    <tr><td>FullName</td><td>string?</td><td>Engineer’s full name</td><td>MaxLength(100)</td></tr>
+    <tr><td>Code</td><td>int?</td><td>Engineer-specific internal code</td><td>Optional</td></tr>
+    <tr><td>Specialization</td><td>string?</td><td>Engineering field (e.g., Civil, Electrical)</td><td>MaxLength(100)</td></tr>
+    <tr><td>GraduationYear</td><td>int?</td><td>Year of graduation</td><td>Range(1900, 2100)</td></tr>
+    <tr><td>DateOfBirth</td><td>DateTime?</td><td>Date of birth</td><td>Stored as date in DB 📅</td></tr>
+    <tr><td>Position</td><td>string?</td><td>Job position or title</td><td>MaxLength(100)</td></tr>
+    <tr><td>NationalityId</td><td>int?</td><td>Foreign key referencing Nationality</td><td>Optional</td></tr>
+    <tr><td>Nationality</td><td>Nationality?</td><td>Navigation to nationality entity</td><td>Virtual navigation property</td></tr>
+    <tr><td>WorkAddress</td><td>string?</td><td>Address of current workplace</td><td>MaxLength(200)</td></tr>
+    <tr><td>Address</td><td>string?</td><td>Home or personal address</td><td>MaxLength(200)</td></tr>
+    <tr><td>PhoneNumber</td><td>string?</td><td>Contact phone number</td><td>Phone validation + MaxLength(20)</td></tr>
+    <tr><td>Email</td><td>string?</td><td>Email address</td><td>EmailAddress + MaxLength(100)</td></tr>
+    <tr><td>Notes</td><td>string?</td><td>Optional notes or comments</td><td>No constraint</td></tr>
+    <tr><td>ProfileImagePath</td><td>string?</td><td>Path to profile image</td><td>MaxLength(255)</td></tr>
+    <tr><td>PassportNumber</td><td>string?</td><td>Passport number</td><td>MaxLength(50)</td></tr>
+    <tr><td>PassportExpiryDate</td><td>DateOnly?</td><td>Passport expiration date</td><td>Stored as date 📅</td></tr>
+    <tr><td>IdNumber</td><td>string?</td><td>Government-issued ID number</td><td>MaxLength(50)</td></tr>
+    <tr><td>IdExpiryDate</td><td>DateOnly?</td><td>National ID expiration date</td><td>Stored as date 📅</td></tr>
+    <tr><td>IdReleaseLocation</td><td>string?</td><td>Place where the ID was issued</td><td>MaxLength(50)</td></tr>
+    <tr><td>Salary</td><td>decimal?</td><td>Monthly or yearly salary</td><td>Range(0, 1,000,000) 💰</td></tr>
+    <tr><td>BankAccountNo</td><td>string?</td><td>Bank account number</td><td>MaxLength(50)</td></tr>
+    <tr><td>BankName</td><td>string?</td><td>Name of the bank</td><td>MaxLength(50)</td></tr>
+</table>
+
+<h2>Engineer Relationships</h2>
+<table>
+    <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+    <tr><td>Nationality</td><td>Nationality?</td><td>Linked nationality entity (optional)</td></tr>
+</table>
+
+<h2>Service Methods</h2>
+<table>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr><td>GetAllAsync()</td><td>Gets all engineers with nationalities</td></tr>
+    <tr><td>GetByIdAsync(id)</td><td>Fetches specific engineer + nationality</td></tr>
+    <tr><td>AddAsync(entity, file)</td><td>Saves image (if provided), stores engineer</td></tr>
+    <tr><td>UpdateAsync(entity, file)</td><td>Updates details, replaces image</td></tr>
+    <tr><td>DeleteAsync(id)</td><td>Deletes record and related image</td></tr>
+    <tr><td>SaveImageAsync(file)</td><td>Saves image to /uploads/engineers</td></tr>
+    <tr><td>DeleteImageFile(path)</td><td>Deletes image from disk</td></tr>
+    <tr><td>GenerateNewCode()</td><td>Generates sequential Code</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

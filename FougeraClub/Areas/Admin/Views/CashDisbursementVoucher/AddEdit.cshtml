@@ -1,0 +1,389 @@
+﻿@model CashDisbursementVoucherVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? Resource2.EditCashRequest : Resource2.CreateCashRequest;
+    ViewData["Title pakage"] = @Resource2.FinancialManagement ?? " ";
+    ViewData["Title ListIndex"] = Resource2.CashDisbursementVoucherList ?? " ";
+    ViewData["Title Single"] = ((Model?.Id == 0) ? @Resource2.CreateCashRequest : @Resource2.EditCashRequest) ?? " ";
+}
+<!-- Breadcrumb Navigation Column -->
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <h4 class="ico-header-title">
+            <i class="fa-solid fa-money-check-dollar me-1 text-ico"></i>
+            @ViewData["Title"]
+        </h4>
+    </div>
+    <div class="col-md-6 d-flex align-items-center flex-wrap justify-content-end">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/CashDisbursementVoucher/Index">@ViewData["Title ListIndex"]</a></li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="card border d-flex flex-wrap align-items-start p-3">
+    <div class="container-fluid">
+        <form asp-action="AddEdit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row c-edit-form">
+
+                <!-- Type -->
+                <div class="col-md-3 mb-3">
+                    <label class="form-label fw-semibold asteriskRequired d-block">@Resource2.Type</label>
+                    <div class="d-flex flex-wrap gap-3">
+                        @* @foreach (var item in Model?.TypeEnumList ?? Enumerable.Empty<SelectListItem>())
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input typeradiobtn" type="radio" asp-for="Type"
+                                    id="TypeEnum_@item.Value" value="@item.Value"
+                                    checked="@(Model?.Type.HasValue == true ? Model?.Type.Value.ToString() == item.Value : false)" />
+                                <label class="form-check-label" for="TypeEnum_@item.Value">@item.Text</label>
+                            </div>
+                        } *@
+
+                        @foreach (var item in Model?.TypeEnumList ?? Enumerable.Empty<SelectListItem>())
+                        {
+                            @if (Model != null && Model.AcknowledgmentReceiptApprovalDone)
+                            {
+                                @if (Model?.Type.HasValue == true && Model?.Type.Value.ToString() == item.Value)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input typeradiobtn" type="radio" asp-for="Type"
+                                               id="TypeEnum_@item.Value" value="@item.Value"
+                                               checked="@(Model?.Type.HasValue == true ? Model?.Type.Value.ToString() == item.Value : false)" />
+                                        <label class="form-check-label" for="TypeEnum_@item.Value">@item.Text</label>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input typeradiobtn" type="radio" asp-for="Type"
+                                           id="TypeEnum_@item.Value" value="@item.Value"
+                                           checked="@(Model?.Type.HasValue == true ? Model?.Type.Value.ToString() == item.Value : false)" />
+                                    <label class="form-check-label" for="TypeEnum_@item.Value">@item.Text</label>
+                                </div>
+                            }
+                        }
+
+
+                    </div>
+                    <span id="TypeCheckResult" class="text-danger small"></span>
+                    <span asp-validation-for="Type" id="typeValidVM" class="text-danger small"></span>
+                </div>
+
+                <!-- DocumentNo -->
+                <div class="col-md-3 mb-3">
+                    <label asp-for="DocumentNo" class="form-label fw-semibold">@Resource2.ItemNumber</label>
+                    <input asp-for="DocumentNo" class="form-control" placeholder="0" type="number" readonly />
+                    <input asp-for="DocumentNo" type="hidden" />
+                    <span asp-validation-for="DocumentNo" class="text-danger small"></span>
+                </div>
+
+                <!-- Date -->
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Date" class="form-label asteriskRequired fw-semibold">@Resource2.Date</label>
+                    <div class="input-icon-left">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                        <input asp-for="Date" class="form-control green-border form-control-sm filter-bordered" type="date" />
+                    </div>
+
+                    <span asp-validation-for="Date" class="text-danger small"></span>
+                </div>
+                <!-- Month -->
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Month" class="form-label fw-semibold" style="margin-top:.6rem;">@Resource2.Month</label>
+                    <input asp-for="Month" class="form-control" placeholder="@Resource2.Month" readonly />
+                    <span asp-validation-for="Month" class="text-danger small"></span>
+                </div>
+                <div class="col-md-12">
+                    @if (Model == null || Model.Details == null)
+                    {
+                        <textarea name="Description" class="form-control"
+                        rows="5">@Resource2.CashDisbursementVoucherDescPlaceholder</textarea>
+                    }
+                    else
+                    {
+                        <textarea asp-for="Description" class="form-control" rows="5"></textarea>
+                    }
+                    <span asp-validation-for="Description" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 mt-3">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1> @Resource2.AmountsToBeDisbursedFromClubAccount</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <label for="DocNo" class="form-label fw-semibold mt-2">@Resource2.ItemNumber</label>
+                        <input id="DocNo" class="form-control" type="number" />
+                        <span id="DocNoSpan" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="DocumentDate" class="form-label asteriskRequired fw-semibold">@Resource2.DocumentDate</label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                            <input id="DocumentDate" class="form-control green-border form-control-sm filter-bordered " type="date" />
+                        </div>
+
+
+
+
+                        <span id="DocumentDateSpan" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label for="Amount" class="form-label asteriskRequired fw-semibold">@Resource2.Amount</label>
+                        <input id="Amount" class="form-control" placeholder="0.00" min="0.01" type="number" />
+                        <span id="AmountSpan" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label for="Notes" class="form-label asteriskRequired fw-semibold">@Resource1.Description</label>
+                        <textarea id="Notes" class="form-control" type="text" rows="3"></textarea>
+                        <span id="NotesSpan" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-12 d-flex justify-content-end ">
+                        <button type="button" class="btn btn-secondary btn-sm px-4" onclick="addRow()">
+                            <i class="fa-solid fa-plus-circle  me-1 "></i> @Resource2.Add
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive mt-4">
+                    <table class="table table-bordered table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@Resource2.ItemNumber</th>
+                                <th>@Resource2.DocumentDate</th>
+                                <th>@Resource1.Description</th>
+                                <th>@Resource2.Amount</th>
+                                <th>@Resource2.Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="Details">
+                            @if (Model?.Details != null)
+                            {
+                                var index = 0;
+                                foreach (var detail in Model.Details)
+                                {
+                                    <tr>
+                                        <td><input class="form-control" type="number" name="Details[@index].DocumentNo"
+                                                value="@detail.DocumentNo" readonly/></td>
+                                        <td><input class="form-control" type="date" name="Details[@index].DocumentDate"
+                                                   value="@detail.DocumentDate?.ToString("yyyy-MM-dd")" readonly />
+                                        </td>
+                                        <td>
+                                            <input class="form-control" name="Details[@index].Notes" value="@detail.Notes" readonly />
+                                        </td>
+                                        <td><input class="form-control Amount" type="number" min="0.01" placeholder="0.00"
+                                                   name="Details[@index].Amount" value="@detail.Amount" readonly />
+                                        </td>
+                                        <td class="text-center"><button type="button"
+                                                    class="btn-control btn-icon btn-sm rounded-circle"
+                                                onclick="removeRow(this)"><i class="fa-solid fa-trash fs-5"></i></button></td>
+                                    </tr>
+                                    index++;
+                                }
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <th>@Resource2.Total</th>
+                                <td><input class="form-control" type="number" placeholder="0.00" min="0.01"
+                                        id="totalAmount" name="TotalAmount" value="@Model?.TotalAmount" readonly /></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="row data-part pt-1 pb-1">
+            <div class="d-flex justify-content-center gap-2">
+                @if (Model != null && Model.AcknowledgmentReceiptApprovalDone)
+                {
+                    <button href="#" class="disabled btn btn-success btn-sm me-2">
+                        <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                    </button>
+                }
+                else
+                {
+                    <button type="submit" class="btn btn-success btn-sm me-2">
+                        <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                    </button>
+                }
+
+                <a asp-action="Index" class="btn-cancel-search btn btn-sm me-2">
+                    @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+                </a>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <!-- Custom Bootstrap Modal for Delete Confirmation -->
+    <script>
+        let rowIndex = @(Model?.Details?.Count() ?? 0)
+
+            function addRow() {
+                const DocumentNo = $("#DocNo").val().trim();
+                const DocumentDate = $("#DocumentDate").val().trim();
+                const Amount = $("#Amount").val().trim();
+                const Notes = $("#Notes").val().trim();
+
+                let isValid = true;
+
+                if (!DocumentNo) {
+                    $("#DocNoSpan").text("@Html.Raw(Resource1.Required)");
+                    isValid = false;
+                } else $("#DocNoSpan").text("");
+
+                if (!DocumentDate) {
+                    $("#DocumentDateSpan").text("@Html.Raw(Resource1.Required)");
+                    isValid = false;
+                } else $("#DocumentDateSpan").text("");
+
+                if (!Amount) {
+                    $("#AmountSpan").text("@Html.Raw(Resource1.Required)");
+                    isValid = false;
+                } else $("#AmountSpan").text("");
+
+                if (!Notes) {
+                    $("#NotesSpan").text("@Html.Raw(Resource1.Required)");
+                    isValid = false;
+                } else $("#NotesSpan").text("");
+
+                if (!isValid) return;
+
+                const tbody = document.getElementById("Details");
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                                            <td><input class="form-control" type="number" name="Details[${rowIndex}].DocumentNo" value="${DocumentNo}" readonly /></td>
+                                            <td><input class="form-control" type="date" name="Details[${rowIndex}].DocumentDate" value="${DocumentDate}" readonly /></td>
+                                            <td><input class="form-control" name="Details[${rowIndex}].Notes" value="${Notes}" readonly /></td>
+                                            <td><input class="form-control Amount" placeholder="0.00" type="number" min="0.01" name="Details[${rowIndex}].Amount" value="${Amount}" readonly /></td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn-control btn-icon btn-sm rounded-circle " onclick="removeRow(this)">
+                                                    <i class="fa-solid fa-trash fs-5"></i>
+                                                </button>
+                                            </td>
+                                        `;
+
+                tbody.appendChild(row);
+                rowIndex++;
+
+                updateTotalAmount();
+
+                // Clear inputs
+                $("#DocNo, #DocumentDate, #Amount, #Notes").val("");
+            }
+
+        // Store the row to be deleted
+        let rowToDelete = null;
+        function removeRow(button) {
+            rowToDelete = button.closest("tr");
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+
+        function confirmDeleteRow() {
+            if (rowToDelete) {
+                rowToDelete.remove();
+                // Reindex all rows
+                const rows = document.querySelectorAll("#Details tr");
+                rows.forEach((row, i) => {
+                    const inputs = row.querySelectorAll("input");
+                    inputs.forEach(input => {
+                        const name = input.getAttribute("name");
+                        if (name) {
+                            input.setAttribute("name", name.replace(/\[\d+\]/, `[${i}]`));
+                        }
+                    });
+                });
+                rowIndex = rows.length;
+                updateTotalAmount();
+                rowToDelete = null;
+            }
+            var modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            if (modal) modal.hide();
+        }
+
+        function updateTotalAmount() {
+            let totalAmount = 0;
+            $(".Amount").each(function () {
+                const val = parseFloat($(this).val());
+                if (!isNaN(val)) totalAmount += val;
+            });
+            $("#totalAmount").val(totalAmount.toFixed(2));
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const dateInput = document.querySelector('[name="Date"]');
+            const monthInput = document.querySelector('[name="Month"]');
+
+            if (dateInput && monthInput) {
+                dateInput.addEventListener("change", function () {
+                    const dateValue = this.value;
+                    if (dateValue) {
+                        const date = new Date(dateValue);
+
+                        // Get month name in current page language
+                        const monthName = date.toLocaleString('@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName', { month: 'long' });
+
+                        monthInput.value = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                    } else {
+                        monthInput.value = "";
+                    }
+                });
+            }
+        });
+    </script>
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Resource2.ConfirmDelete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>هل أنت متأكد من أنك تريد حذف هذا العنصر؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">
+                        @Resource2.Cancel
+                    </button>
+                    <button type="button" class="btn-cancel-search btn" onclick="confirmDeleteRow()">
+                        @Resource2.Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>HomeController Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<!-- Overview -->
+<table>
+    <thead>
+        <tr>
+            <h2>HomeController – Overview</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Controller Name</th>
+            <td>HomeController</td>
+        </tr>
+        <tr>
+            <th>Framework</th>
+            <td>ASP.NET Core MVC</td>
+        </tr>
+        <tr>
+            <th>Purpose</th>
+            <td>
+                Serves as the central hub for admin area navigation, language management,
+                and system-level utilities including redirects and error-safe operations.
+            </td>
+        </tr>
+        <tr>
+            <th>Primary Role</th>
+            <td>Admin dashboard entry point and system-level helper controller</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Controller Configuration -->
+<table>
+    <thead>
+        <tr>
+            <h2>Controller Configuration</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Area</th>
+            <td>Admin</td>
+        </tr>
+        <tr>
+            <th>Authorization</th>
+            <td>AdminAuthorize Attribute</td>
+        </tr>
+        <tr>
+            <th>Route Template</th>
+            <td><code>Admin/[controller]/[action]</code></td>
+        </tr>
+        <tr>
+            <th>Routing Strategy</th>
+            <td>Fixed route for centralized admin navigation</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Index Action -->
+<table>
+    <thead>
+        <tr>
+            <h2>Action: Index</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Purpose</th>
+            <td>Main admin entry action</td>
+        </tr>
+        <tr>
+            <th>Behavior</th>
+            <td>Redirects to Statistics controller Index action</td>
+        </tr>
+        <tr>
+            <th>Return Type</th>
+            <td>RedirectToActionResult</td>
+        </tr>
+        <tr>
+            <th>Use Case</th>
+            <td>Acts as the default landing page for the admin area</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Index Attributes -->
+<table>
+    <thead>
+        <tr>
+            <h2>Index Action – Attributes</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>[NoLogging]</th>
+            <td>Prevents this navigation action from being logged</td>
+        </tr>
+        <tr>
+            <th>[IgnoreAction]</th>
+            <td>Excludes the action from route discovery and menus</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Language Management -->
+<table>
+    <thead>
+        <tr>
+            <h2>Language Management System</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Action Name</th>
+            <td>ChangeLanguage</td>
+        </tr>
+        <tr>
+            <th>Purpose</th>
+            <td>Switch application language dynamically (Arabic / English)</td>
+        </tr>
+        <tr>
+            <th>HTTP Method</th>
+            <td>GET</td>
+        </tr>
+        <tr>
+            <th>Input Parameter</th>
+            <td><code>lang</code> (Language code)</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Language Session Handling -->
+<table>
+    <thead>
+        <tr>
+            <h2>ChangeLanguage – Session & Navigation</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Session Key</th>
+            <td>CurrentCulture</td>
+        </tr>
+        <tr>
+            <th>Session Value</th>
+            <td>Language code (e.g., ar / en)</td>
+        </tr>
+        <tr>
+            <th>Redirect Logic</th>
+            <td>Returns user to the referring page</td>
+        </tr>
+        <tr>
+            <th>Fallback Redirect</th>
+            <td>Redirects to root ("/") if Referer is not available</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ChangeLanguage Attributes -->
+<table>
+    <thead>
+        <tr>
+            <h2>ChangeLanguage – Attributes</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>[NoLogging]</th>
+            <td>Language changes are excluded from activity logs</td>
+        </tr>
+        <tr>
+            <th>[IgnoreAction]</th>
+            <td>Hidden from menus and route scanners</td>
+        </tr>
+        <tr>
+            <th>[HttpGet]</th>
+            <td>Safe GET request for switching language</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Code Logic -->
+<table>
+    <thead>
+        <tr>
+            <h2>ChangeLanguage – Core Logic</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Session Assignment</th>
+            <td>
+                <code>
+                    HttpContext.Session.SetString("CurrentCulture", lang);
+                </code>
+            </td>
+        </tr>
+        <tr>
+            <th>Referer Retrieval</th>
+            <td>
+                <code>
+                    var referer = Request.Headers["Referer"].ToString();
+                </code>
+            </td>
+        </tr>
+        <tr>
+            <th>Redirect Execution</th>
+            <td>
+                <code>
+                    return Redirect(referer ?? "/");
+                </code>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Summary -->
+<table>
+    <thead>
+        <tr>
+            <h2>Module Summary</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Responsibility Scope</th>
+            <td>Admin navigation, culture switching, system-level redirection</td>
+        </tr>
+        <tr>
+            <th>Security Level</th>
+            <td>Admin-only access</td>
+        </tr>
+        <tr>
+            <th>Logging Strategy</th>
+            <td>Critical system actions excluded from logging</td>
+        </tr>
+        <tr>
+            <th>Design Goal</th>
+            <td>Clean, centralized, and low-risk admin entry controller</td>
+        </tr>
+    </tbody>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

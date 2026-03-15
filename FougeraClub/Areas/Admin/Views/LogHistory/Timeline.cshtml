@@ -1,0 +1,593 @@
+@model PaginatedList<FougeraClub.Areas.Admin.ViewModels.LogHistory.LogsVM>
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using System.Globalization
+@{
+    ViewData["Title"] = "سجل العمليات (تايملاين)";
+    ViewData["Title ListIndex"] = Resource1.LogHistorys ?? " ";
+    ViewData["Title single"] = Resource1.Timeline ?? " ";
+    ViewData["Title pakage"] = "سجل العمليات";
+
+
+    var allMembersName = ViewBag.allMembersName as IEnumerable<SelectListItem>;
+
+    var lang = SessionHelper.GetCurrentLanguage();
+    var culture_ar = new CultureInfo("ar"); // ex: "ar" أو "en"
+    var culture_en = new CultureInfo("en-GB"); // ex: "ar" أو "en"
+
+    var PerformedAnOperation_Ar = (Resource2.ResourceManager.GetString("PerformedAnOperation", culture_ar));
+    var InPage_Ar = (Resource2.ResourceManager.GetString("InPage", culture_ar));
+    var PerformedAnOperation_En = (Resource2.ResourceManager.GetString("PerformedAnOperation", culture_en));
+    var InPage_En = (Resource2.ResourceManager.GetString("InPage", culture_en));
+}
+
+<link href="~/css/site.css" rel="stylesheet" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    /* Timeline styles with alternating cards */
+    .timeline {
+        position: relative;
+        padding: 20px 0;
+        max-width: 1200px;
+        margin: 0 auto;
+        min-height: 400px;
+        /* Ensure minimum height for empty states */
+    }
+
+    .timeline.timeline-green::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 2px;
+        background: #27ae60 !important;
+        z-index: 2;
+        transform: translateX(-50%);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 30px;
+        width: 100%;
+        clear: both;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: 50%;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #47A644;
+        border: 3px solid white;
+        z-index: 1;
+        transform: translateX(-50%);
+        box-shadow: 0 0 0 3px rgba(71, 166, 68, 0.2);
+    }
+
+    .timeline-content {
+        position: relative;
+        width: 45%;
+        padding: 15px;
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: right;
+        /* All content RTL aligned */
+        direction: rtl;
+        /* Ensure proper RTL text direction */
+    }
+
+    .timeline-content:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Left-aligned items (odd) */
+    .timeline-item:nth-child(odd) .timeline-content {
+        float: left;
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        right: -10px;
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-left: 10px solid white;
+    }
+
+    /* Right-aligned items (even) */
+    .timeline-item:nth-child(even) .timeline-content {
+        float: right;
+    }
+
+    .timeline-item:nth-child(even) .timeline-content::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: -10px;
+        width: 0;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid white;
+    }
+
+    .timeline-title {
+        margin: 0 0 10px 0;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        color: #333;
+        justify-content: flex-start;
+        gap: 8px; /* ← space between Attributes */
+        /* word-spacing: 5px; */ /* ← space between words */
+        /* RTL alignment */
+    }
+
+    .timeline-meta {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 10px;
+        font-size: 0.8rem;
+        color: #666;
+        justify-content: flex-start;
+        /* RTL alignment */
+    }
+
+    .timeline-desc {
+        margin: 0 0 10px 0;
+        color: #555;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        text-align: right;
+        /* RTL alignment */
+    }
+
+    .user-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 8px;
+        background: #f0f7ff;
+        border-radius: 4px;
+        font-size: 1.0rem;
+        color: #47A644;
+        margin-right: auto;
+        /* RTL alignment */
+    }
+
+    .no-records {
+        padding: 20px;
+        text-align: center;
+        color: #666;
+    }
+
+    /* Pagination container with proper spacing and centering */
+    .pagination-container {
+        padding: 25px 15px 15px 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        border-top: 1px solid #eee;
+        border-radius: 0 0 8px 8px;
+        position: relative;
+        z-index: 10;
+        width: 100%;
+    }
+
+    .pagination {
+        margin: 0;
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: center;
+        display: flex;
+    }
+
+    .page-item {
+        display: inline-block;
+    }
+
+    .page-item .page-link {
+        border-radius: 4px;
+        border: 1px solid #dee2e6;
+        color: #47A644;
+        padding: 8px 12px;
+        display: block;
+        text-align: center;
+    }
+
+    .page-item.active .page-link {
+        background-color: #47A644;
+        border-color: #47A644;
+        color: white;
+    }
+
+    .page-item:not(.active) .page-link:hover {
+        background-color: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    /* Main card container adjustments */
+    .rounded.shadow-sm {
+        position: relative;
+        overflow: visible;
+    }
+
+    /* Ensure proper spacing between timeline and pagination */
+    #timelineContainer {
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .timeline::before {
+            left: 20px;
+        }
+
+        .timeline.timeline-green::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background: none !important;
+            z-index: 2;
+            transform: translateX(-50%);
+        }
+
+        .timeline-content {
+            width: calc(100% - 60px);
+            float: none !important;
+            margin-left: 60px;
+            text-align: right !important;
+            /* Keep RTL on mobile */
+        }
+
+        .timeline-dot {
+            left: 20px;
+            transform: translateX(0);
+        }
+
+        .timeline-content::before {
+            display: none;
+        }
+
+        .timeline-title,
+        .timeline-meta {
+            justify-content: flex-end !important;
+            /* Keep RTL on mobile */
+        }
+
+        .pagination-container {
+            padding: 20px 10px 10px 10px;
+            margin-top: 15px;
+            background-color: white;
+        }
+
+        .page-item .page-link {
+            padding: 6px 10px;
+            font-size: 0.9rem;
+        }
+
+        .pagination {
+            gap: 3px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .pagination {
+            gap: 2px;
+        }
+
+        .page-item .page-link {
+            padding: 5px 8px;
+            font-size: 0.85rem;
+            min-width: 35px;
+        }
+    }
+</style>
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap" style="margin-bottom:-30px">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"] &nbsp;</a>
+                </li>
+                >  &nbsp;
+                <li class="breadcrumb-item">
+                    <a href="/Admin/LogHistory">@ViewData["Title ListIndex"] </a>
+                </li>
+                > &nbsp;
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="log-progress" style="margin-top:-30px;">
+    <br />
+    <div class="card">
+        <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3"
+            style="max-height:60px;">
+            <!-- Page title section -->
+            <div class="flex-grow-1">
+                <h4 class="header-title my-1">
+                    الشريط الزمني
+                </h4>
+            </div>
+
+
+
+
+            <!-- Action buttons section (Print, Export, Add, Toggle) -->
+            <div class="d-flex align-items-center gap-3 flex-wrap" style="margin-left: 4px;margin-top: -5px; ">
+
+                <!-- Go Back To Table View -->
+                <a class="btn btn-success Excelbtn" asp-action="Index">
+                    سجل العمليات
+                </a>
+            </div>
+        </div>
+        <div class="rounded shadow-sm px-3 pt-3 pb-2 mb-4">
+            <form method="get" class="filterImg p-2">
+
+                <!-- ===== ROW 1 : USERS ===== -->
+                <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                        <label for="selectedUser" class="fw-semibold mb-1">
+                            @Resource2.Username:
+                        </label>
+                        <select id="selectedUser" name="selectedUserId"
+                                class="form-select form-select-sm filter-bordered">
+                            <option value="">@Resource1.SelectAll</option>
+                            @{
+                                var selUser = (Context.Request.Query["selectedUserId"].FirstOrDefault() ?? "");
+                            }
+                            @foreach (var u in (ViewBag.AllUsersList as IEnumerable<SelectListItem>) ?? Enumerable.Empty<SelectListItem>())
+                            {
+                                <option value="@u.Value" selected="@(u.Value == selUser ? "selected" : null)">
+                                    @u.Text
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="selectedMember" class="fw-semibold mb-1">
+                            @Resource1.member:
+                        </label>
+                        <select id="selectedMember" name="selectedMemberEmail"
+                                class="form-select form-select-sm filter-bordered">
+                            <option value="">@Resource1.SelectAll</option>
+                            @{
+                                var selMember = (Context.Request.Query["selectedMemberEmail"].FirstOrDefault() ?? "");
+                            }
+                            @foreach (var m in (ViewBag.allMembersName as IEnumerable<SelectListItem>) ?? Enumerable.Empty<SelectListItem>())
+                            {
+                                <option value="@m.Value" selected="@(m.Value == selMember ? "selected" : null)">
+                                    @m.Text
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <!-- ===== ROW 2 : DATES ===== -->
+                <div class="row g-3 mt-1">
+                    <div class="col-12 col-md-6">
+                        <label for="dateFrom" class="fw-bold mb-1" style="color:#09b080">
+                            من تاريخ:
+                        </label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"
+                                 alt="calendar icon" class="date-icon">
+                            <input type="date" name="dateFrom" id="dateFrom"
+                                   class="form-control form-select-sm filter-bordered"
+                                   value="@Context.Request.Query["dateFrom"]" />
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label for="dateTo" class="fw-bold mb-1" style="color:#09b080">
+                            إلى تاريخ:
+                        </label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"
+                                 alt="calendar icon" class="date-icon">
+                            <input type="date" name="dateTo" id="dateTo"
+                                   class="form-control form-select-sm filter-bordered"
+                                   value="@Context.Request.Query["dateTo"]" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ACTION BUTTONS ===== -->
+                <div class="d-flex justify-content-end align-items-center pt-3 gap-2 flex-wrap">
+                    <a href="@Url.Action("Timeline")" class="btn-cancel-search btn btn-sm me-2">
+                        <i class="ri-close-line me-1"></i> إلغاء
+                    </a>
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="ri-filter-line me-1"></i> بحث
+                    </button>
+                </div>
+
+            </form>
+
+
+            <!-- Timeline Container -->
+            <div class="timeline timeline-green" id="timelineContainer">
+                @if (Model != null && Model.Items != null && Model.Items.Count > 0)
+                {
+                    var filteredItems = Model.Items.Where(l => {
+                        var a = (l.NameAr ?? "");
+                        var e = (l.NameEn ?? "");
+                        return !(a.Contains("صفحة خطأ") || a.Contains("عرض صفحة خطأ") || e.ToLower().Contains("error"));
+                    }).ToList();
+                    @* foreach (var log in Model.Items.Select((value, index) => new { Index = index, Value = value })) *@
+                    foreach (var log in filteredItems)
+                    {
+                        
+                            if (string.IsNullOrEmpty(log.UserFullName))
+                            {
+                                var memberName = allMembersName?.Where(mem => mem.Value.ToString() == log.UserId).FirstOrDefault()?.Text;
+                                log.UserFullName = !string.IsNullOrEmpty(memberName) ? memberName : (Resource1.NotFoundNow ?? "Not Found");
+                            }
+                        
+
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                @* @{
+                                    // Build operation description logic once per item
+                                    string actionText = null;
+                                    string controllerNameResource = null;
+                                    string key = null;
+                                    var action = log.Value.Action;
+                                    var controller = log.Value.Controller;
+                                    if (!string.IsNullOrEmpty(action))
+                                    {
+                                        actionText = Resource2.ResourceManager.GetString(action)
+                                        ?? Resource1.ResourceManager.GetString(action);
+                                    }
+                                    if (!string.IsNullOrEmpty(controller))
+                                    {
+                                        key = controller + "s";
+                                        if (controller.Contains("."))
+                                        {
+                                            key = controller.Substring(0, controller.IndexOf('.'));
+                                        }
+                                        controllerNameResource = string.IsNullOrEmpty(Resource2.ResourceManager.GetString(key))
+                                        ? Resource1.ResourceManager.GetString(key)
+                                        : Resource2.ResourceManager.GetString(key);
+                                        if (string.IsNullOrEmpty(controllerNameResource))
+                                        {
+                                            controllerNameResource = string.IsNullOrEmpty(Resource1.ResourceManager.GetString(controller))
+                                            ? Resource2.ResourceManager.GetString(controller)
+                                            : Resource1.ResourceManager.GetString(controller);
+                                        }
+                                    }
+                                } *@
+                               @*  <h3 class="timeline-title">
+                                    <i class="fa fa-history timeline-icon"></i>
+                                    @Resource2.PerformedAnOperation
+                                    <span class="fw-bold">
+                                        @(actionText ?? log.Value.Action)
+                                        @if (!string.IsNullOrEmpty(log.Value.LogTarget))
+                                        {
+                                            @:(@log.Value.LogTarget)
+                                        }
+                                    </span>
+                                    @Resource2.InPage
+                                    <span class="fw-bold">@(controllerNameResource ?? log.Value.Controller)</span>
+                                </h3> *@
+
+                                <h3 class="timeline-title fw-bold" style="text-align: center;" data-label="@Resource1.Process">
+                                    <i class="fa fa-history timeline-icon"></i>
+                                    @Html.Raw(
+                                    ((lang == "ar") ? log.NameAr : log.NameEn)
+                                    ?.Replace(@InPage_En ?? "__", $"<span style='font-weight:normal;'>{ InPage_En }</span>")
+                                    ?.Replace(@PerformedAnOperation_En ?? "__", $"<span style='font-weight:normal;'>{PerformedAnOperation_En }</span>")
+                                    ?.Replace(@InPage_Ar ?? "__", $"<span style='font-weight:normal;'>{ InPage_Ar }</span>")
+                                    ?.Replace(@PerformedAnOperation_Ar ?? "__", $"<span style='font-weight:normal;'>{PerformedAnOperation_Ar }</span>")
+                                                )
+                             </h3>
+                                <div class="timeline-meta">
+                                    <span>@log.RequestTime.ToString("d")?.Replace("/","-")</span>
+                                    <span>@log.RequestTime.ToString("HH:mm:ss")</span>
+                                </div>
+
+                                <span class="user-badge">
+                                    <i class="ri-user-line"></i>
+                                    @{
+                                        var userKindLabel = "";
+                                        var currentLang = SessionHelper.GetCurrentLanguage();
+                                        if (log.UserKind == "Member")
+                                        {
+                                            userKindLabel = Resource1.member ?? "Member";
+                                        }
+                                        else if (log.UserKind == "SystemUser")
+                                        {
+                                            userKindLabel = currentLang == "ar" ? "مستخدم نظام" : "System User";
+                                        }
+                                    }
+                                    <span class="ms-2">@log.UserFullName</span>
+                                    <small class="text-muted" style="margin-inline-start:8px;">(@userKindLabel)</small>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="no-records">لا يوجد عمليات مسجلة حالياً</div>
+                }
+            </div>
+
+            <!-- Pagination Container -->
+            <div class="pagination-container mt-3">
+                @if (Model != null && Model.TotalPages > 1)
+                {
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            @if (Model.HasPreviousPage)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Timeline" asp-route-page="@(Model.PageIndex - 1)"
+                                        asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                                        asp-route-dateFrom="@Context.Request.Query["dateFrom"]"
+                                        asp-route-dateTo="@Context.Request.Query["dateTo"]">&laquo; السابق</a>
+                                </li>
+                            }
+
+                            @{
+                                int maxVisiblePages = 20;
+                                int startPage = Math.Max(1, Model.PageIndex - 5);
+                                int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
+
+                                // Adjust start page if we're near the end
+                                if (endPage - startPage + 1 < maxVisiblePages && startPage > 1)
+                                {
+                                    startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+                                }
+                            }
+
+                            @for (int i = startPage; i <= endPage; i++)
+                            {
+                                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                                    <a class="page-link" asp-action="Timeline" asp-route-page="@i"
+                                        asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                                        asp-route-dateFrom="@Context.Request.Query["dateFrom"]"
+                                        asp-route-dateTo="@Context.Request.Query["dateTo"]">@i</a>
+                                </li>
+                            }
+
+                            @if (endPage < Model.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" asp-action="Timeline" asp-route-page="@(endPage + 1)"
+                                        asp-route-searchTerm="@Context.Request.Query["searchTerm"]"
+                                        asp-route-dateFrom="@Context.Request.Query["dateFrom"]"
+                                        asp-route-dateTo="@Context.Request.Query["dateTo"]">التالي &raquo;</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>

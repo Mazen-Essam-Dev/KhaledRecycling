@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>Role Management Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<h1>Role Management Module – Documentation</h1>
+
+<!-- ================= ApplicationRole ================= -->
+<section>
+<table>
+    <h2>ApplicationRole Class</h2>
+    <tr>
+        <th>Namespace</th>
+        <td>Infrastructure.Identity</td>
+    </tr>
+    <tr>
+        <th>Base Class</th>
+        <td>IdentityRole</td>
+    </tr>
+    <tr>
+        <th>Purpose</th>
+        <td>Extends ASP.NET Core IdentityRole to support application-specific role logic.</td>
+    </tr>
+    <tr>
+        <th>Custom Property</th>
+        <td><strong>RoleNumber</strong> (int) – Numeric identifier for role has should sign in this system as like (Manager , Accountant- ActivitiesSupervisor).</td>
+    </tr>
+    <tr>
+        <th>Notes</th>
+        <td>
+            Inherits Id, Name, NormalizedName, ConcurrencyStamp.<br>
+            RoleNumber can be used for Signature_Person checks should sign in this system.
+        </td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= RoleFormVM ================= -->
+<section>
+<table>
+    <h2>RoleFormVM ViewModel</h2>
+    <tr>
+        <th>Namespace</th>
+        <td>FougeraClub.Areas.Admin.ViewModels.Role</td>
+    </tr>
+    <tr>
+        <th>Purpose</th>
+        <td>Form model for creating or editing roles in the Admin area.</td>
+    </tr>
+    <tr>
+        <th>Property</th>
+        <td>
+            <strong>Name</strong> (string)<br>
+            Required, max length 200.<br>
+            Uses localized validation attributes.
+        </td>
+    </tr>
+    <tr>
+        <th>Validation</th>
+        <td>
+            LocalizedRequired("Required")<br>
+            LocalizedMaxLength(200, "MaxLength_200")
+        </td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= RoleNumber Enum ================= -->
+<section>
+<table>
+    <h2>RoleNumber Enum</h2>
+    <tr>
+        <th>Namespace</th>
+        <td>Domain.Enums</td>
+    </tr>
+    <tr>
+        <th>Purpose</th>
+        <td>Defines application-specific numeric identifiers for user roles.</td>
+    </tr>
+</table>
+
+<table>
+    <h2>RoleNumber Enum Users should Signs Assigned Manually from DB</h2>
+    <tr>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>NormalUser</td>
+        <td>1</td>
+        <td>Standard user with permissions and is not allowed to sign a signature in this project.</td>
+    </tr>
+    <tr>
+        <td>Manager</td>
+        <td>2</td>
+        <td>User with managerial permissions and signature authority.</td>
+    </tr>
+    <tr>
+        <td>ActivitiesSupervisor</td>
+        <td>3</td>
+        <td>User responsible for supervising activities and signature authority.</td>
+    </tr>
+    <tr>
+        <td>Accountant</td>
+        <td>4</td>
+        <td>User responsible for accounting , financial operations and signature authority.</td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Manage View ================= -->
+<section>
+<table>
+    <h2>Manage.cshtml</h2>
+    <tr>
+        <th>Purpose</th>
+        <td>Assign and manage permissions for a specific role.</td>
+    </tr>
+    <tr>
+        <th>Features</th>
+        <td>
+            Grouped permissions by controller.<br>
+            Select All per group.<br>
+            Save changes via POST.<br>
+            Responsive layout.
+        </td>
+    </tr>
+    <tr>
+        <th>Special Logic</th>
+        <td>
+            Indeterminate checkbox state.<br>
+            Localized permission names.<br>
+            JavaScript ensures correct model binding.
+        </td>
+    </tr>
+    <tr>
+        <th>Security</th>
+        <td>Anti-forgery token, permission-based access.</td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Index View ================= -->
+<section>
+<table>
+    <h2>Index.cshtml</h2>
+    <tr>
+        <th>Purpose</th>
+        <td>List all roles and provide management actions.</td>
+    </tr>
+    <tr>
+        <th>Actions</th>
+        <td>
+            Create Role<br>
+            Manage Permissions<br>
+            Edit Role<br>
+            Delete Role
+        </td>
+    </tr>
+    <tr>
+        <th>Special Logic</th>
+        <td>
+            Permission-based button rendering.<br>
+            Edit/Delete via Bootstrap modals.
+        </td>
+    </tr>
+    <tr>
+        <th>Security</th>
+        <td>Actions visible only if user has permissions.</td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Create Form ================= -->
+<section>
+<table>
+    <h2>_CreateForm.cshtml</h2>
+    <tr>
+        <th>Purpose</th>
+        <td>Create a new role.</td>
+    </tr>
+    <tr>
+        <th>ViewModel</th>
+        <td>RoleFormVM</td>
+    </tr>
+    <tr>
+        <th>Features</th>
+        <td>
+            Localized labels and placeholders.<br>
+            Validation messages.<br>
+            POST to Create action.
+        </td>
+    </tr>
+    <tr>
+        <th>Security</th>
+        <td>Anti-forgery token enabled.</td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= General Notes ================= -->
+<section>
+<table>
+    <h2>General Notes</h2>
+    <tr>
+        <th>Localization</th>
+        <td>Uses Resource1 and Resource2 for all labels and messages.</td>
+    </tr>
+    <tr>
+        <th>Permissions</th>
+        <td>All actions validated using PermissionScanner.</td>
+    </tr>
+    <tr>
+        <th>Responsive Design</th>
+        <td>CSS Grid and media queries for mobile and desktop.</td>
+    </tr>
+    <tr>
+        <th>Security</th>
+        <td>Anti-forgery tokens and permission-based UI rendering.</td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Summary ================= -->
+<section>
+<table>
+    <h2>Module Summary</h2>
+    <tr>
+        <th>Manage</th>
+        <td>Assign and revoke permissions with grouped selection.</td>
+    </tr>
+    <tr>
+        <th>Index</th>
+        <td>List, edit, delete, and manage roles.</td>
+    </tr>
+    <tr>
+        <th>Create</th>
+        <td>Create new roles with validation and localization.</td>
+    </tr>
+</table>
+</section>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

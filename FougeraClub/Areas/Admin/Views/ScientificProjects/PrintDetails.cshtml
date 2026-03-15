@@ -1,0 +1,270 @@
+﻿@using Infrastructure.Identity
+@inject UserManager<ApplicationUser> UserManager
+@model ScientificProjectsVM
+@{
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title>Project Card</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            direction:rtl;
+            font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+            font-size: 13px;
+            color: #000;
+            background: #fff;
+            margin: 20px;
+        }
+
+        h2, h4 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px 20px;
+        }
+
+        .info-item {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+
+            .info-item strong {
+                display: block;
+                font-weight: bold;
+                margin-bottom: 2px;
+                color: #09b080;
+            }
+
+        textarea, input, select {
+            display: none !important; /* hide original inputs */
+        }
+
+        .list-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        .list-item {
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+            .images img {
+                width: 100%;
+                max-height: 200px;
+                object-fit: contain;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 4px;
+            }
+
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 40px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+            color: #666;
+        }
+
+        @@media print {
+
+            body {
+                margin: 0;
+            }
+
+            .section {
+                margin-bottom: 30px;
+            }
+            .footer {
+                position: fixed;
+                bottom: 10px;
+                width: 100%;
+            }
+            /* To still display Flex after Run Open Media Print */
+            .row {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                justify-content: space-between !important;
+            }
+
+            [class*="col-"] {
+                float: none !important;
+                display: block !important;
+                flex: 1 !important;
+                max-width: 100% !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h2>@Resource1.Details_ScientificProject</h2>
+
+    <!-- General Info -->
+    <div class="section info-grid">
+        <div class="info-item"><strong>@Resource2.Code</strong>@Model.SerialCode</div>
+        <div class="info-item"><strong>@Resource1.DateByCalander</strong>@Model.DateByCalander?.ToString("d")?.Replace("/","-")</div>
+        <div class="info-item">
+            <strong>@Resource2.ScientificSpecialization</strong>
+            @(SessionHelper.GetCurrentLanguage() == "ar"
+                        ? Model.all_Departments?.FirstOrDefault(d => d.Id == Model.DepartmentId)?.NameAr
+                        : Model.all_Departments?.FirstOrDefault(d => d.Id == Model.DepartmentId)?.NameEn)
+        </div>
+
+        <div class="info-item"><strong>@Resource1.ProjectNameAr</strong>@Model.ProjectNameAr</div>
+        <div class="info-item"><strong>@Resource1.ProjectNameEn</strong>@Model.ProjectNameEn</div>
+        <div class="info-item"><strong>@Resource1.IdeaOwnerAr</strong>@Model.IdeaOwnerAr</div>
+        <div class="info-item"><strong>@Resource1.IdeaOwnerEn</strong>@Model.IdeaOwnerEn</div>
+
+        <div class="info-item"><strong>@Resource1.ProjectIdeaAr</strong>@Model.ProjectIdeaAr</div>
+        <div class="info-item"><strong>@Resource1.ProjectIdeaEN</strong>@Model.ProjectIdeaEN</div>
+        <div class="info-item"><strong>@Resource1.ExpectedCost</strong>@Model.ExpectedCost</div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="section info-grid">
+        <div class="info-item"><strong>@Resource1.InstallationAndConnections</strong>@Model.InstallationRecommendations</div>
+        <div class="info-item"><strong>@Resource2.DeliveryTechniques</strong>@Model.DeliveryData</div>
+    </div>
+
+    <!-- Elements -->
+    <div class="section">
+        <h4>@Resource1.ProjectElements</h4>
+        <div class="list-group">
+            @foreach (var el in new[] { Model.ProjectElement1, Model.ProjectElement2, Model.ProjectElement3, Model.ProjectElement4, Model.ProjectElement5, Model.ProjectElement6, Model.ProjectElement7, Model.ProjectElement8 })
+            {
+                if (!string.IsNullOrEmpty(el))
+                {
+                    <div class="list-item">@el</div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Participants -->
+    <div class="section">
+        <h4>@Resource1.Participants</h4>
+        <div class="list-group">
+            @foreach (var p in new[] { Model.Participant1, Model.Participant2, Model.Participant3, Model.Participant4 })
+            {
+                if (!string.IsNullOrEmpty(p))
+                {
+                    <div class="list-item">@p</div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Supervisors -->
+    <div class="section">
+        <h4>@Resource1.Supervisors</h4>
+        <div class="list-group">
+            @foreach (var s in new[] { Model.Supervisor1, Model.Supervisor2, Model.Supervisor3, Model.Supervisor4, Model.Supervisor5, Model.Supervisor6 })
+            {
+                if (!string.IsNullOrEmpty(s))
+                {
+                    <div class="list-item">@s</div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Images -->
+    <div class="section">
+        <h4>@Resource2.ProjectImages</h4>
+        <div class="images">
+            @if (!string.IsNullOrEmpty(Model?.FilePath1))
+            {
+                <img src="@Url.Content("~" + Model.FilePath1)" alt="Project Image" />
+            }
+            @if (!string.IsNullOrEmpty(Model?.FilePath2))
+            {
+                <img src="@Url.Content("~" + Model.FilePath2)" alt="Project Image" />
+            }
+            @if (!string.IsNullOrEmpty(Model?.FilePath3))
+            {
+                <img src="@Url.Content("~" + Model.FilePath3)" alt="Project Image" />
+            }
+            @if (!string.IsNullOrEmpty(Model?.FilePath4))
+            {
+                <img src="@Url.Content("~" + Model.FilePath4)" alt="Project Image" />
+            }
+        </div>
+    </div>
+
+    <!-- Signature Section -->
+    @*<hr class="custom-hr" />*@
+    <div class="row g-3">
+        <!-- Trainer Signature (Activities/Membership Supervisor) -->
+        <div class="col-md-6 text-center">
+            <div role="button" tabindex="0" style="cursor:pointer;">
+                <label class="form-label fw-semibold">@Resource1.SupervisorSignature</label>
+                <div class="small text-muted">
+                    @if (Model.ActivityMonitorSigniture != null && !string.IsNullOrEmpty(Model.ActivityMonitorSigniture.ImagePath))
+                    {
+                        <img src="~/@Model.ActivityMonitorSigniture.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Activity Monitor Signature" />
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- Manager Signature -->
+        <div class="col-md-6 text-center">
+            <div role="button" tabindex="0" style="cursor:pointer;">
+                <label class="form-label fw-semibold">@Resource1.ManagerSignature</label>
+                <div class="small text-muted">
+                    @if (Model.ManagerSignature != null && !string.IsNullOrEmpty(Model.ManagerSignature.ImagePath))
+                    {
+                        <img src="~/@Model.ManagerSignature.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Manager Signature" />
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <p class="PrintedBy">Printed by : <span> @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        // This Part Is Important
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+         // Close window after printing
+            window.onafterprint = function() {
+                setTimeout(function() {
+                    window.close();
+                }, 500);
+            };
+    </script>
+</body>

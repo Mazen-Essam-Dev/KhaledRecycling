@@ -1,0 +1,161 @@
+﻿@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <title>تحت الصيانة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+        :root {
+            --blue: #4aa3df;
+            --orange: #f4a259;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --card: rgba(255, 255, 255, 0.85);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Tahoma, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #f5f7fb;
+            overflow: hidden;
+            color: var(--text);
+        }
+
+        /* Centering wrapper */
+        .page {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* Background blobs */
+        .blob {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+            .blob.blue {
+                background: var(--blue);
+                top: -120px;
+                right: -120px;
+            }
+
+            .blob.orange {
+                background: var(--orange);
+                bottom: -120px;
+                left: -120px;
+            }
+
+        /* Card */
+        .card {
+            position: relative;
+            z-index: 1;
+            max-width: 620px;
+            width: 100%;
+            padding: 2.8rem 2.4rem;
+            text-align: center;
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.08);
+            margin-inline: auto;
+        }
+
+        .icon {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        p {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.75rem;
+            color: #9ca3af;
+            z-index: 1;
+        }
+
+        .info-icon {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .spinner {
+            margin: 1.2rem auto 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: 3px solid rgba(74, 163, 223, 0.25);
+            border-top-color: #4aa3df;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @@keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <!-- Background -->
+        <div class="blob blue"></div>
+        <div class="blob orange"></div>
+
+        <!-- Centered Card -->
+        <main class="card">
+            <!-- Inline info icon -->
+            <div class="info-icon" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#4aa3df" stroke-width="1.5" />
+                    <line x1="12" y1="10" x2="12" y2="16" stroke="#4aa3df" stroke-width="1.5" stroke-linecap="round" />
+                    <circle cx="12" cy="7" r="1" fill="#4aa3df" />
+                </svg>
+            </div>
+
+            <h1>جاري تحديث النظام الرجاء الإنتظار...</h1>
+
+            <!-- Loading spinner -->
+            <div class="spinner" aria-label="loading"></div>
+        </main>
+
+
+     
+    </div>
+</body>
+</html>

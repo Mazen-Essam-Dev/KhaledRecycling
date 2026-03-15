@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificate & Verifiy  – Documentation</title>
+
+    <link rel="stylesheet" href="Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+
+</head>
+
+<body>
+
+<h3>Certificate & Verifiy  – Documentation</h3>
+
+<!-- ================= Overview ================= -->
+<h2>Overview</h2>
+
+<table>
+    <caption>Certificate Module Responsibilities</caption>
+    <tr>
+        <th>Responsibility</th>
+        <td>Generating course certificates</td>
+    </tr>
+    <tr>
+        <th>Responsibility</th>
+        <td>Creating secure, verifiable QR codes</td>
+    </tr>
+    <tr>
+        <th>Responsibility</th>
+        <td>Allowing public certificate verification</td>
+    </tr>
+    <tr>
+        <th>Responsibility</th>
+        <td>Displaying and printing the original certificate</td>
+    </tr>
+</table>
+
+<div class="note">
+    This module ensures that every issued certificate can be validated online using an
+    <strong>encrypted certificate serial</strong> embedded inside a QR code.
+</div>
+
+<!-- ================= Architecture Summary ================= -->
+<h2>Architecture Summary</h2>
+
+<table>
+    <caption>Main Module Components</caption>
+    <tr>
+        <th>Component</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>CertificateController</td>
+        <td>
+            Handles certificate generation, encryption of certificate serials,
+            QR code creation, and public verification logic.
+        </td>
+    </tr>
+    <tr>
+        <td>Certificate Verification View</td>
+        <td>
+            Public-facing view that displays whether a certificate is valid or invalid
+            after scanning the QR code.
+        </td>
+    </tr>
+    <tr>
+        <td>Printable Certificate View</td>
+        <td>
+            Renders the official certificate layout optimized for screen display and printing.
+        </td>
+    </tr>
+</table>
+
+<!-- ================= Flow Summary ================= -->
+<h2>Flow Summary</h2>
+
+<table>
+    <caption>Certificate Lifecycle Flow</caption>
+    <tr>
+        <th>Step</th>
+        <th>Action</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Print Certificate</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Encrypt Certificate Serial</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Generate QR Code</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Public QR Scan</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Certificate Verification</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Valid / Invalid Result</td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>(Optional) View Original Certificate</td>
+    </tr>
+</table>
+<img src="Assets-CSS-JS/Certificate.jpeg">
+<div style="display:flex;justify-content:0;">
+<img src="Assets-CSS-JS/Verify.jpeg" width="700px;">
+<img src="Assets-CSS-JS/NotValid.jpeg" width="700px;">
+</div>
+</body>
+</html>

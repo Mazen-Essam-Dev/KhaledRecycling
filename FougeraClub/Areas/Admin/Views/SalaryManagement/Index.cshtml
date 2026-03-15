@@ -1,0 +1,626 @@
+﻿@using Domain.DTOs.Admin.SalaryManagement
+@using FougeraClub.Areas.Admin.ViewModels.SalaryManagement
+@model PaginatedList<SalaryManagementVM>
+@{
+    ViewData["Title"] = @Resource1.payrollList ?? " ";
+    ViewData["Title pakage"] = @Resource1.SalaryManagementUnitManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.payrollList ?? " ";
+    var allyears = ViewBag.allYears as List<int>;
+    var addPermission = PermissionScanner.ValidatePermission("SalaryManagement", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("SalaryManagement", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("SalaryManagement", "Delete");
+    var AllEmployeesNames = ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>;
+}
+    <div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+        <!-- Breadcrumb Navigation Column -->
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                    <li class="breadcrumb-item">
+                        <a href="#">@ViewData["Title pakage"]</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="#">@ViewData["Title Single"]</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+        <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <!-- Records Count -->
+            <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto px-2 py-1">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="countRecords">@Model.Count </span>
+            </div>
+        </div>
+    </div>
+<input hidden asp-for="IsAbleToOpen" id="IsAbleToOpen" />
+
+
+    <script>
+        function openPrintpayrollReportPage() {
+            const selectedYear = encodeURIComponent(document.getElementById('selectedYear').value);
+            const selectedEmployee = encodeURIComponent(document.getElementById('selectedEmployee').value);
+            const selectedMonth = encodeURIComponent(document.getElementById('selectedMonth').value);
+            if(!selectedYear || !selectedMonth){
+                showToastrCannotPrintPleseSelectFirst(); // Toaster Can't PrintpayrollReport
+                return ;
+            }
+
+            var countRecords = document.getElementById('NewCountRecords').value;
+            if(countRecords && countRecords>3999){
+                showToastrCannotPrint(); // Toaster Can't PrintpayrollReport more 3999 record
+            }
+            else{
+                const url = `/Admin/SalaryManagement/PrintpayrollReport?selectedMonth=${selectedMonth}&selectedYear=${selectedYear}&selectedEmployee=${selectedEmployee}`;
+
+                //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                const printWindow = window.open(
+                    url,
+                    'printWindow',
+                    'width=1000,height=800,noopener,noreferrer'
+                );
+            }
+        }
+    </script>
+    <script>
+        function openDiscountsAndBonusesReportPage() {
+            const selectedYear = encodeURIComponent(document.getElementById('selectedYear').value);
+            const selectedEmployee = encodeURIComponent(document.getElementById('selectedEmployee').value);
+            const selectedMonth = encodeURIComponent(document.getElementById('selectedMonth').value);
+            if(!selectedYear || !selectedMonth){
+                showToastrCannotPrintPleseSelectFirst(); // Toaster Can't PrintDiscountsAndBonusesReport
+                return ;
+            }
+
+            var countRecords = document.getElementById('NewCountRecords').value;
+            if(countRecords && countRecords>3999){
+                showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+            }
+            else{
+                const url = `/Admin/SalaryManagement/PrintDiscountsAndBonusesReport?selectedMonth=${selectedMonth}&selectedYear=${selectedYear}&selectedEmployee=${selectedEmployee}`;
+
+                //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                const printWindow = window.open(
+                    url,
+                    'printWindow',
+                    'width=1000,height=800,noopener,noreferrer'
+                );
+            }
+
+        }
+    </script>
+    <script>
+        function openExcelPage_payrollReport() {
+            const selectedYear = encodeURIComponent(document.getElementById('selectedYear').value);
+            const selectedEmployee = encodeURIComponent(document.getElementById('selectedEmployee').value);
+            const selectedMonth = encodeURIComponent(document.getElementById('selectedMonth').value);
+            if(!selectedYear || !selectedMonth){
+                showToastrCannotPrintPleseSelectFirst(); // Toaster Can't PrintDiscountsAndBonusesReport
+                return ;
+            }
+            const url = `/Admin/SalaryManagement/createExcelReport_Download_payrollReport?selectedMonth=${selectedMonth}&selectedYear=${selectedYear}&selectedEmployee=${selectedEmployee}`;
+            window.open(url, '_self');
+
+        }
+    </script>
+    <script>
+        function openExcelPage_DiscountsAndBonusesReport() {
+            const selectedYear = encodeURIComponent(document.getElementById('selectedYear').value);
+            const selectedEmployee = encodeURIComponent(document.getElementById('selectedEmployee').value);
+            const selectedMonth = encodeURIComponent(document.getElementById('selectedMonth').value);
+            if(!selectedYear || !selectedMonth){
+                showToastrCannotPrintPleseSelectFirst(); // Toaster Can't PrintDiscountsAndBonusesReport
+                return ;
+            }
+            const url = `/Admin/SalaryManagement/createExcelReport_Download_DiscountsAndBonusesReport?selectedMonth=${selectedMonth}&selectedYear=${selectedYear}&selectedEmployee=${selectedEmployee}`;
+            window.open(url, '_self');
+        }
+    </script>
+<script>
+    function OpenDetails_payrollReportPage() {
+        const isAbleOpen = encodeURIComponent(document.getElementById('IsAbleToOpen').value);
+        const selectedYear = encodeURIComponent(document.getElementById('selectedYear').value);
+        const selectedEmployee = encodeURIComponent(document.getElementById('selectedEmployee').value);
+        const selectedMonth = encodeURIComponent(document.getElementById('selectedMonth').value);
+
+        var countRecords = document.getElementById('NewCountRecords').value;
+        if(countRecords && countRecords>3999){
+            showToastrCannotPrint(); // Toaster Can't PrintpayrollReport more 3999 record
+        }
+        console.log("isAbleOpen:", isAbleOpen);
+        if(!selectedYear || !selectedMonth){
+            showToastrCannotPrintPleseSelectFirst(); // Toaster Can't PrintpayrollReport
+            return ;
+        }
+        if(isAbleOpen != "true"){
+            showToastrCannotPrintPleseSelectAnotherFirst(); // Toaster Can't PrintDiscountsAndBonusesReport
+            return ;
+        }
+        const url = `/Admin/SalaryManagement/OpenDetails_payrollReport?selectedMonth=${selectedMonth}&selectedYear=${selectedYear}&selectedEmployee=${selectedEmployee}`;
+        window.open(url, '_self');
+    }
+</script>
+<script>
+    function OpenDetails_DiscountsAndBonusesReportPage() {
+        const isAbleOpen = encodeURIComponent(document.getElementById('IsAbleToOpen').value);
+        const selectedYear = encodeURIComponent(document.getElementById('selectedYear').value);
+        const selectedEmployee = encodeURIComponent(document.getElementById('selectedEmployee').value);
+        const selectedMonth = encodeURIComponent(document.getElementById('selectedMonth').value);
+
+        var countRecords = document.getElementById('NewCountRecords').value;
+        if(countRecords && countRecords>3999){
+            showToastrCannotPrint(); // Toaster Can't PrintpayrollReport more 3999 record
+        }
+        console.log("isAbleOpen:", isAbleOpen);
+        if(!selectedYear || !selectedMonth){
+            showToastrCannotPrintPleseSelectFirst(); // Toaster Can't PrintpayrollReport
+            return ;
+        }
+        if(isAbleOpen != "true"){
+            showToastrCannotPrintPleseSelectAnotherFirst(); // Toaster Can't PrintDiscountsAndBonusesReport
+            return ;
+        }
+        const url = `/Admin/SalaryManagement/OpenDetails_DiscountsAndBonusesReport?selectedMonth=${selectedMonth}&selectedYear=${selectedYear}&selectedEmployee=${selectedEmployee}`;
+        window.open(url, '_self');
+    }
+</script>
+<script>
+    // Toaster For you can't Print
+    function showToastrCannotPrintPleseSelectFirst() {
+      toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "timeOut": "3000"
+      };
+      var cantPrint2 ='@Html.Raw(Resource1.PleaseChooseYearAndMonthFirstly)';
+
+      toastr.error(cantPrint2);
+    }
+</script>
+<script>
+    // Toaster For you can't Print
+    function showToastrCannotPrintPleseSelectAnotherFirst() {
+      toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "timeOut": "3000"
+      };
+      var cantPrint2 ='@Html.Raw(Resource1.PleaseChooseYearAndMonthAnother)';
+
+      toastr.error(cantPrint2);
+    }
+</script>
+<div class="card">
+    <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start row">
+        <div class="col-md-3">
+            <div class="d-flex align-items-center gap-2">
+                <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                    <i class="ri-calendar-schedule-fill me-2 text-ico"></i>
+                    @ViewData["Title Single"]
+                </h4>
+            </div>
+        </div>
+        <div class="col-md-9 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+            @if (addPermission)
+            {
+                <a asp-action="AddEdit" class="btn btn-outline-success btn-sm">
+                    <i class="fa fa-plus me-1"></i> @Resource2.CreateNew
+                </a>
+            }
+
+            <button type="button" class="btn btn-success btn-sm" onclick="OpenDetails_payrollReportPage();">
+                <i class="fa-solid fa-pen me-1"></i> @Resource2.Approval1 @Resource1.payrollReport
+            </button>
+
+            @* <button type="button" class="btn btn-success btn-sm" onclick="openPrintpayrollReportPage()">
+                <i class="fa fa-print me-1"></i> @Resource1.payrollReportPrint
+            </button> *@
+
+            <button type="button" class="btn btn-success btn-sm" onclick="OpenDetails_DiscountsAndBonusesReportPage();">
+                <i class="fa-solid fa-pen me-1"></i> @Resource2.Approval1 @Resource1.DiscountsAndBonusesReport
+            </button>
+
+            @* <button type="button" class="btn btn-success btn-sm" onclick="openDiscountsAndBonusesReportPage()">
+                <i class="fa fa-print me-1"></i> @Resource1.DiscountsAndBonusesPrint
+            </button> *@
+
+            <!-- Payroll Report Export As Excel -->
+            <a class="btn btn-success btn-sm" onclick="openExcelPage_payrollReport();">
+                <i class="fa-solid fa-file-excel me-2" style="font-size:17px;"></i>@Resource1.createExcelReport_Download_payrollReport
+            </a>
+
+            <!-- Discounts & Bonuses Report Export As Excel -->
+            <a class="btn btn-success btn-sm" onclick="openExcelPage_DiscountsAndBonusesReport();">
+                <i class="fa-solid fa-file-excel me-2" style="font-size:17px;"></i>@Resource3.ExportDiscounts_BonusesExcel
+            </a>
+
+        </div>
+    </div>
+    <div class="rounded shadow-sm p-3">
+        <form method="get" id="carFilterForm" class="filterImg rounded p-2">
+            <div class="row">
+                <div class="filter-dropdown col-md-3">
+                    <label for="dateTo" class="fw-medium mb-2">@Resource1.Year:</label>
+                    <div class="input-icon-left">
+                        <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+
+                        <select id="selectedYear" name="selectedYear" class="form-control">
+                            <option value="" selected>@Resource2.ShowAll</option>
+                            @if (allyears != null && allyears.Any())
+                            {
+                                @foreach (var year in allyears)
+                                {
+                                    if (year == ViewBag.selectedYear)
+                                    {
+                                        <option value="@year" selected>@year</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@year">@year</option>
+                                    }
+
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <!-- Date From -->
+                    <div class="filter-dropdown">
+                        <label for ="dateTo" class="fw-medium mb-2">
+                            @Resource1.SelectEmployee:
+                        </label>
+                        <select id="selectedEmployee" name="selectedEmployee" class="form-control">
+                            <option value="">@Resource2.ShowAll</option>
+                            @if (AllEmployeesNames?.Count() > 0)
+                            {
+                                @if (SessionHelper.GetCurrentLanguage() == "ar")
+                                {
+                                    @foreach (var emp in AllEmployeesNames)
+                                    {
+                                        if (ViewBag.selectedEmployee == emp.Id)
+                                        {
+                                            <option value="@emp.Id" id="@emp.Id" selected="selected">@emp.FullNameAr</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@emp.Id" id="@emp.Id">@emp.FullNameAr</option>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    @foreach (var emp in AllEmployeesNames)
+                                    {
+                                        if (ViewBag.selectedEmployee == emp.Id)
+                                        {
+                                            <option value="@emp.Id" id="@emp.Id" selected="selected">@emp.FullNameEn</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@emp.Id" id="@emp.Id">@emp.FullNameEn</option>
+                                        }
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="filter-dropdown col-md-3">
+                    <label for="dateTo" class="fw-medium mb-2">@Resource1.Month:</label>
+                    <div class="input-icon-left">
+                        <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+                        <select id="selectedMonth" name="selectedMonth" class="form-control">
+                            <option value="" selected>@Resource2.ShowAll</option>
+                            @if (allyears != null && allyears.Any())
+                            {
+                                @for (int m = 1; m <= 12; m++)
+                                {
+                                    <option value="@m" @* @(Model.Month == m ? "selected" : "") *@  >@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 d-flex flex-column justify-content-end">
+                    <div class="d-flex justify-content-end">
+                        <button type="button" id="btnClearFilters" class="btn-cancel-search btn btn-sm me-2">
+                            <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                        </button>
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="ri-filter-line me-1"></i> @Resource1.Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mt-3">
+            <div class="rounded shadow-sm p-3">
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Attachments Modal (unchanged logic) -->
+<div class="modal fade" id="uploadFilesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div id="attachmentsContent"></div>
+    </div>
+</div>
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Resource1.DeleteInventory</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                @Resource1.ConfirmDelete <strong id="itemName"></strong> ؟
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" name="id" id="itemId" />
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Resource1.Cancel</button>
+                    <button type="submit" class="btn btn-danger">@Resource1.Yes_delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PurchaseOrder Attachments Modal -->
+<div class="modal fade" id="salaryManagementAttachmentsModal" tabindex="-1" aria-labelledby="salaryManagementAttachmentsModalLabel"
+     aria-hidden="true">
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (ViewBag.ReopenModal != null && (bool)ViewBag.ReopenModal)
+    {
+        <script>
+            var myModal = new bootstrap.Modal(document.getElementById('uploadFilesModal'));
+            myModal.show();
+        </script>
+    }
+    <script>
+            $(document).on("click", ".show-delete-info", function () {
+            var message = $(this).data("message"); // take message from data-attribute
+            $("#deleteInfoMessage").text(message);
+
+            var modal = new bootstrap.Modal(document.getElementById("deleteInfoModal"));
+            modal.show();
+        });
+
+    </script>
+    <script>
+
+        // Expiry highlighting (kept your logic)
+        $(document).ready(function () {
+            $('.expiryDate').each(function () {
+                const endDateStr = $(this).text().trim();
+                if (!endDateStr) return;
+
+                const expiryDate = new Date(endDateStr);
+                if (isNaN(expiryDate.getTime())) return;
+
+                const today = new Date();
+                const in30Days = new Date();
+
+                today.setHours(0, 0, 0, 0);
+                in30Days.setDate(today.getDate() + 30);
+                in30Days.setHours(0, 0, 0, 0);
+                expiryDate.setHours(0, 0, 0, 0);
+
+                if (expiryDate < today) {
+                    $(this).closest('tr').addClass('badge-expired');
+                } else if (expiryDate <= in30Days) {
+                    $(this).closest('tr').addClass('badge-warning');
+                }
+            });
+        });
+
+    </script>
+
+    <script>
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var name = button.getAttribute('data-name');
+            document.getElementById('itemId').value = id;
+            document.getElementById('itemName').textContent = name;
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#selectedEmployee').val(filters.selectedEmployee);
+                $('#selectedYear').val(filters.selectedYear);
+                $('#selectedMonth').val(filters.selectedMonth);
+                $('#pageSizeSelect').val(filters.pageSize);
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // Ensure month dropdown disabled/dim when no year selected
+            function updateMonthStateIndex() {
+                const year = $('#selectedYear').val();
+                const month = $('#selectedMonth');
+                if (!year) {
+                    month.prop('disabled', true);
+                    month.css('opacity', '0.6');
+                } else {
+                    month.prop('disabled', false);
+                    month.css('opacity', '1');
+                }
+            }
+
+            // initial state
+            updateMonthStateIndex();
+
+            // when year changes
+            $('#selectedYear').on('change', function() { updateMonthStateIndex(); });
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#selectedEmployee').val('');
+                $('#selectedYear').val('');
+                $('#selectedMonth').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+                updateMonthStateIndex();
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    selectedEmployee: $('#selectedEmployee').val(),
+                    selectedYear: $('#selectedYear').val(),
+                    selectedMonth: $('#selectedMonth').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var selectedEmployee = $('#selectedEmployee').val();
+                var selectedYear = $('#selectedYear').val();
+                var selectedMonth = $('#selectedMonth').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/SalaryManagement/Index',
+                    type: 'GET',
+                    data: { selectedEmployee, selectedYear ,selectedMonth, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+
+                        $('.expiryDate').each(function () {
+                            const endDateStr = $(this).text().trim();
+                            if (!endDateStr) return;
+
+                            const expiryDate = new Date(endDateStr);
+                            if (isNaN(expiryDate.getTime())) return;
+
+                            const today = new Date();
+                            const in30Days = new Date();
+
+                            today.setHours(0, 0, 0, 0);
+                            in30Days.setDate(today.getDate() + 30);
+                            in30Days.setHours(0, 0, 0, 0);
+                            expiryDate.setHours(0, 0, 0, 0);
+
+                            if (expiryDate < today) {
+                                $(this).closest('tr').addClass('badge-expired');
+                            } else if (expiryDate <= in30Days) {
+                                $(this).closest('tr').addClass('badge-warning');
+                            }
+                        });
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+
+    <script>
+        // Toaster For you can't Print
+        function showToastrCannotPrintPleseSelectFirst() {
+          toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-center",
+            "timeOut": "3000"
+          };
+          var cantPrint2 ='@Html.Raw(Resource1.PleaseChooseYearAndMonthFirstly)';
+
+          toastr.error(cantPrint2);
+        }
+    </script>
+    <script>
+        function showToastrCannotPrintPleseSelectEmployeeFirst() {
+                      toastr.options = {
+                        "closeButton": true,
+                        "progressBar": true,
+                        "positionClass": "toast-top-center",
+                        "timeOut": "3000"
+                      };
+                      var cantPrint2 ='@Html.Raw(Resource2.PleaseSelectEmployeeFirst)';
+
+                      toastr.error(cantPrint2);
+                    }
+    </script>
+
+    <script>
+        // SalaryManagement Attachments Modal
+        $(document).on('click', '.open-salaryManagement-attachments-modal', function () {
+            var salaryManagementId = $(this).data('entity-id');
+            console.log('Opening attachments for SalaryManagement ID:', salaryManagementId);
+            $.ajax({
+                url: '/Admin/SalaryManagement/GetSalaryManagementAttachments',
+                type: 'GET',
+                data: { id: salaryManagementId },
+                success: function (data) {
+                    console.log('Attachments loaded successfully');
+                    $('#salaryManagementAttachmentsModal').html(data).modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error loading attachments:', xhr.responseText, status, error);
+                    alert('Error loading attachments: ' + (xhr.responseText || error));
+                }
+            });
+        });
+    </script>
+}

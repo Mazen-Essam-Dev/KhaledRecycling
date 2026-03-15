@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Activity Member - Full Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Activity Module Documentation</h1>
+
+<!-- ===================================================== -->
+<h2>ActivityController</h2>
+
+<table>
+    <tr>
+        <th>File</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>ActivityController.cs</td>
+        <td>Member-area controller for activity browsing, subscriptions, and age validation</td>
+    </tr>
+</table>
+
+<h3>Controller Attributes</h3>
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>[MemberAuthorize]</td>
+        <td>Restricts access to authenticated members</td>
+    </tr>
+    <tr>
+        <td>[Area("Member")]</td>
+        <td>Defines Member area routing</td>
+    </tr>
+    <tr>
+        <td>[Route("Member/[controller]/[action]")]</td>
+        <td>Standardized controller routing</td>
+    </tr>
+</table>
+
+<h3>Injected Dependencies</h3>
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Responsibility</th>
+    </tr>
+    <tr>
+        <td>IActivityService</td>
+        <td>Business logic and activity data access</td>
+    </tr>
+    <tr>
+        <td>IHttpContextAccessor</td>
+        <td>Session and HTTP context access</td>
+    </tr>
+    <tr>
+        <td>IMapper</td>
+        <td>Entity to ViewModel mapping</td>
+    </tr>
+</table>
+
+<h3>Controller Actions</h3>
+<table>
+    <tr>
+        <th>Action</th>
+        <th>Description</th>
+        <th>Return Type</th>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>Displays activities with member subscription status</td>
+        <td>View</td>
+    </tr>
+    <tr>
+        <td>Details</td>
+        <td>Loads activity details in modal partial view</td>
+        <td>PartialView</td>
+    </tr>
+    <tr>
+        <td>Subscribe (GET)</td>
+        <td>Displays subscription confirmation</td>
+        <td>View</td>
+    </tr>
+    <tr>
+        <td>Subscribe (POST)</td>
+        <td>Handles activity subscription</td>
+        <td>Redirect</td>
+    </tr>
+    <tr>
+        <td>CheckAge</td>
+        <td>AJAX age validation for activity</td>
+        <td>JSON</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>ActivityService</h2>
+
+<table>
+    <tr>
+        <th>File</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>ActivityService.cs</td>
+        <td>Business logic for activity lifecycle, subscriptions, and age rules</td>
+    </tr>
+</table>
+
+<h3>Service Methods</h3>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>GetAllAsync</td>
+        <td>Returns all activities with member subscription data</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync</td>
+        <td>Fetches activity by ID</td>
+    </tr>
+    <tr>
+        <td>AddAsync</td>
+        <td>Creates a new activity</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync</td>
+        <td>Updates existing activity</td>
+    </tr>
+    <tr>
+        <td>SubscribeAsync</td>
+        <td>Subscribes member to activity</td>
+    </tr>
+    <tr>
+        <td>CheckAgeAsync</td>
+        <td>Validates age requirements</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync</td>
+        <td>Removes activity</td>
+    </tr>
+    <tr>
+        <td>Exists</td>
+        <td>Checks activity existence</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>ActivityVM</h2>
+
+<table>
+    <tr>
+        <th>Property Group</th>
+        <th>Fields</th>
+    </tr>
+    <tr>
+        <td>Identification</td>
+        <td>Id</td>
+    </tr>
+    <tr>
+        <td>Titles</td>
+        <td>TitleAr, TitleEn</td>
+    </tr>
+    <tr>
+        <td>Dates</td>
+        <td>StartDate, EndDate</td>
+    </tr>
+    <tr>
+        <td>Rules</td>
+        <td>MinimumAge, Location</td>
+    </tr>
+    <tr>
+        <td>Content</td>
+        <td>Description, AttachmentPath</td>
+    </tr>
+    <tr>
+        <td>Status</td>
+        <td>Subscribed, Subscriptions</td>
+    </tr>
+</table>
+
+<h3>Validation Rules</h3>
+<table>
+    <tr>
+        <th>Validation</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>LocalizedRequired</td>
+        <td>Culture-aware required validation</td>
+    </tr>
+    <tr>
+        <td>RegularExpression</td>
+        <td>Arabic/English language validation</td>
+    </tr>
+    <tr>
+        <td>Date Rule</td>
+        <td>EndDate must be after StartDate</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Activity Entity</h2>
+
+<table>
+    <tr>
+        <th>Category</th>
+        <th>Properties</th>
+    </tr>
+    <tr>
+        <td>Identification</td>
+        <td>Id</td>
+    </tr>
+    <tr>
+        <td>Titles</td>
+        <td>TitleAr, TitleEn</td>
+    </tr>
+    <tr>
+        <td>Scheduling</td>
+        <td>StartDate, EndDate</td>
+    </tr>
+    <tr>
+        <td>Rules</td>
+        <td>MinimumAge, Location</td>
+    </tr>
+    <tr>
+        <td>Content</td>
+        <td>Description, Achievement, AttachmentPath</td>
+    </tr>
+    <tr>
+        <td>Relationships</td>
+        <td>Questions</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Activity Views</h2>
+
+<table>
+    <tr>
+        <th>View</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>Index.cshtml</td>
+        <td>Activity listing with subscription status</td>
+    </tr>
+    <tr>
+        <td>_DetailsPartial.cshtml</td>
+        <td>Modal activity details</td>
+    </tr>
+    <tr>
+        <td>Create.cshtml</td>
+        <td>Admin activity creation</td>
+    </tr>
+    <tr>
+        <td>Subscribe.cshtml</td>
+        <td>Subscription confirmation</td>
+    </tr>
+</table>
+
+<h3>Index.cshtml – Table Columns</h3>
+<table>
+    <tr>
+        <th>Column</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Date</td>
+        <td>Formatted activity start date</td>
+    </tr>
+    <tr>
+        <td>Duration</td>
+        <td>Calculated days</td>
+    </tr>
+    <tr>
+        <td>Title</td>
+        <td>Language-specific activity title</td>
+    </tr>
+    <tr>
+        <td>Age</td>
+        <td>Minimum age requirement</td>
+    </tr>
+    <tr>
+        <td>Location</td>
+        <td>Activity venue</td>
+    </tr>
+    <tr>
+        <td>Actions</td>
+        <td>Details and Subscribe buttons</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Security & Technical Features</h2>
+
+<table>
+    <tr>
+        <th>Area</th>
+        <th>Implementation</th>
+    </tr>
+    <tr>
+        <td>Authorization</td>
+        <td>MemberAuthorize attribute</td>
+    </tr>
+    <tr>
+        <td>Session</td>
+        <td>Email-based member identification</td>
+    </tr>
+    <tr>
+        <td>Validation</td>
+        <td>Age, date, and subscription rules</td>
+    </tr>
+    <tr>
+        <td>Localization</td>
+        <td>Arabic/English resource files</td>
+    </tr>
+    <tr>
+        <td>AJAX</td>
+        <td>SweetAlert2 + JSON responses</td>
+    </tr>
+</table>
+
+<div class="note">
+    ✔ Clean MVC separation<br>
+    ✔ Strong business rule enforcement<br>
+    ✔ Full bilingual support<br>
+    ✔ Secure, scalable activity management module
+</div>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>
+

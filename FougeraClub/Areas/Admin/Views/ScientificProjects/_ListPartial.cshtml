@@ -1,0 +1,208 @@
+﻿@model ScientificProjectsVM
+
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    ViewData["Title"] = Resource1.ScientificProjectsList;
+    ViewData["Title pakage"] = @Resource1.ScientificProjectsManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.ScientificProjectsList ?? " ";
+
+    var detailsPermission = PermissionScanner.ValidatePermission("ScientificProjects", "Details");
+    var editPermission = PermissionScanner.ValidatePermission("ScientificProjects", "Edit");
+    var projectCardPermission = PermissionScanner.ValidatePermission("ScientificProjects", "ProjectCard");
+    var deletePermission = PermissionScanner.ValidatePermission("ScientificProjects", "Delete");
+
+    var ActivitiesSupervisorIsLoggedIn = (PermissionScanner.ValidateRoleNumber() == RoleNumber.ActivitiesSupervisor && await PermissionScanner.CheckLoggedUserIfHasSignature());
+    var ManagerIsLoggedIn = (PermissionScanner.ValidateRoleNumber() == RoleNumber.Manager && await PermissionScanner.CheckLoggedUserIfHasSignature());
+    var thisProjectTrainerIsLoggedIn = (Model.IsTrainerLogginedForSign && await PermissionScanner.CheckLoggedUserIfHasSignature());
+}
+
+<input type="hidden" id="NewCountRecords" value="@Model.TotalCount" />
+
+<!-- Page Size Selector -->
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th style="width:4%;">@* @Resource2.ProjectNo *@ .No</th>
+                <th>@Resource1.ProjectName</th>
+                <th>@Resource1.Student_Employee</th>
+                <th style="width:4%;">@Resource1.Date</th>
+                <th style="width:15%;">@Resource2.ScientificSpecialization</th>
+                <th style="width:12%;">@Resource2.Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.all_ScientificProjectListVM != null && Model.all_ScientificProjectListVM.Any())
+            {
+                foreach (var project in Model.all_ScientificProjectListVM)
+                {
+                    var boolManagerSignature = project.ManagerSignature != null && !string.IsNullOrEmpty(project.ManagerSignature.ImagePath);
+                    var boolActivityMonitorSigniture = project.ActivityMonitorSigniture != null && !string.IsNullOrEmpty(project.ActivityMonitorSigniture.ImagePath);
+                    var boolTrainerSigniture = project.Trainer1Signiture != null && !string.IsNullOrEmpty(project.Trainer1Signiture.ImagePath);
+                    var bool3And = (boolActivityMonitorSigniture && boolManagerSignature && boolTrainerSigniture);
+                    var OpenEdit = !boolTrainerSigniture || (!boolTrainerSigniture && thisProjectTrainerIsLoggedIn) || (!boolActivityMonitorSigniture && ActivitiesSupervisorIsLoggedIn) || (!boolManagerSignature && ManagerIsLoggedIn);
+                    var NoEdit = !OpenEdit;
+                    var department = Model.all_Departments?.FirstOrDefault(x => x.Id == project.DepartmentId);
+                    <tr data-id="@project?.Id">
+                        <td data-label="@Resource2.ProjectNo">
+                            <span class="fw-medium">@project?.SerialCode</span>
+                        </td>
+                        <td data-label="@Resource1.ProjectName" onclick="window.location.href='@Url.Action("ProjectCard", new { id = project.Id })'" style="cursor:pointer;">
+                            @(lang == "ar" ? project?.ProjectNameEn : project?.ProjectNameEn)
+                        </td>
+                        <td data-label="@Resource1.Student_Employee">
+                            <span>@(lang == "ar" ? project?.Student_EmployeeAr : project?.Student_EmployeeEn)</span>
+                        </td>
+                        <td data-label="@Resource1.DateByCalander">
+                            <span>@project?.DateByCalander?.ToString("d")?.Replace("/","-")</span>
+                        </td>
+                        <td data-label="@Resource2.ScientificSpecialization">
+                            <span>@(lang == "ar" ? department?.NameAr : department?.NameEn)</span>
+                        </td>
+                        <td data-label="@Resource2.Actions">
+                            <!-- Details -->
+                            @* @if (detailsPermission)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Details">
+                                    <a asp-action="Details"
+                                       asp-route-id="@project?.Id"
+                                       class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-eye fs-5"></i>
+                                    </a>
+                                </span>
+                            } *@
+                             <!-- Edit -->
+                            @if (editPermission && @* !bool2And *@ OpenEdit)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Edit">
+                                    <a asp-action="AddEdit"
+                                       asp-route-id="@project?.Id"
+                                       class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-pen-to-square fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+                            else //Fake Edit
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Edit">
+                                                <button asp-action="#" disabled
+                                                    class="disabled btn btn-control-dis  btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-pen-to-square fs-5"></i>
+                                    </button>
+                                </span>
+                            }
+                            @if (projectCardPermission @* && bool3And *@)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource1.ProjectCard2">
+                                    <a asp-action="ProjectCard"
+                                       asp-route-id="@project?.Id"
+                                       class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-credit-card fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+                            else
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource1.ProjectCard2">
+                                    <a asp-action="#" disabled
+                                       class="disabled btn btn-control-dis  btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-credit-card fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+                            @* <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Accept">
+                                <a id="activityMonitorSignatureSection" data-id="@project.Id" data-role="activityMonitor" data-notes="@project.Notes" data-titleModalLabel="@(Resource1.EnterOTP + " " + Resource1.SupervisorSignature)" style="cursor:pointer;" href="#" class="btn btn-soft-success btn-icon btn-sm rounded-circle signature-trigger" role="button" tabindex="0">
+                                    <i class="fa-regular fa-square-check"></i>
+                                </a>
+                            </span>
+
+                            <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Accept">
+                                <a id="managerSignatureSection" data-id="@project.Id" data-role="manager" data-notes="@project.Notes" data-titleModalLabel="@(Resource1.EnterOTP + " " + Resource1.ManagerSignature)" style="cursor:pointer;" href="#" class="btn btn-soft-success btn-icon btn-sm rounded-circle signature-trigger" role="button" tabindex="0">
+                                    <i class="fa-regular fa-square-check"></i>
+                                </a>
+                            </span> *@
+                            <!-- Delete -->
+                            @if (deletePermission && @* !bool2And *@ !boolTrainerSigniture)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Delete">
+                                    <form asp-action="Delete"
+                                          asp-route-id="@project?.Id" data-swal="delete" data-message="@(lang == "ar" ? project?.ProjectNameAr : project?.ProjectNameEn)"
+                                          method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('@Resource2.ConfirmDelete');">
+                                        <button type="submit"
+                                                class="btn-control btn-icon btn-sm rounded-circle">
+                                            <i class="fa-solid fa-trash fs-5"></i>
+                                        </button>
+                                    </form>
+                                </span>
+                            }
+                            else //Fake Delete
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Delete">
+                                    <button asp-action="#" class="disabled btn btn-control-dis  btn-icon btn-sm rounded-circle" disabled>
+                                        <i class="fa-solid fa-trash fs-5"></i>
+                                    </button>
+                                </span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoData</h5>
+                            <p class="mb-0">@Resource2.GoToCreatePage</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.CurrentPage > 1 ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.CurrentPage - 1)">
+                @Resource2.Previous
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.CurrentPage < Model.TotalPages ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.CurrentPage + 1)">
+                @Resource2.Next
+            </a>
+        </li>
+    </ul>
+</nav>

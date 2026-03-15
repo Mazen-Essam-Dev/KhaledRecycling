@@ -1,0 +1,283 @@
+﻿@model EmployeeVM
+
+@{
+    ViewData["Title"] = @Resource2.EmployeeInfo;
+    ViewData["Title pakage"] = @Resource1.EmployeesManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.EmployeesList;
+    ViewData["Title Single"] = @Resource2.EmployeeInfo;
+}
+
+<!-- Breadcrumb Navigation Column -->
+    <div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+        <!-- Breadcrumb -->
+        <div class="col-md-6">
+            <nav aria-label="breadcrumb" class="ms-2">
+                <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                    <li class="breadcrumb-item">
+                        <a href="#">@ViewData["Title pakage"]</a>
+                    </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Employees/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                    <li class="breadcrumb-item">
+                        <a href="#">@ViewData["Title Single"]</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap justify-content-end">
+        <a asp-area="Admin"
+           asp-controller="Employees"
+           asp-action="PrintDetails"
+           asp-route-id="@Model?.Id"
+           target="_blank"
+           class="btn btn-success px-3 btn-sm">
+            <i class="fa fa-print me-1"></i> @Resource2.Print
+        </a>
+
+        @{
+            var refererURL = ViewBag.refererURL;
+        }
+        @if (!string.IsNullOrEmpty(refererURL) && refererURL.Contains("Employees/Index", StringComparison.OrdinalIgnoreCase))
+        {
+            <a class="btn-cancel-search btn btn-sm px-3" href="/Admin/Employees/index">
+                <i class="bi bi-x-circle"></i> @Resource1.Back
+            </a>
+        }
+        else if (!string.IsNullOrEmpty(refererURL) && refererURL.Contains("SalaryManagement/Index", StringComparison.OrdinalIgnoreCase))
+        {
+            <a class="btn-cancel-search btn btn-sm px-3" href="/Admin/SalaryManagement/index">
+                <i class="bi bi-x-circle"></i> @Resource1.Back
+            </a>
+        }
+
+    </div>
+
+    </div>
+
+
+<div class="card">
+<div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+    <div class="flex-grow-1">
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <i class="fa-solid fa-circle-info me-1 text-ico"></i>
+                @ViewData["Title Single"]
+            </h4>
+        </div>
+    </div>
+
+    <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap justify-content-end">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex justify-content-center align-items-center bg-light rounded-circle">
+                    @if (!string.IsNullOrEmpty(Model?.PhotoPath) && Model?.PhotoPath != "../../")
+                    {
+                        <div class="img-hover">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal">
+                                <i class="fas fa-eye icon-eye"></i>
+                                <img src="~/@Model?.PhotoPath"
+                                     class="rounded-circle border border-2 object-fit-cover preview w-y-x-50 "
+                                     alt="profile picture" />
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex justify-content-center align-items-center bg-light rounded-circle w-y-x-50">
+                            <i class="fa-solid fa-user text-muted fs-2"></i>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model?.PhotoPath))
+                    {
+                        <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModal" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@Resource2.EmployeeImage</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.PhotoPath" class="img-fluid" alt="@Resource2.EmployeeImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            
+                <div class="d-flex flex-column">
+                    <span class="text-success d-block fs-4">@Resource2.EmployeeNo</span>
+                    <span class="fw-semibold">
+                        @Model?.Code
+                    </span>
+                </div>
+            </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mt-3">
+            <div class="text-left sec-title">
+                <div class="lg-title">
+                    <h1>@Resource1.BasicData</h1>
+                </div>
+                <div class="title-sep-left"></div>
+                <div class="title-sep-sm-left"></div>
+            </div>
+        </div>
+    </div>
+    <div class="c-edit-form mb-3">
+    <div class="row">
+                <div class="col-md-12 mb-2">
+            <label class="form-label" asp-for="FullNameAr"> @Resource2.Name </label>
+            <input asp-for="FullNameAr" readonly class="form-control" />
+            <span asp-validation-for="FullNameAr" class="text-danger"></span>
+        </div>
+
+        @* <div class="col-md-12">
+                <label class="form-label" asp-for="FullNameEn">@Resource2.FullNameEn</label>
+                <input asp-for="FullNameEn" readonly class="form-control" />
+                <span asp-validation-for="FullNameEn" class="text-danger"></span>
+            </div> *@
+                <div class="col-md-3 mb-2">
+            <label class="form-label" for="Jobtitle1"> @Resource1.JobTitle1 </label>
+            <input id="Jobtitle1" name="Jobtitle1" value="@Model?.JobTitle1" readonly class="form-control" />
+        </div>
+        <div class="col-md-3 mb-2">
+            <label asp-for="NationalityId" class="form-label">@Resource2.Nationality</label>
+            <input asp-for="NationalityId" hidden type="hidden" readonly class="form-control" />
+            <input id="Nationality2" name="Nationality2" value="@Model?.NationalitiesList?.Find(x => x.Value == Model.NationalityId.ToString())?.Text" readonly class="form-control" />
+            <span asp-validation-for="NationalityId" class="text-danger small"></span>
+        </div>
+
+                <div class="col-md-3 mb-2">
+            <label class="form-label" asp-for="PhoneNumber">@Resource1.PhoneNumber</label>
+            <input asp-for="PhoneNumber" type="number" oninput="noChars(input)" readonly class="form-control" />
+            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+        </div>
+                <div class="col-md-3 mb-2">
+            <label class="form-label" asp-for="Email">@Resource1.Email</label>
+            <input asp-for="Email" readonly class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-12">
+            <label class="form-label" asp-for="Address">@Resource1.Address</label>
+            <textarea asp-for="Address" readonly class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+    </div>
+    </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-left sec-title">
+                    <div class="lg-title">
+                        <h1>@Resource2.PassportInfo</h1>
+                    </div>
+                    <div class="title-sep-left"></div>
+                    <div class="title-sep-sm-left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="c-edit-form mb-3">
+    <div class="row ">
+        <div class="col-md-6">
+            <label class="form-label" asp-for="PassportNumber"> @Resource1.PassportNumber </label>
+            <input asp-for="PassportNumber" readonly class="form-control" />
+            <span asp-validation-for="PassportNumber" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" asp-for="PassportExpiryDate"> @Resource1.PassportExpiryDate </label>
+                    <div class="input-icon-left">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                        <input asp-for="PassportExpiryDate" hidden type="date" readonly class="form-control green-border form-control-sm filter-bordered valid">
+                        <input id="assportExpiryDa" name="assportExpiryDa" value="@Model?.PassportExpiryDate?.ToString("d")?.Replace("/", "-")" type="text" readonly class="form-control green-border form-control-sm filter-bordered valid">
+                    </div>
+            <span asp-validation-for="PassportExpiryDate" class="text-danger"></span>
+        </div>
+    </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-left sec-title">
+                    <div class="lg-title">
+                        <h1>@Resource2.IdInfo</h1>
+                    </div>
+                    <div class="title-sep-left"></div>
+                    <div class="title-sep-sm-left"></div>
+                </div>
+            </div>
+        </div>
+      <div class="c-edit-form mb-3">
+    <div class="row">
+        <div class="col-md-4">
+            <label class="form-label" asp-for="NationalIdNumber">@Resource2.IdNumber</label>
+            <input asp-for="NationalIdNumber"
+                   type="hidden" hidden
+                   readonly class="form-control" />
+            <input type="text" id="NationalIdNumber2" name="NationalIdNumber2" readonly value="@Model?.NationalIdNumber" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" asp-for="NationalIdLocation"> @Resource2.PlaceOfIssue</label>
+            <input asp-for="NationalIdLocation" readonly class="form-control" />
+            <span asp-validation-for="NationalIdLocation" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" asp-for="NationalIdExpiryDate"> @Resource1.NationalIdExpiryDate </label>
+                    <div class="input-icon-left">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                        <input type="date" hidden class="form-control green-border form-control-sm filter-bordered valid" asp-for="NationalIdExpiryDate" readonly>
+                        <input id="ationalIdEx" name="ationalIdEx" value="@Model?.NationalIdExpiryDate?.ToString("d")?.Replace("/", "-")" type="text" class="form-control green-border form-control-sm filter-bordered valid" readonly>
+                    </div>
+            <span asp-validation-for="NationalIdExpiryDate" class="text-danger"></span>
+        </div>
+    </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-left sec-title">
+                    <div class="lg-title">
+                        <h1>@Resource2.FinancialInfo</h1>
+                    </div>
+                    <div class="title-sep-left"></div>
+                    <div class="title-sep-sm-left"></div>
+                </div>
+            </div>
+        </div>
+        <div class="c-edit-form mb-3">
+        <div class="row">
+        <div class="col-md-4">
+            <label class="form-label" asp-for="Salary">@Resource2.Salary</label>
+            <input asp-for="Salary" type="number" oninput="noChars(input)" readonly class="form-control" />
+            <span asp-validation-for="Salary" class="text-danger"></span>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" asp-for="BankName">@Resource1.BankName</label>
+            <input asp-for="BankName" readonly class="form-control" />
+            <span asp-validation-for="BankName" class="text-danger"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label" asp-for="BankAccountNumber"> @Resource1.BankAccountNumber </label>
+            <input asp-for="BankAccountNumber" readonly class="form-control" />
+            <span asp-validation-for="BankAccountNumber" class="text-danger"></span>
+        </div>
+            </div>
+        </div>
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <label class="form-label" asp-for="Notes">@Resource1.Notes</label>
+            <textarea asp-for="Notes" readonly class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+    </div>
+    </div>
+    </div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

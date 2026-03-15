@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Expense & Receipt Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Expense And Receipt Module</h1>
+
+<!-- ===================================================== -->
+<table>
+    <h2>ExpenseAndReceiptController</h2>
+    <tr><th>Namespace</th><td>FougeraClub.Areas.Admin.Controllers</td></tr>
+    <tr><th>Responsibility</th><td>Manage Expenses, Receipts, Monthly Reports, OTP approvals, Excel export, Printing, File uploads</td></tr>
+    <tr><th>Area</th><td>Admin</td></tr>
+    <tr><th>Authorization</th><td>AdminAuthorize</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>Controller Dependencies</h2>
+    <tr><th>Service</th><th>Description</th></tr>
+    <tr><td>IExpenseService</td><td>Expense and report business logic</td></tr>
+    <tr><td>IReceiptService</td><td>Receipt business logic</td></tr>
+    <tr><td>IUnitOfWork</td><td>Database transaction handling</td></tr>
+    <tr><td>IMapper</td><td>Entity ↔ ViewModel mapping</td></tr>
+    <tr><td>IHubContext</td><td>SignalR notifications</td></tr>
+    <tr><td>INotificationService</td><td>Role-based system notifications</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>Enums</h2>
+    <tr><th>Enum</th><th>Values</th></tr>
+    <tr>
+        <td>ExpensesSourceEnum</td>
+        <td>1 = Bank<br>2 = MiscellaneousExpenses</td>
+    </tr>
+    <tr>
+        <td>ReportTypeEnum</td>
+        <td>1 = ExpensesReport<br>2 = ExpensesAndReceiptsReport</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>Domain Entities – Overview</h2>
+    <tr><th>Entity</th><th>Purpose</th></tr>
+    <tr><td>ExpenseAndReceiptAndOther</td><td>Core transactional entity for expenses and receipts</td></tr>
+    <tr><td>ExpenseAndReceiptReport</td><td>Combined expenses & receipts monthly report</td></tr>
+    <tr><td>ExpensesAndReciptReportSign</td><td>Signature tracking for combined reports</td></tr>
+    <tr><td>ExpensesGate</td><td>Expense classification gate</td></tr>
+    <tr><td>ExpensesReport</td><td>Expenses-only monthly report</td></tr>
+    <tr><td>ExpensesSource</td><td>Expense source classification</td></tr>
+    <tr><td>ItemTypeEntity</td><td>Transaction type definition</td></tr>
+    <tr><td>ReceivingReceipt</td><td>Receiving receipt with approval workflow</td></tr>
+    <tr><td>ReportSalaryType</td><td>Salary report type definition</td></tr>
+    <tr><td>ReportType</td><td>Financial report type definition</td></tr>
+    <tr><td>SalaryReportSign</td><td>Salary report signature tracking</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>ExpenseAndReceiptAndOther – Key Fields</h2>
+    <tr><th>Category</th><th>Fields</th></tr>
+    <tr>
+        <td>Identification</td>
+        <td>Id, ItemType, ItemNumber</td>
+    </tr>
+    <tr>
+        <td>Relations</td>
+        <td>BudgetItemId, ExpensesGateId, ExpensesSourceId, SupplierId</td>
+    </tr>
+    <tr>
+        <td>Financial</td>
+        <td>Amount, Vat, Date, Notes</td>
+    </tr>
+    <tr>
+        <td>Files</td>
+        <td>AttachmentPath, Attachment (NotMapped)</td>
+    </tr>
+    <tr>
+        <td>Reports</td>
+        <td>ExpensesReportId, ExpenseAndReceiptReportId</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>Controller Actions – Core</h2>
+    <tr><th>Action</th><th>Description</th></tr>
+    <tr><td>AddEdit (GET)</td><td>Load add/edit form with dynamic validation</td></tr>
+    <tr><td>AddEdit (POST)</td><td>Create or update expense or receipt</td></tr>
+    <tr><td>Delete</td><td>Delete expense or receipt</td></tr>
+    <tr><td>Receipts</td><td>List receipts with filters and pagination</td></tr>
+    <tr><td>Expenses</td><td>List expenses with VAT calculations</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>Reports & Printing</h2>
+    <tr><th>Action</th><th>Description</th></tr>
+    <tr><td>ExpensesReport</td><td>Monthly expenses aggregation</td></tr>
+    <tr><td>ExpensesAndReceiptsReport</td><td>Combined expenses & receipts report</td></tr>
+    <tr><td>Print_Expenses</td><td>Printable expenses list</td></tr>
+    <tr><td>Print_Receipts</td><td>Printable receipts list</td></tr>
+    <tr><td>Excel Export</td><td>Multi-language Excel reports</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>OTP Workflow</h2>
+    <tr><th>Step</th><th>Rule</th></tr>
+    <tr><td>OTP Role</td><td>Manager only</td></tr>
+    <tr><td>On Add</td><td>Send OTP notification to Manager</td></tr>
+    <tr><td>On Edit</td><td>Re-send OTP and lock delete</td></tr>
+    <tr><td>After Validation</td><td>Disable editing and enable printing</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>ExpenseService</h2>
+    <tr><th>Namespace</th><td>Application.Services.Admin.ExpenseAndReceipt</td></tr>
+    <tr><th>Responsibilities</th><td>Expense CRUD, OTP validation, report calculation, cascading balances</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>ExpenseService – Key Responsibilities</h2>
+    <tr><th>Feature</th><th>Description</th></tr>
+    <tr><td>Dynamic Reports</td><td>No static report tables, calculated from transactions</td></tr>
+    <tr><td>Balance Cascade</td><td>Recalculates future months automatically</td></tr>
+    <tr><td>OTP Validation</td><td>Manager approval workflow</td></tr>
+    <tr><td>Receiving Receipts</td><td>Linked receipt approval and signatures</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>ReceiptService</h2>
+    <tr><th>Namespace</th><td>Application.Services.Admin.ExpenseAndReceipt</td></tr>
+    <tr><th>Responsibilities</th><td>Receipt CRUD, balance cascading, serial generation</td></tr>
+</table>
+
+<!-- ===================================================== -->
+<table>
+    <h2>ReceiptService – Core Methods</h2>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr><td>GetLastSerialCode</td><td>Generate next receipt serial</td></tr>
+    <tr><td>AddAsync</td><td>Add receipt and recalc balances</td></tr>
+    <tr><td>UpdateAsync</td><td>Update receipt and cascade balances</td></tr>
+    <tr><td>DeleteAsync</td><td>Delete receipt and refresh future balances</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

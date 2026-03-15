@@ -1,0 +1,297 @@
+﻿@using Infrastructure.Identity
+@inject UserManager<ApplicationUser> UserManager
+@model EmployeeVM
+@{
+    ViewData["Title"] = Resource2.EmployeeInfo;
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+    var printedBy = currentUser?.Email ?? "Unknown User";
+    var today = DateTime.Now.ToString("dd/MM/yyyy");
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+
+    <title>@ViewData["Title"]</title>
+
+    <style>
+        html, body {
+            width: 100%;
+            background: #fff;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 13px;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .printArea {
+            width: 800px;
+            margin: auto;
+        }
+
+        table {
+            border-collapse: collapse !important;
+            width: 100% !important;
+            table-layout: fixed;
+        }
+
+        th, td {
+            border: 1px solid #000 !important;
+            padding: 5px !important;
+            box-shadow: none;
+        }
+
+        th {
+            background: #f5f5f5 !important;
+            font-weight: bold;
+        }
+        .header-section h5 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .footer {
+            margin-top: 35px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f5f5f5 !important;
+            font-weight: bold;
+        }
+       
+        @@media print {
+            @@page { size: A4; margin: 10mm; }
+
+            * {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .footer {
+                border-top: 1px double #000;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                padding: 10px 0 0 0;
+                font-size: 14px;
+            }
+
+            #image1{
+                max-width: 120px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container printArea">
+
+    <!-- ================= HEADER ================= -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap border-black border-bottom py-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center flex-fill">
+                <div style="text-align:center">
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">الإمارات العربية المتحدة</h5>
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">حكومة الفجيرة</h5>
+                    <h5 style="color:#000000; font-size: 16px;font-weight:700;">نادي الفجيرة العلمي</h5>
+                </div>
+            </div>
+            <div class="flex-fill text-center">
+                <center>
+                    <img src="/ar/assets/images/logo-ar.png" alt="logo" style="width:75px;">
+                </center>
+            </div>
+            <div class="d-flex justify-content-end align-items-center flex-fill">
+                <div style="text-align:center">
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">UNITED ARAB EMIRATES</h5>
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">GOVT. OF FUJAIRAH</h5>
+                    <h5 style="color:#000000; font-size: 16px;font-weight:700;">FUJAIRAH SCIENCE CLUB</h5>
+                </div>
+            </div>
+        </div>
+
+    <!-- ================= TITLE + PHOTO + EMP NO ================= -->
+        <div style="display: flex; justify-content: space-between; align-items: center; width:100%;margin-bottom: 15px;">
+
+        <div style="display:flex; flex-direction:column;">
+            <div style="margin-bottom:10px; font-weight:bold;" style="color:#af1717">@Resource2.EmployeeInfo</div>
+                <div style="text-align: center; background: #f5f5f5; padding:1px 5px;">
+                    @* تاريخ : <span>@today</span> *@
+                </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:15px;">
+                <div style="display:flex; flex-direction:column;">
+                    <div style="margin-bottom:10px; font-weight:bold;">رقم الموظف</div>
+                    <div style="text-align:center; background:#f5f5f5;">@Model?.Code</div>
+                </div>
+            @if (!string.IsNullOrEmpty(Model?.PhotoPath))
+            {
+                <img id="image1" src="~/@Model.PhotoPath"
+                     style="height:80px; max-width:120px; border:1px solid #000;" />
+            }
+            else
+            {
+                <img id="image1" src="/assets/images/no-image.png"
+                    style="height:80px;  max-width:120px; border:1px solid #000;" />
+            }
+
+        </div>
+    </div>
+
+        
+        <table class="mb-3" style="width:100%; table-layout:auto;">
+            <colgroup>
+                <!-- Label columns (narrow) -->
+                <col style="width:15%; white-space:nowrap;">
+                <col>
+                <col style="width:15%; white-space:nowrap;">
+                <col>
+            </colgroup>
+
+            <tr>
+                <th colspan="4">البيانات الأساسية</th>
+            </tr>
+
+            <tr>
+                <td>@Resource2.Name</td>
+                <td colspan="3">@Model?.FullNameAr</td>
+            </tr>
+
+            <tr>
+                <td>الوظيفة</td>
+                <td>@Model?.JobTitle1</td>
+                <td>الجنسية</td>
+                <td>@Model?.Nationality1</td>
+            </tr>
+
+            <tr>
+                <td>رقم الهاتف</td>
+                <td>@Model?.PhoneNumber</td>
+                <td>البريد الإلكتروني</td>
+                <td>@Model?.Email</td>
+            </tr>
+
+            <tr>
+                <td>العنوان</td>
+                <td colspan="3" style="text-align:right;">@Model?.Address</td>
+            </tr>
+        </table>
+
+
+        <!-- ================= PASSPORT ================= -->
+        <table class="mb-3" width="100%">
+            <colgroup>
+                <col width="15%">
+                <col>
+                <col width="15%">
+                <col>
+            </colgroup>
+
+            <tr>
+                <th colspan="4">بيانات جواز السفر</th>
+            </tr>
+
+            <tr>
+                <td>رقم جواز السفر</td>
+                <td colspan="3">@Model?.PassportNumber</td>
+            </tr>
+
+            <tr>
+                <td>تاريخ انتهاء الجواز</td>
+                <td colspan="3">@Model?.PassportExpiryDate?.ToString("d")?.Replace("/", "-")</td>
+            </tr>
+        </table>
+
+        <!-- ================= NATIONAL ID ================= -->
+        <table class="mb-3" width="100%">
+            <colgroup>
+                <col width="15%">
+                <col>
+                <col width="15%">
+                <col>
+            </colgroup>
+
+            <tr>
+                <th colspan="4">بيانات الهوية</th>
+            </tr>
+
+            <tr>
+                <td>رقم الهوية</td>
+                <td colspan="3">@Model?.NationalIdNumber</td>
+            </tr>
+
+            <tr>
+                <td>مكان الإصدار</td>
+                <td colspan="3">@Model?.NationalIdLocation</td>
+            </tr>
+
+            <tr>
+                <td>تاريخ انتهاء الهوية</td>
+                <td colspan="3">@Model?.NationalIdExpiryDate?.ToString("d")?.Replace("/", "-")</td>
+            </tr>
+        </table>
+
+        <!-- ================= FINANCE ================= -->
+        <table class="mb-3" width="100%">
+            <colgroup>
+                <col width="15%">
+                <col>
+                <col width="15%">
+                <col>
+            </colgroup>
+
+            <tr>
+                <th colspan="4">البيانات المالية</th>
+            </tr>
+
+            <tr>
+                <td>قيمة الراتب</td>
+                <td colspan="3">@Model?.Salary</td>
+            </tr>
+
+            <tr>
+                <td>اسم البنك</td>
+                <td colspan="3">@Model?.BankName</td>
+            </tr>
+
+            <tr>
+                <td>رقم حساب البنك</td>
+                <td colspan="3">@Model?.BankAccountNumber</td>
+            </tr>
+        </table>
+
+    <!-- ================= NOTES ================= -->
+    <table class="mb-3">
+        <tr><th>الملاحظات</th></tr>
+        <tr><td>@Model?.Notes</td></tr>
+    </table>
+
+    <!-- ================= FOOTER ================= -->
+        <div class="footer">
+            <p class="PrintedBy">Printed by : <span style="font-weight:bold !important;"> @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+        </div>
+
+    </div>
+
+<script>
+window.onload = function () {
+    setTimeout(() => window.print(), 300);
+    window.onafterprint = () => window.close();
+};
+</script>
+
+</body>
+</html>

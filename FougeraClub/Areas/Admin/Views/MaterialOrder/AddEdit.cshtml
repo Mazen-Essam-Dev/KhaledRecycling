@@ -1,0 +1,372 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.MaterialOrder
+@using System.Globalization
+@model MaterialOrderVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    var lang = SessionHelper.GetCurrentLanguage();
+    ViewData["Title"] = isEdit ? "تعديل طلب مواد" : "إضافة طلب مواد";
+    ViewData["Title pakage"] = @Resource1.MaterialOrderManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.MaterialOrderList ?? " ";
+    ViewData["Title Single"] = ((Model?.Id == 0) ? "إضافة طلب مواد جديد" : "تعديل طلب مواد") ?? " ";
+    var boolUserSignature = Model?.SignatureUser != null && !string.IsNullOrEmpty(Model.SignatureUser.ImagePath);
+    var boolManagerSignature = Model?.SignatureManager != null && !string.IsNullOrEmpty(Model.SignatureManager.ImagePath);
+}
+<!-- Breadcrumb Navigation Column -->
+<div class="card-header border-bottom d-flex align-items-start row my-3">
+    <div class="d-flex align-items-center col-md-6 flex-wrap">
+        <h4 class="ico-header-title">
+            <i class="fa-solid fa-cart-shopping me-1 text-ico"></i>
+            @ViewData["Title"]
+        </h4>
+    </div>
+    <div class="col-md-6 d-flex align-items-center justify-content-end gap-1  flex-wrap">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/MaterialOrder">@ViewData["Title ListIndex"]</a></li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+
+    </div>
+
+</div>
+
+<div class="card  p-3">
+    <div class="container-fluid">
+        <form asp-action="AddEdit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="MaterialOrderCode" />
+            <input type="hidden" asp-for="TrainerId" />
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="IsTrainerLogged" />
+            <div class="row">
+                <!-- MaterialOrderCode -->
+                <div class="col-md-6">
+                    <label for="MaterialOrderCode2" class="form-label fw-semibold" style="margin-top:.6rem;">رقم طلب المواد</label>
+                    <input id="MaterialOrderCode2" value="@Model?.MaterialOrderCode" readonly disabled
+                           class="form-control mb-2" type="text" style="background-color: #f5f5f5 !important;font-weight: bold;" />
+                    <span asp-validation-for="MaterialOrderCode" class="text-danger small"></span>
+                </div>
+
+                <!-- Date -->
+                <div class="col-md-6 mb-2">
+                    <label asp-for="Date" class="form-label asteriskRequired fw-semibold">@Resource2.Date</label>
+                    <div class="input-icon-left">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon"
+                            class="date-icon">
+                        <input asp-for="Date" class="form-control green-border form-control-sm filter-bordered "
+                            type="date" id="DateInput" />
+                    </div>
+                    <span asp-validation-for="Date" class="text-danger small"></span>
+                </div>
+                @if(Model?.IsTrainerLogged!=true)
+                {
+                <!-- DepartmentId -->
+                <div class="col-md-12">
+                    <label for="DepartmentId" class="form-label asteriskRequired fw-semibold">القسم</label>
+                    <select class="form-control mb-2" asp-for="DepartmentId" required>
+                        <option value="">-- @Resource2.Select القسم --</option>
+                        @if (Model?.DepartmentsList != null && Model.DepartmentsList.Any())
+                        {
+
+                            @foreach (var sup in Model.DepartmentsList)
+                            {
+                                if (sup.Selected == true)
+                                {
+                                    <option value="@sup.Value" selected>@sup.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@sup.Value">@sup.Text</option>
+                                }
+                            }
+                           
+                        }
+                    </select>
+                    <span asp-validation-for="DepartmentId" class="text-danger small"></span>
+                </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="DepartmentId" />
+                    <!-- MaterialOrderCode -->
+                    <div class="col-md-12">
+                        <label for="de1" class="form-label asteriskRequired fw-semibold" style="margin-top:.6rem;">القسم</label>
+                        <input name="de1" id="de1" value="@Model.DepartmentName" readonly disabled style="background-color: #f5f5f5 !important;font-weight: bold;"
+                               class="form-control mb-2" type="text" />
+                    </div>
+                }
+
+                <div class="col-12">
+                    <label asp-for="Notes" class="form-label fw-semibold">@Resource2.Notes</label>
+                    <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Notes" class="text-danger small"></span>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-12 mt-3">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>إضافة بنود طلب المواد</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col-md-6">
+                    <label for="Quantity" class="form-label asteriskRequired fw-semibold">@Resource1.Quantity</label>
+                    <input id="Quantity" class="form-control only-integer mb-2" type="number" placeholder="1" step="1"
+                        min="1" />
+                    <span id="QuantitySpan" class="text-danger small"></span>
+                </div>
+                <div class="col-md-6">
+                    <label for="SinglePrice" class="form-label asteriskRequired fw-semibold">@Resource1.SinglePrice</label>
+                    <input id="SinglePrice" placeholder="0.00" class="form-control mb-2" type="number" />
+                    <span id="SinglePriceSpan" class="text-danger small"></span>
+                </div>
+                <div class="col-md-12">
+                    <label for="ItemName" class="form-label asteriskRequired fw-semibold">@Resource1.ItemName</label>
+                    <input id="ItemName" class="form-control mb-2" type="text" />
+                    <span id="ItemNameSpan" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-12 d-flex justify-content-end mt-2 mp-1">
+                    <button type="button" class="btn btn-success px-4" onclick="addRow()">
+                        <i class="fa-solid fa-cart-plus me-2"></i> @Resource2.Add
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>
+                                بنود طلب المواد
+                            </h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Table -->
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover align-middle table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Resource1.Quantity</th>
+                            <th>@Resource1.SinglePrice</th>
+                            <th>@Resource1.ItemName</th>
+                            <th>@Resource2.Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="Items">
+                        @if (Model?.Items != null)
+                        {
+                            var index = 0;
+                            foreach (var detail in Model.Items)
+                            {
+                                <tr>
+                                    <td><input class="form-control only-integer" type="number" name="Items[@index].Quantity"
+                                            value="@detail.Quantity"  /></td>
+                                    <td><input class="form-control only-decimal" type="text" name="Items[@index].SinglePrice"
+                                               placeholder="0.00" value="@detail.SinglePrice"  />
+                                    </td>
+                                    <td><input class="form-control" type="text" name="Items[@index].ItemName"
+                                               value="@detail.ItemName"   />
+                                    </td>
+                                    <td class="text-center"><button type="button"
+                                            class="btn-control btn-icon btn-sm rounded-circle" onclick="removeRow(this)"><i
+                                                class="fa-solid fa-trash fs-5"></i></button></td>
+                                </tr>
+                                index++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="20" class="text-center p-5">
+                                    <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                                        <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                                        <h5 class="mt-3">@Resource1.NoData</h5>
+                                        <p class="mb-0">@Resource2.GoToCreatePage</p>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        }
+                    </tbody>
+                </table>
+                <!-- Actions -->
+                <div class="d-flex justify-content-end mt-3 ">
+                    @if (!boolManagerSignature)
+                    {
+                        <button type="submit" class="btn btn-success me-2">
+                            <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                        </button>
+                    }
+                    else //Fake
+                    {
+                        <button type="button" disabled class="btn-cancel-search btn-sm btn me-2">
+                            <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                        </button>
+                    }
+                    <a asp-action="Index" class="btn-cancel-search btn-sm btn">
+                        @Resource2.Back<i class="fa-solid fa-arrow-left me-1"></i>
+                    </a>
+                </div>
+            </div>
+
+
+
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+
+        $('.typeradiobtn, #DateInput').on('change', function () {
+            let id = document.getElementById("Id").value;
+            let selectedDate = document.getElementById("DateInput").value;
+            const msgValid = "@Html.Raw(Resource1.Dateisvalid)";
+            const msgInvalid = "@Html.Raw(@Resource2.ReportIsExist)";
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            // 🔹 Integer numbers only (0-9)
+            $('.only-integer').on('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+            // 🔹 Decimal numbers (one dot . allowed)
+            $('.only-decimal').on('input', function () {
+                // Remove anything other than a number or dot .
+                this.value = this.value.replace(/[^0-9.]/g, '');
+
+                // Allow only one dot .
+                if ((this.value.match(/\./g) || []).length > 1) {
+                    this.value = this.value.slice(0, -1);
+                }
+            });
+
+        });
+    </script>
+
+    <script>
+        let rowIndex = @Model?.Items?.Count() ?? 0;
+
+        function addRow() {
+            const quantity = document.getElementById("Quantity").value;
+            const singlePrice = document.getElementById("SinglePrice").value.replace(',', '.').replace('٫', '.');
+            const itemName = document.getElementById("ItemName").value;
+
+            if (!quantity || (!singlePrice || singlePrice == "0.00" || singlePrice == "0.0" || singlePrice == "0" || singlePrice == "") || !itemName) {
+                $("#ItemNameSpan").text("");
+                $("#SinglePriceSpan").text("");
+                $("#QuantitySpan").text("");
+                if (!quantity) {
+                    $("#QuantitySpan").text("@Html.Raw(Resource1.Required)");
+                }
+                if (!singlePrice || singlePrice == "0.00" || singlePrice == "0.0" || singlePrice == "0" || singlePrice == "") {
+                    $("#SinglePriceSpan").text("@Html.Raw(Resource1.Required)");
+                }
+                if (!itemName) {
+                    $("#ItemNameSpan").text("@Html.Raw(Resource1.Required)");
+                }
+                return;
+            }
+            $("#ItemNameSpan").text("");
+            $("#SinglePriceSpan").text("");
+            $("#QuantitySpan").text("");
+
+
+            const tbody = document.getElementById("Items");
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td><input class="form-control only-integer" type="number" name="Items[${rowIndex}].Quantity" value="${quantity}"  /></td>
+                    <td><input class="form-control only-decimal" type="number" placeholder="0.00" name="Items[${rowIndex}].SinglePrice" value="${singlePrice}" step="0.01" min="0.01" /></td>
+                    <td><input class="form-control" type="text" name="Items[${rowIndex}].ItemName" value="${itemName}"  /></td>
+                    <td class="text-center"><button type="button" class="btn-control btn-icon btn-sm rounded-circle" onclick="removeRow(this)"><i class="fa-solid fa-trash fs-5"></i></button></td>
+                `;
+            tbody.appendChild(row);
+            rowIndex++;
+
+            // Clear inputs
+            document.getElementById("Quantity").value = "1";
+            document.getElementById("SinglePrice").value = "";
+            document.getElementById("ItemName").value = "";
+        }
+
+        // Store the row to be deleted
+        let rowToDelete = null;
+        function removeRow(button) {
+            rowToDelete = button.closest("tr");
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+
+        function confirmDeleteRow() {
+            if (rowToDelete) {
+                rowToDelete.remove();
+                // Reindex all rows
+                const rows = document.querySelectorAll("#Items tr");
+                rows.forEach((row, i) => {
+                    const inputs = row.querySelectorAll("input");
+                    inputs.forEach(input => {
+                        const name = input.getAttribute("name");
+                        if (name) {
+                            input.setAttribute("name", name.replace(/\[\d+\]/, `[${i}]`));
+                        }
+                    });
+                });
+                rowIndex = rows.length;
+                rowToDelete = null;
+            }
+            var modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            if (modal) modal.hide();
+        }
+    </script>
+
+    <!-- Delete Modal (matches other admin pages) -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Resource2.ConfirmDelete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>هل أنت متأكد من أنك تريد حذف هذا العنصر؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel-search btn btn-sm"
+                        data-bs-dismiss="modal">@Resource2.Cancel</button>
+                    <button type="button" class="btn btn-success btn-sm"
+                        onclick="confirmDeleteRow()">@Resource2.Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}

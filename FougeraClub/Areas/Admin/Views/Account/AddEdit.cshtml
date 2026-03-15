@@ -1,0 +1,487 @@
+﻿@using System.Security.Claims
+@using FougeraClub.Areas.Admin.ViewModels.Account
+@model AdminVM
+@{
+    ViewData["Title"] = string.IsNullOrEmpty(Model.Id) ? Resource2.CreateNewAccount : Resource2.EditAccount;
+    ViewData["Title pakage"] = "وحدة إدارة المستخدمين";
+    ViewData["Title Single"] = (string.IsNullOrEmpty(Model.Id) ? Resource2.CreateNewAccount : Resource2.EditAccount) ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.UsersList;
+    var loggedInUserId = @User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var loggedInRole = @User.FindFirstValue(ClaimTypes.Role);
+}
+@{
+    bool canEditRole =
+        PermissionScanner.ValidatePermission("Account", "Index") ||
+        PermissionScanner.ValidatePermission("Roles", "Index") ||
+        PermissionScanner.ValidatePermission("Account", "Manage") ||
+        PermissionScanner.ValidatePermission("Roles", "Manage") ||
+        PermissionScanner.ValidatePermission("Account", "Add") ||
+        PermissionScanner.ValidatePermission("Roles", "Add") ||
+        PermissionScanner.ValidatePermission("Account", "Edit") ||
+        PermissionScanner.ValidatePermission("Roles", "Edit");
+}
+
+<style>
+    .upload-file-rtl,
+    .upload-file-ltr {
+        cursor: pointer;
+        background-color: #f0f0f0;
+        border: 1px dashed #ccc;
+        padding: 10px;
+        transition: background-color 0.3s;
+    }
+        .upload-file-rtl:hover,
+        .upload-file-ltr:hover {
+            background-color: #e0e0e0;
+        }
+</style>
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-user me-1 text-ico"></span>
+                @ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-end" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/Account/Index">@ViewData["Title ListIndex"]</a></li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="card all-borders p-3">
+    <div class="c-edit-form  rounded">
+        <form asp-action="AddEdit" id="mainForm" method="post" class="row" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="col-md-6 mb-2">
+                <label asp-for="FullNameAr" class="form-label asteriskRequired mb-1">@Resource2.FullNameAr</label>
+                <input asp-for="FullNameAr" class="form-control" placeholder="@Resource2.FullNameAr" />
+                <span asp-validation-for="FullNameAr" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <label asp-for="FullNameEn" class="form-label asteriskRequired mb-1">@Resource2.FullNameEn</label>
+                <input asp-for="FullNameEn" class="form-control" placeholder="@Resource2.FullNameEn" />
+                <span asp-validation-for="FullNameEn" class="text-danger"></span>
+            </div>
+             <div class="col-md-6 mb-2">
+                <label asp-for="Username" class="form-label asteriskRequired mb-1">@Resource2.Username</label>
+
+                @if (canEditRole)
+                {
+                    <!-- Editable -->
+                    <input asp-for="Username"
+                           class="form-control"
+                           placeholder="@Resource2.Username"
+                           autocomplete="off" />
+                }
+                else
+                {
+                    <!-- Read-only display -->
+                    <input class="form-control"
+                           value="@Model.Username"
+                           readonly />
+
+                    <!-- Hidden input to keep old value -->
+                    <input type="hidden" asp-for="Username" />
+                }
+
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="Email" class="form-label asteriskRequired mb-1">@Resource2.Email</label>
+                <input asp-for="Email" class="form-control" placeholder="example@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="col-md-6 mb-2">
+                <label asp-for="PhoneNumber" class="form-label asteriskRequired mb-1">@Resource2.PhoneNumber</label>
+                <input asp-for="PhoneNumber" class="form-control" inputmode="numeric" pattern="\\d*" oninput="this.value=this.value.replace(/\\D/g,'')" placeholder="@Resource1.PhonePlaceholder_10" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="PasswordHash" class="form-label asteriskRequired mb-1">
+                    @Resource2.Password &nbsp;&nbsp; (<span class="text-danger small" style="font-size:12px;">@Resource1.PasswordShouldBe3</span>)
+                </label>
+                <div class="input-group">
+                    <input asp-for="PasswordHash" class="form-control" type="password"
+                           placeholder="@Resource1.PasswordShouldBe3" />
+                    <button type="button" class="btn btn-outline-secondary"
+                            onclick="togglePassword('PasswordHash', this)">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="PasswordHash" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="ConfirmPassword" class="form-label asteriskRequired mb-1">@Resource2.ConfirmPassword</label>
+                <div class="input-group">
+                    <input asp-for="ConfirmPassword" class="form-control" type="password"
+                           placeholder="@Resource2.ConfirmPassword" />
+                    <button type="button" class="btn btn-outline-secondary"
+                            onclick="togglePassword('ConfirmPassword', this)">
+                        <i class="fa fa-eye"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            @* @if ((loggedInRole == Role.SuperAdmin.ToString() && loggedInUserId == Model.Id) ||
+                        !PermissionScanner.ValidatePermission("Roles", "Manage") || Model.RolesList?.Where(r =>
+                        r.Selected).FirstOrDefault()?.Text == Role.SuperAdmin.ToString())
+            {
+                <div class="col-md-6">
+                    <label asp-for="RoleId" class="form-label asteriskRequired mb-1">@Resource2.Role</label>
+                    <select asp-for="RoleId" class="form-select" asp-items="Model?.RolesList" disabled>
+                        <option value="">-- @Resource2.Select --</option>
+                    </select>
+                    <span asp-validation-for="RoleId" class="text-danger small"></span>
+                    <input asp-for="RoleId" hidden />
+                </div>
+            }
+            else
+            {
+                <div class="col-md-6">
+                    <label asp-for="RoleId" class="form-label asteriskRequired mb-1">@Resource2.Role</label>
+                    <select asp-for="RoleId" class="form-select" asp-items="Model?.RolesList">
+                        <option value="">-- @Resource2.Select --</option>
+                    </select>
+                    <span asp-validation-for="RoleId" class="text-danger small"></span>
+                </div>
+            } *@
+
+          
+              <div class="col-md-6">
+                <label asp-for="RoleId" class="form-label asteriskRequired mb-1">@Resource2.Role</label>
+
+                @if (canEditRole)
+                {
+                    <!-- Editable -->
+                    <select asp-for="RoleId"
+                            class="form-select"
+                            asp-items="Model?.RolesList">
+                        <option value="">-- @Resource2.Select --</option>
+                    </select>
+                }
+                else
+                {
+                    <!-- Read-only display -->
+                    <select class="form-select" disabled>
+                        @foreach (var role in Model.RolesList)
+                        {
+                            if (role.Value == Model.RoleId?.ToString())
+                            {
+                                <option selected>@role.Text</option>
+                            }
+                        }
+                    </select>
+
+                    <!-- Hidden input to send old value -->
+                    <input type="hidden" asp-for="RoleId" />
+                }
+
+                <span asp-validation-for="RoleId" class="text-danger small"></span>
+            </div>
+
+        </form>
+        @if (PermissionScanner.ValidatePermission("Account", "SaveSignature") && Model.Id != null)
+        {
+            <form id="signatureForm" action="SaveSignature" enctype="multipart/form-data" method="post">
+                <input type="hidden" name="UserId" value="@Model?.Id" />
+                <div class="col-md-12">
+                    <h5 class="form-label mb-1 my-3">@Resource2.Signature</h5>
+
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+
+                    <button type="button" class="btn btn-outline-secondary mb-2 " id="openSignatureModal">
+                        إضافة أو رسم التوقيع
+                    </button>
+                   
+                        <span class=" mb-1 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                    </div>
+                    @if (Model?.Signature?.ImagePath != null)
+                    {
+                        <div class="data-part text-center pt-1 pb-1">
+                            <img id="savedSignatureImg" src="~/@Model.Signature.ImagePath" alt="Signature" class="img-thumbnail"
+                                 style="max-height:150px;" />
+                        </div>
+                    }
+                    <div class="data-part text-center pt-1 pb-1">
+                        <img id="signaturePreview" class="img-thumbnail d-none" style="max-height:150px;" />
+                    </div>
+                </div>
+
+                <input type="file" class="form-control rounded-2 d-none" accept=".jpg,.jpeg,.png" id="SignatureFile"
+                       name="SignatureFile" onchange="previewSignature(this)">
+                <button type="button" id="saveSignatureBtn" class="btn btn-primary d-none mt-3">@Resource3.SaveSignature</button>
+
+            </form>
+
+            <!-- Signature Modal -->
+            <div class="modal" tabindex="-1" id="signatureModal"
+                 style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:2000; align-items:center; justify-content:center;">
+                <div class="modal-dialog" style="max-width:600px; width:95vw;">
+                    <div class="modal-content p-0" style="border-radius:12px; overflow:hidden;">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                إضافة أو رسم التوقيع
+                            </h5>
+                            <button type="button" class="btn-close" id="closeSignatureModal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body p-0">
+                            <ul class="nav nav-tabs mt-3" id="signatureTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="upload-tab" data-bs-toggle="tab"
+                                            data-bs-target="#uploadTab" type="button" role="tab">
+                                        تحميل صوره
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="draw-tab" data-bs-toggle="tab" data-bs-target="#drawTab"
+                                            type="button" role="tab">
+                                        رسم صوره
+                                    </button>
+                                </li>
+                            </ul>
+                            <div class="tab-content p-3" id="signatureTabContent">
+                                <div class="tab-pane fade show active" id="uploadTab" role="tabpanel">
+                                    <label class="btn btn-outline-success w-100" for="SignatureFileModal">
+                                        <i class="fa-solid fa-upload me-2"></i> تحميل ملف التوقيع
+                                    </label>
+                                    <input type="file" class="form-control d-none" id="SignatureFileModal"
+                                           accept=".jpg,.jpeg,.png">
+                                </div>
+                                <div class="tab-pane fade" id="drawTab" role="tabpanel">
+                                    <div class="mb-2">
+                                        ارسم توقيعك أدناه
+                                    </div>
+
+                                    <div style="border:1px dashed #ddd; border-radius:8px; overflow:hidden;">
+                                        <canvas id="signaturePadCanvas" width="500" height="200" style="background:#fff; width:100%; max-width:500px; display:block; margin:auto;"></canvas>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div>
+                                            <button type="button" class="btn btn-cancel-search btn-sm"
+                                                    id="clearSignaturePad">
+                                                Clear
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-success btn-sm"
+                                                    id="saveDrawnSignature">
+                                                @Resource3.SaveSignature
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="d-flex justify-content-end mt-1">
+            <button type="submit" class="btn btn-success me-1" id="mainFormSubmit">
+                <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+            </button>
+            @if (canEditRole)
+                {
+            <a asp-action="Index" class="btn btn-cancel-search">
+                @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+            </a>
+                }
+            else
+            {
+                <a asp-action="Index" asp-controller="Statistics" class="btn btn-cancel-search">
+                    @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+                </a>
+            }
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $('#mainFormSubmit').on('click', function () {
+            $('#mainForm').submit();
+        });
+
+        // Modal logic
+        const signatureModal = document.getElementById('signatureModal');
+        const openSignatureModalBtn = document.getElementById('openSignatureModal');
+        const closeSignatureModalBtn = document.getElementById('closeSignatureModal');
+        if (openSignatureModalBtn) {
+            openSignatureModalBtn.onclick = function () {
+                signatureModal.style.display = 'flex';
+            };
+        }
+        if (closeSignatureModalBtn) {
+            closeSignatureModalBtn.onclick = function () {
+                signatureModal.style.display = 'none';
+            };
+        }
+        window.onclick = function (event) {
+            if (event.target === signatureModal) {
+                signatureModal.style.display = 'none';
+            }
+        };
+
+        // Tab logic (Bootstrap 5 required)
+        // If not using Bootstrap JS, add simple tab switcher:
+        $(document).on('click', '#signatureTab .nav-link', function () {
+            $('#signatureTab .nav-link').removeClass('active');
+            $(this).addClass('active');
+            $('.tab-pane').removeClass('show active');
+            $($(this).data('bs-target')).addClass('show active');
+        });
+
+        // Upload tab: file input logic
+        $('#SignatureFileModal').on('change', function () {
+            const file = this.files[0];
+            if (file) {
+                // Copy file to main form input
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                document.getElementById('SignatureFile').files = dt.files;
+                previewSignature(document.getElementById('SignatureFile'));
+                signatureModal.style.display = 'none';
+            }
+        });
+
+        // Draw tab: signature pad logic
+        let isDrawing = false, lastX = 0, lastY = 0;
+        const canvas = document.getElementById('signaturePadCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+
+            function getXY(e) {
+                if (e.touches) {
+                    const rect = canvas.getBoundingClientRect();
+                    return [e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top];
+                } else {
+                    return [e.offsetX, e.offsetY];
+                }
+            }
+            canvas.addEventListener('mousedown', function (e) {
+                isDrawing = true;[lastX, lastY] = getXY(e);
+            });
+            canvas.addEventListener('mousemove', function (e) {
+                if (!isDrawing) return;
+                const [x, y] = getXY(e);
+                ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+                [lastX, lastY] = [x, y];
+            });
+            canvas.addEventListener('mouseup', function () { isDrawing = false; });
+            canvas.addEventListener('mouseout', function () { isDrawing = false; });
+            canvas.addEventListener('touchstart', function (e) { isDrawing = true;[lastX, lastY] = getXY(e); });
+            canvas.addEventListener('touchmove', function (e) {
+                if (!isDrawing) return;
+                const [x, y] = getXY(e);
+                ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(x, y); ctx.stroke();
+                [lastX, lastY] = [x, y];
+                e.preventDefault();
+            }, { passive: false });
+            canvas.addEventListener('touchend', function () { isDrawing = false; });
+
+            document.getElementById('clearSignaturePad').onclick = function () {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            };
+            document.getElementById('saveDrawnSignature').onclick = function () {
+                // Convert canvas to blob and set as file input
+                canvas.toBlob(function (blob) {
+                    const file = new File([blob], 'signature.png', { type: 'image/png' });
+                    const dt = new DataTransfer();
+                    dt.items.add(file);
+                    document.getElementById('SignatureFile').files = dt.files;
+                    previewSignature(document.getElementById('SignatureFile'));
+                    signatureModal.style.display = 'none';
+                }, 'image/png');
+            };
+        }
+
+        // Preview logic (shared)
+        function previewSignature(input) {
+            const file = input.files[0];
+            const preview = document.getElementById("signaturePreview");
+            const oldImage = document.getElementById("savedSignatureImg");
+            const saveBtn = document.getElementById("saveSignatureBtn");
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    preview.src = e.target.result;
+                    preview.classList.remove("d-none");
+                    saveBtn.classList.remove("d-none");
+                    if (oldImage) oldImage.classList.add("d-none");
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Save signature AJAX
+        $("#saveSignatureBtn").click(function () {
+            var form = $("#signatureForm")[0];
+            var formData = new FormData(form);
+            $.ajax({
+                url: '@Url.Action("SaveSignature", "Account", new { area = "Admin" })',
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        alert("✅ @Html.Raw(Resource2.SignatureSavedSuccessfully)");
+                        $("#signaturePreview")
+                            .attr("src", URL.createObjectURL($("#signatureForm input[type=file]")[0].files[0]))
+                            .removeClass("d-none");
+                    } else {
+                        alert("!!!! " + response.message);
+                    }
+                },
+                error: function () {
+                    alert("❌ @Html.Raw(Resource1.ErrorOccurred)");
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+    </script>
+}

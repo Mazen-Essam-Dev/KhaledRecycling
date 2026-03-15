@@ -1,0 +1,131 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.MaintenanceClub
+@model PaginatedList<MaintenanceClubVM>
+
+@{
+    ViewData["Title"] = @Resource1.ClubMaintenanceManagementList ?? " ";
+    ViewData["Title pakage"] = @Resource1.ClubMaintenanceManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.ClubMaintenanceManagementList ?? " ";
+    var addPermission = PermissionScanner.ValidatePermission("MaintenanceClub", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("MaintenanceClub", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("MaintenanceClub", "Delete");
+}
+
+<input type="hidden" id="NewCountRecords" value="@ViewBag.TotalCount" />
+
+
+<!-- Page Size Selector -->
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>@Resource1.MaintenanceLocation</th>
+                <th>@Resource1.MaintenanceTitle</th>
+                <th style="width:6%;">@* @Resource1.MaintenanceDate *@ @Resource1.Date1</th>
+                <th style="width:4%;">@* @Resource1.MaintenanceTime *@ @Resource1.Time</th>
+                <th style="width:12%;">@Resource2.Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Items.Any())
+            {
+                foreach (var item in Model.Items)
+                {
+                    <tr data-id="@item.Id">
+                        <td data-label="@Resource1.MaintenanceLocation">@item.Location</td>
+                        <td data-label="@Resource1.MaintenanceTitle">@item.Title</td>
+                        <td data-label="@Resource1.MaintenanceDate">@item.Date?.ToString("d")?.Replace("/","-")</td>
+                        <td data-label="@Resource1.MaintenanceTime">@item.Time?.ToString(@"hh\:mm")</td>
+                        <td data-label="@Resource2.Actions">
+                            
+                            <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Details">
+                                <a class="btn-control btn-icon btn-sm rounded-circle" asp-action="Details"
+                                    asp-route-id="@item.Id">
+                                    <i class="fa-solid fa-eye fs-5"></i>
+                                </a>
+                            </span>
+
+                            <span data-bs-toggle="tooltip" data-bs-title="المرفقات">
+                                <button class="btn-control btn-icon btn-sm rounded-circle open-maintenance-club-attachments-modal" data-maintenance-club-id="@item.Id">
+                                    <i class="fa-solid fa-paperclip fs-5"></i>
+                                </button>
+                            </span>
+
+                            @if (editPermission)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Edit">
+                                    <a asp-action="AddEdit" asp-route-id="@item.Id"
+                                       class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-pen-to-square fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+                            @if (deletePermission)
+                            {
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" class="d-inline" data-swal="delete"
+                                    data-message="@item.Title">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-trash fs-5"></i>
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoCars</h5>
+                            <p class="mb-0">@Resource2.GoToCreatePage</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+    <!-- Pagination -->
+    <nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+        <ul class="pagination my-1">
+            <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.PageIndex - 1)">
+                    @Resource2.Previous
+                </a>
+            </li>
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+                </li>
+            }
+            <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.PageIndex + 1)">
+                    @Resource2.Next
+                </a>
+            </li>
+        </ul>
+    </nav>

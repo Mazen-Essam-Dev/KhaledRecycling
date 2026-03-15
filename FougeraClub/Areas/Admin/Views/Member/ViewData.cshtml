@@ -1,0 +1,515 @@
+﻿@model MemberVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? Resource2.EditMember : Resource2.CreateMember;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center py-3 px-3 bg-white rounded shadow-sm mb-3">
+    <!-- Title -->
+    <div class="mb-2 mb-md-0">
+        <h2 class="h4 text-success fw-bold mb-0">
+            @ViewData["Title"]
+        </h2>
+    </div>
+</div>
+<div class="d-flex flex-wrap justify-content-between align-items-center border-top border-2 border-danger pt-3 mb-4">
+    <div>
+        @if (!string.IsNullOrEmpty(Model?.ProfileImagePath))
+        {
+            <img src="@Model.ProfileImagePath" style="width: 100px; height: auto;" alt="Profile" />
+        }
+        else
+        {
+            <i class="fa-solid fa-person"  alt="Default"></i>
+            @* <img src="~/images/default-avatar.png" style="width: 100px; height: auto;" alt="Default" /> *@
+        }
+    </div>
+    <div class="bg-light px-4 py-2 fw-bold">
+        @Model?.Code - @Model?.Id
+    </div>
+    <div>
+        <button type="button" onclick="window.print()" class="btn btn-light border">@Resource2.Print</button>
+    </div>
+</div>
+
+<!-- التاريخ -->
+<div class="text-center mb-3">
+    <span>@Model?.RegistrationDate.ToString("d")?.Replace("/","-")</span>
+</div>
+
+
+<div class="content-inner">
+    <div class="data-part">
+        <h2 class="home-second-title">@Resource2.EditMyData</h2>
+        <div>
+
+            <form method="get" enctype="multipart/form-data">
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <input asp-for="Id" hidden />
+                <div class="row g-3">
+
+                    <!-- Column 1 -->
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="Code" class="form-label fw-semibold">@Resource2.Code</label>
+
+                        <input asp-for="Code" readonly type="number" class="form-control" placeholder="@Resource2.Code" />
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="FullNameAr" class="form-label fw-semibold">@Resource2.FullNameAr</label>
+
+                        <input asp-for="FullNameAr" readonly class="form-control " placeholder="@Resource2.FullNameAr" />
+                        <span asp-validation-for="FullNameAr" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="FullNameEn" class="form-label fw-semibold">@Resource2.FullName</label>
+
+                        <input asp-for="FullNameEn" readonly class="form-control " placeholder="@Resource2.FullNameEn" />
+                        <span asp-validation-for="FullNameEn" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6   mb-3">
+                        <label asp-for="Email" class="form-label">@Resource2.Email</label>
+
+                        <input asp-for="Email" readonly class="form-control" placeholder="@Resource2.Email" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+
+
+
+
+
+
+                    <!-- Other form fields -->
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="IdNumber" class="form-label fw-semibold">@Resource2.IdNumber</label>
+
+                        <input asp-for="IdNumber" readonly class="form-control " placeholder="@Resource2.IdNumber" />
+                        <span asp-validation-for="IdNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="IdExpiryDate" class="form-label fw-semibold">@Resource2.IdExpiryDate</label>
+
+                        <input asp-for="IdExpiryDate" readonly type="date" class="form-control " placeholder="@Resource2.IdExpiryDate" />
+                        <span asp-validation-for="IdExpiryDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="DateOfBirth" class="form-label fw-semibold">@Resource2.DateOfBirth</label>
+
+                        <input asp-for="DateOfBirth" readonly type="date" class="form-control " id="DateOfBirth" placeholder="@Resource2.DateOfBirth" />
+                        <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="Age" class="form-label fw-semibold">@Resource2.Age</label>
+
+                        <input asp-for="Age" readonly type="number" class="form-control " id="Age" placeholder="@Resource2.Age" />
+                        <span asp-validation-for="Age" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="PhoneNumber" class="form-label fw-semibold">@Resource2.PhoneNumber</label>
+
+                        <input asp-for="PhoneNumber" readonly class="form-control" placeholder="@Resource2.PhoneNumber" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3" id="fatherPhoneWrapper" style="display: none;">
+                        <label asp-for="FatherPhone" class="form-label fw-semibold"> @Resource2.FatherPhone</label>
+
+                        <input asp-for="FatherPhone" readonly class="form-control" placeholder="@Resource2.FatherPhone" />
+                        <span asp-validation-for="FatherPhone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3" id="motherPhoneWrapper" style="display: none;">
+                        <label asp-for="MotherPhone" class="form-label fw-semibold">@Resource2.MotherPhone</label>
+
+                        <input asp-for="MotherPhone" readonly class="form-control" placeholder="@Resource2.MotherPhone" />
+                        <span asp-validation-for="MotherPhone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="AcademicQualification" class="form-label fw-semibold">@Resource2.AcademicQualification</label>
+
+                        <input asp-for="AcademicQualification" readonly class="form-control" placeholder="@Resource2.AcademicQualification" />
+                        <span asp-validation-for="AcademicQualification" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EducationInstitution" class="form-label fw-semibold">@Resource2.EducationInstitution</label>
+
+                        <input asp-for="EducationInstitution" readonly class="form-control" placeholder="@Resource2.EducationInstitution" />
+                        <span asp-validation-for="EducationInstitution" class="text-danger small"></span>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label asp-for="NationalityId" class="form-label">@Resource2.Nationality</label>
+                        <select asp-for="NationalityId" disabled class="form-select" asp-items="Model?.NationalitiesList">
+                            <option value="">-- @Resource2.Select --</option>
+                        </select>
+                        <span asp-validation-for="NationalityId" class="text-danger small"></span>
+                    </div>
+
+
+                    <div class="col-md-6">
+                        <label asp-for="CityId" class="form-label">@Resource2.City</label>
+                        <select asp-for="CityId" disabled class="form-select" asp-items="Model?.CitiesList">
+                            <option value="">-- @Resource2.SelectCity --</option>
+                        </select>
+                        <span asp-validation-for="CityId" class="text-danger small"></span>
+                    </div>
+
+
+                    <!-- Column 2 -->
+                    <!-- GuardianProfession (Father's Job) — shown if NOT first option -->
+                    <div class="col-md-6  mb-3" id="guardianProfessionWrapper" style="display: none;">
+                        <label asp-for="GuardianProfession" class="form-label">@Resource2.GuardianProfession</label>
+
+                        <input asp-for="GuardianProfession" readonly class="form-control " id="GuardianProfession" placeholder="@Resource2.GuardianProfession" />
+                        <span asp-validation-for="GuardianProfession" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Profession (User Job) — shown only if first option is selected -->
+                    <div class="col-md-6  mb-3" id="professionWrapper" style="display: none;">
+                        <label asp-for="Profession" class="form-label">Profession</label>
+
+                        <input asp-for="Profession" readonly class="form-control" id="Profession" placeholder="@Resource2.Profession" />
+                        <span asp-validation-for="Profession" class="text-danger small"></span>
+                    </div>
+
+
+
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="Address" class="form-label">@Resource2.Address</label>
+
+                        <input asp-for="Address" readonly class="form-control" placeholder="@Resource2.Address" />
+                        <span asp-validation-for="Address" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="Hobby" class="form-label">@Resource2.Hobby</label>
+
+                        <input asp-for="Hobby" readonly class="form-control" placeholder="@Resource2.Hobby" />
+                        <span asp-validation-for="Hobby" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="Languages" class="form-label">@Resource2.Languages</label>
+
+                        <input asp-for="Languages" readonly class="form-control" placeholder="@Resource2.Languages" />
+                        <span asp-validation-for="Languages" class="text-danger small"></span>
+                    </div>
+
+
+
+
+
+                    <div class="col-md-4   mb-3">
+                        <label asp-for="Facebook" class="form-label">@Resource2.Facebook</label>
+
+                        <input asp-for="Facebook" readonly class="form-control" placeholder="@Resource2.Facebook" />
+                        <span asp-validation-for="Facebook" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4   mb-3">
+                        <label asp-for="Xplatform" class="form-label">@Resource2.Xplatform</label>
+
+                        <input asp-for="Xplatform" readonly class="form-control" placeholder="@Resource2.Xplatform" />
+                        <span asp-validation-for="Xplatform" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4   mb-3">
+                        <label asp-for="Instagram" class="form-label">@Resource2.Instagram</label>
+
+                        <input asp-for="Instagram" readonly class="form-control" placeholder="@Resource2.Instagram" />
+                        <span asp-validation-for="Instagram" class="text-danger small"></span>
+                    </div>
+
+
+                    <div class="data-part">
+                        <h1 class="part-title">@Resource2.AttachedFiles</h1>
+
+                        <div class="section">
+                            <div>
+                                <div class="row">
+                                    <!-- Profile Image Section -->
+                                    <div class="col-md-4 col-12">
+                                        <div class="mb-3">
+                                            <label asp-for="ProfileImage" class="form-label d-flex justify-content-between">
+                                                @Resource2.ProfileImage
+                                                @if (!string.IsNullOrEmpty(Model?.ProfileImagePath))
+                                                {
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#profileImageModal" class="eye-ii">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                }
+                                            </label>
+                                            
+                                        </div>
+                                    </div>
+
+                                    <!-- ID Image Section -->
+                                    <div class="col-md-4 col-12">
+                                        <div class="mb-3">
+                                            <label asp-for="IdImage" class="form-label d-flex justify-content-between">
+                                                @Resource2.IdImage
+                                                @if (!string.IsNullOrEmpty(Model?.IdImagePath))
+                                                {
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#idImageModal" class="eye-ii">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                }
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Passport Image Section -->
+                                    <div class="col-md-4 col-12">
+                                        <div class="mb-3">
+                                            <label asp-for="PassportImage" class="form-label d-flex justify-content-between">
+                                                @Resource2.PassportImage
+                                                @if (!string.IsNullOrEmpty(Model?.PassportImagePath))
+                                                {
+                                                    <a href="#" data-bs-toggle="modal" data-bs-target="#passportImageModal" class="eye-ii">
+                                                        <i class="fa fa-eye"></i>
+                                                    </a>
+                                                }
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model?.ProfileImagePath))
+                        {
+                            <div class="modal fade" id="profileImageModal" tabindex="-1" aria-labelledby="profileImageLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">@Resource2.ProfileImage</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="@Model.ProfileImagePath" class="img-fluid" alt="الصورة الشخصية" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model?.IdImagePath))
+                        {
+                            <div class="modal fade" id="idImageModal" tabindex="-1" aria-labelledby="idImageLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">@Resource2.IdImage</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="@Model.IdImagePath" class="img-fluid" alt="صورة الهوية" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model?.PassportImagePath))
+                        {
+                            <div class="modal fade" id="passportImageModal" tabindex="-1" aria-labelledby="passportImageLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">@Resource2.PassportImage</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                        </div>
+                                        <div class="modal-body text-center">
+                                            <img src="@Model.PassportImagePath" class="img-fluid" alt="صورة جواز السفر" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+
+
+                    <!-- Gender -->
+                    <div class="col-md-4">
+                        <label class="form-label d-block">@Resource2.Gender</label>
+
+                        @foreach (var item in Html.GetEnumSelectList<Gender>() ?? Enumerable.Empty<SelectListItem>())
+                        {
+                            var isChecked = Model?.GenderId?.ToString() == item.Value ? "checked" : "";
+                            <div class="form-check form-check-inline">
+                                <input disabled class="form-check-input" type="radio"
+                                       name="GenderId"
+                                       id="gender_@item.Value"
+                                       value="@item.Value"
+                                       @(isChecked) />
+
+                                <label class="form-check-label" for="gender_@item.Value">@item.Text</label>
+                            </div>
+                        }
+
+                        <span asp-validation-for="GenderId" class="text-danger small"></span>
+                    </div>
+                    <!-- HeardBy -->
+                    <div class="col-md-4">
+                        <label class="form-label d-block">@Resource2.HeardBy</label>
+                        @foreach (var item in Html.GetEnumSelectList<HeardBySources>() ?? Enumerable.Empty<SelectListItem>())
+                        {
+                            <div class="form-check form-check-inline">
+                                <input disabled class="form-check-input" type="radio" name="HeardBy" id="heardby_@item.Value"
+                                       value="@item.Value" @(Model.HeardBy?.ToString() == item.Value ? "checked" : "") />
+                                <label class="form-check-label" for="heardby_@item.Value">@item.Text</label>
+                            </div>
+                        }
+
+                        <span asp-validation-for="HeardBy" class="text-danger small"></span>
+                        <!-- Hidden input to submit the selected GenderId value -->
+                        <input type="hidden" asp-for="HeardBy" value="@Model?.HeardBy" />
+
+                    </div>
+
+                    <!-- Profession -->
+                    <div class="col-md-4">
+                        <label class="form-label d-block">@Resource2.Profession</label>
+
+                        @foreach (var item in Html.GetEnumSelectList<Profession>() ?? Enumerable.Empty<SelectListItem>())
+                        {
+                            <div class="form-check form-check-inline">
+                                <input disabled class="form-check-input" type="radio" name="ProfessionId" id="profession_@item.Value"
+                                       value="@item.Value" @(Model.ProfessionId?.ToString() == item.Value ? "checked" : "") />
+                                <label class="form-check-label" for="profession_@item.Value">@item.Text</label>
+                            </div>
+                        }
+                        <span asp-validation-for="ProfessionId" class="text-danger small"></span>
+                    </div>
+
+
+                    <div class="col-md-12  mb-3 p-2">
+                        <!-- Hidden input that will be updated via JS -->
+                        <input  type="hidden" name="License" id="LicenseHidden" value="false" />
+
+                        <!-- Checkbox shown to the user -->
+                        <input disabled class="form-check-input" type="checkbox"
+                               id="License"
+                               value="true"
+                               @(Model.License.Value ? "checked" : "") />
+
+                        <label class="form-check-label" for="License">
+                            @Resource2.LicensePhotographSocialMedia
+                        </label>
+
+                        <span asp-validation-for="License" class="text-danger small d-block"></span>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-end mt-4">
+                    <a onclick="window.open('/Admin/Course/SubscribedMembersInCourses', '_blank');" class="btn btn-success btn-lg px-3">@Resource2.Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dobInput = document.getElementById("DateOfBirth");
+            const ageInput = document.getElementById("Age");
+
+            const fatherWrapper = document.getElementById("fatherPhoneWrapper");
+            const motherWrapper = document.getElementById("motherPhoneWrapper");
+            const fatherPhone = document.getElementById("FatherPhone");
+            const motherPhone = document.getElementById("MotherPhone");
+
+            function calculateAge() {
+                const dob = new Date(dobInput.value);
+                if (!isNaN(dob)) {
+                    const today = new Date();
+                    let age = today.getFullYear() - dob.getFullYear();
+                    const m = today.getMonth() - dob.getMonth();
+                    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                        age--;
+                    }
+
+                    ageInput.value = age;
+
+                    // Show/hide Father and Mother phone inputs based on age
+                    const showGuardianFields = age < 18;
+                    fatherWrapper.style.display = showGuardianFields ? "block" : "none";
+                    motherWrapper.style.display = showGuardianFields ? "block" : "none";
+                    fatherPhone.disabled = !showGuardianFields;
+                    motherPhone.disabled = !showGuardianFields;
+
+                    if (!showGuardianFields) {
+                        fatherPhone.value = "";
+                        motherPhone.value = "";
+                    }
+                } else {
+                    ageInput.value = '';
+                    fatherWrapper.style.display = "none";
+                    motherWrapper.style.display = "none";
+                    fatherPhone.disabled = true;
+                    motherPhone.disabled = true;
+                    fatherPhone.value = "";
+                    motherPhone.value = "";
+                }
+            }
+
+            dobInput.addEventListener("change", calculateAge);
+            calculateAge(); // Initial run
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const professionRadios = document.querySelectorAll('input[name="ProfessionId"]');
+            const professionWrapper = document.getElementById("professionWrapper");
+            const guardianProfessionWrapper = document.getElementById("guardianProfessionWrapper");
+            const professionInput = document.getElementById("Profession");
+            const guardianProfessionInput = document.getElementById("GuardianProfession");
+
+            function toggleProfessionInputs() {
+                const selected = document.querySelector('input[name="ProfessionId"]:checked');
+                if (selected) {
+                    if (selected.value === professionRadios[0].value ||  selected.value === professionRadios[3].value) {
+                        professionWrapper.style.display = "block";
+                        guardianProfessionWrapper.style.display = "none";
+                        guardianProfessionInput.value = "";
+                    } else {
+                        professionWrapper.style.display = "none";
+                        guardianProfessionWrapper.style.display = "block";
+                        professionInput.value = "";
+                    }
+                }
+            }
+
+            professionRadios.forEach(radio => {
+                radio.addEventListener("change", toggleProfessionInputs);
+            });
+
+            toggleProfessionInputs(); // Initial run
+        });
+    </script>
+    <script>
+        document.getElementById('License').addEventListener('change', function () {
+            const hidden = document.getElementById('LicenseHidden');
+            hidden.value = this.checked ? "true" : "false";
+        });
+    </script>
+
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+<title>Activity Module Documentation</title>	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Activity Module Documentation</h1>
+
+<table class="doc-table">
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>_ActivityService</td><td>Service for handling activity CRUD operations</td></tr>
+<tr><td>_unitOfWork</td><td>Access to repositories like Users, Departments, Subscriptions</td></tr>
+<tr><td>_mapper</td><td>AutoMapper for mapping between DTOs and ViewModels</td></tr>
+<tr><td>_excelReportService</td><td>Service to generate Excel reports with localization</td></tr>
+</tbody>
+</table>
+
+<h2>ActivityController Actions Overview</h2>
+
+<table class="doc-table">
+<thead>
+<tr><th>Action</th><th>Purpose / Features</th></tr>
+</thead>
+<tbody>
+<tr><td>Index</td><td>Display paginated activities, filter by date/keyword, calculate duration and subscription count, supports Ajax partial views</td></tr>
+<tr><td>AddEdit</td><td>Create/Edit activity, file attachment management (PDF ≤ 5MB), dropdown refill on validation fail, temporary file storage, validation for type/size</td></tr>
+<tr><td>Details</td><td>PartialView display of activity details, file existence check, dynamic duration, lightweight modal</td></tr>
+<tr><td>MembersActivity</td><td>Display members of an activity, pagination, filtering, combined activity/member ViewModel, supports Ajax</td></tr>
+<tr><td>Delete</td><td>Delete activity by id, async, admin authorization, redirects to list</td></tr>
+<tr><td>Print & ExportToExcel</td><td>Print/export activities, keyword/date filtering, calculate duration/subscription count, bilingual formatting, dynamic columns, improved date formatting</td></tr>
+<tr><td>createExcelReport_Download</td><td>Download filtered activity data as Excel, DTO conversion, localization, timestamp-based file naming, try-catch error handling</td></tr>
+<tr><td>PrintMembersActivity / createExcelReport_Download_MembersActivity</td><td>Print/export subscribed members, includes nationality, age, contact, activity context, bilingual support</td></tr>
+</tbody>
+</table>
+
+<h2>Validation & Session</h2>
+
+<table class="doc-table">
+<thead>
+<tr><th>Validation / Session</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>File Validation</td><td>PDF only, max 5MB, temporary storage, old file cleanup</td></tr>
+<tr><td>Model Validation</td><td>Required fields: TitleAr/En, dates, location; start < end validation; proper file path handling</td></tr>
+<tr><td>Language Support</td><td>Bilingual UI, session-based language, Resource1/2</td></tr>
+<tr><td>Session Management</td><td>Language preference, temp file paths, improved UX</td></tr>
+</tbody>
+</table>
+
+<h2>ActivityService Documentation</h2>
+
+<table class="doc-table">
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>_unitOfWork</td><td>Access to repositories (Activities, Members, Subscriptions)</td></tr>
+<tr><td>FileName</td><td>Default folder/file name for saving attachments ("Activities")</td></tr>
+</tbody>
+</table>
+
+<h2>ActivityService Methods</h2>
+
+<table class="doc-table">
+<thead>
+<tr><th>Method</th><th>Purpose / Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>GetAllAsync</td><td>Retrieve all activities asynchronously</td></tr>
+<tr><td>GetByIdAsync</td><td>Retrieve activity by id, returns null if not found</td></tr>
+<tr><td>AddAsync</td><td>Add activity, optional file upload, transactional save, returns new Id</td></tr>
+<tr><td>UpdateAsync</td><td>Update activity, optional file replacement, preserves old file paths, uses UpdateValues pattern</td></tr>
+<tr><td>DeleteAsync</td><td>Delete activity, cleanup file attachment, transaction commit</td></tr>
+<tr><td>GetAllMembersOfActivityAsync</td><td>Get members subscribed to activity, eager load Nationality, separate member/subscription retrieval</td></tr>
+</tbody>
+</table>
+
+<h2>Activity Entity</h2>
+
+<table class="doc-table">
+<thead>
+<tr><th>Property</th><th>Type</th><th>Notes / Validation</th></tr>
+</thead>
+<tbody>
+<tr><td>Id</td><td>int</td><td>Primary key, [Key]</td></tr>
+<tr><td>TitleAr</td><td>string?</td><td>Max 200, Arabic</td></tr>
+<tr><td>TitleEn</td><td>string?</td><td>Max 200, English</td></tr>
+<tr><td>StartDate</td><td>DateOnly?</td><td>Start date of activity</td></tr>
+<tr><td>EndDate</td><td>DateOnly?</td><td>End date of activity</td></tr>
+<tr><td>MinimumAge</td><td>int?</td><td>Minimum allowed age</td></tr>
+<tr><td>Location</td><td>string?</td><td>Max 200</td></tr>
+<tr><td>Description</td><td>string?</td><td>Optional description</td></tr>
+<tr><td>Achievement</td><td>string?</td><td>Optional achievements</td></tr>
+<tr><td>AttachmentPath</td><td>string?</td><td>Max 300, file path</td></tr>
+<tr><td>Questions</td><td>ICollection&lt;Question&gt;</td><td>Initialized empty list</td></tr>
+</tbody>
+</table>
+
+<h2>ActivityVM ViewModel</h2>
+
+<table class="doc-table">
+<thead>
+<tr><th>Property</th><th>Description</th><th>Validation / Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Id</td><td>Activity identifier</td><td>Auto-managed</td></tr>
+<tr><td>TitleAr</td><td>Arabic title</td><td>Required, Max 200</td></tr>
+<tr><td>TitleEn</td><td>English title</td><td>Required, Max 200</td></tr>
+<tr><td>StartDate</td><td>Activity start date</td><td>Required, Not in past</td></tr>
+<tr><td>EndDate</td><td>Activity end date</td><td>Required, after StartDate</td></tr>
+<tr><td>MinimumAge</td><td>Minimum age</td><td>Required</td></tr>
+<tr><td>Location</td><td>Activity location</td><td>Required, Max 200</td></tr>
+<tr><td>Description</td><td>Details</td><td>Optional</td></tr>
+<tr><td>Achievement</td><td>Achievements</td><td>Optional</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>Property</th><th>Description</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>AttachmentPath</td><td>File storage path</td><td>Max length 300</td></tr>
+<tr><td>Attachment</td><td>File upload</td><td>IFormFile</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>Property</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>IsSubscribed</td><td>bool</td><td>Indicates if current user is subscribed</td></tr>
+<tr><td>ActivityDuration</td><td>int?</td><td>Duration in days</td></tr>
+<tr><td>SubscriptionCount</td><td>int?</td><td>Number of participants</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>Property</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Questions</td><td>Activity-related questions (IEnumerable&lt;Question&gt;)</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>MembersActivityVM</th><th>Description</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Activity</td><td>ActivityVM</td><td>Activity information</td></tr>
+<tr><td>Members</td><td>MemberVM list</td><td>Related members</td></tr>
+<tr><td>Subscriptions</td><td>Subscription list</td><td>Member subscriptions to this activity</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>SubscribedMemberInActivitiesVM</th><th>Description</th><th>Notes</th></tr>
+</thead>
+<tbody>
+<tr><td>Activity</td><td>Selected activity details</td><td>ActivityVM</td></tr>
+<tr><td>Members_Paginated</td><td>Paginated members</td><td>PaginatedList&lt;MemberVM&gt;</td></tr>
+<tr><td>Subscriptions</td><td>Raw subscription records</td><td>IEnumerable&lt;Subscription&gt;</td></tr>
+</tbody>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

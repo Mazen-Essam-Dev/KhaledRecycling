@@ -1,0 +1,57 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.AnnualSchedule
+@model AnnualScheduleVM
+@{
+    ViewData["Title pakage"] = @Resource1.AnnualInventoryManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.InventoryDetails ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.InventoryList ?? " ";
+
+}
+
+<!-- Breadcrumb Navigation Column -->
+<div class="col-6">
+    <nav aria-label="breadcrumb" class="ms-2">
+        <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+            <li class="breadcrumb-item">
+                <a href="#">@ViewData["Title pakage"]</a>
+            </li>
+
+            <li class="breadcrumb-item"><a href="/Admin/AnnualSchedule/Index">@ViewData["Title ListIndex"]</a></li>
+
+            <li class="breadcrumb-item">
+                <a href="#">@ViewData["Title Single"]</a>
+            </li>
+        </ol>
+    </nav>
+</div>
+
+<div class="content-inner">
+    <div class="data-part">
+        <h2 class="home-second-title">@Resource1.InventoryDetails</h2>
+        <div class="card p-4">
+            <dl class="row">
+                <dt class="col-sm-3">@Resource1.Item</dt>
+                <dd class="col-sm-9">@Model.Item</dd>
+                <dt class="col-sm-3">@Resource1.Statement</dt>
+                <dd class="col-sm-9">@Model.Statement</dd>
+                <dt class="col-sm-3">@Resource1.Previous</dt>
+                <dd class="col-sm-9">@Model.Previous</dd>
+                <dt class="col-sm-3">@Resource1.Current</dt>
+                <dd class="col-sm-9">@Model.Current</dd>
+                <dt class="col-sm-3">@Resource1.Record</dt>
+                <dd class="col-sm-9">@Model.Record</dd>
+                <dt class="col-sm-3">@Resource1.Status1</dt>
+                <dd class="col-sm-9">@Model.Status</dd>
+                <dt class="col-sm-3">@Resource1.Day</dt>
+                <dd class="col-sm-9">@Model.Day?.ToString("d")?.Replace("/","-")</dd>
+                <dt class="col-sm-3">@Resource1.Day</dt>
+                <dd class="col-sm-9">@ViewBag.Daytext</dd>
+                <dt class="col-sm-3">@Resource1.Year</dt>
+                <dd class="col-sm-9">@Model.year</dd>
+            </dl>
+        </div>
+        <div class="mt-3 d-flex justify-content-end">
+            <a asp-action="Index" class="btn btn-secondary">@Resource1.BackToList</a>
+        </div>
+    </div>
+</div>

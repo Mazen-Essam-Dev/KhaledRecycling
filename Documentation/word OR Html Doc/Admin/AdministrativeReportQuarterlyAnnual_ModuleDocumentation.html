@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Administrative Report Quarterly & Annual System Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Administrative Report Quarterly & Annual System Documentation</h1>
+
+<section>
+    <h2>Controller Overview</h2>
+    <p>ASP.NET Core Controller for managing quarterly and annual administrative reports with activity tracking and signature verification.</p>
+    <table>
+        <tr><th>Property</th><th>Value</th></tr>
+        <tr><td>Area</td><td>Admin</td></tr>
+        <tr><td>Authorization</td><td>AdminAuthorize</td></tr>
+        <tr><td>Dependencies</td><td>IAdministrativeReportQuarterlyAnnualService, IMapper (AutoMapper)</td></tr>
+    </table>
+</section>
+
+<section>
+    <h2>Action Methods</h2>
+    <table>
+        <tr><th>Method</th><th>Purpose</th><th>Parameters</th><th>Features</th></tr>
+        <tr>
+            <td>Index</td>
+            <td>Main dashboard for quarterly/annual reports</td>
+            <td>selectedYear (optional)</td>
+            <td>
+                Year dropdown population, Quarterly data aggregation, Activity and administrative counts calculation,
+                Collaborative report signature checking, AJAX partial view support
+            </td>
+        </tr>
+        <tr>
+            <td>All2Details</td>
+            <td>Combined administrative and activities details view</td>
+            <td>selectedYear, quarter, pagination</td>
+            <td>Delegates to service layer, Signature verification, Returns mapped data</td>
+        </tr>
+        <tr>
+            <td>AdminstrativeDetails</td>
+            <td>Administrative-only reports view</td>
+            <td>selectedYear, quarter, pagination</td>
+            <td>Quarter filtering, Annual summary (quarter=5), Signature verification</td>
+        </tr>
+        <tr>
+            <td>ActivitiesDetails</td>
+            <td>Activities-focused reports with chart data</td>
+            <td>selectedYear, quarter, pagination</td>
+            <td>Pie chart data, Monthly participation, Activity duration, Quarter-based grouping</td>
+        </tr>
+    </table>
+</section>
+
+<section>
+    <h2>Print Methods</h2>
+    <table>
+        <tr><th>Method</th><th>Purpose</th></tr>
+        <tr><td>PrintActivitiesDetails</td><td>Printable version of activities report</td></tr>
+        <tr><td>PrintAdminstrativeDetails</td><td>Printable administrative reports</td></tr>
+        <tr><td>PrintAll2Details</td><td>Printable combined reports</td></tr>
+    </table>
+    <p>All use [IgnoreAction] attribute to exclude routes.</p>
+</section>
+
+<section>
+    <h2>Signature & OTP System</h2>
+    <table>
+        <tr><th>Feature</th><th>Description</th></tr>
+        <tr>
+            <td>SendOtp</td>
+            <td>Generates and sends OTP for specific roles (trainer/manager)</td>
+        </tr>
+        <tr>
+            <td>ValidateOtp</td>
+            <td>Verifies OTP codes for report signing with [NoLogging] attribute</td>
+        </tr>
+        <tr>
+            <td>Signature Integration</td>
+            <td>Signature checking across all detail views, Role-based authorization, Quarterly report type differentiation</td>
+        </tr>
+    </table>
+</section>
+
+<section>
+    <h2>Quarter Handling Code</h2>
+    <pre><code>List&lt;List&lt;int&gt;&gt; quarters = new() {
+    new List&lt;int&gt;{1,2,3},    // Q1
+    new List&lt;int&gt;{4,5,6},    // Q2
+    new List&lt;int&gt;{7,8,9},    // Q3
+    new List&lt;int&gt;{10,11,12}  // Q4
+};</code></pre>
+</section>
+
+<section>
+    <h2>DTO Summary Table</h2>
+    <table>
+        <tr><th>DTO Name</th><th>Level</th><th>Contains Details?</th><th>Primary Use</th></tr>
+        <tr>
+            <td>MonthlyAdministrativeReportDetailDTO</td><td>Item level</td><td>Yes</td><td>Represents one recorded activity</td>
+        </tr>
+        <tr>
+            <td>MonthsOfYearsAnnualyDTO</td><td>Monthly summary</td><td>No</td><td>Dashboard counts and summaries</td>
+        </tr>
+        <tr>
+            <td>MonthsOfYearsAnnualyWithDetailsDTO</td><td>Monthly detailed</td><td>Yes</td><td>Full reporting and printing</td>
+        </tr>
+        <tr>
+            <td>MonthsOfYearsAnnualyActivitiesAndAdministrativeDTO</td><td>Quarterly/Annual comparison</td><td>Yes</td><td>Charts, side-by-side analysis</td>
+        </tr>
+    </table>
+</section>
+
+<section>
+    <h2>ViewModels Overview</h2>
+    <table>
+        <tr><th>ViewModel</th><th>Purpose</th></tr>
+        <tr><td>ActivitiesReportQuarterlyVM</td><td>Quarterly activities report with detailed months and chart data</td></tr>
+        <tr><td>AdministrativeReportQuarterlyAnnualIndexVM</td><td>Index page summary counts and quarters dropdown</td></tr>
+        <tr><td>AdministrativeReportQuarterlyAnnualVM</td><td>Detailed ViewModel for quarterly/annual report</td></tr>
+        <tr><td>MonthsOfYearsAnnualyActivitiesAndAdministrative</td><td>Combines admin and activity data for quarterly charts</td></tr>
+        <tr><td>MonthsOfYearsAnnualyVM</td><td>Represents monthly data within a year</td></tr>
+        <tr><td>MonthsOfYearsAnnualyWithDetailsVM</td><td>Monthly data with child details and paging</td></tr>
+        <tr><td>OTPRequest</td><td>OTP validation request for signing reports</td></tr>
+        <tr><td>PieChartVM</td><td>Stores chart data for quarterly participation visualization</td></tr>
+        <tr><td>QuartersReportActivitiesDetailsVM</td><td>Detailed activities for a specific quarter report</td></tr>
+        <tr><td>QuartersReportAdminstrativeDetailsVM</td><td>Detailed administrative report for a specific quarter</td></tr>
+        <tr><td>QuartersReportCollaborativeDetailsVM</td><td>Collaborative reports combining activities and administrative data</td></tr>
+    </table>
+</section>
+
+<section>
+    <h2>Business Logic Summary</h2>
+    <table>
+        <tr><th>Feature</th><th>Description</th></tr>
+        <tr>
+            <td>Quarter Management</td>
+            <td>Dynamic availability, filtering, validation, empty state handling</td>
+        </tr>
+        <tr>
+            <td>Signature Workflow</td>
+            <td>Manager signature requirement, OTP-based authentication, role-based access</td>
+        </tr>
+        <tr>
+            <td>Data Calculation</td>
+            <td>Activity duration summation, participant aggregation, monthly subtotals, grand totals</td>
+        </tr>
+    </table>
+</section>
+
+<section>
+    <h2>Technical & Integration Points</h2>
+    <table>
+        <tr><th>Feature</th><th>Description</th></tr>
+        <tr><td>Charts</td><td>Chart.js, Doughnut/Bar charts, Multi-level, Color coding, Custom center text, Tooltips</td></tr>
+        <tr><td>State Management</td><td>Session storage, AJAX partial updates, Modal management</td></tr>
+        <tr><td>Export</td><td>Print functionality, Signature requirement enforcement, Year/Quarter parameter passing</td></tr>
+        <tr><td>Localization</td><td>Resource files for multi-language support, Culture-specific loading</td></tr>
+    </table>
+</section>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

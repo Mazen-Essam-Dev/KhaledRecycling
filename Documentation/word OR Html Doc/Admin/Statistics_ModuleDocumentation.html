@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Statistics Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<h1>Statistics Module Documentation</h1>
+
+<!-- ================= SupplierService ================= -->
+
+<h2>SupplierService</h2>
+
+<table>
+    <tr>
+        <th>Section</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Overview</td>
+        <td>Service layer for managing suppliers with data integrity checks, attachment handling, and relationship tracking.</td>
+    </tr>
+    <tr>
+        <td>Dependencies</td>
+        <td>
+            <ul>
+                <li>IUnitOfWork – Repository & transactions</li>
+                <li>IWebHostEnvironment – File attachment handling</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+<h3>SupplierService Operations</h3>
+
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Key Notes</th>
+    </tr>
+    <tr>
+        <td>GetAllAsync()</td>
+        <td>Retrieve all suppliers</td>
+        <td>
+            • Uses <b>AsNoTracking()</b><br>
+            • Dynamically sets <b>HasRelatedData</b><br>
+            • Checks Expenses, Receipts, PurchaseOrders
+        </td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync(int id)</td>
+        <td>Fetch supplier by ID</td>
+        <td>Returns nullable Supplier entity</td>
+    </tr>
+    <tr>
+        <td>AddAsync(Supplier)</td>
+        <td>Create new supplier</td>
+        <td>Returns generated supplier ID</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync(Supplier)</td>
+        <td>Update existing supplier</td>
+        <td>Includes null safety checks</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync(int id)</td>
+        <td>Delete supplier</td>
+        <td>Prevents deletion if entity not found</td>
+    </tr>
+</table>
+
+<h3>Relationship Integrity Logic</h3>
+
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Implementation</th>
+    </tr>
+    <tr>
+        <td>HasRelatedData</td>
+        <td>
+            <code>
+context.Expenses.Any(e => e.SupplierId == s.Id) ||
+context.Receipts.Any(r => r.SupplierId == s.Id) ||
+context.PurchaseOrders.Any(po => po.SupplierId == s.Id)
+            </code>
+        </td>
+    </tr>
+</table>
+
+<!-- ================= StatisticsService ================= -->
+
+<h2>StatisticsService</h2>
+
+<table>
+    <tr>
+        <th>Section</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Overview</td>
+        <td>Provides system-wide analytics across members, courses, activities, departments, and demographics.</td>
+    </tr>
+    <tr>
+        <td>Dependencies</td>
+        <td>
+            <ul>
+                <li>IMemberService</li>
+                <li>IUnitOfWork</li>
+                <li>IHttpContextAccessor (Localization)</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+<h3>Statistics Operations</h3>
+
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Output</th>
+    </tr>
+    <tr>
+        <td>GetStatisticsAsync()</td>
+        <td>Collect and calculate all analytics</td>
+        <td>StatisticsDTO</td>
+    </tr>
+</table>
+
+<h3>Statistical Dimensions</h3>
+
+<table>
+    <tr>
+        <th>Category</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Subscriptions</td>
+        <td>Activities, courses, department participation</td>
+    </tr>
+    <tr>
+        <td>Demographics</td>
+        <td>Age groups, gender, residents vs citizens</td>
+    </tr>
+    <tr>
+        <td>Departments</td>
+        <td>Course distribution and engagement rates</td>
+    </tr>
+</table>
+
+<h3>Division Safety Logic</h3>
+
+<table>
+    <tr>
+        <th>Scenario</th>
+        <th>Handling</th>
+    </tr>
+    <tr>
+        <td>Zero Members</td>
+        <td>
+            <code>
+if (allMembersCount == 0) {
+    allMembersCount = 1;
+    TotalInCourses = 1;
+    TotalInActivities = 1;
+}
+            </code>
+        </td>
+    </tr>
+</table>
+
+<!-- ================= Statistics ViewModels ================= -->
+
+<h2>Statistics ViewModels</h2>
+
+<table>
+    <tr>
+        <th>ViewModel</th>
+        <th>Purpose</th>
+        <th>Main Properties</th>
+    </tr>
+    <tr>
+        <td>StatisticsVM</td>
+        <td>Main container</td>
+        <td>TotalInActivities, TotalInCourses, All Stats Lists</td>
+    </tr>
+    <tr>
+        <td>AgeGroupStatVM</td>
+        <td>Age distribution</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+    <tr>
+        <td>CourseCategoryStatVM</td>
+        <td>Department participation</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+    <tr>
+        <td>GenderStatVM</td>
+        <td>Gender ratio</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+    <tr>
+        <td>ResidentsAndCitizensStatVM</td>
+        <td>Residency analytics</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+</table>
+
+<!-- ================= Statistics DTOs ================= -->
+
+<h2>Statistics DTOs</h2>
+
+<table>
+    <tr>
+        <th>DTO</th>
+        <th>Purpose</th>
+        <th>Properties</th>
+    </tr>
+    <tr>
+        <td>StatisticsDTO</td>
+        <td>Transfer analytics data</td>
+        <td>TotalInActivities, TotalInCourses, Stats Lists</td>
+    </tr>
+    <tr>
+        <td>AgeGroupStat</td>
+        <td>Age data transfer</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+    <tr>
+        <td>CourseCategoryStat</td>
+        <td>Department data</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+    <tr>
+        <td>GenderStat</td>
+        <td>Gender data</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+    <tr>
+        <td>ResidentsAndCitizensStat</td>
+        <td>Residency data</td>
+        <td>Label, Percentage, Count</td>
+    </tr>
+</table>
+
+<h2>Business Intelligence Value</h2>
+
+<table>
+    <tr>
+        <th>Area</th>
+        <th>Impact</th>
+    </tr>
+    <tr>
+        <td>Decision Making</td>
+        <td>Data-driven planning and optimization</td>
+    </tr>
+    <tr>
+        <td>Reporting</td>
+        <td>Printable and dashboard-ready analytics</td>
+    </tr>
+    <tr>
+        <td>Performance Tracking</td>
+        <td>Department and demographic insights</td>
+    </tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

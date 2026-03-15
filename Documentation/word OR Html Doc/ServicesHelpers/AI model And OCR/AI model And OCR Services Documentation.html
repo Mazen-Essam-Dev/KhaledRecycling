@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI model & OCR Services Documentation</title>
+    <link rel="stylesheet" href="../../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+</head>
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>AI model & OCR Services Documentation</h1>
+
+<h2>CompareService</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Service class for string comparison. Implements ICompareService. Provides Levenshtein distance and similarity percentage calculations.</td></tr>
+</table>
+
+<h3>Methods</h3>
+
+<h4>LevenshteinDistance</h4>
+<table>
+    <tr><th>Signature</th><th>Description</th></tr>
+    <tr>
+        <td>public async Task&lt;int&gt; LevenshteinDistance(string s, string t)</td>
+        <td>Calculates the Levenshtein distance between two strings (minimum number of insertions, deletions, or substitutions).</td>
+    </tr>
+</table>
+
+<h4>SimilarityPercentage</h4>
+<table>
+    <tr><th>Signature</th><th>Description</th></tr>
+    <tr>
+        <td>public async Task&lt;double&gt; SimilarityPercentage(string? s, string? t)</td>
+        <td>Returns a percentage (0-100) representing similarity between two strings based on Levenshtein distance. Returns 0 if either string is null.</td>
+    </tr>
+</table>
+
+<h2>MLModel AI Controller Module</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Module for creating image classification ML models with training and error troubleshooting tips.</td></tr>
+</table>
+
+<h3>Videos & Resources</h3>
+<table>
+    <tr><th>Resource</th><th>Link / Notes</th></tr>
+    <tr>
+        <td>YouTube Tutorial</td>
+        <td><a href="https://www.youtube.com/watch?v=fxyIefV8cuw" target="_blank">https://www.youtube.com/watch?v=fxyIefV8cuw</a></td>
+    </tr>
+    <tr>
+        <td>MLNet Meta File</td>
+        <td>Download and place at: <br>C:\Users\hp\AppData\Local\Temp\MLNET\resnet_v2_50_299.meta <br><a href="https://aka.ms/mlnet-resources/meta/resnet_v2_50_299.meta" target="_blank">Download Link</a></td>
+    </tr>
+</table>
+
+<h3>Notes (English / Arabic)</h3>
+<table>
+    <tr><th>Language</th><th>Instructions</th></tr>
+    <tr>
+        <td>English</td>
+        <td>When training Image Classification, if it breaks, check error screen below. Likely manual download of meta file needed. Place in correct path, reopen project, train again.</td>
+    </tr>
+    <tr>
+        <td>Arabic</td>
+        <td>عند عمل موديل صور Image Classification، لما يعلق في التدريب اقرأ شاشة الايرور، في الغالب ستحتاج تحميل الملف يدوياً ووضعه في المسار الصحيح، ثم أغلق وافتح المشروع وأعد التدريب.</td>
+    </tr>
+</table>
+
+<h3>OCR Project</h3>
+<table>
+    <tr><th>Module</th><th>Libraries / Notes</th></tr>
+    <tr>
+        <td>Image OCR</td>
+        <td>Extract text from images using SixLabors.ImageSharp and Tesseract. Requires downloading ara.traineddata and eng.traineddata. Place in `tessdata` folder inside project.</td>
+    </tr>
+    <tr>
+        <td>PDF OCR</td>
+        <td>Extract text from PDFs using free .NET libraries (supports English & Arabic).</td>
+    </tr>
+</table>
+
+<h2>OCRService</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Service for extracting text from images using Tesseract OCR and ImageSharp. Supports preprocessing, grayscale conversion, and custom cropping for ID Cards.</td></tr>
+</table>
+
+<h3>Namespaces Used</h3>
+<table>
+    <tr><th>Namespace</th></tr>
+    <tr><td>Tesseract</td></tr>
+    <tr><td>SixLabors.ImageSharp</td></tr>
+    <tr><td>SixLabors.ImageSharp.Processing</td></tr>
+    <tr><td>Microsoft.AspNetCore.Http</td></tr>
+</table>
+
+<h3>Core Methods</h3>
+<table>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr>
+        <td>ReadAllTextAsync(IFormFile imageFile)</td>
+        <td>Reads all text from uploaded image without cropping.</td>
+    </tr>
+    <tr>
+        <td>ReadCropped_MarginXY_TextAsync(string grayPath, float marginXRatio, float marginYRatio)</td>
+        <td>Crops image using margin percentages, then extracts text.</td>
+    </tr>
+    <tr>
+        <td>ReadCropped_Custom4_TextAsync(string grayPath, float xL, float xR, float yU, float yD, string? lang = null)</td>
+        <td>Crops by custom ratios (Left, Right, Top, Bottom) and applies OCR.</td>
+    </tr>
+    <tr>
+        <td>ReadGrayTextAsync(IFormFile imageFile)</td>
+        <td>Converts uploaded image to grayscale and returns saved path.</td>
+    </tr>
+</table>
+
+<h3>Shortcut Methods for ID Cards</h3>
+<table>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr><td>ExtractTextFrom_Cropped_IDNumberAndBirth_Async(string grayPath)</td><td>Extracts ID Number & Birth Date</td></tr>
+    <tr><td>ExtractTextFrom_Cropped_ExpiryDate_Async(string grayPath)</td><td>Extracts Expiry Date</td></tr>
+    <tr><td>ExtractTextFrom_Cropped_FullEnName_Async(string grayPath)</td><td>Extracts Full English Name</td></tr>
+    <tr><td>ExtractTextFrom_Cropped_FullArName_Async(string grayPath)</td><td>Extracts Full Arabic Name</td></tr>
+    <tr><td>ExtractTextFrom_Cropped_Gender_Async(string grayPath)</td><td>Extracts Gender</td></tr>
+    <tr><td>ExtractTextFrom_Cropped_Nationality_Async(string grayPath)</td><td>Extracts Nationality</td></tr>
+    <tr><td>ExtractAllTextDataFrom_IDCardGray_Async(string grayPath)</td><td>Returns all extracted ID Card data as DTO</td></tr>
+    <tr><td>DeleteTempFile1(string path)</td><td>Deletes temporary image file</td></tr>
+</table>
+
+</main>
+
+<script defer src="../../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+</body>
+</html>

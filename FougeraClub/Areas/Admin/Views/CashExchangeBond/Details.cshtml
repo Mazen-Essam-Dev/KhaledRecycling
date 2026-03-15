@@ -1,0 +1,179 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.CashExchangeBond
+@model CashExchangeBondVM
+@{
+    ViewData["Title"] = Resource1.CashExchangeBondReceipt2;
+    ViewData["Title pakage"] = @Resource2.FinancialManagement;
+    ViewData["Title ListIndex"] = Resource2.ListofCashExchangeBonds ?? " ";
+    ViewData["Title Single"] = @Resource1.CashExchangeBondReceipt2;
+}
+<!-- Breadcrumb Navigation Column -->
+<div class="row my-3 flex-nowrap" style="margin-top:-5px!important;">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-6">
+        <nav aria-label="breadcrumb" class="ms-2">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"><a href="/Admin/CashExchangeBond/Index">@ViewData["Title ListIndex"]</a></li>
+
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap">
+        <a asp-action="PrintDetails" asp-route-id="@Model?.Id"
+           class="btn btn-success px-3 btn-sm ms-auto"
+           target="_blank">
+            <i class="fa-solid fa-print me-1"></i> @Resource1.Print
+        </a>
+        <a asp-action="Index" class="btn btn-outline-secondary px-4 btn-sm">
+            <i class="bi bi-x-circle"></i> @Resource2.Back
+        </a>
+    </div>
+</div>
+
+
+<div class="content-inner">
+    <div class="data-part" style="margin-top:10px;">
+
+        <h2 class="home-second-title mb-4"> @ViewData["Title"]</h2>
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row g-3 px-4 py-2">
+
+            <!-- Date -->
+            <div class="col-md-6">
+                <label asp-for="Date" class="form-label fw-semibold">@Resource2.Date</label>
+                <input asp-for="Date" class="form-control" type="date" id="DateInput" />
+                <span asp-validation-for="Date" class="text-danger small"></span>
+            </div>
+
+
+            <div class="col-md-6">
+                <label asp-for="Money" class="form-label fw-semibold">@Resource1.Money</label>
+                <input asp-for="Money" id="Money2" class="form-control" placeholder="@Resource1.Money2" />
+                <span asp-validation-for="Money" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-12">
+                <input id="ArMoney" name="ArMoney" class="form-control" value="@ViewBag.arMoney" placeholder="@Resource1.ArMoney" />
+            </div>
+
+            <div class="col-md-12">
+                <input id="EnMoney" name="EnMoney" class="form-control" value="@ViewBag.enMoney" placeholder="@Resource1.EnMoney" />
+            </div>
+
+            <!-- PersonName -->
+            <div class="col-md-6">
+                <label asp-for="PersonName" class="form-label fw-semibold">@Resource1.DisbursedTo</label>
+                <input asp-for="PersonName" class="form-control" placeholder="@Resource1.DisbursedTo @Resource1.PersonName" />
+                <span asp-validation-for="PersonName" class="text-danger small"></span>
+            </div>
+
+            <!-- AboutText -->
+            <div class="col-md-6">
+                <label asp-for="AboutText" class="form-label fw-semibold">@Resource1.AboutText</label>
+                <input asp-for="AboutText" class="form-control" placeholder="@Resource1.AboutText" />
+                <span asp-validation-for="AboutText" class="text-danger small"></span>
+            </div>
+        </div>
+
+
+        <!-- Signatures -->
+        <div class="row g-3">
+            <!-- Signature ActivitiesAndMembership Supervisor -->
+            <div class="col-md-4 text-center">
+                <label class="form-label fw-semibold">@Resource1.Recipient</label>
+            </div>
+
+            <div class="col-md-4 text-center">
+                <label class="form-label fw-semibold">@Resource1.Accountant</label>
+            </div>
+
+            <!-- Signature Manager -->
+            <div class="col-md-4 text-center">
+                <label class="form-label fw-semibold">@Resource1.Manager</label>
+            </div>
+        </div>
+
+        <!-- AddedDocuments -->
+        <hr class="custom-hr" />
+        <div class="data-part">
+            <h4 class="background-skewed-rtl">@Resource1.AddedDocuments</h4>
+
+            <!-- Table -->
+            <div class="table-responsive mt-2 px-4 py-2">
+                <table class="table monthly-index-table table-bordered table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>@Resource1.DocumentNo</th>
+                            <th>@Resource1.DocumentDate</th>
+                            <th>@Resource1.AccountNo</th>
+                            <th>@Resource1.Particular</th>
+                            <th>@Resource1.Money</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model?.Details != null)
+                        {
+                            foreach (var detail in Model.Details)
+                            {
+                                <tr>
+                                    <td>@detail.DocumentNo</td>
+                                    <td>@detail.DocumentDate?.ToString("d")?.Replace("/","-")</td>
+                                    <td>@detail.AccountNo</td>
+                                    <td>@detail.Particular</td>
+                                    <td>@detail.Money</td>
+                                </tr>
+                            }
+                            <tr>
+                                @{
+                                    var allmoney = Model.Details.Sum(x => x.Money);
+                                }
+                                <td colspan="4"><label class="fw-bold text-start" style="display:flex;;margin-inline-start:50px;">@($" {Resource1.Total} : {TafqeetHelper.Tafqeet(allmoney.Value, CurrencyHelper.AED_Main_Ar, CurrencyHelper.AED_Sub_Ar)}")</label></td>
+                                <td class="fw-bold">@allmoney?.ToString("0.00")</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">@Resource2.NoRecordsFound</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+
+
+        @* <!-- Signature Section -->
+        <hr class="custom-hr" />
+        <div class="row g-3">
+            <!-- Signature ActivitiesAndMembership Supervisor -->
+            <div class="col-md-6 text-center">
+                <label  class="form-label fw-semibold">@Resource1.SignatureActivitiesMembershipSupervisor</label>
+            </div>
+
+            <!-- Signature Manager -->
+            <div class="col-md-6 text-center">
+                <label class="form-label fw-semibold">@Resource1.SignatureManager</label>
+            </div>
+        </div> *@
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+}

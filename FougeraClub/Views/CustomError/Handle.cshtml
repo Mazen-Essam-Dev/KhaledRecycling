@@ -1,0 +1,33 @@
+﻿@using Domain.Resources
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Error 404 Not Found";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/ErrorPages/style/bootstrap.min.css">
+    <link rel="stylesheet" href="/ErrorPages/style/style.css">
+    <title>Document</title>
+</head>
+<body class="  h-100">
+    <div class="container d-flex justify-content-center align-items-center  w-50 " style="height: 100vh;margin-top:-100px;">
+        <img src="~/ErrorPages/pages/404.jpeg" class="w-100" alt="">
+    </div>
+
+    <div class="align-items-center text-center " style="height: 100vh;margin-top:-100px;">
+        <button type="button" class="btn btn-secondary btn-lg px-5 py-3" style="background-color:#0aae7e" onclick="window.history.back()">
+            @Resource1.ReturnBackToPreviousPage
+        </button>
+    </div>
+</body>
+</html>
+@* <div class="text-center mt-5">
+        <h1 class="display-4 text-danger">⚠ @ViewBag.ErrorMessage</h1>
+    </div> *@

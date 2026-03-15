@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Maintenance Club Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<!-- ================= Controller ================= -->
+<table>
+    <h2>Maintenance Club Module Documentation</h2>
+    <tr><th>Overview</th><td>ASP.NET Core Controller for managing club maintenance records with PDF validation, filtering, and reporting.</td></tr>
+    <tr><th>Area</th><td>Admin</td></tr>
+    <tr><th>Authorization</th><td>AdminAuthorize</td></tr>
+    <tr><th>Dependencies</th><td>IMaintenanceClubService, ISupplierService, IUnitOfWork, IMapper</td></tr>
+</table>
+
+<table>
+    <h2>Controller Actions</h2>
+    <tr><th>Action</th><th>Description</th></tr>
+    <tr><td>Index</td><td>Main listing with search, date range filtering, pagination (50 items), AJAX partial loading.</td></tr>
+    <tr><td>AddEdit (GET)</td><td>Loads create or edit form based on optional ID.</td></tr>
+    <tr><td>AddEdit (POST)</td><td>Handles form submission with PDF type and size validation (5MB max).</td></tr>
+    <tr><td>Delete</td><td>Deletes maintenance record using POST for security.</td></tr>
+    <tr><td>Details</td><td>Read-only maintenance record view.</td></tr>
+    <tr><td>PrintDetails</td><td>Printable version of maintenance record.</td></tr>
+</table>
+
+<table>
+    <h2>PDF Validation Logic</h2>
+    <tr>
+        <th>Code</th>
+        <td>
+            <code>
+                var result = await FileHelper.CheckFileIsPdf_5Mg_Async(model.PdfFile);<br>
+                if (result != "OK" && result != "null")<br>
+                ModelState.AddModelError("PdfFilePath", result);
+            </code>
+        </td>
+    </tr>
+</table>
+
+<!-- ================= Service ================= -->
+<table>
+    <h2>MaintenanceClubService Documentation</h2>
+    <tr><th>Overview</th><td>Service layer implementing business logic for maintenance management with PDF file handling.</td></tr>
+    <tr><th>Namespace</th><td>Application.Services.Admin</td></tr>
+    <tr><th>Interface</th><td>IMaintenanceClubService</td></tr>
+    <tr><th>Dependencies</th><td>IUnitOfWork, IWebHostEnvironment</td></tr>
+</table>
+
+<table>
+    <h2>Service Methods</h2>
+    <tr><th>Method</th><th>Responsibility</th></tr>
+    <tr><td>GetAllAsync</td><td>Retrieve all maintenance records.</td></tr>
+    <tr><td>GetByIdAsync</td><td>Retrieve maintenance record by ID.</td></tr>
+    <tr><td>AddAsync</td><td>Create record and save PDF file.</td></tr>
+    <tr><td>UpdateAsync</td><td>Update record with optional PDF replacement.</td></tr>
+    <tr><td>DeleteAsync</td><td>Delete record and associated PDF file.</td></tr>
+</table>
+
+<table>
+    <h2>PDF Save Logic</h2>
+    <tr>
+        <th>Code</th>
+        <td>
+            <code>
+                entity.PdfFilePath = entity.PdfFile == null ? "" :<br>
+                await FileHelper.SaveImageAsync(entity.PdfFile, FileName);
+            </code>
+        </td>
+    </tr>
+</table>
+
+<!-- ================= Entity ================= -->
+<table>
+    <h2>MaintenanceClub Entity</h2>
+    <tr><th>Namespace</th><td>Domain.Entities</td></tr>
+    <tr><th>Purpose</th><td>Stores maintenance scheduling and documentation data.</td></tr>
+</table>
+
+<table>
+    <h2>Entity Properties</h2>
+    <tr><th>Property</th><th>Description</th></tr>
+    <tr><td>Id</td><td>Primary key identifier.</td></tr>
+    <tr><td>Title</td><td>Maintenance title (Arabic display, max 100).</td></tr>
+    <tr><td>Date</td><td>Maintenance date.</td></tr>
+    <tr><td>Time</td><td>Maintenance time.</td></tr>
+    <tr><td>Location</td><td>Maintenance location (max 200).</td></tr>
+    <tr><td>Details</td><td>Detailed description (max 2000).</td></tr>
+    <tr><td>PdfFilePath</td><td>Stored PDF file path.</td></tr>
+    <tr><td>PdfFile</td><td>IFormFile upload (NotMapped).</td></tr>
+</table>
+
+<!-- ================= ViewModel ================= -->
+<table>
+    <h2>MaintenanceClubVM</h2>
+    <tr><th>Namespace</th><td>FougeraClub.Areas.Admin.ViewModels.MaintenanceClub</td></tr>
+    <tr><th>Purpose</th><td>ViewModel for add/edit maintenance records with validation.</td></tr>
+</table>
+
+<table>
+    <h2>ViewModel Properties</h2>
+    <tr><th>Property</th><th>Details</th></tr>
+    <tr><td>Title</td><td>Required, localized validation.</td></tr>
+    <tr><td>Date</td><td>Required, Date picker.</td></tr>
+    <tr><td>Time</td><td>Required, Time picker.</td></tr>
+    <tr><td>Location</td><td>Required, max 200.</td></tr>
+    <tr><td>Details</td><td>Optional, max 2000.</td></tr>
+    <tr><td>PdfFile</td><td>PDF upload, validated.</td></tr>
+    <tr><td>PdfFilePath</td><td>Stored file path.</td></tr>
+</table>
+
+<!-- ================= Views ================= -->
+<table>
+    <h2>Maintenance Club Views</h2>
+    <tr><th>View</th><th>Description</th></tr>
+    <tr><td>Index.cshtml</td><td>Main list with filtering, pagination, AJAX partial.</td></tr>
+    <tr><td>_ListPartial.cshtml</td><td>Paginated table rendering.</td></tr>
+    <tr><td>Details.cshtml</td><td>Read-only maintenance details.</td></tr>
+    <tr><td>AddEdit.cshtml</td><td>Create/Edit form with PDF upload.</td></tr>
+</table>
+
+<!-- Updates -->
+<h2>Updates And Additions</h2>
+<table>
+    <caption>Attachments Modal ajax,Js</caption>
+    <tr>
+        <th>Location</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>controller</td><td>GetMaintenanceClubAttachments</td><td>Display all salary Attachments in modal</td></tr>
+    <tr><td>controller</td><td>UploadMaintenanceClubFiles</td><td>delete and add updated attachments of salary</td></tr>
+    <tr><td>Service</td><td>GetAttachmentsAsync</td><td>Retrieve salary attachments</td></tr>
+    <tr><td>Service</td><td>UploadAttachmentsAsync</td><td>Upload salary attachments</td></tr>
+    <tr><td>DTO</td><td>MaintenanceClubAttachmentDTO</td><td>attachment Object of his attachments</td></tr>
+    <tr><td>DTO</td><td>MaintenanceClubAttachmentsDTO</td><td>this Main Id and list of first</td></tr>
+    <tr><td>VMS</td><td>MaintenanceClubAttachmentVM</td><td>attachment Object of his attachments</td></tr></tr>
+    <tr><td>VMS</td><td>MaintenanceClubAttachmentsVM</td><td>this Main Id and list of first</td></tr>
+    <tr><td>Views</td><td>_MaintenanceClubAttachmentsModal</td><td>[for add & remove attachments in modal with ajax and js]</td></tr>
+</table>
+
+<table>
+    <h2>System Features</h2>
+    <tr><th>Category</th><th>Capabilities</th></tr>
+    <tr><td>Security</td><td>Role-based permissions and secure actions.</td></tr>
+    <tr><td>Filtering</td><td>Date range, text search, session persistence.</td></tr>
+    <tr><td>Export</td><td>Print and Excel with filter awareness.</td></tr>
+    <tr><td>Localization</td><td>Arabic UI and localized validation.</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>Scientific Projects Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<!-- ================= Controller Overview ================= -->
+<table>
+    <tr><h2>ScientificProjectsController – Overview</th></tr>
+    <tr><th>Namespace</th><td>FougeraClub.Areas.Admin.Controllers</td></tr>
+    <tr><th>Purpose</th><td>CRUD operations, OTP workflow, approvals, printing, reporting, and notifications for Scientific Projects</td></tr>
+    <tr><th>Routing</th><td>Admin/[controller]/[action]</td></tr>
+</table>
+
+<!-- ================= Controller Attributes ================= -->
+<table>
+    <tr><h2>Controller Attributes</h2></tr>
+    <tr><th>Attribute</th><th>Description</th></tr>
+    <tr><td>AdminAuthorize</td><td>Restricts access to admin users only</td></tr>
+    <tr><td>Area("Admin")</td><td>Defines controller under Admin area</td></tr>
+    <tr><td>Route</td><td>Defines fixed routing pattern</td></tr>
+</table>
+
+<!-- ================= Controller Dependencies ================= -->
+<table>
+    <tr><h2>Controller Dependencies</h2></tr>
+    <tr><th>Dependency</th><th>Purpose</th></tr>
+    <tr><td>IUnitOfWork</td><td>Database access and repositories</td></tr>
+    <tr><td>IWebHostEnvironment</td><td>File storage and environment access</td></tr>
+    <tr><td>IScientificProjectsService</td><td>OTP and signature business logic</td></tr>
+    <tr><td>UserManager</td><td>User and role management</td></tr>
+    <tr><td>IHubContext</td><td>SignalR real-time notifications</td></tr>
+    <tr><td>INotificationService</td><td>Role-based notification sending</td></tr>
+    <tr><td>IHttpContextAccessor</td><td>Session and role validation</td></tr>
+</table>
+
+<!-- ================= OTP Workflow ================= -->
+<table>
+    <tr><h2>OTP & Signature Workflow</h2></tr>
+    <tr><th>Step</th><th>Behavior</th></tr>
+    <tr><td>1</td><td>Trainer receives OTP and signs first</td></tr>
+    <tr><td>2</td><td>Edit disabled for Trainer after signing & <strong>Delete disabled for any User</strong></td></tr>
+    <tr><td>3</td><td>Notification sent to Activity Monitor</td></tr>
+    <tr><td>4</td><td>Activity Monitor validates OTP and signs</td></tr>
+    <tr><td>5</td><td>Notification sent to Manager</td></tr>
+    <tr><td>6</td><td>Manager validates OTP and signs</td></tr>
+    <tr><td>7</td><td>Edit & delete disabled for all users</td></tr>
+    <tr><td>8</td><td>Project Card and Print enabled</td></tr>
+</table>
+
+<!-- ================= Controller Actions ================= -->
+<table>
+    <tr><h2>Controller Actions</h2></tr>
+    <tr><th>Action</th><th>HTTP</th><th>Description</th></tr>
+    <tr><td>Index</td><td>GET</td><td>List projects with search, date filter, pagination, AJAX support</td></tr>
+    <tr><td>Create</td><td>GET</td><td>Prepare new project with serial code and departments</td></tr>
+    <tr><td>Create</td><td>POST</td><td>Save project with file uploads and validation</td></tr>
+    <tr><td>Details</td><td>GET</td><td>View project details and signatures</td></tr>
+    <tr><td>Edit</td><td>GET</td><td>Load project for editing</td></tr>
+    <tr><td>Edit</td><td>POST</td><td>Update project and files</td></tr>
+    <tr><td>Delete</td><td>POST</td><td>Delete project if no signatures exist</td></tr>
+    <tr><td>Print</td><td>GET</td><td>Printable filtered list</td></tr>
+    <tr><td>ProjectCard</td><td>GET</td><td>Display project card</td></tr>
+    <tr><td>SendOtp</td><td>POST</td><td>Send OTP to selected role</td></tr>
+    <tr><td>ValidateOtp</td><td>POST</td><td>Validate OTP and store signature</td></tr>
+</table>
+
+<!-- ================= Service Overview ================= -->
+<table>
+    <tr><h2>ScientificProjectsService – Overview</h2></tr>
+    <tr><th>Namespace</th><td>Application.Services.Admin</td></tr>
+    <tr><th>Responsibility</th><td>OTP generation, validation, and signature persistence</td></tr>
+</table>
+
+<!-- ================= Service Dependencies ================= -->
+<table>
+    <tr><h2>Service Dependencies</h2></tr>
+    <tr><th>Dependency</th><th>Purpose</th></tr>
+    <tr><td>IUnitOfWork</td><td>Database updates for signatures</td></tr>
+    <tr><td>IHttpContextAccessor</td><td>Session-based OTP tracking</td></tr>
+    <tr><td>ISMSForSendingOTPService</td><td>OTP delivery</td></tr>
+</table>
+
+<!-- ================= AutoMapper ================= -->
+<table>
+    <tr><h2>AutoMapper – ScientificProjectsProfile</h2></tr>
+    <tr><th>Source</th><th>Destination</th><th>Notes</th></tr>
+    <tr><td>ScientificProjectsVM</td><td>ScientificProjects</td><td>Maps form data to entity</td></tr>
+    <tr><td>ScientificProjects</td><td>ScientificProjectsVM</td><td>Reverse mapping enabled</td></tr>
+</table>
+
+<!-- ================= Entity ================= -->
+<table>
+    <tr><h2>ScientificProjects Entity</h2></tr>
+    <tr><th>Property</th><th>Type</th><th>Attributes</th><th>Description</th></tr>
+    <tr><td>Id</td><td>int</td><td>Key</td><td>Primary key</td></tr>
+    <tr><td>SerialCode</td><td>string</td><td>MaxLength(50)</td><td>Project serial number</td></tr>
+    <tr><td>DepartmentId</td><td>int?</td><td>ForeignKey</td><td>Related department</td></tr>
+    <tr><td>ProjectNameAr</td><td>string</td><td>MaxLength(200)</td><td>Arabic name</td></tr>
+    <tr><td>ProjectNameEn</td><td>string</td><td>MaxLength(200)</td><td>English name</td></tr>
+    <tr><td>ProjectIdeaAr</td><td>string?</td><td>MaxLength(200)</td><td>Arabic Description of Project Idea</td></tr>
+    <tr><td>ProjectIdeaEn</td><td>string?</td><td>MaxLength(200)</td><td>English Description of Project Idea</td></tr>
+    <tr><td>IdeaOwnerAr</td><td>string?</td><td>MaxLength(200)</td><td>Arabic Idea Owner Name</td></tr>
+    <tr><td>IdeaOwnerEn</td><td>string?</td><td>MaxLength(200)</td><td>English Idea Owner Name</td></tr>
+    <tr><td>Supervisor1-Supervisor6</td><td>string?</td><td>MaxLength(200)</td><td>Supervisor Name</td></tr>
+    <tr><td>Participant1-Participant4</td><td>string?</td><td>MaxLength(200)</td><td>Participant Name</td></tr>
+    <tr><td>ProjectElement1-ProjectElement8</td><td>string?</td><td>MaxLength(200)</td><td>Project Element</td></tr>
+    <tr><td>ExpectedCost</td><td>double?</td><td>-</td><td>Estimated cost</td></tr>
+    <tr><td>InstallationRecommendations</td><td>string?</td><td>MaxLength(500)</td><td>Installation Recommendations Data</td></tr>
+    <tr><td>DeliveryData</td><td>string?</td><td>MaxLength(500)</td><td>Delivery cost</td></tr>
+	<tr><td>FilePath1–FilePath6</td><td>string?</td><td>MaxLength(200)</td><td>Images pathes</td></tr>
+</table>
+
+<!-- ================= ViewModel ================= -->
+<table>
+    <tr><h2>ScientificProjectsVM – ViewModel</h2></tr>
+    <tr><th>Property</th><th>Type</th><th>Validation</th><th>Description</th></tr>
+    <tr><td>ProjectNameAr</td><td>string</td><td>Required, Regex</td><td>Arabic project name</td></tr>
+    <tr><td>ProjectNameEn</td><td>string</td><td>Required, Regex</td><td>English project name</td></tr>
+    <tr><td>DepartmentId</td><td>int?</td><td>Required</td><td>Department selection</td></tr>
+    <tr><td>ProjectIdeaAr</td><td>string?</td><td>MaxLength(200)</td><td>Arabic Description of Project Idea</td></tr>
+    <tr><td>ProjectIdeaEn</td><td>string?</td><td>MaxLength(200)</td><td>English Description of Project Idea</td></tr>
+    <tr><td>IdeaOwnerAr</td><td>string?</td><td>MaxLength(200)</td><td>Arabic Idea Owner Name</td></tr>
+    <tr><td>IdeaOwnerEn</td><td>string?</td><td>MaxLength(200)</td><td>English Idea Owner Name</td></tr>
+    <tr><td>Supervisor1-Supervisor6</td><td>string?</td><td>MaxLength(200)</td><td>Supervisor Name</td></tr>
+    <tr><td>Participant1-Participant4</td><td>string?</td><td>MaxLength(200)</td><td>Participant Name</td></tr>
+    <tr><td>ProjectElement1-ProjectElement8</td><td>string?</td><td>MaxLength(200)</td><td>Project Element</td></tr>
+    <tr><td>ExpectedCost</td><td>double?</td><td>-</td><td>Estimated cost</td></tr>
+    <tr><td>InstallationRecommendations</td><td>string?</td><td>MaxLength(500)</td><td>Installation Recommendations Data</td></tr>
+    <tr><td>DeliveryData</td><td>string?</td><td>MaxLength(500)</td><td>Delivery cost</td></tr>
+    <tr><td>File1–File6</td><td>IFormFile</td><td>Image validation</td><td>Attachments</td></tr>
+	<tr><td>FilePath1–FilePath6</td><td>string?</td><td>MaxLength(200)</td><td>Images pathes</td></tr>
+
+</table>
+
+<!-- ================= Views ================= -->
+<table>
+    <tr><h2>Views Summary</h2></tr>
+    <tr><th>View</th><th>Purpose</th></tr>
+    <tr><td>Index</td><td>Listing, filtering, printing, Excel export</td></tr>
+    <tr><td>Create</td><td>Project creation</td></tr>
+    <tr><td>Edit</td><td>Project modification</td></tr>
+    <tr><td>Details</td><td>Read-only view and OTP signing</td></tr>
+    <tr><td>ProjectCard</td><td>Final approved project card</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

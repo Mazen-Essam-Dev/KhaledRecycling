@@ -1,0 +1,211 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Course
+@model CourseVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? Resource2.EditCourse : Resource2.CreateCourse;
+    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.CoursesList;
+    ViewData["Title Single"] = isEdit ? Resource2.EditCourse : Resource1.AddNewCourse;
+}
+
+<style>
+    #newAlignMaxbuttons {
+        /* width: 40%; */
+        /* align-items: center; */
+        display: flex !important;
+        justify-content: end !important;
+        /* justify-content: center; */
+        align-items: center !important;
+        gap: 5px !important;
+        margin-right: 20px !important;
+    }
+</style>
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-book me-2 text-ico"></span>
+                @ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-end" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Course/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="card all-borders p-3">
+    <form asp-action="AddEdit" method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" class="needs-validation" />
+        <input type="hidden" asp-for="Attachment_TempFilePath" class="needs-validation" />
+        <input type="hidden" asp-for="Attachment_OldPath" class="needs-validation" />
+
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+                <label asp-for="DepartmentId" class="form-label asteriskRequired">@Resource1.Specialization</label>
+                        <select asp-for="DepartmentId" class="form-select " asp-items="Model?.DepartmentsList"
+                                onchange="GetTrainersInDept(this.value)">
+                            <option value="">-- @Resource2.Select --</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-3">
+                <label asp-for="TrainerId" class="form-label asteriskRequired">@Resource2.TrainerName</label>
+                        <select asp-for="TrainerId" class="form-select " asp-items="Model?.TrainersList">
+                            <option value="">-- @Resource2.Select --</option>
+                        </select>
+                        <span asp-validation-for="TrainerId" class="text-danger small"></span>
+                        <input type="hidden" id="TrainerIdValue" value="@Model?.TrainerId" />
+                    </div>
+
+
+            <div class="col-md-3">
+                <label asp-for="TitleAr" class="form-label asteriskRequired">@Resource1.CourseTitle</label>
+                        <input asp-for="TitleAr" class="form-control " placeholder="@Resource1.CourseTitle" />
+                        <span asp-validation-for="TitleAr" class="text-danger small"></span>
+                    </div>
+
+            <div class="col-md-3">
+                <label asp-for="TitleEn" class="fw-medium asteriskRequired mb-1">@Resource2.CourseTitleEn</label>
+                        <input asp-for="TitleEn" class="form-control" placeholder="@Resource2.CourseTitleEn" />
+                        <span asp-validation-for="TitleEn" class="text-danger small"></span>
+                    </div>
+
+
+            <div class="col-md-6 filter-dropdown">
+                <label asp-for="StartDate" class="fw-medium asteriskRequired mb-2">@Resource2.StartDate</label>
+                <div class="input-icon-left">
+                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                    <input asp-for="StartDate" class="form-control green-border form-control-sm filter-bordered" type="date" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                </div>
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+
+            <div class="col-md-6 filter-dropdown">
+                <label asp-for="EndDate" class="fw-medium asteriskRequired mb-2">@Resource2.EndDate</label>
+                <div class="input-icon-left">
+                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                    <input asp-for="EndDate" class="form-control green-border form-control-sm filter-bordered" type="date" />
+                </div>
+                <span asp-validation-for="EndDate" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="Location" class="form-label asteriskRequired">@Resource2.Location</label>
+                <input asp-for="Location" class="form-control" placeholder="@Resource2.Location" />
+                <span asp-validation-for="Location" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-12">
+                <label asp-for="Time" class="form-label">@Resource1.Time</label>
+                <input asp-for="Time" class="form-control" placeholder="@Resource1.Time" />
+                <span asp-validation-for="Time" class="text-danger small"></span>
+            </div>
+
+
+            <div class="col-12">
+                <label asp-for="Description" class="form-label asteriskRequired">@Resource2.Description</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger small"></span>
+            </div>
+
+
+            <div class="col-md-12 ">
+                <div class="d-flex flex-column flex-lg-row">
+                    <div style="width: 100%;">
+                        <h5 class="form-label">@Resource2.UploadFile PDF </h5>
+
+                        <div class="input-group mb-2  d-flex align-items-center">
+                            <input type="file" class="form-control rounded-2 " accept=".pdf" asp-for="Attachment" placeholder="أختار الملف ">
+                            <label class="rounded-2 upload-file-rtl upload-file-hover upload-file-ltr " asp-for="Attachment"><i class="fa-solid fa-upload fa-xl"></i></label>
+                        </div>
+                        @* Preview *@
+                        @if (!string.IsNullOrEmpty(Model.Attachment_TempFilePath))
+                        {
+                            @* <img src="~/@Model.Attachment_TempFilePath.Replace("wwwroot/", "")" class="img-thumbnail mt-2" style="max-height:140px;" /> *@
+                            <a href="~/@Model.Attachment_TempFilePath.Replace("wwwroot/", "")" target="_blank" class="eye-ii">
+                                <i class="fa fa-eye"></i> @Resource3.ViewFile
+                            </a>
+                        }
+                        else if (isEdit && !string.IsNullOrEmpty(Model?.Attachment_OldPath))
+                        {
+                            <a href="~/@Model.Attachment_OldPath" target="_blank" class="eye-ii">
+                                <i class="fa fa-eye"></i> @Resource3.ViewFile
+                            </a>
+                        }
+                        <span asp-validation-for="Attachment" class="text-danger small"></span>
+
+                        <div class=""><span class="d-inline-block mt-0 text-red"> @Resource3.MaximumFileSize5MB </span></div>
+
+                    </div>
+
+                    <div class="mb-1 newAlignMaxbuttons" id="newAlignMaxbuttons">
+                        <button type="submit" class="btn-cancel-search btn btn-sm px-3">
+                            <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                        </button>
+
+                        @if (ViewBag.Course_AddEdit == "SubscribedMembersInCourses")
+                        {
+                            <a asp-action="SubscribedMembersInCourses" asp-area="Admin" asp-controller="Course" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-arrow-left"></i> @Resource2.Back
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-action="Index" class="btn btn-success btn-sm  px-3">
+                                @Resource2.Back  <i class="fa-solid fa-arrow-left"></i>
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deptId = $('#DepartmentId').val();
+            var trainerId = $('#TrainerIdValue').val();
+            if (deptId) {
+                GetTrainersInDept(deptId, trainerId);
+            }
+        });
+
+        function GetTrainersInDept(deptId, trainerId) {
+            $.ajax({
+                url: '@Url.Action("GetTrainersInDept", "Course")',
+                type: 'GET',
+                data: { deptId, trainerId },
+                success: function (data) {
+                    var trainerSelect = $('select[name="TrainerId"]').empty()
+                        .append('<option value="">-- @Resource2.Select --</option>');
+                    $.each(data.trainers, function (i, trainer) {
+                        trainerSelect.append(
+                            `<option value="${trainer.value}" ${trainer.selected ? 'selected' : ''}>${trainer.text}</option>`
+                        );
+                    });
+                }
+            });
+        }
+
+    </script>
+}

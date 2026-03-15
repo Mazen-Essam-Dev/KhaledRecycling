@@ -1,0 +1,175 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.ArchivingDocument
+@model ArchivingDocumentVM
+@{
+    ViewData["Title pakage"] = @Resource1.ArchivingDocumentManagement ?? " ";
+    ViewData["Title Single"] = ((Model.Id == 0) ? @Resource1.AddNewArchivingDocument : @Resource1.EditArchivingDocument) ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.ArchivingDocumentList ?? " ";
+
+}
+
+<style>
+    #newAlignMaxbuttons {
+        /* width: 40%; */
+        /* align-items: center; */
+        display: flex !important;
+        justify-content: end !important;
+        /* justify-content: center; */
+        align-items: center !important;
+        gap: 5px !important;
+        margin-right: 20px !important;
+    }
+</style>
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-file me-1 text-ico"></span>
+                @((Model.Id == 0) ? @Resource1.AddNewArchivingDocument : @Resource1.EditArchivingDocument)
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-end" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/ArchivingDocument/Index">@ViewData["Title ListIndex"]</a></li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="card all-borders p-3">
+    <div class="c-edit-form  rounded">
+        <form asp-action="AddEdit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="TempFilePath" />
+            <input type="hidden" asp-for="OldPath" />
+            <div class="row">
+                <!-- Type -->
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold asteriskRequired d-block">@Resource2.Type  </label>
+                    <div class="d-flex flex-wrap gap-3 mt-2">
+                        @foreach (var item in Model?.TypeEnumList ?? Enumerable.Empty<SelectListItem>())
+                        {
+                            <div class="form-check ">
+                                <input class="form-check-input typeradiobtn"
+                                       type="radio"
+                                       asp-for="Type"
+                                       id="TypeEnum_@item.Value"
+                                       value="@item.Value"
+                                       checked="@(Model?.Type.HasValue == true ? item.Selected : false)" />
+                                <label class="form-check-label" for="TypeEnum_@item.Value">@item.Text</label>
+                            </div>
+                        }
+                    </div>
+                    <span id="TypeCheckResult" class="text-danger small"></span>
+                    <span asp-validation-for="Type" id="typeValidVM" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="Title" class="form-label asteriskRequired">@Resource1.DocumentTitle  </label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label for="Authority" class="form-label asteriskRequired">@Resource1.DocumentAuthority  </label>
+                    <input asp-for="Authority" class="form-control" />
+                    <span asp-validation-for="Authority" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label for="DocumentReferenceNumber" class="form-label asteriskRequired">@Resource1.DocumentReferenceNumber </label>
+                    <input asp-for="DocumentReferenceNumber" class="form-control" />
+                    <span asp-validation-for="DocumentReferenceNumber" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-12 mb-3">
+                    <label for="DocumentCategoryId" class="form-label">
+                        التصنيف 
+                    </label>
+                    <select asp-for="DocumentCategoryId" class="form-select">
+                        <option value="">--</option>
+                        @{
+                            var categories = (Model?.DocumentCategoryList ?? Enumerable.Empty<SelectListItem>())
+                                .OrderBy(x => int.TryParse(x.Value, out var id) ? id : int.MaxValue);
+                        }
+                        @foreach (var c in categories)
+                        {
+                            <option value="@c.Value" selected="@(c.Selected ? "selected" : null)">@c.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="DocumentCategoryId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-12 mb-3">
+                    <label for="Date" class="form-label asteriskRequired">@Resource1.Date  </label>
+                    <div class="input-icon-left">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                        <input asp-for="Date" type="date" class="form-control green-border form-control-sm filter-bordered" />
+                    </div>
+                    <span asp-validation-for="Date" class="text-danger small"></span>
+                </div>
+
+
+                <div class="col-md-12 ">
+                    <div class="d-flex flex-column flex-lg-row">
+                        <div style="width: 100%;">
+                            <h5 class="form-label">@Resource1.PdfFile</h5>
+
+                            <div class="input-group mb-1  d-flex align-items-center">
+                                <input asp-for="PdfFile" type="file" class="form-control rounded-2 " accept=".pdf" id="pdfFile">
+                                <label class=" rounded-2 upload-file-ltr upload-file-rtl upload-file-hover  " for="pdfFile">
+                                    <i class="fa-solid fa-upload fs-5 px-1"></i>
+                                </label>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                @* Preview *@
+                                @if (!string.IsNullOrEmpty(Model.TempFilePath))
+                                {
+                                    <a href="~/@Model.TempFilePath.Replace("wwwroot/", "")" target="_blank" class="eye-ii">
+                                        <i class="fa fa-eye me-1"></i> <span class="text-black">@Resource3.ViewFile</span>
+                                    </a>
+                                    <span class="d-inline-block mb-2 text-red"> @Resource3.MaximumFileSize5MB </span>
+                                }
+                                else if (!string.IsNullOrEmpty(Model?.OldPath))
+                                {
+                                    <a href="~/@Model.OldPath" target="_blank" class="eye-ii">
+                                        <i class="fa fa-eye me-1"></i> <span class="text-black">@Resource3.ViewFile</span>
+                                    </a>
+                                    <span class="d-inline-block mb-2 text-red"> @Resource3.MaximumFileSize5MB </span>
+                                }
+                                else if (!string.IsNullOrEmpty(Model?.PdfFilePath))
+                                {
+                                    <a href="~/@Model.PdfFilePath" target="_blank" class="eye-ii">
+                                        <i class="fa fa-eye me-1"></i> <span class="text-black">@Resource3.ViewFile</span>
+                                    </a>
+                                    <span class="d-inline-block mb-2 text-red"> @Resource3.MaximumFileSize5MB </span>
+                                }
+                            </div>
+                            <span asp-validation-for="PdfFilePath" class="text-danger small"></span>
+
+                            <div class=""><span class="d-inline-block mt-0 text-red"> @Resource3.MaximumFileSize5MB </span></div>
+
+                        </div>
+
+                        <div class="mb-1 newAlignMaxbuttons" id="newAlignMaxbuttons">
+                            <button type="submit" class="btn btn-success me-2">
+                                <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                            </button>
+                            <a asp-action="Index" class="btn btn-cancel-search">
+                                @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+        </form>
+    </div>
+</div>

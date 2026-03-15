@@ -1,0 +1,176 @@
+﻿@model StatisticsVM
+@using FougeraClub.Areas.Admin.ViewModels.Statistics
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+}
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    @if (SessionHelper.GetCurrentLanguage() == "ar")
+    {
+        <link href="~/ar/assets/css/report-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/ar/assets/css/report-ltr.css" rel="stylesheet" />
+    }
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+</head>
+
+<div id="report">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+    <!-- Official Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- headline Title -->
+        <div class="text-center bg-danger text-white py-2 mb-4 rounded">
+            <h4>@ViewData["Title"]</h4>
+            @* <p class="text-muted"> @AppDubaiTime.Now.ToString("HH:mm d", System.Globalization.CultureInfo.InvariantCulture)</p> *@
+        </div>
+
+        <!-- totals -->
+        <div class="row text-center mb-4">
+            <div class="col-md-6">
+                <div class="bg-light border rounded py-3 fw-bold">
+                    @Resource1.TotalActivityParticipants : @Model.TotalInActivities
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="bg-light border rounded py-3 fw-bold">
+                    @Resource1.TotalCourseParticipants : @Model.TotalInCourses
+                </div>
+            </div>
+        </div>
+
+        <!-- Age ratios -->
+        <div class="bg-success bg-opacity-10 border rounded p-2 text-start mb-3 fw-bold">
+            @Resource1.AgePercentagesofParticipants
+        </div>
+        <div class="row g-3 mb-4">
+            @foreach (var age in Model.AgeGroupStats)
+            {
+                <div class="col-md-3 col-sm-6">
+                    <div class="border rounded text-center p-3">
+                        <div>@age.Label</div>
+                        <div class="fw-bold text-danger">@age.Percentage %</div>
+                        <div>@age.Count</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Course participation rates for each department -->
+        <div class="bg-success bg-opacity-10 border rounded p-2 text-start mb-3 fw-bold">
+            @Resource1.Courseparticipationforeachdepartment
+        </div>
+        <div class="row g-3 mb-4">
+            @foreach (var course in Model.CourseDepartmentCategoryStats)
+            {
+                <div class="col-md-3 col-sm-6">
+                    <div class="border rounded text-center p-3">
+                        <div>@course.Label</div>
+                        <div class="fw-bold text-primary">@course.Percentage %</div>
+                        <div>@course.Count</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Another Ratio -->
+        <div class="bg-success bg-opacity-10 border rounded p-2 text-start mb-3 fw-bold">
+            @Resource1.OtherPercentagesCourseParticipants
+        </div>
+
+        <div class="row text-center g-3 mb-4" dir="rtl">
+            <!-- first group -->
+            <div class="col-md-6">
+                <div class="fw-bold mb-2 text-center">@Resource1.RatioMalesFemales</div>
+                <div class="row g-3">
+                    @foreach (var gender in Model.GenderStats)
+                    {
+                        <div class="col-md-6 col-sm-6">
+                            <div class="border rounded text-center p-3">
+                                <div>@gender.Label</div>
+                                <div class="fw-bold text-info">@gender.Percentage %</div>
+                                <div>@gender.Count</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Second group -->
+            <div class="col-md-6">
+                <div class="fw-bold mb-2 text-center">@Resource1.RatioResidentsCitizens</div>
+                <div class="row g-3">
+                    @foreach (var residentsOrCitizen in Model.ResidentsAndCitizensStats)
+                    {
+                        <div class="col-md-6 col-sm-6">
+                            <div class="border rounded text-center p-3">
+                                <div>@residentsOrCitizen.Label</div>
+                                <div class="fw-bold text-danger">@residentsOrCitizen.Percentage %</div>
+                                <div>@residentsOrCitizen.Count</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p class="PrintedBy">Printed by : <span>@((currentUser != null && currentUser.Email != null) ? currentUser.Email : "Unknown User")  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+    </div>
+
+
+
+    <script>
+
+        // This Part Is Important
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+         // Close window after printing
+            window.onafterprint = function() {
+                setTimeout(function() {
+                     window.history.back(); // goes to previous page
+                }, 500);
+            };
+    </script>
+</div>

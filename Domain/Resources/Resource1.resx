@@ -1,0 +1,3405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Delete_All" xml:space="preserve">
+    <value>Delete All</value>
+  </data>
+  <data name="Delete_Specific" xml:space="preserve">
+    <value>Delete Specific</value>
+  </data>
+  <data name="DeleteLogs" xml:space="preserve">
+    <value>Delete Specific</value>
+  </data>
+  <data name="DeleteAllLogs" xml:space="preserve">
+    <value>Delete All</value>
+  </data>
+  <data name="Identity.Account.Register" xml:space="preserve">
+    <value>add new Register</value>
+  </data>
+  <data name="Index" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Logs" xml:space="preserve">
+    <value>Logs</value>
+  </data>
+  <data name="NoData" xml:space="preserve">
+    <value>No Data</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="view.Home.Index" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>add new Register</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Home page</value>
+  </data>
+  <data name="LogsTitle" xml:space="preserve">
+    <value>Logs</value>
+    <comment>سجل العمليات</comment>
+  </data>
+  <data name="Search_by_process_name" xml:space="preserve">
+    <value>Search by process name</value>
+    <comment>اسم العملية</comment>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+    <comment>بحث</comment>
+  </data>
+  <data name="No_results_found" xml:space="preserve">
+    <value>No results found</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>No.</value>
+    <comment>الرقم</comment>
+  </data>
+  <data name="Employee_name" xml:space="preserve">
+    <value>Employee Name</value>
+    <comment>اسم الموظف</comment>
+  </data>
+  <data name="Page" xml:space="preserve">
+    <value>Page</value>
+    <comment>الصفحة</comment>
+  </data>
+  <data name="Process" xml:space="preserve">
+    <value>Process</value>
+    <comment>العملية</comment>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+    <comment>التاريخ</comment>
+  </data>
+  <data name="are_you_sure" xml:space="preserve">
+    <value>are you sure?</value>
+    <comment>هل أنت متأكد؟</comment>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="The_selected_records_will_be_permanently_deleted" xml:space="preserve">
+    <value>The selected records will be permanently deleted</value>
+    <comment>سيتم حذف السجلات المحددة نهائيًا</comment>
+  </data>
+  <data name="Yes_delete_them" xml:space="preserve">
+    <value>Yes, delete them</value>
+    <comment>نعم، احذفهم</comment>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+    <comment>إلغاء</comment>
+  </data>
+  <data name="All_records_will_be_permanently_deleted" xml:space="preserve">
+    <value>All records will be permanently deleted</value>
+    <comment>سيتم حذف السجلات كلها نهائيًا</comment>
+  </data>
+  <data name="LogHistory" xml:space="preserve">
+    <value>Logs History</value>
+  </data>
+  <data name="Courses" xml:space="preserve">
+    <value>Courses</value>
+    <comment>الدورات</comment>
+  </data>
+  <data name="CourseDate" xml:space="preserve">
+    <value>Course Date</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Department</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="CourseTitle" xml:space="preserve">
+    <value>Course Title</value>
+  </data>
+  <data name="ControlTools" xml:space="preserve">
+    <value>Control Tools</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>View Details</value>
+    <comment>عرض التفاصيل</comment>
+  </data>
+  <data name="Finished_course" xml:space="preserve">
+    <value>Finished course</value>
+    <comment>دورة منتهية</comment>
+  </data>
+  <data name="Course_Data" xml:space="preserve">
+    <value>Course Data</value>
+    <comment>بيانات الدورة</comment>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Start Date</value>
+    <comment>تاريخ البداية</comment>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>End Date</value>
+    <comment>تاريخ النهاية</comment>
+  </data>
+  <data name="For_more_details_ClickHere" xml:space="preserve">
+    <value>For more details please click here</value>
+    <comment>لمزيد من التفاصيل يرجى الضغط هنا</comment>
+  </data>
+  <data name="An_error_occurred_loading_course_data" xml:space="preserve">
+    <value>An error occurred while loading course data</value>
+    <comment>حدث خطأ أثناء تحميل بيانات الدورة</comment>
+  </data>
+  <data name="ElSubscribe" xml:space="preserve">
+    <value>Subscribe</value>
+    <comment>الإشتراك</comment>
+  </data>
+  <data name="Course_Subscribtion" xml:space="preserve">
+    <value>Course Subscribtion</value>
+    <comment>الاشتراك في دورة</comment>
+  </data>
+  <data name="photo_identification_ID" xml:space="preserve">
+    <value>Identification picture</value>
+    <comment>صورة الهوية</comment>
+  </data>
+  <data name="passport_picture" xml:space="preserve">
+    <value>passport picture</value>
+    <comment>صورة جواز السفر</comment>
+  </data>
+  <data name="I_have_read_and_agree_to_terms_and_conditions" xml:space="preserve">
+    <value>I have read and agree to the </value>
+    <comment>قرأت وفهمت</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Rate" xml:space="preserve">
+    <value>View Course Rate</value>
+    <comment>التقييم</comment>
+  </data>
+  <data name="Rate2" xml:space="preserve">
+    <value> Rate</value>
+  </data>
+  <data name="MasterPage" xml:space="preserve">
+    <value>Home Page</value>
+    <comment>الرئيسية</comment>
+  </data>
+  <data name="NextActivities" xml:space="preserve">
+    <value>Next Activities</value>
+    <comment>الفعاليات القادمة</comment>
+  </data>
+  <data name="NextCourses" xml:space="preserve">
+    <value>Next Courses</value>
+    <comment>الدورات القادمة</comment>
+  </data>
+  <data name="More" xml:space="preserve">
+    <value>More</value>
+    <comment>المزيد</comment>
+  </data>
+  <data name="Certificate" xml:space="preserve">
+    <value>Certificate</value>
+    <comment>شهادة</comment>
+  </data>
+  <data name="Excellent" xml:space="preserve">
+    <value>Excellent</value>
+    <comment>ممتاز</comment>
+  </data>
+  <data name="Happy" xml:space="preserve">
+    <value>Happy</value>
+    <comment>سعيد</comment>
+  </data>
+  <data name="Fair" xml:space="preserve">
+    <value>Fair</value>
+    <comment>متوسط</comment>
+  </data>
+  <data name="VeryGood" xml:space="preserve">
+    <value>Very Happy</value>
+    <comment>سعيد جداً</comment>
+  </data>
+  <data name="Good" xml:space="preserve">
+    <value>Good</value>
+    <comment>جيد</comment>
+  </data>
+  <data name="UnHappy" xml:space="preserve">
+    <value>UnHappy</value>
+    <comment>مقبول</comment>
+  </data>
+  <data name="CourseRate" xml:space="preserve">
+    <value>View Course Rate</value>
+    <comment>تقييم الدورة</comment>
+  </data>
+  <data name="Employee" xml:space="preserve">
+    <value>Employee</value>
+    <comment>الموظف</comment>
+  </data>
+  <data name="Trainer" xml:space="preserve">
+    <value>Trainers</value>
+    <comment>المدربين / المشرفين</comment>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>This field is required!</value>
+    <comment>هذا الحقل مطلوب !</comment>
+  </data>
+  <data name="MaxLength_100" xml:space="preserve">
+    <value>Maximum 100 characters!</value>
+    <comment>حد اقصى 100 حرف !</comment>
+  </data>
+  <data name="MaxLength_20" xml:space="preserve">
+    <value>Maximum 20 characters!</value>
+    <comment>حد اقصى 20 حرف !</comment>
+  </data>
+  <data name="MaxLength_200" xml:space="preserve">
+    <value>Maximum 200 characters!</value>
+    <comment>حد اقصى 200 حرف !</comment>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Enter A Valid Email</value>
+    <comment>يلزم ادخال بريد</comment>
+  </data>
+  <data name="MaxLength_50" xml:space="preserve">
+    <value>Maximum 50 characters!</value>
+    <comment>حد اقصى 50 حرف !</comment>
+  </data>
+  <data name="Mast_Length_15" xml:space="preserve">
+    <value>This field corresponds to 15 numbers</value>
+    <comment>هذا الحقل يلازم 15 رقم</comment>
+  </data>
+  <data name="FullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone Number</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="NationalityId" xml:space="preserve">
+    <value>Nationality</value>
+  </data>
+  <data name="DepartmentId" xml:space="preserve">
+    <value>Department</value>
+  </data>
+  <data name="JobTitle" xml:space="preserve">
+    <value>Job Title</value>
+  </data>
+  <data name="PassportNumber" xml:space="preserve">
+    <value>Passport Number</value>
+  </data>
+  <data name="PassportExpiryDate" xml:space="preserve">
+    <value>Passport Expiry Date</value>
+  </data>
+  <data name="NationalIdNumber" xml:space="preserve">
+    <value>National ID Number</value>
+  </data>
+  <data name="NationalIdExpiryDate" xml:space="preserve">
+    <value>National ID Expiry Date</value>
+  </data>
+  <data name="BankAccountNumber" xml:space="preserve">
+    <value>Bank Account Number</value>
+  </data>
+  <data name="BankName" xml:space="preserve">
+    <value>Bank Name</value>
+  </data>
+  <data name="Salary" xml:space="preserve">
+    <value>Salary</value>
+  </data>
+  <data name="Photo" xml:space="preserve">
+    <value>Photo</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Add_New_Employee" xml:space="preserve">
+    <value>Add New Employee</value>
+    <comment> إضافة موظف جديد</comment>
+  </data>
+  <data name="Employee_Details" xml:space="preserve">
+    <value>Employee Details</value>
+    <comment>تفاصيل الموظف</comment>
+  </data>
+  <data name="Employee_List" xml:space="preserve">
+    <value>Employee List</value>
+    <comment>قائمة الموظفين</comment>
+  </data>
+  <data name="Employees" xml:space="preserve">
+    <value>Employees</value>
+    <comment>الموظفين</comment>
+  </data>
+  <data name="Search_by_name_or_phone" xml:space="preserve">
+    <value>Search by name or phone or National ID Number</value>
+    <comment> الاسم | رقم  الهوية | الهاتف</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+    <comment>تعديل</comment>
+  </data>
+  <data name="Employee_Data_Management_Unit" xml:space="preserve">
+    <value>Employee Data Management Unit</value>
+    <comment>وحدة إدارة بيانات الموظفين</comment>
+  </data>
+  <data name="DeleteConfirmed" xml:space="preserve">
+    <value>Delete</value>
+    <comment>حذف</comment>
+  </data>
+  <data name="Yes_delete" xml:space="preserve">
+    <value>Yes, delete</value>
+    <comment>نعم احذف</comment>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+    <comment>اغلاق</comment>
+  </data>
+  <data name="Delete_Employee" xml:space="preserve">
+    <value>Delete Employee</value>
+    <comment>حذف موظف</comment>
+  </data>
+  <data name="are_you_sure_Delete" xml:space="preserve">
+    <value>are you sure Delete ?</value>
+    <comment>هل انت متأكد من حذف ؟</comment>
+  </data>
+  <data name="Edit_Employee" xml:space="preserve">
+    <value>Edit Employee</value>
+    <comment>تعديل بيانات موظف</comment>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+    <comment>الكود</comment>
+  </data>
+  <data name="Attachments" xml:space="preserve">
+    <value>Attachments</value>
+    <comment>المرفقات</comment>
+  </data>
+  <data name="MaxLength_500" xml:space="preserve">
+    <value>Maximum 500 characters!</value>
+    <comment>حد اقصى 500 حرف !</comment>
+  </data>
+  <data name="Add_New_ScientificProject" xml:space="preserve">
+    <value>Add New Scientific Project</value>
+  </data>
+  <data name="DateByCalander" xml:space="preserve">
+    <value>Project Date</value>
+  </data>
+  <data name="Select_Department" xml:space="preserve">
+    <value>Select Department</value>
+  </data>
+  <data name="ProjectNameAr" xml:space="preserve">
+    <value>Project Name (Arabic)</value>
+  </data>
+  <data name="ProjectNameEn" xml:space="preserve">
+    <value>Project Name (En)</value>
+  </data>
+  <data name="IdeaOwnerAr" xml:space="preserve">
+    <value>Idea Owner (Arabic)</value>
+  </data>
+  <data name="IdeaOwnerEn" xml:space="preserve">
+    <value>Idea Owner (EN)</value>
+  </data>
+  <data name="ProjectIdeaAr" xml:space="preserve">
+    <value>Project Idea (Arabic)</value>
+  </data>
+  <data name="ProjectIdeaEN" xml:space="preserve">
+    <value>Project Idea (En)</value>
+  </data>
+  <data name="ProjectElements" xml:space="preserve">
+    <value>Project Elements</value>
+  </data>
+  <data name="Element" xml:space="preserve">
+    <value>Element</value>
+  </data>
+  <data name="DeliveryData" xml:space="preserve">
+    <value>Delivery Data</value>
+  </data>
+  <data name="Participants" xml:space="preserve">
+    <value>Participants</value>
+  </data>
+  <data name="Participant" xml:space="preserve">
+    <value>Participant</value>
+  </data>
+  <data name="Supervisors" xml:space="preserve">
+    <value>Supervisors</value>
+  </data>
+  <data name="Supervisor" xml:space="preserve">
+    <value>Supervisor</value>
+  </data>
+  <data name="ExpectedCost" xml:space="preserve">
+    <value>Expected Cost</value>
+  </data>
+  <data name="UploadFiles" xml:space="preserve">
+    <value>Upload Files</value>
+  </data>
+  <data name="ScientificProjects" xml:space="preserve">
+    <value>Scientific Projects</value>
+  </data>
+  <data name="ProjectName" xml:space="preserve">
+    <value>Project Name</value>
+  </data>
+  <data name="IdeaOwner" xml:space="preserve">
+    <value>Idea Owner</value>
+  </data>
+  <data name="Search_by_name" xml:space="preserve">
+    <value>Search by Name</value>
+  </data>
+  <data name="Delete_ScientificProject" xml:space="preserve">
+    <value>Delete Scientific Project</value>
+  </data>
+  <data name="ScientificProjects_Data_Management_Unit" xml:space="preserve">
+    <value>Scientific Projects Data Management Unit</value>
+    <comment>وحدة ادارة بيانات المشاريع العلمية</comment>
+  </data>
+  <data name="Add_New_ScientificProjects" xml:space="preserve">
+    <value>Add New Scientific Projects</value>
+    <comment>إضافة مشروع علمي جديد</comment>
+  </data>
+  <data name="ScientificProjects_List" xml:space="preserve">
+    <value>Scientific Projects List</value>
+    <comment>قائمة المشاريع العلمية</comment>
+  </data>
+  <data name="Delete_Project" xml:space="preserve">
+    <value>Delete Project</value>
+    <comment>حذف المشروع</comment>
+  </data>
+  <data name="Search_by_ProjectName_or_Department" xml:space="preserve">
+    <value>Search by Project Name or Scientific Specialization</value>
+    <comment> حسب اسم المشروع | القسم</comment>
+  </data>
+  <data name="SerialCode" xml:space="preserve">
+    <value>Serial Code</value>
+    <comment>الكود</comment>
+  </data>
+  <data name="Add_New_ScientificProjects1" xml:space="preserve">
+    <value>New Project</value>
+  </data>
+  <data name="Edit_ScientificProject" xml:space="preserve">
+    <value>Updating scientific project data</value>
+    <comment>تحديث بيانات مشروع علمي</comment>
+  </data>
+  <data name="View_File" xml:space="preserve">
+    <value>View File</value>
+    <comment>عرض الملف</comment>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Files</value>
+    <comment>الملفات</comment>
+  </data>
+  <data name="MaxLength_300" xml:space="preserve">
+    <value>Maximum 300 characters!</value>
+    <comment>حد اقصى 300 حرف !</comment>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="StartDate1" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Years" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="Specialization" xml:space="preserve">
+    <value>Specialization</value>
+  </data>
+  <data name="Signup" xml:space="preserve">
+    <value>Sign up</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Show All</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="Search1" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Save1" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Records" xml:space="preserve">
+    <value>Records</value>
+  </data>
+  <data name="ProfileImage" xml:space="preserve">
+    <value>Upload Profile Image</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="Permissions" xml:space="preserve">
+    <value>Permissions</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Notes1" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="MyData" xml:space="preserve">
+    <value>My Data</value>
+  </data>
+  <data name="Index1" xml:space="preserve">
+    <value>View All</value>
+  </data>
+  <data name="IdExpiryDate" xml:space="preserve">
+    <value>ID Expiry Date</value>
+  </data>
+  <data name="Female" xml:space="preserve">
+    <value>Female</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Gender</value>
+  </data>
+  <data name="Email1" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="DateTo" xml:space="preserve">
+    <value>Date To</value>
+  </data>
+  <data name="Details1" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DateOfBirth" xml:space="preserve">
+    <value>Date of Birth</value>
+  </data>
+  <data name="DateFrom" xml:space="preserve">
+    <value>Date from</value>
+  </data>
+  <data name="Date1" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Create New</value>
+  </data>
+  <data name="Code1" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Above" xml:space="preserve">
+    <value>Above</value>
+  </data>
+  <data name="AllTypes" xml:space="preserve">
+    <value>All Types</value>
+  </data>
+  <data name="Ages" xml:space="preserve">
+    <value>Ages</value>
+  </data>
+  <data name="Age" xml:space="preserve">
+    <value>Age</value>
+  </data>
+  <data name="Address1" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="AlreadyHaveAccount" xml:space="preserve">
+    <value>Already have an account?</value>
+  </data>
+  <data name="CurrentProfileImage" xml:space="preserve">
+    <value>Current Profile Image</value>
+  </data>
+  <data name="CurrentAttachment" xml:space="preserve">
+    <value>Current Attachment</value>
+  </data>
+  <data name="DownloadAttachment" xml:space="preserve">
+    <value>Download Attachment</value>
+  </data>
+  <data name="DontHaveAccount" xml:space="preserve">
+    <value>Don't have an account</value>
+  </data>
+  <data name="UploadAttachment" xml:space="preserve">
+    <value>Upload Attachment</value>
+  </data>
+  <data name="UploadProfileImage" xml:space="preserve">
+    <value>Upload Profile Image</value>
+  </data>
+  <data name="EditActivity" xml:space="preserve">
+    <value>Edit Activity</value>
+    <comment>تحديث بيانات فعالية</comment>
+  </data>
+  <data name="CreateActivity" xml:space="preserve">
+    <value>Create Activity</value>
+  </data>
+  <data name="ActivityTitleAr" xml:space="preserve">
+    <value>Activity Title Ar</value>
+    <comment>عنوان الفعالية (عربي)</comment>
+  </data>
+  <data name="ActivityTitleEn" xml:space="preserve">
+    <value>Activity Title En</value>
+    <comment>عنوان الفعالية (En)</comment>
+  </data>
+  <data name="ActivitysIndex" xml:space="preserve">
+    <value>Activities List</value>
+    <comment>قائمة الفعاليات</comment>
+  </data>
+  <data name="Trainers" xml:space="preserve">
+    <value>Trainers</value>
+    <comment>المشرفين</comment>
+  </data>
+  <data name="ActivityTitle" xml:space="preserve">
+    <value>Activity Title</value>
+    <comment>عنوان الفعالية</comment>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Cancel1" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Are you sure you want to the deletion?</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="CreateNew1" xml:space="preserve">
+    <value>Create New</value>
+  </data>
+  <data name="ActivityUnit" xml:space="preserve">
+    <value>Activity Data Management Unit</value>
+    <comment>وحدة إدراة بيانات الفعاليات</comment>
+  </data>
+  <data name="MinimumAge" xml:space="preserve">
+    <value>Minimum Age</value>
+    <comment>الأعمار</comment>
+  </data>
+  <data name="UploadAttachmentForMoreDetails" xml:space="preserve">
+    <value>Download a file for more details</value>
+    <comment>تحميل ملف لمزيد من التفاصيل</comment>
+  </data>
+  <data name="Achievement" xml:space="preserve">
+    <value>Achievement</value>
+    <comment>الأنجازات</comment>
+  </data>
+  <data name="SubscriptionCount" xml:space="preserve">
+    <value>Subscriptions Count</value>
+    <comment>عدد المشتركين</comment>
+  </data>
+  <data name="ActivityDuration" xml:space="preserve">
+    <value>Activity Duration</value>
+    <comment>مدة الفعالية</comment>
+  </data>
+  <data name="ParticipantsInActivity" xml:space="preserve">
+    <value>Participants in the Activity</value>
+    <comment>المشاركين فى الفعالية</comment>
+  </data>
+  <data name="subscriberName" xml:space="preserve">
+    <value>Subscriber Name</value>
+    <comment>أسم المشترك</comment>
+  </data>
+  <data name="SubscriptionHistory" xml:space="preserve">
+    <value>Subscription history</value>
+    <comment>تاريخ الأشتراك</comment>
+  </data>
+  <data name="Details_ScientificProject" xml:space="preserve">
+    <value>Details of a technical card for a scientific project</value>
+    <comment>تفاصيل بطاقة فنية مشروع علمى</comment>
+  </data>
+  <data name="ProjectCard2" xml:space="preserve">
+    <value>Technical card scientific project</value>
+    <comment>بطاقة فنية مشروع علمى</comment>
+  </data>
+  <data name="Statistics" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
+  <data name="From20yearsAndMore" xml:space="preserve">
+    <value>From 20 years And More</value>
+    <comment>من 20 عام وأكثر</comment>
+  </data>
+  <data name="males" xml:space="preserve">
+    <value>Males</value>
+    <comment>الذكور</comment>
+  </data>
+  <data name="Females" xml:space="preserve">
+    <value>Females</value>
+    <comment>الإناث</comment>
+  </data>
+  <data name="residents" xml:space="preserve">
+    <value>Residents</value>
+    <comment>المقيمين</comment>
+  </data>
+  <data name="citizens" xml:space="preserve">
+    <value>Citizens</value>
+    <comment>المواطنين</comment>
+  </data>
+  <data name="TotalActivityParticipants" xml:space="preserve">
+    <value>Total Activity Participants</value>
+    <comment>إجمالي المشتركين في الفعاليات</comment>
+  </data>
+  <data name="TotalCourseParticipants" xml:space="preserve">
+    <value>Total Course Participants</value>
+    <comment>إجمالي المشتركين في الدورات</comment>
+  </data>
+  <data name="AgePercentagesofParticipants" xml:space="preserve">
+    <value>Age Percentages of Participants in Activities</value>
+    <comment>نسب الأعمار المشتركين في الفعاليات</comment>
+  </data>
+  <data name="Courseparticipationforeachdepartment" xml:space="preserve">
+    <value>Course participation percentage for each department</value>
+    <comment>نسب الإشتراك في الدورات لكل قسم</comment>
+  </data>
+  <data name="OtherPercentagesCourseParticipants" xml:space="preserve">
+    <value>Other percentages of course participants</value>
+    <comment>نسب أخرى للمشتركين في الدورات</comment>
+  </data>
+  <data name="RatioMalesFemales" xml:space="preserve">
+    <value>Ratio of Males to Females</value>
+    <comment>نسبة الذكور الى الإناث</comment>
+  </data>
+  <data name="RatioResidentsCitizens" xml:space="preserve">
+    <value>Ratio of Residents to Citizens</value>
+    <comment>نسبة المقيمين الى المواطنين</comment>
+  </data>
+  <data name="FujairahScientificClub" xml:space="preserve">
+    <value>Fujairah Scientific Club</value>
+    <comment>نادي الفجيرة العلمي</comment>
+  </data>
+  <data name="logo" xml:space="preserve">
+    <value>logo</value>
+    <comment>شعار</comment>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Log in</value>
+    <comment>تسجيل الدخول</comment>
+  </data>
+  <data name="Forgotyourpassword" xml:space="preserve">
+    <value>Forgot your password?</value>
+    <comment>هل نسيت كلمة المرور؟</comment>
+  </data>
+  <data name="ResendEmailConfirmation" xml:space="preserve">
+    <value>Resend email confirmation</value>
+    <comment>إعادة إرسال تأكيد البريد الإلكتروني</comment>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember Me</value>
+    <comment>تذكرني</comment>
+  </data>
+  <data name="PrintCertificate" xml:space="preserve">
+    <value>Print Certificate</value>
+    <comment>طباعة الشهادة</comment>
+  </data>
+  <data name="EndDateMustAfterStartDate" xml:space="preserve">
+    <value>The end date must be after the start date</value>
+    <comment>تاريخ النهاية يجب أن يكون بعد تاريخ البداية</comment>
+  </data>
+  <data name="MaxLength" xml:space="preserve">
+    <value>Max Length is exceeded</value>
+    <comment>تم تجاوز الحد الأقصى لعدد الحروف او الارقام</comment>
+  </data>
+  <data name="MaxLength_51" xml:space="preserve">
+    <value>Maximum 50 characters!</value>
+    <comment>حد اقصى 50 حرف !</comment>
+  </data>
+  <data name="Mast_Length_16" xml:space="preserve">
+    <value>This field corresponds to 16 numbers</value>
+    <comment>هذا الحقل يلازم 16 رقم</comment>
+  </data>
+  <data name="Mast_Length_18" xml:space="preserve">
+    <value>This field corresponds to 10 numbers XXX-XXXX-XXXX</value>
+    <comment> هذا الحقل يلازم 10رقم في شكل XXX-XXXX-XXXX</comment>
+  </data>
+  <data name="SearchByCourseTitle" xml:space="preserve">
+    <value>Search By Course Title</value>
+    <comment>عنوان الدورة</comment>
+  </data>
+  <data name="UploadEmployeeFiles" xml:space="preserve">
+    <value>Upload employee files</value>
+    <comment>رفع ملفات الموظف</comment>
+  </data>
+  <data name="ViewPassport" xml:space="preserve">
+    <value>View Passport</value>
+    <comment>عرض جواز السفر</comment>
+  </data>
+  <data name="ViewWorkstartNotification" xml:space="preserve">
+    <value>View work start notification</value>
+    <comment>عرض إشعار مباشرة العمل</comment>
+  </data>
+  <data name="ViewIDCard" xml:space="preserve">
+    <value>View ID Card</value>
+    <comment>عرض بطاقة الهوية</comment>
+  </data>
+  <data name="Viewtheidentificationcard" xml:space="preserve">
+    <value>View The Identification Card</value>
+    <comment>عرض الكارت التعريفي</comment>
+  </data>
+  <data name="ViewMaritalStatusreport" xml:space="preserve">
+    <value>View marital status report</value>
+    <comment>عرض تقرير الحالة الاجتماعية</comment>
+  </data>
+  <data name="IDCard" xml:space="preserve">
+    <value>ID Card</value>
+    <comment>بطاقة الهوية</comment>
+  </data>
+  <data name="MaritalStatusreport" xml:space="preserve">
+    <value>Marital status report</value>
+    <comment>تقرير الحالة الاجتماعية</comment>
+  </data>
+  <data name="Passport" xml:space="preserve">
+    <value>Passport</value>
+    <comment>جواز السفر</comment>
+  </data>
+  <data name="theidentificationcard" xml:space="preserve">
+    <value>The Identification Card</value>
+    <comment>الكارت التعريفي</comment>
+  </data>
+  <data name="WorkstartNotification" xml:space="preserve">
+    <value>work start notification</value>
+    <comment>إشعار مباشرة العمل</comment>
+  </data>
+  <data name="CaptureThisImageAgainWithHighQuality" xml:space="preserve">
+    <value>Capture This Image Again with High Quality</value>
+    <comment>التقط هذه الصورة مرة أخرى بجودة عالية</comment>
+  </data>
+  <data name="OKitValid" xml:space="preserve">
+    <value>OK it's Valid</value>
+    <comment>حسنًا، إنه صالح</comment>
+  </data>
+  <data name="DataExtractedCorrectly" xml:space="preserve">
+    <value>Data Extracted Correctly</value>
+    <comment>البيانات مستخرجة بشكل صحيح</comment>
+  </data>
+  <data name="UploadIDCard" xml:space="preserve">
+    <value>Upload ID Card</value>
+    <comment>  الرجاء رفع بطاقة هوية </comment>
+  </data>
+  <data name="CaptureThisImageAgainFromFrontFace" xml:space="preserve">
+    <value>Capture This Image Again From Front Face</value>
+    <comment>التقط هذه الصورة مرة أخرى من الوجه الأمامي</comment>
+  </data>
+  <data name="UploadIDCardThisIsNot" xml:space="preserve">
+    <value>Upload ID Card This is Not</value>
+    <comment>  هذه ليست بطاقة هوية الرجاء اعادة رفع بطاقة</comment>
+  </data>
+  <data name="ThisFieldDoesnotMatchIDCardImage" xml:space="preserve">
+    <value>This Field Doesn't Match ID Card Image</value>
+    <comment>الحقل غير مطابق لصورة البطاقة</comment>
+  </data>
+  <data name="PasswordDoesNotMatch" xml:space="preserve">
+    <value>Password Doesn't Match.</value>
+    <comment>كلمة المرور غير متطابقة</comment>
+  </data>
+  <data name="AccountSuspended" xml:space="preserve">
+    <value>Account Suspended!</value>
+    <comment>تم تعليق الحساب!</comment>
+  </data>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Invalid Credentials.</value>
+    <comment>بيانات دخول غير صالحة</comment>
+  </data>
+  <data name="UsernameAlreadyExists" xml:space="preserve">
+    <value>Username already exists.</value>
+    <comment>اسم المستخدم موجود بالفعل</comment>
+  </data>
+  <data name="UploadPassportImage" xml:space="preserve">
+    <value>Upload Passport Image</value>
+    <comment>  الرجاء رفع صورة جواز السفر </comment>
+  </data>
+  <data name="UploadIDCardDiffrent" xml:space="preserve">
+    <value>Upload ID Card Different</value>
+    <comment>  الرجاء رفع بطاقة هوية مختلفة عن جواز السفر</comment>
+  </data>
+  <data name="UploadPassportImageDiffrent" xml:space="preserve">
+    <value>Upload Passport Image Different</value>
+    <comment>  الرجاء رفع صورة جواز السفر مختلفة عن بطاقة الهوية</comment>
+  </data>
+  <data name="ThisIsnotaPreviouslyRegisteredIDCard" xml:space="preserve">
+    <value>This Isn't a Previously Registered ID Card</value>
+    <comment>هذه ليست البطاقة المسجلة من قبل</comment>
+  </data>
+  <data name="ThisIDCardIsExpired" xml:space="preserve">
+    <value>This ID Card is Expired</value>
+    <comment>هذه البطاقة منتهية الصلاحية</comment>
+  </data>
+  <data name="UploadIDCardNew" xml:space="preserve">
+    <value>Upload New ID Card as old Expired</value>
+    <comment>  الرجاء رفع بطاقة هوية </comment>
+  </data>
+  <data name="CourseLicense1" xml:space="preserve">
+    <value>The member is obligated to fully attend any Course in which he registers</value>
+    <comment>يلتزم العضو بالحضور الكامل لأي دورة يقوم بالتسجيل فيها</comment>
+  </data>
+  <data name="CourseLicense2" xml:space="preserve">
+    <value>At Fujairah Scientific Club, if it is not possible to attend, the club management must be informed before the date</value>
+    <comment>بنادي الفجيرة العلمي في حال التعذر عن الحضور، يجب إبلاغ إدارة النادي قبل موعد</comment>
+  </data>
+  <data name="CourseLicense3" xml:space="preserve">
+    <value>Course for at least 24 hours A member may be denied registration for subsequent Courses if:</value>
+    <comment>الدورات بـ 24 ساعة على الأقل قد يُحرم العضو من التسجيل في دورات لاحقة في حال</comment>
+  </data>
+  <data name="CourseLicense4" xml:space="preserve">
+    <value>Repeated absence without an acceptable excuse Registration for any Course is considered implicit approval of these conditions</value>
+    <comment>الغياب المتكرر بدون عذر مقبول يعتبر التسجيل في أي دورة موافقة ضمنية على هذه الشروط</comment>
+  </data>
+  <data name="IreadAndUnderstoodTermsAndConditions" xml:space="preserve">
+    <value>I read and understood the terms and conditions</value>
+    <comment>قرأت وفهمت الشروط والأحكام</comment>
+  </data>
+  <data name="RecordsCount" xml:space="preserve">
+    <value>Records Count</value>
+    <comment>عدد السجلات</comment>
+  </data>
+  <data name="CourseDelete" xml:space="preserve">
+    <value>Course Delete</value>
+    <comment>حذف الدورة</comment>
+  </data>
+  <data name="ConfirmDeleteSubscription" xml:space="preserve">
+    <value>Are you sure you want to the delete The Subscription of Member ?</value>
+  </data>
+  <data name="UsersManagementUnite" xml:space="preserve">
+    <value>وحدة إدارة المستخدمين</value>
+    <comment>وحدة إدارة المستخدمين</comment>
+  </data>
+  <data name="LogsUnite" xml:space="preserve">
+    <value>سجل العمليات</value>
+    <comment>سجل العمليات</comment>
+  </data>
+  <data name="member" xml:space="preserve">
+    <value>Member</value>
+    <comment>عضو</comment>
+  </data>
+  <data name="Supplier" xml:space="preserve">
+    <value>Supplier</value>
+    <comment>المورد</comment>
+  </data>
+  <data name="Add_New_Supplier" xml:space="preserve">
+    <value>Add New Supplier</value>
+    <comment> إضافة مورد جديد</comment>
+  </data>
+  <data name="Supplier_Data_Management_Unit" xml:space="preserve">
+    <value>Supplier Data Management Unit</value>
+    <comment>وحدة إدارة بيانات الموردين</comment>
+  </data>
+  <data name="Supplier_Details" xml:space="preserve">
+    <value>Supplier Details</value>
+    <comment>تفاصيل المورد</comment>
+  </data>
+  <data name="Supplier_List" xml:space="preserve">
+    <value>Supplier List</value>
+    <comment>قائمة الموردين</comment>
+  </data>
+  <data name="Supplier_name" xml:space="preserve">
+    <value>Supplier Name</value>
+    <comment>اسم المورد</comment>
+  </data>
+  <data name="Edit_Supplier" xml:space="preserve">
+    <value>Edit Supplier</value>
+    <comment>تعديل بيانات مورد</comment>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="Accounts" xml:space="preserve">
+    <value>Users</value>
+    <comment>المستخدمين</comment>
+  </data>
+  <data name="Activitys" xml:space="preserve">
+    <value>Activities</value>
+    <comment>الفعاليات</comment>
+  </data>
+  <data name="AnnualSchedules" xml:space="preserve">
+    <value>Annual Schedules</value>
+    <comment>الجرد السنوي</comment>
+  </data>
+  <data name="Cars" xml:space="preserve">
+    <value>Cars</value>
+    <comment>السيارات</comment>
+  </data>
+  <data name="CarServices" xml:space="preserve">
+    <value>Car Services</value>
+    <comment>صيانات السيارات</comment>
+  </data>
+  <data name="Employeess" xml:space="preserve">
+    <value>Employees</value>
+    <comment>الموظفين</comment>
+  </data>
+  <data name="Engineers" xml:space="preserve">
+    <value>Engineers</value>
+    <comment>المهندسين</comment>
+  </data>
+  <data name="Homes" xml:space="preserve">
+    <value>Home</value>
+    <comment>الرئيسية</comment>
+  </data>
+  <data name="LogHistorys" xml:space="preserve">
+    <value>Logs History</value>
+    <comment>سجل العمليات</comment>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>View Members</value>
+    <comment>عرض الأعضاء</comment>
+  </data>
+  <data name="Roless" xml:space="preserve">
+    <value>Roles (Groups)</value>
+    <comment>الأدوار ( المجموعات )</comment>
+  </data>
+  <data name="ScientificProjectss" xml:space="preserve">
+    <value>Scientific Projects</value>
+    <comment>المشاريع العلمية</comment>
+  </data>
+  <data name="Statisticss" xml:space="preserve">
+    <value>Statistics</value>
+    <comment>الإحصائيات</comment>
+  </data>
+  <data name="Suppliers" xml:space="preserve">
+    <value>Suppliers</value>
+    <comment>الموردين</comment>
+  </data>
+  <data name="IDClassifications" xml:space="preserve">
+    <value>ID Classification Page</value>
+    <comment> صفحة استخراج من الصور</comment>
+  </data>
+  <data name="ActivitiesManagement" xml:space="preserve">
+    <value>Activities and Membership Management</value>
+  </data>
+  <data name="RegisteredInCourses" xml:space="preserve">
+    <value>Registered in Courses</value>
+  </data>
+  <data name="CoursesList" xml:space="preserve">
+    <value>Courses List</value>
+  </data>
+  <data name="AddNewCourse" xml:space="preserve">
+    <value>Add New Course</value>
+  </data>
+  <data name="TrainersList" xml:space="preserve">
+    <value>Trainers List</value>
+  </data>
+  <data name="AddNewTrainer" xml:space="preserve">
+    <value>Add New Trainer</value>
+  </data>
+  <data name="EventsManagement" xml:space="preserve">
+    <value>Events Management</value>
+  </data>
+  <data name="EventsList" xml:space="preserve">
+    <value>Events List</value>
+  </data>
+  <data name="AddNewEvent" xml:space="preserve">
+    <value>Add New Event</value>
+  </data>
+  <data name="EmployeesManagement" xml:space="preserve">
+    <value>Employees Management</value>
+  </data>
+  <data name="EmployeesList" xml:space="preserve">
+    <value>Employees List</value>
+  </data>
+  <data name="AddNewEmployee" xml:space="preserve">
+    <value>Add New Employee</value>
+  </data>
+  <data name="CarsManagement" xml:space="preserve">
+    <value>Cars Management</value>
+  </data>
+  <data name="CarsList" xml:space="preserve">
+    <value>Cars List</value>
+  </data>
+  <data name="CarsMaintenanceList" xml:space="preserve">
+    <value>Cars Maintenance List</value>
+  </data>
+  <data name="ClubMaintenanceManagement" xml:space="preserve">
+    <value>Club Maintenance Management</value>
+  </data>
+  <data name="MaintenanceList" xml:space="preserve">
+    <value>Maintenance List</value>
+  </data>
+  <data name="AddNewMaintenance" xml:space="preserve">
+    <value>Add New Maintenance</value>
+  </data>
+  <data name="SuppliersManagement" xml:space="preserve">
+    <value>Suppliers Management</value>
+  </data>
+  <data name="SuppliersList" xml:space="preserve">
+    <value>Suppliers List</value>
+  </data>
+  <data name="AddNewSupplier" xml:space="preserve">
+    <value>Add New Supplier</value>
+  </data>
+  <data name="AnnualInventoryManagement" xml:space="preserve">
+    <value>Annual Inventory Management</value>
+  </data>
+  <data name="InventoryList" xml:space="preserve">
+    <value>Inventory List</value>
+  </data>
+  <data name="AddNewInventory" xml:space="preserve">
+    <value>Add New Inventory</value>
+  </data>
+  <data name="EngineersAssociationManagement" xml:space="preserve">
+    <value>Engineers Association Management</value>
+  </data>
+  <data name="EngineersList" xml:space="preserve">
+    <value>Engineers List</value>
+  </data>
+  <data name="ScientificProjectsManagement" xml:space="preserve">
+    <value>Scientific Projects Management</value>
+  </data>
+  <data name="ScientificProjectsList" xml:space="preserve">
+    <value>Scientific Projects List</value>
+  </data>
+  <data name="UsersList" xml:space="preserve">
+    <value>Users List</value>
+  </data>
+  <data name="UserGroups" xml:space="preserve">
+    <value>User Groups</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading...</value>
+    <comment>جارٍ التحميل...</comment>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+    <comment>الوقت</comment>
+  </data>
+  <data name="AddNewClubMaintenance" xml:space="preserve">
+    <value>Add New Club Maintenance</value>
+  </data>
+  <data name="EditClubMaintenance" xml:space="preserve">
+    <value>Edit Club Maintenance</value>
+  </data>
+  <data name="CurrentFile" xml:space="preserve">
+    <value>Current File:</value>
+  </data>
+  <data name="MaintenanceDetails" xml:space="preserve">
+    <value>Maintenance Details</value>
+  </data>
+  <data name="MaintenanceTitle" xml:space="preserve">
+    <value>Maintenance Title</value>
+  </data>
+  <data name="MaintenanceDate" xml:space="preserve">
+    <value>Maintenance Date</value>
+  </data>
+  <data name="MaintenanceTime" xml:space="preserve">
+    <value>Maintenance Time</value>
+  </data>
+  <data name="MaintenanceLocation" xml:space="preserve">
+    <value>Maintenance Location</value>
+  </data>
+  <data name="MaintenanceDescription" xml:space="preserve">
+    <value>Maintenance Description</value>
+  </data>
+  <data name="PdfFile" xml:space="preserve">
+    <value>PDF File</value>
+  </data>
+  <data name="ViewFile" xml:space="preserve">
+    <value>View File</value>
+  </data>
+  <data name="NoFileAttached" xml:space="preserve">
+    <value>No File Attached</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to List</value>
+  </data>
+  <data name="CurrentFile1" xml:space="preserve">
+    <value>Current File</value>
+    <comment>الملف الحالي</comment>
+  </data>
+  <data name="ClubMaintenanceManagementList" xml:space="preserve">
+    <value>Club Maintenance Data List</value>
+    <comment>قائمة بيانات صيانة مقر النادى</comment>
+  </data>
+  <data name="TheReportIsLoadingpleasewait" xml:space="preserve">
+    <value>The Report is loading, please wait...</value>
+    <comment>جاري تحميل التقرير، الرجاء الانتظار...</comment>
+  </data>
+  <data name="EngineerList" xml:space="preserve">
+    <value>Engineer List</value>
+    <comment>قائمة المهندسين</comment>
+  </data>
+  <data name="AnnualTextarea1" xml:space="preserve">
+    <value>Based on the 2023 management meeting and Management Resolution No. 12 dated 12/22/2024, the committee took an inventory of the club's assets as stated below</value>
+    <comment>بناءا على أجتماع الأدارة لعام 2023 وقرار الادارة رقم 12 بتاريخ 22/12/2024 قامت اللجنة بجرد موجودات النادى حسب ما جاء أدناه</comment>
+  </data>
+  <data name="AnnualTextarea2" xml:space="preserve">
+    <value>Today.................And on the date of.................................................</value>
+    <comment>اليوم .................وبتاريخ .............................تم جرد ....................م</comment>
+  </data>
+  <data name="AnnualScheduleManagement" xml:space="preserve">
+    <value>Annual Schedule Management</value>
+  </data>
+  <data name="AnnualInventoryForm" xml:space="preserve">
+    <value>Annual Inventory Form</value>
+  </data>
+  <data name="SearchByItemOrDescription" xml:space="preserve">
+    <value>Search by Item or Description</value>
+  </data>
+  <data name="EditInventory" xml:space="preserve">
+    <value>Edit Inventory</value>
+  </data>
+  <data name="InventoryDetails" xml:space="preserve">
+    <value>Inventory Details</value>
+  </data>
+  <data name="Item" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="Current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="Record" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="Day" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="InventoryYear" xml:space="preserve">
+    <value>Inventory Year</value>
+  </data>
+  <data name="SupplierName" xml:space="preserve">
+    <value>Supplier Name</value>
+  </data>
+  <data name="VATNumber" xml:space="preserve">
+    <value>VAT Number</value>
+  </data>
+  <data name="AddSupplier" xml:space="preserve">
+    <value>Add Supplier</value>
+  </data>
+  <data name="EditSupplier" xml:space="preserve">
+    <value>Edit Supplier</value>
+  </data>
+  <data name="SupplierDetails" xml:space="preserve">
+    <value>Supplier Details</value>
+  </data>
+  <data name="NameAr" xml:space="preserve">
+    <value>Name (Arabic)</value>
+  </data>
+  <data name="NameEn" xml:space="preserve">
+    <value>Name (En)</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Mobile" xml:space="preserve">
+    <value>Mobile</value>
+  </data>
+  <data name="TaxNumber" xml:space="preserve">
+    <value>Tax Number</value>
+  </data>
+  <data name="Statement" xml:space="preserve">
+    <value>Particular</value>
+    <comment>البيان</comment>
+  </data>
+  <data name="DeleteInventory" xml:space="preserve">
+    <value>Delete inventory</value>
+    <comment>حذف جرد</comment>
+  </data>
+  <data name="CreateCarService" xml:space="preserve">
+    <value>Add Car Service</value>
+    <comment>إضافة صيانة سيارة</comment>
+  </data>
+  <data name="EditCarService" xml:space="preserve">
+    <value>Edit Car Service</value>
+    <comment>تعديل صيانة سيارة</comment>
+  </data>
+  <data name="NoEvents" xml:space="preserve">
+    <value>No Events</value>
+  </data>
+  <data name="NoEventsMessage" xml:space="preserve">
+    <value>No records found currently, you can start by adding a new event.</value>
+  </data>
+  <data name="NoUsers" xml:space="preserve">
+    <value>No Users</value>
+  </data>
+  <data name="NoUsersMessage" xml:space="preserve">
+    <value>No records found currently, you can start by adding a new user.</value>
+  </data>
+  <data name="NoCars" xml:space="preserve">
+    <value>No Cars</value>
+  </data>
+  <data name="NoCarsMessage" xml:space="preserve">
+    <value>No car records found currently, you can start by adding a new car.</value>
+  </data>
+  <data name="NoEngineers" xml:space="preserve">
+    <value>No Engineers</value>
+  </data>
+  <data name="NoEngineersMessage" xml:space="preserve">
+    <value>No records found currently, you can start by adding a new engineer.</value>
+  </data>
+  <data name="NoMembers" xml:space="preserve">
+    <value>No Members</value>
+  </data>
+  <data name="NoMembersMessage" xml:space="preserve">
+    <value>No records found currently, you can start by adding a new member.</value>
+  </data>
+  <data name="NoRoles" xml:space="preserve">
+    <value>No Roles</value>
+  </data>
+  <data name="NoRolesMessage" xml:space="preserve">
+    <value>No records found currently, you can start by adding a new role.</value>
+  </data>
+  <data name="PrintLogHistory" xml:space="preserve">
+    <value>Print Logs History</value>
+    <comment>طباعة سجل العمليات</comment>
+  </data>
+  <data name="PrintDate" xml:space="preserve">
+    <value>Print Date</value>
+    <comment>تاريخ الطباعة</comment>
+  </data>
+  <data name="SearchWord" xml:space="preserve">
+    <value>Search Word</value>
+    <comment>كلمة البحث</comment>
+  </data>
+  <data name="NoSerial" xml:space="preserve">
+    <value>Serial No.</value>
+    <comment>مسلسل</comment>
+  </data>
+  <data name="pdfFileMore5mg" xml:space="preserve">
+    <value>pdf File is More Than 5 MG</value>
+    <comment>ملف pdf اكبر من 5 ميجا</comment>
+  </data>
+  <data name="PdfOnly" xml:space="preserve">
+    <value>Only PDF files are allowed</value>
+    <comment>يُسمح فقط بملفات PDF</comment>
+  </data>
+  <data name="ImageFileMore3mg" xml:space="preserve">
+    <value>Image File is More Than 3 MG</value>
+    <comment>حجم الصورة اكبر من 3ميجا</comment>
+  </data>
+  <data name="ImageOnly" xml:space="preserve">
+    <value>Only Image files are allowed</value>
+    <comment>يُسمح فقط بملفات صور</comment>
+  </data>
+  <data name="ErrorOccurred" xml:space="preserve">
+    <value>Error Occurred</value>
+    <comment>حدث خطأ</comment>
+  </data>
+  <data name="CarCantDelete" xml:space="preserve">
+    <value>This car cannot be deleted because it has maintenances</value>
+    <comment>لا يمكن حذف السيارة لأن لديها صيانات</comment>
+  </data>
+  <data name="Description2" xml:space="preserve">
+    <value>Description2</value>
+    <comment>الوصف</comment>
+  </data>
+  <data name="MobileNumber" xml:space="preserve">
+    <value>Mobile Number</value>
+  </data>
+  <data name="SupplierNameEn" xml:space="preserve">
+    <value>Name (En)</value>
+  </data>
+  <data name="SupplierNameAr" xml:space="preserve">
+    <value>Name (Arabic)</value>
+  </data>
+  <data name="ThisMustBeEmail" xml:space="preserve">
+    <value>This must be Email, it is incorrect</value>
+    <comment>البريد الإلكتروني غير صحيح</comment>
+  </data>
+  <data name="EditMission" xml:space="preserve">
+    <value>Edit Mission</value>
+    <comment>تعديل مهمة عمل </comment>
+  </data>
+  <data name="CreateMission" xml:space="preserve">
+    <value>Create Mission</value>
+    <comment>إضافة مهمة عمل </comment>
+  </data>
+  <data name="MissionsManagement" xml:space="preserve">
+    <value>External Missions Management</value>
+    <comment>وحدة تدفق الوثائق</comment>
+  </data>
+  <data name="BasicData" xml:space="preserve">
+    <value>Basic Data</value>
+    <comment>البيانات الأساسية</comment>
+  </data>
+  <data name="MissionDate" xml:space="preserve">
+    <value>Mission Date</value>
+    <comment>تاريخ المهمة</comment>
+  </data>
+  <data name="SelectEmployee" xml:space="preserve">
+    <value>Select Employee</value>
+    <comment>اختر الموظف</comment>
+  </data>
+  <data name="MissionLocation" xml:space="preserve">
+    <value>Mission Location</value>
+    <comment>مكان المهمة</comment>
+  </data>
+  <data name="MissionCountry" xml:space="preserve">
+    <value>Mission Country</value>
+    <comment>بلد المهمة</comment>
+  </data>
+  <data name="MissionWorkDescription" xml:space="preserve">
+    <value>Assigned Work</value>
+    <comment>العمل المكلف به</comment>
+  </data>
+  <data name="MissionDetails" xml:space="preserve">
+    <value>Mission Details</value>
+    <comment>تفاصيل مهمة العمل</comment>
+  </data>
+  <data name="Conference" xml:space="preserve">
+    <value>Conference</value>
+    <comment>مؤتمر</comment>
+  </data>
+  <data name="Exhibition" xml:space="preserve">
+    <value>Exhibition</value>
+    <comment>معرض</comment>
+  </data>
+  <data name="Competition" xml:space="preserve">
+    <value>Competition</value>
+    <comment>مسابقة</comment>
+  </data>
+  <data name="Forum" xml:space="preserve">
+    <value>Forum</value>
+    <comment>ملتقى</comment>
+  </data>
+  <data name="ClubEquipment" xml:space="preserve">
+    <value>Club Equipment Purchase</value>
+    <comment>شراء معدات للنادي</comment>
+  </data>
+  <data name="ExchangeOrDelivery" xml:space="preserve">
+    <value>Exchange or Delivery</value>
+    <comment>استقبال او توصيل من المطار</comment>
+  </data>
+  <data name="RequiredFees" xml:space="preserve">
+    <value>Required Fees</value>
+    <comment>الرسوم المالية المطلوبة</comment>
+  </data>
+  <data name="PetroleumFees" xml:space="preserve">
+    <value>Petroleum Fees</value>
+    <comment>رسوم البترول</comment>
+  </data>
+  <data name="FoodFees" xml:space="preserve">
+    <value>Food Fees</value>
+    <comment>رسوم الطعام</comment>
+  </data>
+  <data name="MissionAllowance" xml:space="preserve">
+    <value>Mission Allowance</value>
+    <comment>بدل المهمة</comment>
+  </data>
+  <data name="Candidates" xml:space="preserve">
+    <value>Candidates</value>
+    <comment>المرشحون للمشاركة</comment>
+  </data>
+  <data name="CandidateName" xml:space="preserve">
+    <value>Name</value>
+    <comment>الاسم</comment>
+  </data>
+  <data name="CandidateAdj" xml:space="preserve">
+    <value>Title</value>
+    <comment>الصفة</comment>
+  </data>
+  <data name="Name1" xml:space="preserve">
+    <value>Name 1</value>
+    <comment>الاسم الأول</comment>
+  </data>
+  <data name="Title1" xml:space="preserve">
+    <value>Title 1</value>
+    <comment>الصفة الأولى</comment>
+  </data>
+  <data name="Name2" xml:space="preserve">
+    <value>Name 2</value>
+    <comment>الاسم الثاني</comment>
+  </data>
+  <data name="Title2" xml:space="preserve">
+    <value>Title 2</value>
+    <comment>الصفة الثانية</comment>
+  </data>
+  <data name="Name3" xml:space="preserve">
+    <value>Name 3</value>
+    <comment>الاسم الثالث</comment>
+  </data>
+  <data name="Title3" xml:space="preserve">
+    <value>Title 3</value>
+    <comment>الصفة الثالثة</comment>
+  </data>
+  <data name="Name4" xml:space="preserve">
+    <value>Name 4</value>
+    <comment>الاسم الرابع</comment>
+  </data>
+  <data name="Title4" xml:space="preserve">
+    <value>Title 4</value>
+    <comment>الصفة الرابعة</comment>
+  </data>
+  <data name="ExternalWorkMissionManagement" xml:space="preserve">
+    <value>Document Flow Unit</value>
+    <comment>وحدة تدفق الوثائق</comment>
+  </data>
+  <data name="ExternalWorkMissionList" xml:space="preserve">
+    <value>Work Mission List</value>
+    <comment>قائمة مهمات العمل </comment>
+  </data>
+  <data name="MissionType" xml:space="preserve">
+    <value>Mission Type</value>
+    <comment>نوع المهمة به</comment>
+  </data>
+  <data name="Job" xml:space="preserve">
+    <value>Job</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+    <comment>الأسم</comment>
+  </data>
+  <data name="EmployeeJob" xml:space="preserve">
+    <value>Employee Job</value>
+    <comment>وظيفة الموظف</comment>
+  </data>
+  <data name="ViewdetailsExternalworkMission" xml:space="preserve">
+    <value>View details of an External work Mission</value>
+    <comment>عرض تفاصيل مهمة عمل </comment>
+  </data>
+  <data name="ExternalWorkMission" xml:space="preserve">
+    <value>Work Mission</value>
+    <comment>مهمات العمل </comment>
+  </data>
+  <data name="PrintDetails" xml:space="preserve">
+    <value>Print Details Page</value>
+    <comment>طباعة صفحة التفاصيل</comment>
+  </data>
+  <data name="TheMember" xml:space="preserve">
+    <value>This Member</value>
+    <comment>للعضو</comment>
+  </data>
+  <data name="DeleteSubscription1" xml:space="preserve">
+    <value>Delete Subscription</value>
+    <comment>حذف اشتراك</comment>
+  </data>
+  <data name="TheCourse" xml:space="preserve">
+    <value>The Course</value>
+    <comment>الدورة</comment>
+  </data>
+  <data name="TheRole" xml:space="preserve">
+    <value>The Role</value>
+    <comment>الدور</comment>
+  </data>
+  <data name="NotFoundNow" xml:space="preserve">
+    <value>Not Found Now</value>
+    <comment>غير موجود الان</comment>
+  </data>
+  <data name="NationalIdNumber1" xml:space="preserve">
+    <value>National ID</value>
+  </data>
+  <data name="JobTitle1" xml:space="preserve">
+    <value>Job</value>
+    <comment>الوظيفة</comment>
+  </data>
+  <data name="EmployeeCode" xml:space="preserve">
+    <value>Employee No.</value>
+    <comment>رقم الموظف</comment>
+  </data>
+  <data name="EmployeeImage" xml:space="preserve">
+    <value>Employee Image</value>
+    <comment>صورة الموظف</comment>
+  </data>
+  <data name="UploadEmployeeImage" xml:space="preserve">
+    <value>Upload Employee Image</value>
+    <comment>صورة الموظف</comment>
+  </data>
+  <data name="ParticipatingTitle" xml:space="preserve">
+    <value>Participating Title</value>
+    <comment>عنوان المشاركة</comment>
+  </data>
+  <data name="Regulator" xml:space="preserve">
+    <value>Regulator</value>
+    <comment>الجهة المنظمة</comment>
+  </data>
+  <data name="ParticipatingCountry" xml:space="preserve">
+    <value>ParticipatingCountry</value>
+    <comment>بلد المشاركة</comment>
+  </data>
+  <data name="ParticipatingType" xml:space="preserve">
+    <value>Participating Type</value>
+    <comment>نوع المشاركة</comment>
+  </data>
+  <data name="ParticipatingDate" xml:space="preserve">
+    <value>Participating Date</value>
+    <comment>تاريخ المشاركة</comment>
+  </data>
+  <data name="RequiredToparticipate" xml:space="preserve">
+    <value>Required To participate</value>
+    <comment>المطلوب للمشاركة</comment>
+  </data>
+  <data name="ParticipatingCount" xml:space="preserve">
+    <value>Participating Count</value>
+    <comment>عدد المشاركة</comment>
+  </data>
+  <data name="Manager" xml:space="preserve">
+    <value>Manager</value>
+    <comment>إدارة</comment>
+  </data>
+  <data name="TechnicalSupervisor" xml:space="preserve">
+    <value>Technical Supervisor</value>
+    <comment>مشرف فني</comment>
+  </data>
+  <data name="ActivitiesSupervisor" xml:space="preserve">
+    <value>Activities Supervisor</value>
+    <comment>مشرف الانشطة</comment>
+  </data>
+  <data name="MembersCount" xml:space="preserve">
+    <value>Members Count</value>
+    <comment>اعضاء مشاركين</comment>
+  </data>
+  <data name="ParticipationFeesForAdministrators" xml:space="preserve">
+    <value>Participation Fees For Administrators</value>
+    <comment>رسوم المشاركة للإداريين</comment>
+  </data>
+  <data name="Reserve Amount For Delegation" xml:space="preserve">
+    <value>ReserveAmountForDelegation</value>
+    <comment>مبلغ احتياطى للوفد</comment>
+  </data>
+  <data name="AllowanceTravelForHeadOfDelegation" xml:space="preserve">
+    <value>Travel Allowance For Head Of Delegation</value>
+    <comment>بدل سفر رئيس الوفد</comment>
+  </data>
+  <data name="TotalBudgetRequired" xml:space="preserve">
+    <value>Total Budget Required</value>
+    <comment>اجمالى الموازنة المطلوبة</comment>
+  </data>
+  <data name="TravelTicketValue" xml:space="preserve">
+    <value>Travel Ticket Value</value>
+    <comment>قيمة تذاكر السفر</comment>
+  </data>
+  <data name="HotelAccommodationFees" xml:space="preserve">
+    <value>Hotel Accommodation Fees</value>
+    <comment>رسوم اقامة الفندق</comment>
+  </data>
+  <data name="MembersAllowance" xml:space="preserve">
+    <value>Members Allowance</value>
+    <comment>بدل الاعضاء</comment>
+  </data>
+  <data name="Approval" xml:space="preserve">
+    <value>Approval</value>
+    <comment>الموافقة</comment>
+  </data>
+  <data name="adj" xml:space="preserve">
+    <value>adjective</value>
+    <comment>الصفة</comment>
+  </data>
+  <data name="profession" xml:space="preserve">
+    <value>profession</value>
+    <comment>الوظيفة</comment>
+  </data>
+  <data name="EstimatedBudgetForExternalParticipation" xml:space="preserve">
+    <value>Estimated Budget For Participation</value>
+    <comment>نقدير موازنة مشاركة علمية </comment>
+  </data>
+  <data name="EstimatedBudgetForExternalParticipationList" xml:space="preserve">
+    <value>Estimated Budget For External Participation List</value>
+    <comment>قائمة الموازانات التقديرية  للمشاركات </comment>
+  </data>
+  <data name="DetailsForSharing" xml:space="preserve">
+    <value>Details for sharing</value>
+    <comment>التفاصيل للمشاركة</comment>
+  </data>
+  <data name="BudgetRequiredForParticipation" xml:space="preserve">
+    <value>Budget required for participation</value>
+    <comment>الموازنة المطلوبة للمشاركة</comment>
+  </data>
+  <data name="SupervisorsTravelAllowance" xml:space="preserve">
+    <value>Supervisors Travel Allowance</value>
+    <comment>بدل سفرالمشرفين</comment>
+  </data>
+  <data name="ParticipationFeesHeadOfDelegation" xml:space="preserve">
+    <value>Participation Fees Head Of Delegation</value>
+    <comment>رسوم المشاركة رئيس الوفد</comment>
+  </data>
+  <data name="ParticipationFeesForEntireTeam" xml:space="preserve">
+    <value>Participation Fees For Entire Team</value>
+    <comment>رسوم المشاركة للفريق بالكامل</comment>
+  </data>
+  <data name="Subsidies" xml:space="preserve">
+    <value>Subsidies</value>
+    <comment>الاعفاءات المالية</comment>
+  </data>
+  <data name="FeeStatement" xml:space="preserve">
+    <value>Fee Statement</value>
+    <comment>بيان الرسوم</comment>
+  </data>
+  <data name="TotalFeesForParticipation" xml:space="preserve">
+    <value>Total Fees For Participation</value>
+    <comment>مجموع الرسوم للمشاركة</comment>
+  </data>
+  <data name="meeting" xml:space="preserve">
+    <value>meeting</value>
+    <comment>ملتقى</comment>
+  </data>
+  <data name="gallery" xml:space="preserve">
+    <value>gallery</value>
+    <comment>معرض</comment>
+  </data>
+  <data name="projects" xml:space="preserve">
+    <value>projects</value>
+    <comment>مشاريع</comment>
+  </data>
+  <data name="Participants1" xml:space="preserve">
+    <value>Participants</value>
+  </data>
+  <data name="NumberOfParticipations" xml:space="preserve">
+    <value>Number of participations</value>
+    <comment>عدد المشاركة</comment>
+  </data>
+  <data name="ReserveAmountForDelegation" xml:space="preserve">
+    <value>Reserve Amount For Delegation</value>
+    <comment>مبلغ احتياطى للوفد</comment>
+  </data>
+  <data name="BudgetDate" xml:space="preserve">
+    <value>Budget Date</value>
+    <comment>تاريخ الموازنة</comment>
+  </data>
+  <data name="Integer" xml:space="preserve">
+    <value>This field must be an integer</value>
+    <comment>يجب أن يكون الحقل رقم صحيح</comment>
+  </data>
+  <data name="Decimal_double" xml:space="preserve">
+    <value>This field accepts only decimal and integer numbers</value>
+    <comment>الحقل يقبل ارقام عشرية وصحيحة فقط</comment>
+  </data>
+  <data name="RePrint" xml:space="preserve">
+    <value>RePrint</value>
+    <comment>إعادة الطباعة</comment>
+  </data>
+  <data name="ParticipateInEvent" xml:space="preserve">
+    <value>Participate in an Event</value>
+    <comment>مشاركة فى حدث</comment>
+  </data>
+  <data name="ParticipationsInEventList" xml:space="preserve">
+    <value>Participations in an Event List</value>
+    <comment>قائمة المشاركات فى حدث</comment>
+  </data>
+  <data name="ParticipationsInEventReport" xml:space="preserve">
+    <value>Participations In Event</value>
+    <comment>مشاركة فى حدث</comment>
+  </data>
+  <data name="ParticipationsInEvent" xml:space="preserve">
+    <value>Participations In Event</value>
+    <comment>مشاركة فى حدث</comment>
+  </data>
+  <data name="ActivityReason" xml:space="preserve">
+    <value>Reason</value>
+    <comment>السبب</comment>
+  </data>
+  <data name="ActivityAction" xml:space="preserve">
+    <value>Activity execution</value>
+    <comment>تنفيد النشاط</comment>
+  </data>
+  <data name="ActivityName" xml:space="preserve">
+    <value>Activity</value>
+    <comment>النشاط</comment>
+  </data>
+  <data name="ActivityReason1" xml:space="preserve">
+    <value>Reason - Positive / Opportunities for Improvement</value>
+    <comment>السبب</comment>
+  </data>
+  <data name="DetailsParticipationsInEventReport" xml:space="preserve">
+    <value>Event Participation Report</value>
+    <comment>تقرير مشاركة فى حدث</comment>
+  </data>
+  <data name="ClubDelegationParticipationReport" xml:space="preserve">
+    <value>Club delegation participation report</value>
+    <comment>تقرير مشاركة وفد النادى</comment>
+  </data>
+  <data name="DepartManage" xml:space="preserve">
+    <value>Department / Administration</value>
+    <comment>القسم / الأدارة</comment>
+  </data>
+  <data name="ParticipationReportIn" xml:space="preserve">
+    <value>Participation report in</value>
+    <comment>تقرير المشاركة فى</comment>
+  </data>
+  <data name="SignatureActivitiesMembershipSupervisor" xml:space="preserve">
+    <value>Activities And Membership Supervisor</value>
+    <comment>مشرف الانشطة والعضوية</comment>
+  </data>
+  <data name="SignatureManager" xml:space="preserve">
+    <value>Club Manager</value>
+    <comment>مدير النادى</comment>
+  </data>
+  <data name="Quareter1" xml:space="preserve">
+    <value>First Quarter</value>
+    <comment>الربع الأول</comment>
+  </data>
+  <data name="Quareter2" xml:space="preserve">
+    <value>Second Quarter</value>
+    <comment>الربع الثاني</comment>
+  </data>
+  <data name="Quareter3" xml:space="preserve">
+    <value>Third Quarter</value>
+    <comment>الربع الثالث</comment>
+  </data>
+  <data name="Quareter4" xml:space="preserve">
+    <value>Fourth Quarter</value>
+    <comment>الربع الأخير</comment>
+  </data>
+  <data name="yearFull" xml:space="preserve">
+    <value>Annual</value>
+    <comment>سنوي</comment>
+  </data>
+  <data name="PleaseSelectAyear" xml:space="preserve">
+    <value>Please select a year</value>
+    <comment>من فضلك أختر السنة</comment>
+  </data>
+  <data name="ReportFor" xml:space="preserve">
+    <value>Scientific activity report</value>
+    <comment>تقرير النشاط العلمي</comment>
+  </data>
+  <data name="millad" xml:space="preserve">
+    <value>G</value>
+    <comment>م</comment>
+  </data>
+  <data name="Summary" xml:space="preserve">
+    <value>Summary</value>
+    <comment>ملخص</comment>
+  </data>
+  <data name="S" xml:space="preserve">
+    <value>S</value>
+    <comment>م</comment>
+  </data>
+  <data name="Month1" xml:space="preserve">
+    <value>Month</value>
+    <comment>شهر</comment>
+  </data>
+  <data name="StartDateActivity2" xml:space="preserve">
+    <value>Start Activity</value>
+    <comment>بدأ النشاط</comment>
+  </data>
+  <data name="EndDateActivity2" xml:space="preserve">
+    <value>End Activity</value>
+    <comment>نهاية النشاط</comment>
+  </data>
+  <data name="ActivityReasonStatement" xml:space="preserve">
+    <value>Particulars</value>
+    <comment>البيان</comment>
+  </data>
+  <data name="AdministrativeReportQuarAnn" xml:space="preserve">
+    <value>Administrative Report - Quarterly - Annual</value>
+    <comment>التقرير الادارى - ربع سنوى - سنوى</comment>
+  </data>
+  <data name="AdministrativeReportQuarterlyAnnual" xml:space="preserve">
+    <value>Administrative Report - Quarterly - Annual</value>
+    <comment>التقرير الادارى - ربع سنوى - سنوي</comment>
+  </data>
+  <data name="AdministrativeReportQuarterly" xml:space="preserve">
+    <value>Administrative Report - Quarterly</value>
+    <comment>التقرير الادارى - ربع سنوى</comment>
+  </data>
+  <data name="AdministrativeReportAnnual" xml:space="preserve">
+    <value>Administrative Report - Annual</value>
+    <comment>التقرير الادارى - سنوي</comment>
+  </data>
+  <data name="MonthRegistedBefore" xml:space="preserve">
+    <value>❌ This month is registered before</value>
+    <comment>هذا الشهر مسجل من قبل ❌</comment>
+  </data>
+  <data name="Dateisvalid" xml:space="preserve">
+    <value>✅ Date is valid</value>
+    <comment>✅ التاريخ صحيح</comment>
+  </data>
+  <data name="CertificateAttendanceAndParticipation" xml:space="preserve">
+    <value>Certificate of attendance and participation</value>
+    <comment>شهادة حضور ومشاركة</comment>
+  </data>
+  <data name="FujairahScientificClubAttestsThat" xml:space="preserve">
+    <value>Fujairah Scientific Club attests that</value>
+    <comment>يشهد نادي الفجيرة العلمي بأن</comment>
+  </data>
+  <data name="MemberMale" xml:space="preserve">
+    <value>Student</value>
+    <comment>الطالب</comment>
+  </data>
+  <data name="MemberWoman" xml:space="preserve">
+    <value>Miss</value>
+    <comment>الأُنسـة</comment>
+  </data>
+  <data name="from3" xml:space="preserve">
+    <value>from</value>
+    <comment>الفترة من</comment>
+  </data>
+  <data name="Dated" xml:space="preserve">
+    <value>Dated :</value>
+    <comment>بتاريخ:</comment>
+  </data>
+  <data name="AttendedParticipatedwiththeclubonlinetrainingworkshop" xml:space="preserve">
+    <value>Attended and participated with the club in the online training workshop</value>
+    <comment>قد حضرت وشاركت مع النادي في الورشة التدريبية</comment>
+  </data>
+  <data name="WishingYouContinuedSuccess" xml:space="preserve">
+    <value>Wishing you continued success</value>
+    <comment>متمنين لكم دوام التوفيق</comment>
+  </data>
+  <data name="MaleAttendedParticipatedwiththeclubonlinetrainingworkshop" xml:space="preserve">
+    <value>Attended and participated with the club in the online training workshop</value>
+    <comment>قد حضرت وشاركت مع النادي في الورشة التدريبية </comment>
+  </data>
+  <data name="InstallationAndConnections" xml:space="preserve">
+    <value>Installation and connections</value>
+  </data>
+  <data name="PleaseInsertRole" xml:space="preserve">
+    <value>Please, Insert Role!</value>
+    <comment>من فضلك، أدخل دور!</comment>
+  </data>
+  <data name="RoleIsExists" xml:space="preserve">
+    <value>Role is exists!</value>
+    <comment>هذا الدور موجود من قبل !</comment>
+  </data>
+  <data name="MissionType1" xml:space="preserve">
+    <value>Mission Type</value>
+    <comment>نوع المهمة</comment>
+  </data>
+  <data name="IdNumber1" xml:space="preserve">
+    <value>National ID Number</value>
+  </data>
+  <data name="Licenseplatenumber" xml:space="preserve">
+    <value>License plate number</value>
+    <comment>رقم لوحة السيارة</comment>
+  </data>
+  <data name="MaintenanceDetails1" xml:space="preserve">
+    <value>Maintenance Details</value>
+    <comment>تفاصيل الصيانة</comment>
+  </data>
+  <data name="ExchangeStatement" xml:space="preserve">
+    <value>Exchange statement</value>
+    <comment>بيان الصرف</comment>
+  </data>
+  <data name="Status1" xml:space="preserve">
+    <value>Status</value>
+    <comment>الحالة</comment>
+  </data>
+  <data name="Year1" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="ActivityDetails" xml:space="preserve">
+    <value>Activity Details</value>
+    <comment>تفاصيل الفعالية</comment>
+  </data>
+  <data name="ActivityDetails1" xml:space="preserve">
+    <value>Activity Data</value>
+    <comment>بيانات الفعالية</comment>
+  </data>
+  <data name="Course_Data1" xml:space="preserve">
+    <value>Course Details</value>
+    <comment>تفاصيل الدورة</comment>
+  </data>
+  <data name="PhoneNumberisNotValid" xml:space="preserve">
+    <value>Phone number is not valid</value>
+    <comment>رقم الجوال غير صالح</comment>
+  </data>
+  <data name="View_File1" xml:space="preserve">
+    <value>View Attachment File</value>
+    <comment>عرض الملف</comment>
+  </data>
+  <data name="ActivityDate" xml:space="preserve">
+    <value>Activity Date</value>
+    <comment>تاريخ الفعالية</comment>
+  </data>
+  <data name="AdministrativeReport" xml:space="preserve">
+    <value>Administrative Report</value>
+    <comment>التقرير الادارى</comment>
+  </data>
+  <data name="Theyear1" xml:space="preserve">
+    <value>For the year</value>
+    <comment>لعام</comment>
+  </data>
+  <data name="ReportForTheyear" xml:space="preserve">
+    <value>Scientific activity report For the year</value>
+    <comment>تقرير النشاط العلمي</comment>
+  </data>
+  <data name="ChartComprehensiveGraphicIllustration" xml:space="preserve">
+    <value>Comprehensive graphic illustration</value>
+    <comment>التوضيح البياني المجمع</comment>
+  </data>
+  <data name="ActivitiesandEvents" xml:space="preserve">
+    <value>Activities and Events</value>
+    <comment>الأنشطة والفعاليات</comment>
+  </data>
+  <data name="AdministrativeWork" xml:space="preserve">
+    <value>Administrative Work</value>
+    <comment>الأعمال الإدارية</comment>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Report</value>
+    <comment>تقرير</comment>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+    <comment>تصدير</comment>
+  </data>
+  <data name="chartFor" xml:space="preserve">
+    <value>chart For</value>
+    <comment>رسم بياني</comment>
+  </data>
+  <data name="Adminstrative" xml:space="preserve">
+    <value>Adminstrative</value>
+    <comment>إداري</comment>
+  </data>
+  <data name="AdminstrativeThe" xml:space="preserve">
+    <value>The Adminstrative</value>
+    <comment>الإداري</comment>
+  </data>
+  <data name="ReportThe" xml:space="preserve">
+    <value>The Report</value>
+    <comment>التقرير</comment>
+  </data>
+  <data name="summition" xml:space="preserve">
+    <value>Summition</value>
+    <comment>المجمع</comment>
+  </data>
+  <data name="yearly" xml:space="preserve">
+    <value>Annualy</value>
+    <comment>السنوي</comment>
+  </data>
+  <data name="Activity" xml:space="preserve">
+    <value>Activities</value>
+    <comment>الفعاليات</comment>
+  </data>
+  <data name="cantPrint" xml:space="preserve">
+    <value>You cannot print more than 4000 rows</value>
+    <comment>لايمكن طباعة اكثر من 4000 سجل</comment>
+  </data>
+  <data name="useExcel" xml:space="preserve">
+    <value>Use Excel if possible</value>
+    <comment>استخدم Excel إن أمكن</comment>
+  </data>
+  <data name="PrintMemberCourses" xml:space="preserve">
+    <value>Print member courses</value>
+    <comment>طباعة دورات العضو</comment>
+  </data>
+  <data name="At" xml:space="preserve">
+    <value>At</value>
+    <comment>ح</comment>
+  </data>
+  <data name="Ab" xml:space="preserve">
+    <value>Ab</value>
+    <comment>غ</comment>
+  </data>
+  <data name="createExcelReport_Download" xml:space="preserve">
+    <value>Export To Excel</value>
+    <comment>تصدير Excel</comment>
+  </data>
+  <data name="createExcelReport_Download_SubscripeMember" xml:space="preserve">
+    <value>Export Subscribed courses To Excel </value>
+    <comment>تصدير Excel الدورات المسجلة</comment>
+  </data>
+  <data name="createExcelReport_Download_MemberCourse" xml:space="preserve">
+    <value>Export The Member Courses To Excel</value>
+    <comment>تصدير Excel دورات العضو</comment>
+  </data>
+  <data name="createExcelReport_Download_MembersActivity" xml:space="preserve">
+    <value>Export Subscriptions For Event To Excel </value>
+    <comment>تصدير Excel للمشاركين في الفعالية</comment>
+  </data>
+  <data name="createExcelReport_Download_MembersupscriptiosToCourse" xml:space="preserve">
+    <value>Export Subscriptions For Course To Excel </value>
+    <comment>تصدير Excel للمشاركين في الدورة</comment>
+  </data>
+  <data name="ActivitiesDetails" xml:space="preserve">
+    <value>View activity report</value>
+    <comment>عرض تقرير النشاط</comment>
+  </data>
+  <data name="AdminstrativeDetails" xml:space="preserve">
+    <value>View the Administrative Report</value>
+    <comment>عرض التقرير الإداري</comment>
+  </data>
+  <data name="All2Details" xml:space="preserve">
+    <value>View the Combined Report</value>
+    <comment>عرض التقرير المجمع</comment>
+  </data>
+  <data name="PrintActivitiesDetails" xml:space="preserve">
+    <value>Print Activity Report</value>
+    <comment>طباعة تقرير النشاط</comment>
+  </data>
+  <data name="PrintAdminstrativeDetails" xml:space="preserve">
+    <value>Print the Administrative Report</value>
+    <comment>طباعة التقرير الإداري</comment>
+  </data>
+  <data name="PrintAll2Details" xml:space="preserve">
+    <value>Print the Combined Report</value>
+    <comment>طباعة التقرير المجمع</comment>
+  </data>
+  <data name="PurchaseOrderList" xml:space="preserve">
+    <value>Purchase Order List</value>
+    <comment>قائمة أوامر الشراء</comment>
+  </data>
+  <data name="PurchaseOrderManagement" xml:space="preserve">
+    <value>Purchase Orders Unit </value>
+    <comment>وحدة أوامر الشراء </comment>
+  </data>
+  <data name="CreatePurchaseOrder" xml:space="preserve">
+    <value>Add purchase order</value>
+    <comment>إضافة بنود أمر الشراء</comment>
+  </data>
+  <data name="EditPurchaseOrder" xml:space="preserve">
+    <value>Edit purchase order items</value>
+    <comment>تعديل بنود أمر الشراء</comment>
+  </data>
+  <data name="ItemName" xml:space="preserve">
+    <value>Particulars</value>
+    <comment>البيان</comment>
+  </data>
+  <data name="SinglePrice" xml:space="preserve">
+    <value>Unit Price</value>
+    <comment>سعر الوحدة</comment>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantity</value>
+    <comment>الكمية</comment>
+  </data>
+  <data name="PurchaseOrderItems" xml:space="preserve">
+    <value>Purchase Order Items</value>
+    <comment>بنود أمر الشراء</comment>
+  </data>
+  <data name="PurchaseOrderCode" xml:space="preserve">
+    <value>Purchase Order No</value>
+    <comment>رقم أمر الشراء</comment>
+  </data>
+  <data name="With" xml:space="preserve">
+    <value>With</value>
+    <comment>مع</comment>
+  </data>
+  <data name="all1" xml:space="preserve">
+    <value>All</value>
+    <comment>كل</comment>
+  </data>
+  <data name="No1" xml:space="preserve">
+    <value>No.</value>
+    <comment>الرقم</comment>
+  </data>
+  <data name="Total1" xml:space="preserve">
+    <value>Total</value>
+    <comment>الإجمالى</comment>
+  </data>
+  <data name="TotalWithoutVAT" xml:space="preserve">
+    <value>Total Without VAT</value>
+    <comment>الإجمالي بدون ضرائب</comment>
+  </data>
+  <data name="Manager1" xml:space="preserve">
+    <value>The Manager</value>
+    <comment>المدير</comment>
+  </data>
+  <data name="LocalPurshaseOrder" xml:space="preserve">
+    <value>Local Purshase Order</value>
+    <comment>طلب شراء محلى</comment>
+  </data>
+  <data name="pageNotFound" xml:space="preserve">
+    <value>This Page Not Found</value>
+    <comment>الصفحة غير موجودة</comment>
+  </data>
+  <data name="YouNotAuthorizedAccessPage" xml:space="preserve">
+    <value>You are not authorized to access this page</value>
+    <comment>غير مصرح لك بالدخول إلى هذه الصفحة</comment>
+  </data>
+  <data name="AnUnexpectedErrorOccurred" xml:space="preserve">
+    <value>An unexpected error occurred</value>
+    <comment>حدث خطأ غير متوقع</comment>
+  </data>
+  <data name="ReturnBackToPreviousPage" xml:space="preserve">
+    <value>Return to the previous page</value>
+    <comment>الرجوع إلى الصفحة السابقة</comment>
+  </data>
+  <data name="CreatePurchaseOrder1" xml:space="preserve">
+    <value>Add purchase order items</value>
+    <comment>إضافة بنود أمر الشراء</comment>
+  </data>
+  <data name="createExcelReport_Download_Expenses" xml:space="preserve">
+    <value>Export expense list in Excel</value>
+    <comment>تصدير قائمة المصروفات في Excel</comment>
+  </data>
+  <data name="createExcelReport_Download_ExpensesAndReceiptsReport" xml:space="preserve">
+    <value>Export receipts and payments report in Excel</value>
+    <comment>تصدير تقرير المقبوضات والمدفوعات في Excel</comment>
+  </data>
+  <data name="createExcelReport_Download_ExpensesReport" xml:space="preserve">
+    <value>Export prose expense report in Excel</value>
+    <comment>تصدير تقرير المصروفات النثرية في Excel</comment>
+  </data>
+  <data name="createExcelReport_Download_Receipts" xml:space="preserve">
+    <value>Export the list of receipts in Excel</value>
+    <comment>تصدير قائمة المقبوضات في Excel</comment>
+  </data>
+  <data name="ExpensesAndReceiptsReport" xml:space="preserve">
+    <value>View Receipts and Payments Report</value>
+    <comment>عرض تقرير المقبوضات والمدفوعات</comment>
+  </data>
+  <data name="ExpensesReport" xml:space="preserve">
+    <value>View Prose Expenses Report</value>
+    <comment>عرض تقرير المصروفات النثرية</comment>
+  </data>
+  <data name="Print_Expenses" xml:space="preserve">
+    <value>Print the expense list</value>
+    <comment>طباعة قائمة المصروفات</comment>
+  </data>
+  <data name="Print_ExpensesAndReceiptsReport" xml:space="preserve">
+    <value>Print the receipts and payments report</value>
+    <comment>طباعة تقرير المقبوضات والمدفوعات</comment>
+  </data>
+  <data name="Print_ExpensesReport" xml:space="preserve">
+    <value>Print the prose expense report</value>
+    <comment>طباعة تقرير المصروفات النثرية</comment>
+  </data>
+  <data name="Print_Receipts" xml:space="preserve">
+    <value>Print the list of receipts</value>
+    <comment>طباعة قائمة المقبوضات</comment>
+  </data>
+  <data name="Receipt" xml:space="preserve">
+    <value>Save Receipt</value>
+    <comment>إيصال استلام</comment>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>Select All</value>
+    <comment>أختيار الكل</comment>
+  </data>
+  <data name="Idea" xml:space="preserve">
+    <value>Idea</value>
+    <comment>الفكرة</comment>
+  </data>
+  <data name="AreYouSureDeleted" xml:space="preserve">
+    <value>Are you sure this item has been deleted?</value>
+    <comment>هل انت متأكد من حذف هذا العنصر؟</comment>
+  </data>
+  <data name="slogan" xml:space="preserve">
+    <value>slogan</value>
+    <comment>شعار</comment>
+  </data>
+  <data name="Close1" xml:space="preserve">
+    <value>Close</value>
+    <comment>إغلاق</comment>
+  </data>
+  <data name="RequiredFinancialFees" xml:space="preserve">
+    <value>Required financial fees</value>
+    <comment>الرسوم الماليه المطلوبة</comment>
+  </data>
+  <data name="administration" xml:space="preserve">
+    <value>Administration</value>
+    <comment>الادارة</comment>
+  </data>
+  <data name="ActivitiesSupervisors" xml:space="preserve">
+    <value>Activities Supervisors</value>
+    <comment>مشرفي الانشطة</comment>
+  </data>
+  <data name="EmployeeJob1" xml:space="preserve">
+    <value>Employee job</value>
+    <comment>وظيفه الموظف</comment>
+  </data>
+  <data name="Totals" xml:space="preserve">
+    <value>Total</value>
+    <comment>الاجمالي</comment>
+  </data>
+  <data name="crossroads" xml:space="preserve">
+    <value>crossroads</value>
+    <comment>ملتقي</comment>
+  </data>
+  <data name="AddCarService" xml:space="preserve">
+    <value>Add a car service</value>
+    <comment>إضافة خدمة للسيارة</comment>
+  </data>
+  <data name="ViewCarAttachments" xml:space="preserve">
+    <value>View Car Attachments</value>
+    <comment>عرض مرفقات السيارة</comment>
+  </data>
+  <data name="ModifyVehicleData" xml:space="preserve">
+    <value>Modify vehicle data</value>
+    <comment>تعديل بيانات السيارة</comment>
+  </data>
+  <data name="EditData" xml:space="preserve">
+    <value>Edit Data</value>
+    <comment>تعديل بيانات</comment>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View data details</value>
+    <comment>عرض تفاصيل البيانات</comment>
+  </data>
+  <data name="TheStartDate_mustSameyear" xml:space="preserve">
+    <value>The start date must be the same year as the report date</value>
+    <comment>يجب أن يكون تاريخ البدء في نفس العام مثل تاريخ التقرير</comment>
+  </data>
+  <data name="FailedtoloadEventsdata" xml:space="preserve">
+    <value>Failed to load Events data</value>
+    <comment>فشل في تحميل بيانات الفعالية</comment>
+  </data>
+  <data name="Failedcheckage" xml:space="preserve">
+    <value>Failed in Validation of age</value>
+    <comment>فشل في التحقق من العمر</comment>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change Password</value>
+    <comment>تغيير كلمة السر</comment>
+  </data>
+  <data name="yourOldPassword" xml:space="preserve">
+    <value>your old password</value>
+    <comment>كلمة السر القديمة</comment>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
+    <comment>كلمة السر الجديدة</comment>
+  </data>
+  <data name="ConfirmPassword1" xml:space="preserve">
+    <value>Confirm Password</value>
+    <comment>تأكيد كلمة السر</comment>
+  </data>
+  <data name="Department_Administration" xml:space="preserve">
+    <value>Department/Administration</value>
+    <comment>القسم/ الاداره</comment>
+  </data>
+  <data name="YesDelete" xml:space="preserve">
+    <value>Yes , Delete</value>
+    <comment>نعم، حذف</comment>
+  </data>
+  <data name="DeleteMaintenance" xml:space="preserve">
+    <value>Delete maintenance</value>
+    <comment>حذف صيانة</comment>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Image</value>
+    <comment>صورة</comment>
+  </data>
+  <data name="numberOfAttendees" xml:space="preserve">
+    <value>number Of Attendees</value>
+    <comment>عدد الحضور</comment>
+  </data>
+  <data name="MonthlyActivityReport" xml:space="preserve">
+    <value>Monthly Activity Report</value>
+    <comment>تقرير النشاط الشهري</comment>
+  </data>
+  <data name="AdministrativeReportMonth" xml:space="preserve">
+    <value>Administrative Report in Month</value>
+    <comment>التقرير الاداري شهر</comment>
+  </data>
+  <data name="ActivitywithinMonth" xml:space="preserve">
+    <value>Activity Within Month</value>
+    <comment>النشاط خلال شهر</comment>
+  </data>
+  <data name="SalaryManagementUnitManagement" xml:space="preserve">
+    <value>Salary and Wage Management Unit</value>
+    <comment>وحدة ادارة الرواتب والأجور</comment>
+  </data>
+  <data name="SalaryManagementList" xml:space="preserve">
+    <value>Salary List</value>
+    <comment>قائمة الرواتب</comment>
+  </data>
+  <data name="AddNewSalaryManagement" xml:space="preserve">
+    <value>Add Monthly Salaries</value>
+    <comment>إضافة الرواتب الشهرية</comment>
+  </data>
+  <data name="EditSalaryManagement" xml:space="preserve">
+    <value>Edit The Salary</value>
+    <comment>تعديل الراتب</comment>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>Month</value>
+    <comment>الشهر</comment>
+  </data>
+  <data name="payrollReport" xml:space="preserve">
+    <value>payroll Report</value>
+    <comment>تقرير الرواتب</comment>
+  </data>
+  <data name="payrollList" xml:space="preserve">
+    <value>payroll List</value>
+    <comment>قائمة الرواتب</comment>
+  </data>
+  <data name="DiscountsAndBonusesPrint" xml:space="preserve">
+    <value>Print Discounts And Bonuses</value>
+    <comment>طباعة الخصومات والعلاوات</comment>
+  </data>
+  <data name="Year2" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="BasicSalary" xml:space="preserve">
+    <value>Basic monthly</value>
+    <comment>الأساسى الشهرى</comment>
+  </data>
+  <data name="Allowances" xml:space="preserve">
+    <value>Allowances</value>
+    <comment>البدلات</comment>
+  </data>
+  <data name="TotalSalary" xml:space="preserve">
+    <value>Total Salary</value>
+    <comment>اجمالى الراتب</comment>
+  </data>
+  <data name="WorkDays" xml:space="preserve">
+    <value>Work Days</value>
+    <comment>أيام العمل</comment>
+  </data>
+  <data name="AbsentDays" xml:space="preserve">
+    <value>Absence Days</value>
+    <comment>الغياب</comment>
+  </data>
+  <data name="SickLeaveDays" xml:space="preserve">
+    <value>Sick Leave</value>
+    <comment>المرضى</comment>
+  </data>
+  <data name="AnnualLeaveDays" xml:space="preserve">
+    <value>Annual Leave</value>
+    <comment>الأجازة السنوية</comment>
+  </data>
+  <data name="TotalDeductions" xml:space="preserve">
+    <value>Total Deduction</value>
+    <comment>مجموع الخصم</comment>
+  </data>
+  <data name="BonusesAndMissions" xml:space="preserve">
+    <value>Missions And Bonuses</value>
+    <comment>مهام و مكافأت</comment>
+  </data>
+  <data name="NetSalary" xml:space="preserve">
+    <value>Net Salary</value>
+    <comment>صافى الراتب</comment>
+  </data>
+  <data name="DeductionsAddition" xml:space="preserve">
+    <value>Addition Deduction</value>
+    <comment>خصم إضافي</comment>
+  </data>
+  <data name="Allowances2" xml:space="preserve">
+    <value>Allowances Value</value>
+    <comment>قيمة البدلات</comment>
+  </data>
+  <data name="AbsentDays2" xml:space="preserve">
+    <value>Absence Days</value>
+    <comment>ايام الغياب</comment>
+  </data>
+  <data name="PleaseChooseYearAndMonthFirstly" xml:space="preserve">
+    <value>Please Choose Year And Month Firstly</value>
+    <comment>من فضلك أختر السنة والشهر أولا</comment>
+  </data>
+  <data name="AlFujairScientificClubSalariesRevealedfor" xml:space="preserve">
+    <value>Al-Fujair Scientific Club Salaries Revealed for</value>
+    <comment>كشف رواتب نادى الفجيرة العلمى عن</comment>
+  </data>
+  <data name="The_Value_Invalid" xml:space="preserve">
+    <value>This value is Invalid</value>
+    <comment>القيمة غير صحيحة</comment>
+  </data>
+  <data name="RequiredFrom0_31" xml:space="preserve">
+    <value>Required from 0 - 31</value>
+    <comment>يلزم من 0 - 31</comment>
+  </data>
+  <data name="MaxLength_150" xml:space="preserve">
+    <value>Maximum 150 characters!</value>
+    <comment>حد اقصى 150 حرف !</comment>
+  </data>
+  <data name="createExcelReport_Download_payrollReport" xml:space="preserve">
+    <value>Export Payroll to Excel</value>
+    <comment>تصدير تقرير الرواتب في Excel</comment>
+  </data>
+  <data name="createExcelReport_Download_DiscountsAndBonusesReport" xml:space="preserve">
+    <value>Export Discounts &amp; Bonuses Excel</value>
+    <comment>تصدير تقرير الخصومات والعلاوات في Excel</comment>
+  </data>
+  <data name="Salary1" xml:space="preserve">
+    <value>Salary</value>
+  </data>
+  <data name="MaintenanceClubs" xml:space="preserve">
+    <value>Maintenance Clubs</value>
+    <comment>صيانة مقر النادي</comment>
+  </data>
+  <data name="MaintenanceClub" xml:space="preserve">
+    <value>Maintenance Club</value>
+    <comment>صيانة النادي</comment>
+  </data>
+  <data name="ArchivingDocument" xml:space="preserve">
+    <value>Archiving Document</value>
+    <comment>أرشفة الوثائق</comment>
+  </data>
+  <data name="Incoming" xml:space="preserve">
+    <value>Incoming</value>
+    <comment>وارد</comment>
+  </data>
+  <data name="Outgoing" xml:space="preserve">
+    <value>Outgoing</value>
+    <comment>صادر</comment>
+  </data>
+  <data name="ArchivingDocumentManagement" xml:space="preserve">
+    <value>Archiving Document</value>
+    <comment>أرشفة الوثائق</comment>
+  </data>
+  <data name="ArchivingDocumentList" xml:space="preserve">
+    <value>List of documents</value>
+    <comment>قائمة الوثائق</comment>
+  </data>
+  <data name="AddNewArchivingDocument" xml:space="preserve">
+    <value>Add New Document</value>
+    <comment>إضافة وثيقة جديدة</comment>
+  </data>
+  <data name="EditArchivingDocument" xml:space="preserve">
+    <value>Edit Document</value>
+    <comment>تعديل الوثيقة </comment>
+  </data>
+  <data name="ArchivingDocumentDetails" xml:space="preserve">
+    <value>Details Of Document</value>
+    <comment>تفاصيل الوثيقة </comment>
+  </data>
+  <data name="SearchbyDocumentTitleReferenceNumber" xml:space="preserve">
+    <value>Search by .... Document Title / Reference Number / Entity</value>
+    <comment> عنوان الوثيقة / الرقم المرجعى / الجهة</comment>
+  </data>
+  <data name="ArchivingDocument1" xml:space="preserve">
+    <value>Document</value>
+    <comment>وثيقة</comment>
+  </data>
+  <data name="DocumentReferenceNumber" xml:space="preserve">
+    <value>Document Reference Number</value>
+    <comment>رقم مرجعى للوثيقة</comment>
+  </data>
+  <data name="DocumentAuthority" xml:space="preserve">
+    <value>Authority</value>
+    <comment>الجهة</comment>
+  </data>
+  <data name="DocumentTitle" xml:space="preserve">
+    <value>Letter / Document Title</value>
+    <comment>عنوان الخطاب / الوثيقة</comment>
+  </data>
+  <data name="TypeDocument1" xml:space="preserve">
+    <value>Incoming / Outgoing</value>
+    <comment>وارد / صادر</comment>
+  </data>
+  <data name="DocumentTitle1" xml:space="preserve">
+    <value>Document Title</value>
+    <comment>عنوان الوثيقة</comment>
+  </data>
+  <data name="ViewDocumentFile" xml:space="preserve">
+    <value>View document file</value>
+    <comment>عرض ملف الوثيقة</comment>
+  </data>
+  <data name="CashExchangeBondReceipt" xml:space="preserve">
+    <value>Cash Payment Voucher</value>
+    <comment>سند صرف نقدى</comment>
+  </data>
+  <data name="CashExchangeBondList" xml:space="preserve">
+    <value>List of Cash Exchange Bonds</value>
+    <comment>قائمة سندات الصرف النقدية</comment>
+  </data>
+  <data name="AddNewCashExchangeBond" xml:space="preserve">
+    <value>Add New Cash Payment Voucher</value>
+    <comment>إضافة سند صرف نقدى جديد</comment>
+  </data>
+  <data name="CreateCashExchangeBond" xml:space="preserve">
+    <value>Add New Cash Payment Voucher</value>
+    <comment>إضافة سند صرف نقدى جديد</comment>
+  </data>
+  <data name="EditCashExchangeBond" xml:space="preserve">
+    <value>Edit Cash Payment Voucher</value>
+    <comment>تعديل سند صرف نقدى</comment>
+  </data>
+  <data name="CashExchangeBond" xml:space="preserve">
+    <value>Cash Payment Voucher</value>
+    <comment>سند صرف نقدى</comment>
+  </data>
+  <data name="Money" xml:space="preserve">
+    <value>Money</value>
+    <comment>المبلغ</comment>
+  </data>
+  <data name="PersonName" xml:space="preserve">
+    <value>Person Name</value>
+    <comment>اسم الشخص</comment>
+  </data>
+  <data name="AboutText" xml:space="preserve">
+    <value>About</value>
+    <comment>وذلك عن</comment>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+    <comment>المجموع</comment>
+  </data>
+  <data name="DocumentNo" xml:space="preserve">
+    <value>Document No.</value>
+    <comment>رقم المستند</comment>
+  </data>
+  <data name="DocumentDate" xml:space="preserve">
+    <value>Document Date</value>
+    <comment>تاريخ المستند</comment>
+  </data>
+  <data name="AccountNo" xml:space="preserve">
+    <value>Account No.</value>
+    <comment>رقم الحساب</comment>
+  </data>
+  <data name="Particular" xml:space="preserve">
+    <value>Particular</value>
+    <comment>البيان</comment>
+  </data>
+  <data name="Money2" xml:space="preserve">
+    <value>amount of</value>
+    <comment>مبلغ وقدره</comment>
+  </data>
+  <data name="AddDocuments" xml:space="preserve">
+    <value>Add Documents</value>
+    <comment>إضافة المستندات</comment>
+  </data>
+  <data name="DisbursedTo" xml:space="preserve">
+    <value>Disbursed to:</value>
+    <comment>يصرف الى :</comment>
+  </data>
+  <data name="ArMoney" xml:space="preserve">
+    <value>An amount and its value is Arabic</value>
+    <comment>مبلغ وقدره عربي</comment>
+  </data>
+  <data name="EnMoney" xml:space="preserve">
+    <value>An amount and its value is English</value>
+    <comment>مبلغ وقدره E</comment>
+  </data>
+  <data name="AddedDocuments" xml:space="preserve">
+    <value>Added Documents</value>
+    <comment>الوثائق المضافة</comment>
+  </data>
+  <data name="Recipient" xml:space="preserve">
+    <value>Recipient</value>
+    <comment>المستلم</comment>
+  </data>
+  <data name="Accountant" xml:space="preserve">
+    <value>Accountant</value>
+    <comment>المحاسب</comment>
+  </data>
+  <data name="CreateMonthlyAdministrativeReport" xml:space="preserve">
+    <value>Create Monthly Administrative Report</value>
+  </data>
+  <data name="EditMonthlyAdministrativeReport" xml:space="preserve">
+    <value>Edit Monthly Administrative Report</value>
+  </data>
+  <data name="FromMonth" xml:space="preserve">
+    <value>From month</value>
+  </data>
+  <data name="Month2" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="MonthlyAdministrativeReport" xml:space="preserve">
+    <value>Monthly Administrative Report</value>
+  </data>
+  <data name="MonthlyAdministrativeReportList" xml:space="preserve">
+    <value>Monthly Administrative Report List</value>
+  </data>
+  <data name="DocumentDate2" xml:space="preserve">
+    <value>Bond Date</value>
+    <comment>تاريخ السند</comment>
+  </data>
+  <data name="DocumentNo2" xml:space="preserve">
+    <value>Bond No.</value>
+    <comment>رقم السند</comment>
+  </data>
+  <data name="DocumentTitle2" xml:space="preserve">
+    <value>Bond Title</value>
+    <comment>عنوان السند</comment>
+  </data>
+  <data name="AddNewVoucher" xml:space="preserve">
+    <value>Add New Voucher</value>
+    <comment>إضافة سند صرف نقدى جديد</comment>
+  </data>
+  <data name="MustbeNumber" xml:space="preserve">
+    <value>Must be Number</value>
+    <comment>يلزم ارقام فقط</comment>
+  </data>
+  <data name="LoginMember" xml:space="preserve">
+    <value>Member Login</value>
+    <comment>تسجيل دخول عضو</comment>
+  </data>
+  <data name="HelloYouloggedInSuccessfully" xml:space="preserve">
+    <value>Hello! You have logged in successfully</value>
+    <comment>مرحباً ! تم تسجيل الدخول بنجاح</comment>
+  </data>
+  <data name="AddCarService2" xml:space="preserve">
+    <value>Add Maintenance</value>
+    <comment>إضافة صيانة</comment>
+  </data>
+  <data name="PasswordShouldBe2" xml:space="preserve">
+    <value>Password must be at least 8 characters long and contain a capital letter, symbols, and numbers. *&amp;!@#$ </value>
+  </data>
+  <data name="EmailNotExisting" xml:space="preserve">
+    <value>This Email is Not Existing</value>
+    <comment>البريد الإلكتروني غير موجود</comment>
+  </data>
+  <data name="NotMatchingBassword" xml:space="preserve">
+    <value>Password is incorrect</value>
+    <comment>كلمة المرور غير صحيحة</comment>
+  </data>
+  <data name="LoginFailedUnknownReason" xml:space="preserve">
+    <value>Login failed for an unknown reason</value>
+    <comment>فشل تسجيل الدخول لسبب غير معروف</comment>
+  </data>
+  <data name="EnterPassword" xml:space="preserve">
+    <value>Enter The Password</value>
+    <comment>أدخل كلمة المرور</comment>
+  </data>
+  <data name="PasswordShouldBe3" xml:space="preserve">
+    <value>must be at least 8 characters long and contain a capital letter, symbols, and numbers. *&amp;!@#$ </value>
+  </data>
+  <data name="EmailAlreadyExists" xml:space="preserve">
+    <value>This email is used before</value>
+    <comment>هذا البريد الإلكتروني مستخدم من قبل</comment>
+  </data>
+  <data name="IdNationalNumber_UsedBefore" xml:space="preserve">
+    <value>ID number used before</value>
+    <comment>رقم الهوية مستخدم من قبل</comment>
+  </data>
+  <data name="all2" xml:space="preserve">
+    <value>All</value>
+    <comment>الكل</comment>
+  </data>
+  <data name="ApprovalOfCourses" xml:space="preserve">
+    <value>Approval Of Courses</value>
+    <comment>الموافقة على الدورات</comment>
+  </data>
+  <data name="ApprovalORSuspension" xml:space="preserve">
+    <value>Approval OR Suspension</value>
+    <comment>موافقة أو وقف</comment>
+  </data>
+  <data name="SentDone" xml:space="preserve">
+    <value>Sent Done</value>
+  </data>
+  <data name="CollaborativeType" xml:space="preserve">
+    <value>Combined Report</value>
+    <comment>التقرير المجمع</comment>
+  </data>
+  <data name="SupervisorSignature" xml:space="preserve">
+    <value>Supervisor's signature</value>
+    <comment>توقيع المشرف</comment>
+  </data>
+  <data name="ManagerSignature" xml:space="preserve">
+    <value>Manager's Signature</value>
+    <comment>توقيع المدير</comment>
+  </data>
+  <data name="EnterOTP" xml:space="preserve">
+    <value>Enter OTP</value>
+    <comment>ادخل ال OTP</comment>
+  </data>
+  <data name="RequredTypeExAnRe" xml:space="preserve">
+    <value>Please choose the type of operation</value>
+    <comment>من فضلك اختر نوع العملية</comment>
+  </data>
+  <data name="Timeline" xml:space="preserve">
+    <value>Time Line</value>
+    <comment>الشريط الزمني</comment>
+  </data>
+  <data name="SendSMS" xml:space="preserve">
+    <value>Send SMS</value>
+    <comment>ارسال SMS</comment>
+  </data>
+  <data name="MessagesLogs" xml:space="preserve">
+    <value>Messages Logs</value>
+    <comment>عرض سجل الرسائل</comment>
+  </data>
+  <data name="ValidateOtp" xml:space="preserve">
+    <value>Verify with OTP to sign</value>
+    <comment>تحقق بال OTP للتوقيع</comment>
+  </data>
+  <data name="CashDisbursementRequestValidateOtp" xml:space="preserve">
+    <value>Verify with OTP to sign</value>
+    <comment>تحقق بال OTP للتوقيع</comment>
+  </data>
+  <data name="ExchangeProofRequestValidateOtp" xml:space="preserve">
+    <value>Verify with OTP to sign</value>
+    <comment>تحقق بال OTP للتوقيع</comment>
+  </data>
+  <data name="AcknowledgmentReceiptRequestValidateOtp" xml:space="preserve">
+    <value>Verify with OTP to sign</value>
+    <comment>تحقق بال OTP للتوقيع</comment>
+  </data>
+  <data name="Handle" xml:space="preserve">
+    <value>Display error page</value>
+    <comment>عرض صفحة خطأ</comment>
+  </data>
+  <data name="CustomError" xml:space="preserve">
+    <value>-</value>
+    <comment>-</comment>
+  </data>
+  <data name="hubs" xml:space="preserve">
+    <value>-</value>
+    <comment>-</comment>
+  </data>
+  <data name="notifications" xml:space="preserve">
+    <value>Notifications</value>
+    <comment>تنبيهات</comment>
+  </data>
+  <data name="Subscribe_To_Course" xml:space="preserve">
+    <value>Subscribe To Course</value>
+    <comment>الاشتراك في دورة</comment>
+  </data>
+  <data name="Subscribe_To_Courses" xml:space="preserve">
+    <value>Subscribe To Courses</value>
+    <comment>الإشتراك في الدورات</comment>
+  </data>
+  <data name="UpdateSubscripe" xml:space="preserve">
+    <value>Subscription review</value>
+    <comment>مراجعة الأشتراك</comment>
+  </data>
+  <data name="Mast_Length_10" xml:space="preserve">
+    <value>This field corresponds to 10 numbers . ex: 05011111111</value>
+    <comment> هذا الحقل يلازم 10رقم مثل 05011111111</comment>
+  </data>
+  <data name="PhonePlaceholder_10" xml:space="preserve">
+    <value>0501111111</value>
+    <comment>0501111111</comment>
+  </data>
+  <data name="PhoneInCorrect" xml:space="preserve">
+    <value>The phone number is incorrect</value>
+    <comment>رقم الهاتف غير صحيح</comment>
+  </data>
+  <data name="HellothisFougeraClubOTPMessage" xml:space="preserve">
+    <value>Signature verification code</value>
+    <comment>كود التحقق من التوقيع</comment>
+  </data>
+  <data name="Editgroupname" xml:space="preserve">
+    <value>Edit group name</value>
+    <comment>تعديل اسم المجموعة</comment>
+  </data>
+  <data name="TrainersList2" xml:space="preserve">
+    <value>Trainers List</value>
+  </data>
+  <data name="AddNewTrainer2" xml:space="preserve">
+    <value>Add New Trainer</value>
+  </data>
+  <data name="note11" xml:space="preserve">
+    <value>General notes for development</value>
+    <comment>ملاحظات عامة للتطوير</comment>
+  </data>
+  <data name="GeneralNotes" xml:space="preserve">
+    <value>General Notes</value>
+    <comment>ملاحظات عامة</comment>
+  </data>
+  <data name="AddNewTrainer3" xml:space="preserve">
+    <value>Add New Trainer</value>
+  </data>
+  <data name="Destenation_Supplier" xml:space="preserve">
+    <value>Authority / Supplier</value>
+    <comment>الجهة</comment>
+  </data>
+  <data name="BondNo1" xml:space="preserve">
+    <value>Bond No.</value>
+    <comment>رقم السند</comment>
+  </data>
+  <data name="AddNewSalaryManagement1" xml:space="preserve">
+    <value>Add Salary</value>
+    <comment>إضافة راتب </comment>
+  </data>
+  <data name="SickLeaveDays1" xml:space="preserve">
+    <value>Sick Leave</value>
+    <comment>المرضى</comment>
+  </data>
+  <data name="payrollReportPrint" xml:space="preserve">
+    <value>Print payroll</value>
+    <comment>طباعة الرواتب</comment>
+  </data>
+  <data name="ReportDiscountsAndBonusesFor" xml:space="preserve">
+    <value>Report Discounts And Bonuses For</value>
+    <comment>تقرير الخصومات والعلاوات عن</comment>
+  </data>
+  <data name="DiscountsAndBonusesReport" xml:space="preserve">
+    <value>Discounts And Bonuses Report</value>
+    <comment>تقرير الخصومات والعلاوات</comment>
+  </data>
+  <data name="ViewdetailsExternalworkMission1" xml:space="preserve">
+    <value>External work Mission</value>
+    <comment>مهمة عمل خارجية</comment>
+  </data>
+  <data name="ParticipationsInEventList1" xml:space="preserve">
+    <value>Participations in an Event List</value>
+    <comment>قائمة المشاركات فى حدث</comment>
+  </data>
+  <data name="PrintReport" xml:space="preserve">
+    <value>Print Report</value>
+    <comment>طباعة تقرير</comment>
+  </data>
+  <data name="MaintenanceDate1" xml:space="preserve">
+    <value>Maintenance Date</value>
+    <comment>تاريخ الصيانة</comment>
+  </data>
+  <data name="AddMaintenanceStatement" xml:space="preserve">
+    <value>Add Maintenance Statement</value>
+    <comment>إضافة بيان صيانة</comment>
+  </data>
+  <data name="AddMaintenanceData" xml:space="preserve">
+    <value>Add maintenance data</value>
+    <comment>إضافة بيانات الصيانة</comment>
+  </data>
+  <data name="EditClubMaintenance1" xml:space="preserve">
+    <value>Edit Maintenance Data</value>
+  </data>
+  <data name="AddMaterialOrder" xml:space="preserve">
+    <value>Add New Material Order</value>
+  </data>
+  <data name="EngineerList2" xml:space="preserve">
+    <value>Fujairah Engineers Association Data List</value>
+    <comment>قائمة بيانات رابطة مهندسي الفجيرة</comment>
+  </data>
+  <data name="WorkLocation" xml:space="preserve">
+    <value>Work Location</value>
+    <comment>مكان العمل</comment>
+  </data>
+  <data name="MobileNumber2" xml:space="preserve">
+    <value>Mobile Value</value>
+  </data>
+  <data name="Add_New_ScientificProject3" xml:space="preserve">
+    <value>Enter Technical Card for Scientific Project</value>
+  </data>
+  <data name="CourseCannotSubscribed" xml:space="preserve">
+    <value> This course cannot be subscribed</value>
+    <comment> لا يمكن الاشتراك بالدورة</comment>
+  </data>
+  <data name="CourseCannotSubscribedExbired" xml:space="preserve">
+    <value> This course cannot be subscribed As Exbired</value>
+    <comment> لا يمكن الاشتراك بالدورة</comment>
+  </data>
+  <data name="youSubed" xml:space="preserve">
+    <value>You subscribed</value>
+    <comment>انت مشترك بالفعل</comment>
+  </data>
+  <data name="youRefuesd" xml:space="preserve">
+    <value>You Refuesd</value>
+    <comment>انت مرفوض</comment>
+  </data>
+  <data name="youWait" xml:space="preserve">
+    <value>You submitted and awaiting approval</value>
+    <comment>قدمت طلب وفي انتظار الموافقة</comment>
+  </data>
+  <data name="UpdateMyData" xml:space="preserve">
+    <value>Update My Data</value>
+  </data>
+  <data name="MemberNameAr" xml:space="preserve">
+    <value>Name (Arabic)</value>
+    <comment>الاسم عربي</comment>
+  </data>
+  <data name="MemberNameEn" xml:space="preserve">
+    <value>Name (En)</value>
+    <comment>اسم العضو En</comment>
+  </data>
+  <data name="FatherProfession" xml:space="preserve">
+    <value>Father's profession</value>
+    <comment>مهنة الوالد</comment>
+  </data>
+  <data name="NoExist" xml:space="preserve">
+    <value>No Exist</value>
+    <comment>لا يوجد</comment>
+  </data>
+  <data name="UpdateSubscribe" xml:space="preserve">
+    <value>Update Member Subscription From Table</value>
+    <comment>تحديث اشتراك العضو من الجدول</comment>
+  </data>
+  <data name="TrainerEditMyData2" xml:space="preserve">
+    <value>Update Trainer data for himself</value>
+    <comment>تحديث بيانات المدرب لنفسه</comment>
+  </data>
+  <data name="PasswordRequired" xml:space="preserve">
+    <value>Password is required.</value>
+    <comment>كلمة المرور مطلوبة</comment>
+  </data>
+  <data name="PasswordRequiredConfirm" xml:space="preserve">
+    <value>Confirm Password is required.</value>
+    <comment>تأكيد كلمة المرور مطلوبة</comment>
+  </data>
+  <data name="RoleRequired" xml:space="preserve">
+    <value>Role is required.</value>
+    <comment>الدور مطلوب</comment>
+  </data>
+  <data name="LogHistorys1" xml:space="preserve">
+    <value>Logs History Report</value>
+    <comment>تقرير سجل العمليات</comment>
+  </data>
+  <data name="FujairahPrintFooter" xml:space="preserve">
+    <value>FUJAIRAH SCIENCE CLUB</value>
+    <comment>FUJAIRAH SCIENCE CLUB</comment>
+  </data>
+  <data name="MemberNo" xml:space="preserve">
+    <value>Member No.</value>
+    <comment>رقم العضو</comment>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>City</value>
+    <comment>المدينه</comment>
+  </data>
+  <data name="NoNewCourses" xml:space="preserve">
+    <value>New Courses Not Found</value>
+    <comment>لا توجد دورات قادمة</comment>
+  </data>
+  <data name="NoNewActivities" xml:space="preserve">
+    <value>New Activities Not Found</value>
+    <comment>لا توجد فعاليات قادمة</comment>
+  </data>
+  <data name="NoActivities" xml:space="preserve">
+    <value>Activities Not Found</value>
+    <comment>لا توجد فعاليات </comment>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Courses Not Found</value>
+    <comment>لا توجد دورات</comment>
+  </data>
+  <data name="AcademicQualifications" xml:space="preserve">
+    <value>Academic Qualifications</value>
+    <comment>المؤهلات العلميه</comment>
+  </data>
+  <data name="School_University" xml:space="preserve">
+    <value>School / University</value>
+    <comment>المدرسة / الجامعة</comment>
+  </data>
+  <data name="hobbies" xml:space="preserve">
+    <value>hobbies</value>
+    <comment>الهوايات</comment>
+  </data>
+  <data name="Destenation_Supplierss" xml:space="preserve">
+    <value>Authorities</value>
+    <comment>الجهات</comment>
+  </data>
+  <data name="CourseRate2" xml:space="preserve">
+    <value>Course Rate</value>
+    <comment>تقييم الدورة</comment>
+  </data>
+  <data name="Trainer2" xml:space="preserve">
+    <value>Trainer</value>
+    <comment>مدرب</comment>
+  </data>
+  <data name="PrintMessagesLogs" xml:space="preserve">
+    <value>Print Messages</value>
+    <comment>طباعة سجل الرسائل</comment>
+  </data>
+  <data name="Members2" xml:space="preserve">
+    <value>Members</value>
+    <comment>الأعضاء</comment>
+  </data>
+  <data name="Details2" xml:space="preserve">
+    <value>Details</value>
+    <comment>تفاصيل</comment>
+  </data>
+  <data name="ProjectCard" xml:space="preserve">
+    <value>View Technical card scientific project</value>
+    <comment>عرض بطاقة فنية مشروع علمى</comment>
+  </data>
+  <data name="Activity2" xml:space="preserve">
+    <value>Activity</value>
+    <comment>النشاط</comment>
+  </data>
+  <data name="Accounts2" xml:space="preserve">
+    <value>Accounts</value>
+    <comment>الحسابات</comment>
+  </data>
+  <data name="HttpStatusCodeHandler" xml:space="preserve">
+    <value>View Error Page</value>
+    <comment>عرض صفحة خطأ</comment>
+  </data>
+  <data name="AccessDeniedError403" xml:space="preserve">
+    <value>View Don't Have Permission Page</value>
+    <comment>عرض صفحة ليس لديك الصلاحية</comment>
+  </data>
+  <data name="ExpensesReport2" xml:space="preserve">
+    <value>Prose Expenses Report</value>
+    <comment>تقرير المصروفات النثرية</comment>
+  </data>
+  <data name="ExpensesAndReceiptsReport2" xml:space="preserve">
+    <value>Receipts and Payments Report</value>
+    <comment>عرض تقرير المقبوضات والمدفوعات</comment>
+  </data>
+  <data name="Receipt2" xml:space="preserve">
+    <value>Receipt</value>
+    <comment>إيصال استلام</comment>
+  </data>
+  <data name="CashExchangeBondReceipt2" xml:space="preserve">
+    <value>Cash Payment Voucher</value>
+    <comment>سند صرف نقدى</comment>
+  </data>
+  <data name="GetCourse" xml:space="preserve">
+    <value>View Course Details</value>
+    <comment>عرض تفاصيل الدورة</comment>
+  </data>
+  <data name="DoRate" xml:space="preserve">
+    <value>Course Rate</value>
+    <comment>تقييم الدورة</comment>
+  </data>
+  <data name="MemberPageDate" xml:space="preserve">
+    <value>Member Data</value>
+    <comment>بيانات العضو</comment>
+  </data>
+  <data name="Logout3" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="View_terms_and_conditions" xml:space="preserve">
+    <value> terms and conditions</value>
+    <comment>الشروط والأحكام</comment>
+  </data>
+  <data name="AdoptProject" xml:space="preserve">
+    <value>Adopt Project</value>
+    <comment>إعتماد المشروع</comment>
+  </data>
+  <data name="TrainerSignature" xml:space="preserve">
+    <value>Trainer's signature</value>
+    <comment>توقيع المدرب</comment>
+  </data>
+  <data name="PleaseChooseYearAndMonthAnother" xml:space="preserve">
+    <value>Please Choose Different Year And Month</value>
+    <comment>من فضلك أختر سنة وشهر اخرى</comment>
+  </data>
+  <data name="OpenDetails_ExpensesReport" xml:space="preserve">
+    <value>Approval of Petty Cash Report</value>
+    <comment>اعتماد تقرير المصروفات النثرية</comment>
+  </data>
+  <data name="OpenDetails_ExpensesAndReciptReport" xml:space="preserve">
+    <value>Approval of Receipts - Payments Report</value>
+    <comment>اعتماد تقرير المقبوضات والمدفوعات</comment>
+  </data>
+  <data name="AbsenceReport" xml:space="preserve">
+    <value>Absence Report</value>
+  </data>
+  <data name="OpenDetails_payrollReport" xml:space="preserve">
+    <value>Approve payroll Report</value>
+    <comment>اعتماد تقرير الرواتب</comment>
+  </data>
+  <data name="OpenDetails_DiscountsAndBonusesReport" xml:space="preserve">
+    <value>Approve Report Discounts And Bonuses For</value>
+    <comment>اعتماد تقرير الخصومات والعلاوات عن</comment>
+  </data>
+  <data name="NationalIdExpiryDate2" xml:space="preserve">
+    <value>Nat_ID Expiry</value>
+  </data>
+  <data name="TotalSalary2" xml:space="preserve">
+    <value>Total</value>
+    <comment>الإجمالى</comment>
+  </data>
+  <data name="BasicSalary2" xml:space="preserve">
+    <value>Basic</value>
+    <comment>الأساسى</comment>
+  </data>
+  <data name="terms" xml:space="preserve">
+    <value>Terms &amp; Conditions</value>
+    <comment>الشروط و الأحكام</comment>
+  </data>
+  <data name="FujairahScientificClubwitnesses" xml:space="preserve">
+    <value>Fujairah Scientific Club</value>
+    <comment>يـشـهـد نــــادي الفجيرة العلمــــي</comment>
+  </data>
+  <data name="CertificateAttendanceParticipation" xml:space="preserve">
+    <value>CERTIFICATE</value>
+    <comment>شهادة حضور ومشاركة</comment>
+  </data>
+  <data name="AccordingThisTestimony" xml:space="preserve">
+    <value>Hereby Certifies That</value>
+    <comment>وبموجب هذه الشهـادة بأن</comment>
+  </data>
+  <data name="part1Cert" xml:space="preserve">
+    <value>Demonstrating scientific engagement, academic commitment, and effective participation
+in accordance with the standards of Fujairah Science Club.</value>
+    <comment>وذلك لالتزامه العلمي والتفاعل المعرفي والمشاركة الفعالة وفق المعايير المعتمدة لنادي الفجيرة العلمي</comment>
+  </data>
+  <data name="part2Cert" xml:space="preserve">
+    <value>This Certificate is awarded in recognition of the above participation, With our sincere wishes for continued success and excellence.</value>
+    <comment>لذا تمنح هذه الشهادة تقديرًا للمشاركة العلمية مع أطيب التمنيات له بمزيد من التوفيق والنجاح</comment>
+  </data>
+  <data name="To1" xml:space="preserve">
+    <value>to :</value>
+    <comment>إلى</comment>
+  </data>
+  <data name="duringPeriodFrom" xml:space="preserve">
+    <value>During the period from :</value>
+    <comment>خلال الفترة من</comment>
+  </data>
+  <data name="CertificateVerification" xml:space="preserve">
+    <value>Certificate Verification</value>
+    <comment>التحقق من الشهادة</comment>
+  </data>
+  <data name="ViewOriginalCertificate" xml:space="preserve">
+    <value>View Original Certificate</value>
+    <comment>عرض الشهادة الاصلية</comment>
+  </data>
+  <data name="Subscriber" xml:space="preserve">
+    <value>Subscriber</value>
+    <comment>مشترك</comment>
+  </data>
+  <data name="CertificateVerified_Verified" xml:space="preserve">
+    <value>Certificate Verified</value>
+    <comment>تم التحقق من الشهادة</comment>
+  </data>
+  <data name="CertificateVerified_IssuedBy" xml:space="preserve">
+    <value>This is issued by</value>
+    <comment>صادرة عن</comment>
+  </data>
+  <data name="CertificateVerified_ClubName" xml:space="preserve">
+    <value>FUJAIRAH SCIENCE CLUB</value>
+    <comment>نادي الفجيرة العلمي</comment>
+  </data>
+  <data name="CertificateVerified_NotValid" xml:space="preserve">
+    <value>Certificate not valid</value>
+    <comment>الشهادة غير صالحة</comment>
+  </data>
+  <data name="CertificateVerified_Invalid" xml:space="preserve">
+    <value>this is invalid</value>
+    <comment>هذه الشهادة غير صالحة</comment>
+  </data>
+  <data name="member1" xml:space="preserve">
+    <value>Member</value>
+    <comment>عضو</comment>
+  </data>
+  <data name="Ar" xml:space="preserve">
+    <value>Arabic</value>
+    <comment>عربي</comment>
+  </data>
+  <data name="En" xml:space="preserve">
+    <value>English</value>
+    <comment>انجليزي</comment>
+  </data>
+  <data name="MaxLength_250" xml:space="preserve">
+    <value>Maximum 250 characters!</value>
+    <comment>حد اقصى 250 حرف !</comment>
+  </data>
+  <data name="Student_Employee" xml:space="preserve">
+    <value>Student/Employee</value>
+  </data>
+  <data name="MaterialOrderList" xml:space="preserve">
+    <value>Material Order List</value>
+    <comment>قائمة طلبات المواد</comment>
+  </data>
+  <data name="AddNewInventory2" xml:space="preserve">
+    <value>Add New Inventory</value>
+  </data>
+  <data name="MaterialOrderManagement" xml:space="preserve">
+    <value>Material Order Management</value>
+    <comment>إدارة طلبات المواد</comment>
+  </data>
+  <data name="AddNewInventory1" xml:space="preserve">
+    <value>Add New Inventory</value>
+  </data>
+  <data name="MaterialOrder" xml:space="preserve">
+    <value>Material Order</value>
+    <comment>طلبات المواد</comment>
+  </data>
+  <data name="quotesList" xml:space="preserve">
+    <value>List of price offer comparisons</value>
+    <comment>قائمة مقارنات عروض الاسعار</comment>
+  </data>
+  <data name="quotesManagement" xml:space="preserve">
+    <value>Manage price offer comparisons</value>
+    <comment>إدارة مقارنات عروض الاسعار</comment>
+  </data>
+  <data name="quotes" xml:space="preserve">
+    <value>Compare quotes and award</value>
+    <comment>مقارنة عروض اسعار وترسية</comment>
+  </data>
+  <data name="Addquotes" xml:space="preserve">
+    <value>Add New quote</value>
+  </data>
+  <data name="SecrtaryPermissionSign" xml:space="preserve">
+    <value>Secretary Permission Signature</value>
+  </data>
+  <data name="Details_ComparePrices" xml:space="preserve">
+    <value>Compare quotes and award</value>
+    <comment>مقارنة عروض الأسعار وترسية</comment>
+  </data>
+</root>

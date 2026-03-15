@@ -1,0 +1,303 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Course
+@using FougeraClub.Areas.Admin.ViewModels.Member
+@model MemberCoursesVM
+@{
+    ViewData["Title"] = Resource2.CoursesOfMember;
+    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.Members2 ?? " ";
+    ViewData["Title Single"] = @Resource2.CoursesOfMember ?? " ";
+
+}
+<!-- Breadcrumb & Record Count -->
+<div class="row my-3 flex-nowrap gap-4">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Member/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col d-flex justify-content-end align-items-center text-nowrap">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span><label id="countRecords">@Model.memberId </label></span>
+        </div>
+
+    </div>
+</div>
+<input type="hidden" id="memberId" value="@Model.memberId" />
+<div class="row mb-3">
+        <div class="card">
+            <!-- Card header -->
+        <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-1   px-2">
+                <div class="flex-grow-1">
+                <div class="d-flex align-items-center gap-2">
+                <h4 class="ico-header-title">
+                        <i class="fa-solid fa-book me-1 text-ico"></i>
+                        @Resource2.CoursesOfMember : @(ViewBag.MemberName)
+                    </h4>
+                </div>
+                </div>
+            <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                    @{
+                        var countRecords = Model.Paginated?.Count;
+                    }
+                    @if (countRecords != null && countRecords > 3999)
+                    {
+                        // Toaster Can't Print more 3999 record
+                        <a onclick="showToastrCannotPrint();"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-print me-1"></i> @Resource2.Print 
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Admin/Member/PrintMemberCourses?memberId=@ViewBag.memberId" target="_blank"
+                           class="btn btn-success btn-sm">
+                            <i class="fa fa-print me-1"></i> @Resource2.Print 
+                        </a>
+                    }
+                    <!-- Print Export As Excel -->
+                    <a class="btn btn-success Excelbtn"
+                       onclick="openExcelPage();" href="/Admin/Member/createExcelReport_Download_MemberCourse?memberId=@ViewBag.memberId" target="_self">
+                        <i class="fa-solid fa-file-excel me-2" style="font-size:17px;"></i>@Resource1.createExcelReport_Download 
+                    </a>
+                </div>
+            </div>
+        <div class="colmd-12   px-2">
+        <!-- Table -->
+        <div id="PartialNewListContainer">
+            @await Html.PartialAsync("_ListPartialMemberCourses", Model)
+        </div>
+    </div>
+        </div>
+</div>
+
+
+<!-- Course Details Modal -->
+<div class="modal fade" id="showCourseModal" tabindex="-1" aria-labelledby="showCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="showCourseModalLabel">@Resource1.Course_Data1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="courseDetailsForm">
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label for="modalDepartment" class="form-label">@Resource1.Specialization</label>
+                            <input type="text" readonly class="form-control" id="modalDepartment" name="modalDepartment" required />
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label for="modalTitle" class="form-label">@Resource1.CourseTitle</label>
+                            <input type="text" readonly class="form-control" id="modalTitle" name="modalTitle" required />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="filter-dropdown">
+                            <label for="modalStartDate" class="form-label">@Resource1.StartDate</label>
+                            <div class="input-icon-left">
+                                <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                                    <input type="text" name="modalStartDate" id="modalStartDate" class="form-control green-border form-control-sm filter-bordered" required readonly>
+                            </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="filter-dropdown">
+                            <label for="modalEndDate" class="form-label">@Resource1.EndDate</label>
+                            <div class="input-icon-left">
+                                <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                                    <input type="text" id="modalEndDate" name="modalEndDate" class="form-control green-border form-control-sm filter-bordered" required readonly>
+                                </div>
+                            </div>
+                        </div>
+                 
+
+                
+                        <div class="col-md-12 mb-3">
+                            <label for="modalLocation" class="form-label">@Resource1.Location</label>
+                            <input type="text" readonly class="form-control" id="modalLocation" name="modalLocation" required />
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <label for="modalDescription" class="form-label">@Resource1.Course_Data</label>
+                            <textarea readonly class="form-control" id="modalDescription" name="modalDescription" required></textarea>
+                        </div>
+                    
+
+                   
+                        <div class="col-md-12 mb-6">
+                            <label class="form-label">@Resource1.For_more_details_ClickHere</label>
+                            <div class="">
+                                <a class="btn btn-outline-secondary w-100" id="attachmentPath" href="#" target="_blank">
+                                    @Resource1.View_File1
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-bs-dismiss="modal">@Resource2.Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+               $(document).on('click', '.show-course-btn', function (e) {
+            e.preventDefault(); //if the button is <a> it prevents the redirect
+            const $btn = $(this);
+            const courseId = $btn.data('course-id') ?? $btn.attr('data-course-id'); // More Safe
+
+            if (!courseId) {
+                console.warn('no course id on this element');
+                return;
+            }
+
+            console.log('fetch course', courseId);
+
+            $.ajax({
+                url: '/Admin/Member/GetCourse',
+                type: 'GET',
+                dataType: 'json', // Make sure the server returns (JSON)
+                data: { id: courseId },
+                beforeSend: function () {
+                    //optional: Show small loader or disable button while loading
+                    $btn.prop('disabled', true);
+                }
+            })
+            .done(function (data) {
+                // Assume that data contains the following fields:
+                $('#modalDepartment').val(data.department || '');
+                $('#modalTitle').val(data.title || '');
+                $('#modalStartDate').val(data.startDate || '');
+                $('#modalEndDate').val(data.endDate || '');
+                $('#modalLocation').val(data.location || '');
+                $('#modalDescription').val(data.description || '');
+
+                if (data.attachmentPath) {
+                    $('#attachmentPath').attr('href','../../' + data.attachmentPath);
+                    $('#attachmentPath').attr('target','_blank');
+                    $('#attachmentPath').removeClass('disabled');
+                } else {
+                    $('#attachmentPath').attr('href','#');
+                    $('#attachmentPath').attr('target','_self');
+                    $('#attachmentPath').addClass('disabled');
+                }
+
+                // Show modal (Bootstrap 4/5)
+                // If you use old Bootstrap 4 or 5:
+                // $('#courseModal').modal('show');
+
+                // Or in modern formats (Bootstrap 5 JS):
+                const modalEl = document.getElementById('courseModal');
+                if (modalEl) {
+                    const bsModal = new bootstrap.Modal(modalEl);
+                    bsModal.show();
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error('Failed to load course:', textStatus, errorThrown);
+                // Display an error message to the user if you want
+            })
+            .always(function () {
+                $btn.prop('disabled', false);
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    memberId : $('#memberId').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').length ? $('#pageSizeSelect').val() : "",
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var memberId = $('#memberId').val();
+                var pageSize   = pageSizeOverride || $('#pageSizeSelect').length ? $('#pageSizeSelect').val() : "";
+
+                $.ajax({
+                    url: '/Admin/Member/MemberCourses',
+                    type: 'GET',
+                    data: { memberId,page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+                        const newMemberId = $('#NewMemberId').val();
+                        $('#memberId').text(newMemberId);
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+
+}

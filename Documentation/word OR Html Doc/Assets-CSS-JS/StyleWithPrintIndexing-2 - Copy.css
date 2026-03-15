@@ -1,0 +1,177 @@
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 40px;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        h1, h2, h3 {
+            color: #111827;
+            margin-top: 40px;
+        }
+        h1 {
+            border-bottom: 3px solid #3c5385;
+            padding-bottom: 10px;
+        }
+        h2 {
+    /* border: 5px solid #2563eb; */
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background: linear-gradient(90deg, #f0ecff, #fffafa);
+	color: #060e79;
+        }
+		h2::before {
+    /* content: "## "; */
+    color: #af1717; /* Red color */
+    font-size: 1.5em;
+    font-weight: bold;
+}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 30px;
+            background-color: #ffffff;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: bold;
+        }
+		tr:nth-child(even) {
+            background-color: #f2f6fc;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .note {
+            background-color: #eef2ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px 15px;
+            margin: 20px 0;
+        }
+		
+
+		
+		/* ===============================
+   PRINT STYLES – PDF INDEX SIDEBAR
+   =============================== */
+/* ===============================
+   PRINT – SLIM REPEATED SIDEBAR
+   =============================== */
+@media print {
+
+    body {
+        margin: 0;
+        font-size: 11.5px;
+    }
+
+    /* Slim Sidebar */
+    .print-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 140px; 
+        height: 100%;
+        padding: 14px 10px;
+        background: #f8fafc;
+        border-right: 1.5px solid #3c5385;
+        font-size: 10.5px;
+        line-height: 1.4;
+    }
+
+    .print-sidebar h3 {
+        margin: 0 0 8px;
+        font-size: 11.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #1e3a8a;
+        border-bottom: 1px solid #c7d2fe;
+        padding-bottom: 4px;
+    }
+
+    .print-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .print-sidebar a {
+        text-decoration: none;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: block;
+        padding: 2px 0;               /* مسافة فوق وتحت النص */
+        text-overflow: clip;          /* إزالة ... */
+        font-size: 8px;              /* تصغير الخط إذا النص طويل */
+        white-space: normal;          /* يسمح بتقسيم النص لسطرين أو أكثر */
+    }
+
+    .print-sidebar a::after {
+        content: attr(data-fulltext);
+        font-size: 10px;
+        color: #1f2937;
+        display: block; /* لا يمكن جعله hover */
+        white-space: normal;
+    }
+    /* Optional: جعل النص يختصر تلقائيًا إذا كبير جدًا */
+    .print-sidebar a[data-fulltext]:after {
+        content: attr(data-fulltext);
+        display: block;
+        font-size: 10px;
+        white-space: normal;
+        color: #1f2937;
+    }
+
+    /* فاصل بين كل عنصر وآخر */
+    .print-sidebar li {
+        border-bottom: 1px solid #d1d5db; /* خط خفيف بين العناصر */
+        margin-bottom: 5px;               /* مسافة صغيرة إضافية */
+        padding-bottom: 13px;
+        padding-top:9px;
+    }
+
+    /* Content pushed safely */
+    .doc-content {
+        margin-left: 160px;       /* width + spacing */
+        padding: 30px 35px;
+    }
+
+    /* Clean pagination */
+    table,
+    .note {
+        page-break-inside: avoid;
+    }
+
+    h1, h2, h3 {
+        page-break-after: avoid;
+    }
+
+    <!-- h2 { -->
+        <!-- page-break-before: always; -->
+    <!-- } -->
+	
+}
+
+/* ===============================
+   SCREEN hidden sidbar
+   =============================== */
+@media screen {
+    .print-sidebar {
+        display: none;
+    }
+}
+
+		
+    </style>
+    

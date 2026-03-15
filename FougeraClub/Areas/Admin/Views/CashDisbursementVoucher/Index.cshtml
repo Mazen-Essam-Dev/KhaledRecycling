@@ -1,0 +1,453 @@
+﻿@model PaginatedList<CashDisbursementVoucherVM>
+
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    ViewData["Title"] = @Resource2.CashDisbursementVouchers ?? " ";
+
+    ViewData["Title pakage"] = @Resource2.FinancialManagement ?? " ";
+    ViewData["Title Single"] = @Resource2.CashDisbursementVoucherList ?? " ";
+
+    var addPermission = PermissionScanner.ValidatePermission("CashDisbursementVoucher", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("CashDisbursementVoucher", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("CashDisbursementVoucher", "Delete");
+}
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="countRecords">@Model.Count</span>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+
+        <!-- Main card container for services data -->
+        <div class="card">
+            <!-- Card header with title and action buttons -->
+
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <span class="fa-solid fa-file text-ico me-2"></span>
+                            @Resource2.CashDisbursementVoucherList
+                        </h4>
+                    </div>
+                </div>
+
+                <div class="col-md-6 d-flex align-items-center flex-wrap justify-content-end gap-1">
+                    @if (addPermission)
+                    {
+                        <a asp-action="AddEdit" class="btn btn-outline-success btn-sm">
+                            <i class="fa fa-plus me-1"></i> @Resource1.AddNewVoucher
+                        </a>
+                    }
+                    <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.Print
+                    </button>
+                    <a class="btn btn-success Excelbtn" onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-2"></i>@Resource1.createExcelReport_Download
+                    </a>
+                </div>
+            </div>
+            <div class="rounded shadow-sm p-3">
+                <!-- Search Panel -->
+                <form method="get" class="filterImg rounded">
+                    <div class="gap-2 w-100 p-2">
+                        <div class=" row">
+                            <div class="filter-dropdown col-md-4">
+                                <label for="searchTermInput" class="fw-medium mb-2">@Resource2.Search:</label>
+                                <div class="search-box position-relative">
+                                    <i
+                                        class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                                    <input type="text" name="searchTerm" id="searchTermInput"
+                                        class="form-control green-border form-control-sm filter-bordered ps-4"
+                                           placeholder="@Resource1.BondNo1" />
+                                </div>
+
+                            </div>
+                            <div class="filter-dropdown col-md-4">
+                                <label for="dateFrom" class="fw-medium mb-2">@Resource2.DateFrom:</label>
+                                <div class="input-icon-left">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon"
+                                        class="date-icon">
+                                    <input type="date" name="dateFrom" id="dateFrom"
+                                        class="form-control green-border form-control-sm filter-bordered" />
+                                </div>
+                            </div>
+
+                            <div class="filter-dropdown col-md-4">
+                                <div class="filter-dropdown">
+                                    <label for="dateTo" class="fw-medium mb-2">@Resource2.DateTo:</label>
+                                    <div class="input-icon-left">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"
+                                            alt="calendar icon" class="date-icon">
+                                        <input type="date" name="dateTo" id="dateTo"
+                                            class="form-control green-border form-control-sm filter-bordered" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="d-flex justify-content-end align-items-center p-2 gap-2 flex-wrap">
+                        <button type="button" id="btnClearFilters" class="btn-cancel-search btn-sm btn">
+                            <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                        </button>
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="ri-filter-line me-1"></i> @Resource1.Search
+                        </button>
+                    </div>
+                </form>
+
+
+
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Attachments Modal -->
+<div class="modal fade" id="uploadFilesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div id="attachmentsContent"></div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (ViewBag.ReopenModal != null && (bool)ViewBag.ReopenModal)
+    {
+        <script>
+            var myModal = new bootstrap.Modal(document.getElementById('uploadFilesModal'));
+            myModal.show();
+        </script>
+    }
+
+    <script>
+        document.querySelectorAll('.open-attachments').forEach(btn => {
+          btn.addEventListener('click', async function () {
+            const voucherId = this.getAttribute('data-voucher-id');
+            let response = await fetch('/Admin/CashDisbursementVoucher/GetCashDisbursementVoucherAttachments?id=' + voucherId);
+            let html = await response.text();
+            document.getElementById('attachmentsContent').innerHTML = html;
+
+            // show bootstrap modal
+            const modalEl = document.getElementById('uploadFilesModal');
+            const modal = new bootstrap.Modal(modalEl);
+            modal.show();
+
+            // init handlers for the injected content
+            initAttachmentsModal(modalEl, voucherId);
+          });
+        });
+
+        function initAttachmentsModal(modalEl, voucherId) {
+          // find elements inside the modal (these are from the partial HTML)
+          const form = modalEl.querySelector('#attachmentsForm');
+          const preview = modalEl.querySelector('#attachmentsPreview');
+          const addFileBtn = modalEl.querySelector('#addFileBtn');
+          const fileNameInput = modalEl.querySelector('#fileNameInput');
+          const fileInput = modalEl.querySelector('#fileInput');
+
+          if (!form || !preview) return;
+
+          // Ensure CashDisbursementVoucherId hidden field exists and set it
+          let voucherHidden = form.querySelector('input[name="CashDisbursementVoucherId"]');
+          if (!voucherHidden) {
+            voucherHidden = document.createElement('input');
+            voucherHidden.type = 'hidden';
+            voucherHidden.name = 'CashDisbursementVoucherId';
+            form.appendChild(voucherHidden);
+          }
+          voucherHidden.value = voucherId;
+
+          // Helper: re-index all attachments inputs inside each .file-card
+          function updateIndices() {
+            const cards = preview.querySelectorAll('.file-card');
+            cards.forEach((card, idx) => {
+              card.dataset.index = idx;
+              // rename all inputs/selects/textareas inside this card
+              card.querySelectorAll('input, select, textarea').forEach(el => {
+                if (!el.name) return;
+                // replace first occurrence of [number] with new index
+                el.name = el.name.replace(/\[\d+\]/, `[${idx}]`);
+              });
+            });
+          }
+
+          // Make sure existing cards have a remove button and hidden inputs inside them
+          preview.querySelectorAll('.file-card').forEach((card, idx) => {
+            // ensure card has data-index
+            card.dataset.index = idx;
+
+            // ensure there is a remove button
+            if (!card.querySelector('.remove-btn')) {
+              const removeBtn = document.createElement('button');
+              removeBtn.type = 'button';
+              removeBtn.className = 'remove-btn';
+              removeBtn.title = 'Remove';
+              removeBtn.innerHTML = '&times;';
+              // position it at top-right
+              removeBtn.style.position = 'absolute';
+              removeBtn.style.top = '4px';
+              removeBtn.style.right = '4px';
+              card.appendChild(removeBtn);
+            }
+          });
+
+          // initial index based on existing cards
+          let index = preview.querySelectorAll('.file-card').length;
+
+          // Delegated remove handler (works for existing + newly added)
+          preview.addEventListener('click', function (e) {
+            const removeBtn = e.target.closest('.remove-btn');
+            if (!removeBtn) return;
+
+            const card = removeBtn.closest('.file-card');
+            if (!card) return;
+
+            // if a previewed image created object URL, revoke it
+            const img = card.querySelector('img');
+            if (img && img.src && img.src.startsWith('blob:')) {
+              URL.revokeObjectURL(img.src);
+            }
+
+            // remove the card (hidden inputs inside card will be removed too)
+            card.remove();
+
+            // re-index remaining cards and update names
+            updateIndices();
+
+            // update index counter to current count
+            index = preview.querySelectorAll('.file-card').length;
+          });
+
+          // Handler to add new attachments
+          addFileBtn?.addEventListener('click', function () {
+            const name = (fileNameInput?.value || '').trim();
+            const file = fileInput?.files?.[0];
+
+            if (!name) {
+                $('#fileNameSpan').text('@Html.Raw(Resource1.Required)');
+                return;
+            }else{
+                $('#fileNameSpan').text('');
+            }
+            if (!file) {
+                $('#fileInputSpan').text('@Resource1.Required');
+                return;
+            }else{
+                $('#fileInputSpan').text('');
+            }
+
+            const fileType = (file.type || '').toLowerCase();
+            const isImage = fileType.startsWith('image/');
+            const isPdf = fileType === 'application/pdf';
+
+            // create card
+            const container = document.createElement('div');
+            container.className = 'file-card text-center position-relative';
+            // place inputs inside this card to make reindexing easy
+            container.dataset.index = index;
+
+            let previewHTML = '';
+            if (isImage) {
+              const imgUrl = URL.createObjectURL(file);
+              previewHTML = `<img src="${imgUrl}" class="img-thumbnail" style="width:90px;height:90px;object-fit:cover;border-radius:8px;">`;
+            } else if (isPdf) {
+              previewHTML = `<i class="fa-solid fa-file-pdf fa-5x text-danger"></i>`;
+            } else {
+              previewHTML = `<i class="fa-solid fa-file fa-5x text-secondary"></i>`;
+            }
+
+            container.innerHTML = `
+              <button type="button" class="remove-btn" title="Remove">&times;</button>
+              ${previewHTML}
+              <div class="fw-medium mt-2">${escapeHtml(name)}</div>
+            `;
+
+            // create hidden file input (kept inside card)
+            const tempFileInput = document.createElement('input');
+            tempFileInput.type = 'file';
+            tempFileInput.name = `Attachments[${index}].File`;
+            tempFileInput.classList.add('d-none');
+
+            // copy file into tempFileInput using DataTransfer
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            tempFileInput.files = dt.files;
+
+            // create hidden name input inside card
+            const nameField = document.createElement('input');
+            nameField.type = 'hidden';
+            nameField.name = `Attachments[${index}].Name`;
+            nameField.value = name;
+
+            // append hidden inputs inside card (so removal removes them)
+            container.appendChild(tempFileInput);
+            container.appendChild(nameField);
+
+            preview.appendChild(container);
+
+            // clear inputs
+            fileNameInput.value = '';
+            fileInput.value = '';
+
+            index++;
+            updateIndices();
+          });
+
+          // small helper: escape HTML for inserted names
+          function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function (m) {
+              return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+            });
+          }
+
+          // finally, perform one reindex pass in case names/indices were not correct
+          updateIndices();
+        }
+    </script>
+    <script>
+        function openPrintPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput').value);
+            const dateFrom = encodeURIComponent(document.getElementById('dateFrom').value);
+            const dateTo = encodeURIComponent(document.getElementById('dateTo').value);
+            var countRecords = document.getElementById('NewCountRecords').value;
+            if (countRecords && countRecords > 3999) {
+                showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+            }
+            else {
+                const url = `/Admin/CashDisbursementVoucher/Print?searchTerm=${searchTerm}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+                //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                const printWindow = window.open(
+                    url,
+                    'printWindow',
+                    'width=1000,height=800,noopener,noreferrer'
+                );
+            }
+        }
+    </script>
+    <script>
+        function openExcelPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput').value);
+            const dateFrom = encodeURIComponent(document.getElementById('dateFrom').value);
+            const dateTo = encodeURIComponent(document.getElementById('dateTo').value);
+
+            const url = `/Admin/CashDisbursementVoucher/createExcelReport_Download?searchTerm=${searchTerm}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+
+            window.open(url, '_self');
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#dateFrom').val(filters.dateFrom);
+                $('#dateTo').val(filters.dateTo);
+                $('#pageSizeSelect').val(filters.pageSize);
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#dateFrom').val('');
+                $('#dateTo').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    dateFrom: $('#dateFrom').val(),
+                    dateTo: $('#dateTo').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var searchTerm = $('#searchTermInput').val();
+                var dateFrom = $('#dateFrom').val();
+                var dateTo = $('#dateTo').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/CashDisbursementVoucher/Index',
+                    type: 'GET',
+                    data: { searchTerm, dateFrom, dateTo, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+
+}

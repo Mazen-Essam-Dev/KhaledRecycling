@@ -1,0 +1,1201 @@
+﻿@using Application.Helpers
+@using FougeraClub.Areas.Admin.ViewModels.quote
+@using FougeraClub.Areas.Admin.ViewModels.quote.Details
+@using Infrastructure.Identity
+@inject UserManager<ApplicationUser> UserManager
+@model quoteitemsVM
+@{
+    ViewData["Title"] = Resource1.quotes;
+    ViewData["Title pakage"] = @Resource1.quotesManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.quotesList ?? " ";
+    ViewData["Title Single"] = "تفاصيل طلب المواد";
+
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+
+    var quote = Model?.quote;
+    var boolSignatureSuperVisor = quote?.SignatureSuperVisor != null && !string.IsNullOrEmpty(quote.SignatureSuperVisor.ImagePath);
+    var boolSignatureAccountant = quote?.SignatureAccountant != null && !string.IsNullOrEmpty(quote.SignatureAccountant.ImagePath);
+    var boolSignatureUserSecetary = quote?.SignatureUserSecetary != null && !string.IsNullOrEmpty(quote.SignatureUserSecetary.ImagePath);
+    var boolManagerSignature = quote?.SignatureManager != null && !string.IsNullOrEmpty(quote.SignatureManager.ImagePath);
+
+}
+
+<!-- Breadcrumb -->
+<div class="row my-3 d-flex justify-content-between align-items-center print-none">
+    <div class="col-md-6 d-flex align-items-center flex-wrap justify-content-strat">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title pakage"]</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/quote">@ViewData["Title ListIndex"]</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title Single"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-6 d-flex align-items-center justify-content-end gap-1 flex-wrap">
+        @if (boolSignatureSuperVisor && boolManagerSignature)
+        {
+            <button onclick="printDiv('printArea')" ;="" return="" false;"="" class="print-btn btn btn-success btn-sm">
+                <i class="fa fa-print me-1"></i>@Resource2.Print
+            </button>
+        }
+
+        <a asp-controller="quote" asp-action="Index" class="btn-cancel-search btn-sm btn">
+            رجوع <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<div class="print-container" id="printArea">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black  p-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 19px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center mb-2 me-2">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width: 110px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 19px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <div class="d-flex justify-content-between px-3  ms-3 me-5 fw-semibold" style="text-align: right;">
+       
+        <div>
+            <p class="mb-1">
+                التاريخ : @(Model?.Date?.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy"))
+            </p>
+          
+        </div>
+        <div>
+
+            <p>
+                 الرقم : @(Model?.quoteCode ?? "لا يوجد")
+            </p>
+
+        </div>
+
+    </div>
+    <div class=" d-flex justify-content-center align-items-center m-auto">
+        <div class="fw-bold fs-3">
+            (مقارنة عروض أسعار وترسية)
+        </div>
+    </div>
+
+    <div class=" px-4 mt-2 fw-bold" style="text-align: right;">
+        <p class="mb-1 ">
+            سعــــــادة / مدير نادي الفجيرة العلمي
+        </p>
+        <p class="mb-1">
+           المطلوب / @(Model?.order)
+        </p>
+    </div>
+
+   
+    <!-- Supplier Selection (print-none) - always rendered, visibility managed by JS -->
+    <div class="px-4 mt-3 print-none" id="supplierSelectionSection">
+        <div id="supplierLimitWarning" class="text-danger mt-2 fw-semibold" style="display:none;">
+        </div>
+    </div>
+
+    <!-- Items Table -->
+    <div class="print-background mt-4 px-2">
+        <table class="table w-100 table-bordered" id="assignmentTable">
+            <thead>
+                <tr>
+                    <th class="bg-yellow text-center" style="width:5%">م</th>
+                    <th class="bg-yellow text-center" style="width:22%">البيان</th>
+                    <th class="bg-yellow text-center" style="width:13%">اسم الشركة</th>
+                    <th class="bg-yellow text-center" style="width:8%">الكمية</th>
+                    <th class="bg-yellow text-center" style="width:12%">السعر</th>
+                    <th class="bg-yellow text-center" style="width:12%">السعر الاجمالي</th>
+                    <th class="bg-yellow text-center" style="width:11%">المجموع</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @if (Model?.Items != null && Model.Items.Any())
+                {
+                    var index = 0;
+                    // Group items by supplier
+                    var groupedItems = Model.Items
+                    .Where(i => i.SupplierId != null)
+                    .GroupBy(i => new { i.SupplierId, i.SupplierName })
+                    .ToList();
+
+                    foreach (var group in groupedItems)
+                    {
+                        decimal supplierTotal = 0;
+                        int itemIndex = 0;
+                        foreach (var item in group)
+                        {
+                            var price = item.SinglePrice ?? 0;
+                            var quantity = item.Quantity ?? 0;
+                            decimal totalRecord = price * quantity;
+                            supplierTotal += totalRecord;
+                            
+                            bool isFirstItem = itemIndex == 0;
+                            <tr class="item-row" data-supplier-id="@item.SupplierId" data-item-id="@item.ItemId">
+                                <td class="bg-yellow  text-center" style="color:#2b3038 ">@(index + 1)</td>
+                                <td class="text-center">@item.ItemName</td>
+                                <td class="text-center supplier-name">@item.SupplierName</td>
+                                <td class="text-center item-qty">@item.Quantity</td>
+                                <td class="text-center item-price">
+                                    @if (Model.IsConfirmed)
+                                    {
+                                        <span class="price-display">@price.ToString("0.00")</span>
+                                        <input type="number" step="0.01" min="0"
+                                               class="form-control form-control-sm price-input text-center"
+                                               value="@price.ToString("0.00")"
+                                               style="display:none; width:100px; margin:auto;" />
+                                    }
+                                    else
+                                    {
+                                        <span>@price.ToString("0.00")</span>
+                                    }
+                                </td>
+                                <td class="text-center item-total">@totalRecord.ToString("0.00")</td>                               
+                            </tr>
+                            index++;
+                            itemIndex++;
+                        }
+                    }
+
+                    // Unassigned items
+                    var unassignedItems = Model.Items.Where(i => i.SupplierId == null).ToList();
+                    if (unassignedItems.Any())
+                    {
+                        foreach (var item in unassignedItems)
+                        {
+                            var price = item.SinglePrice ?? 0;
+                            var quantity = item.Quantity ?? 0;
+                            decimal totalRecord = price * quantity;
+                            <tr class="item-row unassigned-row" data-supplier-id="" data-item-id="@item.ItemId">
+                                <td class="bg-yellow text-center">@(index + 1)</td>
+                                <td>@item.ItemName</td>
+                                <td class="text-center supplier-name text-muted">غير معين</td>
+                                <td class="text-center item-qty">@item.Quantity</td>
+                                <td class="text-center item-price">@price.ToString("0.00")</td>
+                                <td class="text-center item-total">@totalRecord.ToString("0.00")</td>
+                            </tr>
+                            index++;
+                        }
+                    }
+                }
+                else
+                {
+                    <tr id="emptyRow">
+                        <td colspan="8" class="text-center text-muted py-4">لا توجد مواد</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div class="text-danger mx-2 px-2 py-2 fs-4 fw-semibold">
+            @Model?.textarea
+        </div>
+    </div>
+    
+    <!-- Confirm / Actions -->
+    <div class="print-none" id="confirmActionsSection">
+    </div>
+
+    <!-- Signature Section -->
+    <div class="signatures-section">
+        <div class="row">
+            <!-- Right side signatures -->
+           <div class="">
+                <div class="col-md-8">
+                    <div class="fw-bold ">
+                        <p class="text-decoration-underline " style=" text-underline-offset: 6px;"> تصديق وموافقة لجنة المشتريات :</p>
+                    </div>
+                    <div >
+                        <div  class="d-flex justify-content-0 gap-3">
+                            <p class="mb-3 fw-semibold my-auto"> 1- مشرف الأنشطة:</p>
+                            @if (boolSignatureSuperVisor)
+                            {
+                                <img src="~/@quote?.SignatureSuperVisor?.ImagePath"
+                                     class="img-fluid"
+                                     style="height:70px;" />
+                            }
+                            else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.ActivitiesSupervisor
+                            && await PermissionScanner.CheckLoggedUserIfHasSignature())
+                            {
+                                <div id="supervisorSignatureSection"
+                                     class="signature-trigger"
+                                     role="button"
+                                     tabindex="0"
+                                     style="cursor:pointer;">
+                                    إضغط هنا للتوقيع
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex justify-content-0 gap-3">
+                            <p class="mb-3 fw-semibold my-auto"> 2- المحاسب:</p>
+                            @if (boolSignatureAccountant)
+                            {
+                                <img src="~/@quote?.SignatureAccountant?.ImagePath"
+                                     class="img-fluid"
+                                     style="height:70px;" />
+                            }
+                            else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.Accountant
+                            && await PermissionScanner.CheckLoggedUserIfHasSignature() && boolSignatureSuperVisor)
+                            {
+                                <div id="accountantSignatureSection"
+                                     class="signature-trigger"
+                                     role="button"
+                                     tabindex="0"
+                                     style="cursor:pointer;">
+                                    إضغط هنا للتوقيع
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div >
+                        <div class="d-flex justify-content-0 gap-3">
+                            <p class="mb-3 fw-semibold my-auto">3- السكرتير:</p>
+                            @if (boolSignatureUserSecetary)
+                            {
+                                <img src="~/@quote?.SignatureUserSecetary?.ImagePath"
+                                     class="img-fluid"
+                                     style="height:70px;" />
+                            }
+                            else if (PermissionScanner.ValidatePermission("quote", "SecrtaryPermissionSign")
+                            && await PermissionScanner.CheckLoggedUserIfHasSignature() && boolSignatureAccountant)
+                            {
+                                <div id="secetarySignatureSection"
+                                     class="signature-trigger"
+                                     role="button"
+                                     tabindex="0"
+                                     style="cursor:pointer;">
+                                    إضغط هنا للتوقيع
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                      <!-- Left side manager signature -->
+            <div class="col-md-12">
+                <div class="text-center ">
+                    <div class="d-flex justify-content-end w-100" >
+                        <p class="fw-semibold">يعتمد,, </p>
+                        @if (boolManagerSignature)
+                        {
+                            <img src="~/@quote?.SignatureManager?.ImagePath"
+                                 class="img-fluid"
+                                 style="height:70px;" />
+                        }
+                        else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.Manager
+                        && await PermissionScanner.CheckLoggedUserIfHasSignature() && boolSignatureUserSecetary)
+                        {
+                            <div id="managerSignatureSection"
+                                 class="signature-trigger"
+                                 role="button"
+                                 tabindex="0"
+                                 style="cursor:pointer;">
+                                إضغط هنا للتوقيع
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            </div>
+      
+        </div>
+    </div>
+</div>
+
+<!-- OTP Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otpModalLabel">@Resource2.EnterOTP</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="otpForm">
+                <input type="hidden" id="otpEntityId" name="id" value="@Model?.Id" />
+                <input type="hidden" id="otpRole" name="role" value="" />
+                <div class="modal-body text-center">
+                    <p>@Resource2.PleaseEnterOTPToConfirmSignature</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        @for (int i = 0; i < 4; i++)
+                        {
+                            <input inputmode="numeric" maxlength="1"
+                                   class="form-control otp-digit text-center fs-4"
+                                   style="width:60px;" />
+                        }
+                    </div>
+                    <div class="invalid-feedback text-center mt-2" style="display:none;">
+                        @Resource2.EnterValidDigitsCode
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Resource2.Close</button>
+                    <button type="submit" class="btn btn-success">@Resource2.Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+
+
+    .black {
+        color: #4C4C5C;
+    }
+
+    .print-container {
+        max-width: 100% !important;
+        margin: 50px 15px;
+        background: white;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: transparent;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: right;
+        border: 1px solid #64635E;
+        color: #2b3038 !important;
+    }
+
+    table.table th {
+        border: 1px solid #64635E !important;
+        color: #2b3038 !important;
+    }
+
+    .bg-yellow {
+        background-color: #95acd6 !important;
+    }
+
+    .supplier-total-row td {
+        background-color: #f8f5e6 !important;
+    }
+
+    .supplier-total-cell {
+        /* background-color: #f8f5e6 !important; */
+        font-weight: bold;
+        color: #dc3545;
+        vertical-align: middle !important;
+    }
+
+    .signature-box {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fafafa;
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .signature-line {
+        border-bottom: 2px solid #333;
+        height: 30px;
+        margin: 10px 0;
+    }
+
+    .signatures-section {
+         margin-top: 5px !important;
+        /*page-break-inside: avoid; */
+    }
+
+    .line {
+        border-bottom:2px solid black;
+    }
+    @@media print {
+        body {
+            background: #fff !important;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .print-none,
+        nav, header, aside, footer,
+        .sidebar, .app-sidebar, .main-sidebar,
+        .navbar, .topbar, .breadcrumb,
+        .btn, button, a.btn,
+        .modal, .modal-backdrop {
+            display: none !important;
+        }
+
+        #printArea,
+        .print-container {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        table {
+            box-shadow: none !important;
+        }
+
+        th.bg-yellow {
+            background-color: #95acd6 !important;
+        }
+
+        @@page {
+            margin: 10mm;
+        }
+    }
+</style>
+
+
+<!-- Hidden data for JS -->
+<script id="itemsJson" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.Items ?? new List<SupplierAssignmentItemVM>()))</script>
+<script id="suppliersJson" type="application/json">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.SuppliersList?.Select(s => new { s.Value, s.Text }) ?? Enumerable.Empty<object>()))</script>
+
+@section Scripts{
+
+<script>
+    function printDiv(divId) {
+      window.print();
+      document.body.innerHTML = originalPage;
+      location.reload();
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        (function () {
+            const otpModalEl = document.getElementById('otpModal');
+            if (!otpModalEl) return;
+
+            const otpModal = new bootstrap.Modal(otpModalEl, { backdrop: 'static', keyboard: false });
+            const otpDigits = Array.from(otpModalEl.querySelectorAll('.otp-digit')).reverse(); // reverse for RTL
+            const otpForm = document.getElementById('otpForm');
+            const otpInvalid = otpModalEl.querySelector('.invalid-feedback');
+
+            // Navigate between OTP inputs
+            otpDigits.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, ''); // digits only
+                    if (e.target.value && index < otpDigits.length - 1) {
+                        otpDigits[index + 1].focus(); // move left in RTL
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && index > 0) {
+                        otpDigits[index - 1].focus();
+                    }
+                });
+            });
+
+            // Reset inputs on modal show
+            otpModalEl.addEventListener('shown.bs.modal', () => {
+                otpDigits.forEach(i => i.value = '');
+                otpDigits[0].focus();
+                otpInvalid.style.display = 'none';
+                otpDigits.forEach(d => d.classList.remove('is-invalid'));
+            });
+
+            // Function to open OTP modal for a given role
+            function openOtpModal(role) {
+                document.getElementById('otpRole').value = role;
+                fetch('/Admin/MaterialOrder/SendOtp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        otpModal.show();
+                    } else {
+                        alert('Failed to send OTP.');
+                    }
+                })
+                .catch(err => console.error('Error sending OTP:', err));
+            }
+
+            // Supervisor signature trigger
+            const supervisorSignatureSection = document.getElementById('supervisorSignatureSection');
+            if (supervisorSignatureSection) {
+                supervisorSignatureSection.addEventListener('click', () => openOtpModal('Supervisor'));
+                supervisorSignatureSection.addEventListener('keypress', e => {
+                if (e.key === 'Enter' || e.key === ' ') { supervisorSignatureSection.click(); e.preventDefault(); }
+                });
+            }
+
+            // Accountant signature trigger
+            const accountantSignatureSection = document.getElementById('accountantSignatureSection');
+            if (accountantSignatureSection) {
+                accountantSignatureSection.addEventListener('click', () => openOtpModal('Accountant'));
+                accountantSignatureSection.addEventListener('keypress', e => {
+                if (e.key === 'Enter' || e.key === ' ') { accountantSignatureSection.click(); e.preventDefault(); }
+                });
+            }
+
+            // Secetary signature trigger
+            const secetarySignatureSection = document.getElementById('secetarySignatureSection');
+            if (secetarySignatureSection) {
+                secetarySignatureSection.addEventListener('click', () => openOtpModal('Secetary'));
+                secetarySignatureSection.addEventListener('keypress', e => {
+                if (e.key === 'Enter' || e.key === ' ') { secetarySignatureSection.click(); e.preventDefault(); }
+                });
+            }
+
+                // Manager signature trigger
+                const managerSignatureSection = document.getElementById('managerSignatureSection');
+                if (managerSignatureSection) {
+                    managerSignatureSection.addEventListener('click', () => openOtpModal('Manager'));
+                    managerSignatureSection.addEventListener('keypress', e => {
+                    if (e.key === 'Enter' || e.key === ' ') { managerSignatureSection.click(); e.preventDefault(); }
+                    });
+                }
+
+            // Validate OTP on submit
+            otpForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const code = otpDigits.map(d => d.value.trim()).reverse().join(''); // restore normal order
+                const id = document.getElementById('otpEntityId')?.value;
+                const role = document.getElementById('otpRole')?.value;
+
+                if (!/^\d{4}$/.test(code)) {
+                    otpDigits.forEach(d => d.classList.add('is-invalid'));
+                    otpInvalid.textContent = 'Please enter a valid 4-digit OTP';
+                    otpInvalid.style.display = 'block';
+                    return;
+                }
+
+                otpDigits.forEach(d => d.classList.remove('is-invalid'));
+                otpInvalid.style.display = 'none';
+
+                try {
+                    const response = await fetch('/Admin/quote/ValidateOtp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: parseInt(id), code: code, role: role })
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        otpModal.hide();
+                        location.reload();
+                    } else {
+                        otpDigits.forEach(d => d.classList.add('is-invalid'));
+                        otpInvalid.textContent = result.message || 'Invalid OTP.';
+                        otpInvalid.style.display = 'block';
+                    }
+                } catch (err) {
+                    console.error('OTP validation failed:', err);
+                }
+            });
+
+        })();
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // ──────── State ────────
+        const MAX_SUPPLIERS = 3;
+        let items = JSON.parse(document.getElementById('itemsJson').textContent);
+        let suppliers = JSON.parse(document.getElementById('suppliersJson').textContent);
+        const quoteId = @(Model?.Id ?? 0);
+
+        // Track confirmed supplier IDs from DB (items with ItemSupplierIsConfirmed)
+        let confirmedSupplierIds = [...new Set(items.filter(i => i.SupplierId && i.ItemSupplierIsConfirmed).map(i => i.SupplierId))];
+        // Track all assigned supplier IDs (confirmed or pending)
+        let assignedSupplierIds = [...new Set(items.filter(i => i.SupplierId).map(i => i.SupplierId))];
+
+        const tableBody = document.getElementById('tableBody');
+        const supplierDropdown = document.getElementById('supplierDropdown');
+        const btnAdd = document.getElementById('btnAddSupplier');
+        const limitWarning = document.getElementById('supplierLimitWarning');
+        const supplierSection = document.getElementById('supplierSelectionSection');
+
+        // ──────── Update Dropdown Visibility ────────
+        function updateDropdownVisibility() {
+            // Count total assigned suppliers (confirmed + pending)
+            const assignedCount = assignedSupplierIds.length;
+            if (supplierSection) {
+                if (assignedCount >= MAX_SUPPLIERS) {
+                    supplierSection.style.display = 'none';
+                } else {
+                    supplierSection.style.display = 'block';
+                }
+            }
+            if (limitWarning) {
+                limitWarning.style.display = assignedCount >= MAX_SUPPLIERS ? 'block' : 'none';
+            }
+        }
+
+        // ──────── Update Supplier Totals ────────
+        function updateSupplierTotals() {
+            // Group items by supplier and calculate totals
+            const supplierTotals = {};
+            
+            items.filter(i => i.SupplierId).forEach(item => {
+                const price = parseFloat(item.SinglePrice) || 0;
+                const qty = parseInt(item.Quantity) || 0;
+                const total = price * qty;
+                
+                if (!supplierTotals[item.SupplierId]) {
+                    supplierTotals[item.SupplierId] = 0;
+                }
+                supplierTotals[item.SupplierId] += total;
+            });
+            
+            // Update all visible supplier total cells
+            document.querySelectorAll('.supplier-total-cell').forEach(cell => {
+                const supplierId = cell.dataset.supplierId;
+                if (supplierId && supplierTotals[supplierId] !== undefined) {
+                    // Only update visible cells (not hidden ones)
+                    if (!cell.style.display || cell.style.display !== 'none') {
+                        cell.textContent = supplierTotals[supplierId].toFixed(2);
+                    }
+                }
+            });
+        }
+
+      // ──────── Render Table ────────
+function renderTable() {
+
+    tableBody.innerHTML = '';
+
+    let rowIndex = 1;
+
+    // العناصر المرتبطة بشركات فقط
+    const supplierItems = items.filter(i => i.SupplierId);
+
+    // تجميع حسب الشركة
+    const grouped = {};
+
+    supplierItems.forEach(item => {
+        if (!grouped[item.SupplierId]) {
+            grouped[item.SupplierId] = {
+                supplierName: item.SupplierName,
+                items: []
+            };
+        }
+        grouped[item.SupplierId].items.push(item);
+    });
+
+    // عرض كل شركة
+    Object.keys(grouped).forEach(suppId => {
+
+        const group = grouped[suppId];
+
+        // ======= حساب المجموع الكامل للشركة قبل رسم الصفوف =======
+        let supplierTotal = group.items.reduce((sum, item) => {
+            const price = parseFloat(item.SinglePrice) || 0;
+            const qty = parseInt(item.Quantity) || 0;
+            return sum + (price * qty);
+        }, 0);
+
+        let itemIndex = 0;
+        const isSupplierConfirmed = confirmedSupplierIds.includes(parseInt(suppId));
+
+        group.items.forEach(item => {
+
+            const price = parseFloat(item.SinglePrice) || 0;
+            const qty = parseInt(item.Quantity) || 0;
+            const total = price * qty;
+
+            const tr = document.createElement('tr');
+            tr.className = 'item-row';
+            tr.dataset.supplierId = suppId;
+            tr.dataset.itemId = item.ItemId;
+
+            let priceCell = '';
+            let controlCell = '';
+            let totalCell = '';
+
+            if (isSupplierConfirmed) {
+                priceCell = `
+                    <span class="price-display">${price.toFixed(2)}</span>
+                    <input type="number"
+                        class="form-control form-control-sm price-input text-center"
+                        value="${price.toFixed(2)}"
+                        step="0.01"
+                        style="display:none;width:100px;margin:auto;" />
+                `;
+            } else {
+                priceCell = `<span>${price.toFixed(2)}</span>`;
+            }
+
+            // ======= أول صف لكل شركة =======
+            if (itemIndex === 0) {
+
+                totalCell = `<td class="text-center supplier-total-cell" rowspan="${group.items.length}" data-supplier-id="${suppId}">${supplierTotal.toFixed(2)}</td>`;              
+
+            } else {
+                // صفوف باقي العناصر
+                totalCell = `<td class="text-center supplier-total-cell" style="display:none;" data-supplier-id="${suppId}">${supplierTotal.toFixed(2)}</td>`;
+
+                controlCell = ''; // باقي الصفوف للشركة غير المؤكدة لا تحتاج أزرار
+            }
+
+            tr.innerHTML = `
+                <td class="bg-yellow text-center">${rowIndex}</td>
+                <td>${item.ItemName}</td>
+                <td class="text-center supplier-name">${item.SupplierName}</td>
+                <td class="text-center item-qty">${qty}</td>
+                <td class="text-center item-price">${priceCell}</td>
+                <td class="text-center item-total">${total.toFixed(2)}</td>
+                ${totalCell}
+            `;
+
+            tableBody.appendChild(tr);
+
+            rowIndex++;
+            itemIndex++;
+        });
+
+    });
+
+    if (supplierItems.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="text-center text-muted py-4">
+                    لم يتم إضافة أي شركة بعد
+                </td>
+            </tr>
+        `;
+    }
+
+    updateDropdownVisibility();
+    attachEventListeners();
+    updateSupplierTotals();
+}
+        // ──────── Attach Events ────────
+        function attachEventListeners() {
+
+            // ── Delete single item (AJAX) ──
+            document.querySelectorAll('.btn-delete-item').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const row = this.closest('tr');
+                    const itemId = parseInt(row.dataset.itemId);
+                    const suppId = parseInt(row.dataset.supplierId);
+
+                    if (!confirm('هل تريد حذف هذا العنصر؟')) return;
+
+                    fetch('/Admin/quote/DeleteSingleItem', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ QuoteId: quoteId, ItemId: itemId, SupplierId: suppId })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove from local items
+                            items = items.filter(i => !(i.ItemId === itemId && i.SupplierId === suppId));
+                            // Recalculate
+                            assignedSupplierIds = [...new Set(items.filter(i => i.SupplierId).map(i => i.SupplierId))];
+                            confirmedSupplierIds = confirmedSupplierIds.filter(id => assignedSupplierIds.includes(id));
+                            renderTable();
+                        } else {
+                            alert(data.message || 'حدث خطأ أثناء الحذف');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Delete item failed:', err);
+                        alert('حدث خطأ أثناء الحذف');
+                    });
+                });
+            });
+
+            // ── Delete all items of a confirmed supplier (AJAX) ──
+            document.querySelectorAll('.btn-delete-supplier').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const suppId = parseInt(this.dataset.supplierId);
+
+                    if (!confirm('هل تريد حذف كل مواد هذه الشركة؟')) return;
+
+                    fetch('/Admin/quote/DeleteSupplierItems', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ QuoteId: quoteId, SupplierId: suppId })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Remove from local items
+                            items = items.filter(i => i.SupplierId !== suppId);
+                            assignedSupplierIds = assignedSupplierIds.filter(id => id !== suppId);
+                            confirmedSupplierIds = confirmedSupplierIds.filter(id => id !== suppId);
+                            
+                            // Create initial materials for assignment if no items remain
+                            createInitialMaterialsIfEmpty();
+                            
+                            renderTable();
+                        } else {
+                            alert(data.message || 'حدث خطأ أثناء الحذف');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Delete supplier failed:', err);
+                        alert('حدث خطأ أثناء الحذف');
+                    });
+                });
+            });
+
+            // ── Delete local (not yet confirmed) supplier ──
+            document.querySelectorAll('.btn-delete-supplier-local').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const suppId = parseInt(this.dataset.supplierId);
+                    items = items.filter(i => i.SupplierId !== suppId);
+                    assignedSupplierIds = assignedSupplierIds.filter(id => id !== suppId);
+                    renderTable();
+                });
+            });
+
+            // ── Confirm supplier → AJAX to ConfirmSingleSupplier ──
+            document.querySelectorAll('.btn-confirm-supplier').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const suppId = parseInt(this.dataset.supplierId);
+                    const btnEl = this;
+                    btnEl.disabled = true;
+                    btnEl.innerHTML = '<i class="fa fa-spinner fa-spin me-1"></i> جاري التأكيد...';
+
+                    fetch('/Admin/quote/ConfirmSingleSupplier', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ QuoteId: quoteId, SupplierId: suppId })
+                    })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update local items with server data
+                            // Remove old items for this supplier
+                            items = items.filter(i => i.SupplierId !== suppId);
+                            // Add new items from server
+                            if (data.items && data.items.length > 0) {
+                                data.items.forEach(si => {
+                                    items.push({
+                                        ItemId: si.itemId,
+                                        ItemName: si.itemName,
+                                        Quantity: si.quantity,
+                                        SupplierId: si.supplierId,
+                                        SupplierName: si.supplierName,
+                                        SinglePrice: si.singlePrice,
+                                        ItemSupplierIsConfirmed: si.itemSupplierIsConfirmed
+                                    });
+                                });
+                            }
+                            // Mark as confirmed
+                            if (!confirmedSupplierIds.includes(suppId)) {
+                                confirmedSupplierIds.push(suppId);
+                            }
+                            assignedSupplierIds = [...new Set(items.filter(i => i.SupplierId).map(i => i.SupplierId))];
+                            renderTable();
+                        } else {
+                            alert(data.message || 'حدث خطأ أثناء التأكيد');
+                            btnEl.disabled = false;
+                            btnEl.innerHTML = '<i class="fa fa-check-circle me-1"></i> تأكيد';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Confirm supplier failed:', err);
+                        alert('حدث خطأ أثناء التأكيد');
+                        btnEl.disabled = false;
+                        btnEl.innerHTML = '<i class="fa fa-check-circle me-1"></i> تأكيد';
+                    });
+                });
+            });
+
+            // ── Edit price (AJAX) ──
+            document.querySelectorAll('.btn-edit-price').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const row = this.closest('tr');
+                    const priceDisplay = row.querySelector('.price-display');
+                    const priceInput = row.querySelector('.price-input');
+
+                    if (priceInput.style.display === 'none') {
+                        priceDisplay.style.display = 'none';
+                        priceInput.style.display = 'block';
+                        priceInput.focus();
+
+                        const savePrice = () => {
+                            const newPrice = parseFloat(priceInput.value) || 0;
+                            const itemId = parseInt(row.dataset.itemId);
+                            const suppId = parseInt(row.dataset.supplierId);
+
+                            // Send AJAX to update price
+                            fetch('/Admin/quote/UpdateItemPrice', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ QuoteId: quoteId, ItemId: itemId, SupplierId: suppId, NewPrice: newPrice })
+                            })
+                            .then(r => r.json())
+                            .then(data => {
+                                if (data.success) {
+                                    const item = items.find(i => i.ItemId === itemId && i.SupplierId === suppId);
+                                    if (item) {
+                                        item.SinglePrice = newPrice;
+                                    }
+                                    renderTable();
+                                    updateSupplierTotals();
+                                } else {
+                                    alert(data.message || 'حدث خطأ أثناء تعديل السعر');
+                                    renderTable();
+                                }
+                            })
+                            .catch(err => {
+                                console.error('Update price failed:', err);
+                                alert('حدث خطأ أثناء تعديل السعر');
+                                renderTable();
+                            });
+                        };
+
+                        priceInput.addEventListener('blur', savePrice, { once: true });
+                      priceInput.addEventListener('keydown', function (e) {
+    // منع كتابة - أو أي حرف غير رقمي أو النقطة العشرية
+    if (e.key === '-' || (!/[0-9.]/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab' && e.key !== 'Enter' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight')) {
+        e.preventDefault();
+    }
+
+    // حفظ عند Enter
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        priceInput.blur();
+    }
+});
+
+priceInput.addEventListener('input', function () {
+    // منع القيم السالبة في حال تم اللصق أو التعديل المباشر
+    if (parseFloat(priceInput.value) < 0) {
+        priceInput.value = 0;
+    }
+});
+                    } else {
+                        priceDisplay.style.display = 'inline';
+                        priceInput.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+// ──────── Add Supplier ────────
+if (btnAdd) {
+    btnAdd.addEventListener('click', function () {
+
+        const selectedOption = supplierDropdown.options[supplierDropdown.selectedIndex];
+
+        if (!selectedOption || !selectedOption.value) {
+            alert('يرجى اختيار شركة');
+            return;
+        }
+
+        const suppId = parseInt(selectedOption.value);
+        const suppName = selectedOption.text;
+
+        // Check if already assigned
+        if (assignedSupplierIds.includes(suppId)) {
+            alert('هذه الشركة مضافة بالفعل');
+            return;
+        }
+
+        // Check max suppliers
+        if (assignedSupplierIds.length >= MAX_SUPPLIERS) {
+            if (limitWarning) limitWarning.style.display = 'block';
+            return;
+        }
+
+        // Get unique quote items to use as templates (get one instance of each item)
+        const uniqueQuoteItems = [];
+        const seenItemIds = new Set();
+        
+        items.forEach(item => {
+            if (!seenItemIds.has(item.ItemId)) {
+                uniqueQuoteItems.push({
+                    ItemId: item.ItemId,
+                    ItemName: item.ItemName,
+                    Quantity: item.Quantity,
+                    SupplierId: null,
+                    SupplierName: null,
+                    SinglePrice: 0,
+                    ItemSupplierIsConfirmed: false
+                });
+                seenItemIds.add(item.ItemId);
+            }
+        });
+
+        // If no items exist, use the original template items from the model
+        let templateItems = uniqueQuoteItems;
+        if (templateItems.length === 0) {
+            const originalTemplateItems = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.Items?.Where(i => i.SupplierId == null).Select(i => new SupplierAssignmentItemVM { 
+                ItemId = i.ItemId, 
+                ItemName = i.ItemName, 
+                Quantity = i.Quantity, 
+                SupplierId = null, 
+                SupplierName = null, 
+                SinglePrice = i.SinglePrice, 
+                ItemSupplierIsConfirmed = false 
+            }) ?? new List<SupplierAssignmentItemVM>()));
+            
+            templateItems = originalTemplateItems.map(item => ({
+                ItemId: item.itemId,
+                ItemName: item.itemName,
+                Quantity: item.quantity,
+                SupplierId: null,
+                SupplierName: null,
+                SinglePrice: item.singlePrice || 0,
+                ItemSupplierIsConfirmed: false
+            }));
+        }
+
+        if (templateItems.length === 0) {
+            alert('لا توجد مواد للنسخ');
+            return;
+        }
+        // Prevent duplicate items if supplier is re-added
+
+        items = items.filter(i => i.SupplierId !== suppId);
+        // Create copies for the new supplier
+        const newItems = templateItems.map(item => ({
+            ItemId: item.ItemId,
+            ItemName: item.ItemName,
+            Quantity: item.Quantity,
+            SupplierId: suppId,
+            SupplierName: suppName,
+            SinglePrice: 0,
+            ItemSupplierIsConfirmed: false
+        }));
+
+        // Add to items list
+        items.push(...newItems);
+
+        // Track supplier
+        assignedSupplierIds.push(suppId);
+
+        // Reset dropdown
+        supplierDropdown.value = '';
+
+        // Re-render table
+        renderTable();
+    });
+}
+
+      @*   // ──────── Add Supplier ────────
+        if (btnAdd) {
+            btnAdd.addEventListener('click', function () {
+                const selectedOption = supplierDropdown.options[supplierDropdown.selectedIndex];
+                if (!selectedOption || !selectedOption.value) {
+                    alert('يرجى اختيار شركة');
+                    return;
+                }
+
+                const suppId = parseInt(selectedOption.value);
+                const suppName = selectedOption.text;
+
+                // Check if already assigned (confirmed or pending)
+                if (assignedSupplierIds.includes(suppId)) {
+                    alert('هذه الشركة مضافة بالفعل');
+                    return;
+                }
+
+                // Check max suppliers limit (including pending assignments)
+                if (assignedSupplierIds.length >= MAX_SUPPLIERS) {
+                    if (limitWarning) limitWarning.style.display = 'block';
+                    return;
+                }
+
+                // Get all unique item IDs from the system
+                const allItemIds = [...new Set(items.map(i => i.ItemId))];
+
+                if (allItemIds.length === 0) {
+                    alert('لا توجد مواد في النظام');
+                    return;
+                }
+
+                // Create items for this supplier (copies of all existing items)
+                const newItems = [];
+                allItemIds.forEach(itemId => {
+                    const originalItem = items.find(i => i.ItemId === itemId);
+                    if (originalItem) {
+                        newItems.push({
+                            ItemId: originalItem.ItemId,
+                            ItemName: originalItem.ItemName,
+                            Quantity: originalItem.Quantity,
+                            SupplierId: suppId,
+                            SupplierName: suppName,
+                            SinglePrice: 0,
+                            ItemSupplierIsConfirmed: false
+                        });
+                    }
+                });
+
+                if (newItems.length === 0) {
+                    alert('لا يمكن إنشاء نسخ من المواد');
+                    return;
+                }
+
+                items.push(...newItems);
+                assignedSupplierIds.push(suppId);
+                supplierDropdown.value = '';
+                renderTable();
+            });
+        } *@
+
+        // ──────── Create Initial Materials If Empty ────────
+        function createInitialMaterialsIfEmpty() {
+            // Check if there are any items left (assigned or unassigned)
+            const hasAnyItems = items.length > 0;
+            
+            if (!hasAnyItems) {
+                // Create initial unassigned materials from the base items
+                // Use the base items that don't have suppliers assigned as template
+                const baseItems = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model?.Items?.Where(i => i.SupplierId == null).Select(i => new SupplierAssignmentItemVM { 
+                    ItemId = i.ItemId, 
+                    ItemName = i.ItemName, 
+                    Quantity = i.Quantity, 
+                    SupplierId = null, 
+                    SupplierName = null, 
+                    SinglePrice = i.SinglePrice, 
+                    ItemSupplierIsConfirmed = false 
+                }) ?? new List<SupplierAssignmentItemVM>()));
+                
+                if (baseItems && baseItems.length > 0) {
+                    baseItems.forEach(baseItem => {
+                        items.push({
+                            ItemId: baseItem.itemId,
+                            ItemName: baseItem.itemName,
+                            Quantity: baseItem.quantity,
+                            SupplierId: null,
+                            SupplierName: null,
+                            SinglePrice: baseItem.singlePrice || 0,
+                            ItemSupplierIsConfirmed: false
+                        });
+                    });
+                }
+            }
+        }
+
+        // ──────── Initial Render ────────
+        // Initialize with base materials if no items exist
+        createInitialMaterialsIfEmpty();
+        renderTable();
+    });
+</script>
+}

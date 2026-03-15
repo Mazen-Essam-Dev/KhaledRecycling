@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>IDClassification AI model And OCR - Full Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>ML Model AI Controller Module — Documentation</h1>
+
+<!-- ===================================================== -->
+<h2>Overview</h2>
+
+<table>
+    <tr>
+        <th>Topic</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Module Purpose</td>
+        <td>Handles AI image classification and OCR-based ID card processing</td>
+    </tr>
+    <tr>
+        <td>Main Features</td>
+        <td>Image classification, OCR extraction, validation, comparison</td>
+    </tr>
+    <tr>
+        <td>Technologies</td>
+        <td>ML.NET, Tesseract OCR, ImageSharp</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Training Notes & Video Reference</h2>
+
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>YouTube Video</td>
+        <td>
+            <a href="https://www.youtube.com/watch?v=fxyIefV8cuw" target="_blank">
+                ML.NET Image Classification Training Guide
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>Common Training Issue</td>
+        <td>Model freezes during training without visible error</td>
+    </tr>
+    <tr>
+        <td>Manual Model File</td>
+        <td>
+            https://aka.ms/mlnet-resources/meta/resnet_v2_50_299.meta
+        </td>
+    </tr>
+    <tr>
+        <td>Required Path</td>
+        <td>
+            C:\Users\hp\AppData\Local\Temp\MLNET\resnet_v2_50_299.meta
+        </td>
+    </tr>
+    <tr>
+        <td>Best Practice</td>
+        <td>Keep project outside C:\ drive</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>OCR Project Overview</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Supported Files</td>
+        <td>Images and PDF documents</td>
+    </tr>
+    <tr>
+        <td>Languages</td>
+        <td>Arabic and English</td>
+    </tr>
+    <tr>
+        <td>Main Libraries</td>
+        <td>SixLabors.ImageSharp, Tesseract OCR</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Image Processing Libraries</h2>
+
+<table>
+    <tr>
+        <th>Library</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>SixLabors.ImageSharp</td>
+        <td>Image sharpening, grayscale conversion, cropping</td>
+    </tr>
+    <tr>
+        <td>Tesseract OCR</td>
+        <td>Text extraction from images (Arabic & English)</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Tesseract Language Data</h2>
+
+<table>
+    <tr>
+        <th>Language File</th>
+        <th>Description</th>
+        <th>Source</th>
+    </tr>
+    <tr>
+        <td>ara.traineddata</td>
+        <td>Arabic OCR language file</td>
+        <td>tessdata / tessdata_best</td>
+    </tr>
+    <tr>
+        <td>eng.traineddata</td>
+        <td>English OCR language file</td>
+        <td>tessdata / tessdata_best</td>
+    </tr>
+</table>
+
+<div class="note">
+    Place the downloaded files inside a folder named <strong>tessdata</strong>  
+    and include it in the project using Tesseract.
+</div>
+
+<!-- ===================================================== -->
+<h2>IDCardExtractedDataVM Properties</h2>
+
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>lable</td>
+        <td>string?</td>
+        <td>AI-predicted document type (e.g., ID)</td>
+    </tr>
+    <tr>
+        <td>Probability_double</td>
+        <td>double?</td>
+        <td>Classification confidence (0–100)</td>
+    </tr>
+    <tr>
+        <td>ProbabilityString</td>
+        <td>string?</td>
+        <td>Formatted probability percentage</td>
+    </tr>
+    <tr>
+        <td>doneAI_bool</td>
+        <td>bool?</td>
+        <td>AI classification success flag</td>
+    </tr>
+    <tr>
+        <td>doneOCR_bool</td>
+        <td>bool?</td>
+        <td>OCR extraction success flag</td>
+    </tr>
+    <tr>
+        <td>doneValidation_bool</td>
+        <td>bool?</td>
+        <td>Data validation success flag</td>
+    </tr>
+    <tr>
+        <td>textExtracted</td>
+        <td>string?</td>
+        <td>Raw OCR extracted text</td>
+    </tr>
+    <tr>
+        <td>matchIDNumber</td>
+        <td>string?</td>
+        <td>Extracted ID number</td>
+    </tr>
+    <tr>
+        <td>matchFullEnName</td>
+        <td>string?</td>
+        <td>Extracted English name</td>
+    </tr>
+    <tr>
+        <td>matchFullArName</td>
+        <td>string?</td>
+        <td>Extracted Arabic name</td>
+    </tr>
+    <tr>
+        <td>matchBirth</td>
+        <td>string?</td>
+        <td>Extracted date of birth</td>
+    </tr>
+    <tr>
+        <td>matchExpiryDate</td>
+        <td>string?</td>
+        <td>Extracted ID expiry date</td>
+    </tr>
+    <tr>
+        <td>matchGender</td>
+        <td>string?</td>
+        <td>Extracted gender</td>
+    </tr>
+    <tr>
+        <td>matchNationality</td>
+        <td>string?</td>
+        <td>Extracted nationality</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>IDClassificationController — Processing Flow</h2>
+
+<table>
+    <tr>
+        <th>Step</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Validate uploaded file</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Run AI image classification</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Check confidence threshold (≥ 90%)</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Convert image to grayscale</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Extract all OCR text fields</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Populate IDCardExtractedDataVM</td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>Optional data comparison & validation</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>CompareService Capabilities</h2>
+
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>LevenshteinDistance</td>
+        <td>Calculates character edit distance</td>
+    </tr>
+    <tr>
+        <td>SimilarityPercentage</td>
+        <td>Returns similarity percentage (0–100)</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>ID Classification Page — UI Flow</h2>
+
+<table>
+    <tr>
+        <th>Section</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Upload Form</td>
+        <td>User uploads ID image</td>
+    </tr>
+    <tr>
+        <td>Validation</td>
+        <td>Client-side and server-side file checks</td>
+    </tr>
+    <tr>
+        <td>Result Display</td>
+        <td>Shows classification label, confidence, and extracted fields</td>
+    </tr>
+    <tr>
+        <td>Error Handling</td>
+        <td>Friendly messages shown for failures</td>
+    </tr>
+</table>
+
+<div class="note">
+    ✔ AI + OCR integrated workflow<br>
+    ✔ Structured validation & comparison<br>
+    ✔ Multilingual ready (Arabic / English)<br>
+    ✔ Extensible for future AI enhancements
+</div>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

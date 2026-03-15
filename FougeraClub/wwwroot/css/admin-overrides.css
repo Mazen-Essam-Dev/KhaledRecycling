@@ -1,0 +1,25 @@
+/*.sidenav-menu {
+    scrollbar-width: thin;
+}
+
+.sidenav-menu::-webkit-scrollbar {
+    width: 8px !important
+}
+
+.sidenav-menu::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, .35) !important;
+    border-radius: 6px !important
+}
+
+html[data-sidenav-size=condensed] .sidenav-menu .simplebar-scrollbar {
+    display: block !important
+}
+
+ small thumb when requested 
+.sidenav-menu::-webkit-scrollbar-thumb {
+    min-height: 32px
+}
+
+.sidenav-menu {
+    --custom-scrollbar-width: 8px
+}*/

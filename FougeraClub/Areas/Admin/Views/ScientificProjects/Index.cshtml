@@ -1,0 +1,443 @@
+﻿@model ScientificProjectsVM
+
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    ViewData["Title"] = Resource1.ScientificProjectsList;
+    ViewData["Title pakage"] = @Resource1.ScientificProjectsManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.ScientificProjectsList ?? " ";
+
+    var editPermission = PermissionScanner.ValidatePermission("ScientificProjects", "Edit");
+    var projectCardPermission = PermissionScanner.ValidatePermission("ScientificProjects", "ProjectCard");
+    var deletePermission = PermissionScanner.ValidatePermission("ScientificProjects", "Delete");
+}
+
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="recordsCount">@Model.TotalCount</span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header border-bottom d-flex flex-wrap align-items-start gap-3">
+                <div class="flex-grow-1">
+                    <h4 class="ico-header-title my-1">
+                        <i class="fa-solid fa-list-check text-ico me-1"></i>
+                        @Resource1.ScientificProjects
+                    </h4>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    @if (PermissionScanner.ValidatePermission("ScientificProjects", "Create"))
+                    {
+                        <a asp-action="Create" class="btn btn-outline-success btn-sm">
+                            <i class="fa fa-plus me-1"></i> @Resource1.Add_New_ScientificProjects1
+                        </a>
+                    }
+                    <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.Print
+                    </button>
+                    <!-- Print Export As Excel -->
+                    <a class="btn btn-success Excelbtn" onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-2"
+                            style="font-size:17px;"></i>@Resource1.createExcelReport_Download
+                    </a>
+                </div>
+            </div>
+
+            <div class="rounded shadow-sm p-3">
+                <!-- Search Panel -->
+                <form method="get" id="projectFilterForm" class="filterImg rounded p-3">
+                    <div class="row">
+                        <div class=" col-md-4">
+                            <label for="searchTermInput" class="fw-semibold mb-1">@Resource2.Search:</label>
+                            <div class="search-box position-relative">
+                                <i
+                                    class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                                <input type="text" name="searchTerm" id="searchTermInput" value="@Model.SearchString"
+                                    class="form-control form-control-sm filter-bordered ps-4"
+                                    placeholder="@Resource1.Search_by_ProjectName_or_Department" />
+                            </div>
+                        </div>
+
+
+
+                        <div class="filter-dropdown col-md-4">
+                            <label for="dateFrom" class="fw-semibold mb-1">@Resource1.DateFrom:</label>
+                            <div class="input-icon-left">
+                                <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon"
+                                    class="date-icon">
+                                <input type="date" name="dateFrom" id="dateFrom"
+                                    class="form-control form-control-sm filter-bordered"
+                                    value="@(Model.StartDate.HasValue? Model.StartDate.Value.ToString("d")?.Replace("/","-") : "")" />
+                            </div>
+                        </div>
+
+
+
+                        <div class="filter-dropdown col-md-4">
+                            <label for="dateTo" class="fw-semibold mb-1">@Resource1.DateTo:</label>
+
+
+                            <div class="input-icon-left">
+                                <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon"
+                                    class="date-icon">
+                                <input type="date" name="dateTo" id="dateTo"
+                                    class="form-control green-border form-control-sm filter-bordered"
+                                    value="@(Model.EndDate.HasValue? Model.EndDate.Value.ToString("d")?.Replace("/","-") : "")" />
+
+                            </div>
+
+
+
+                        </div>
+
+
+
+                        <!-- Filter Action Buttons -->
+                        <div class="d-flex justify-content-end align-items-center  gap-2 flex-wrap mt-3">
+                            <button type="button" id="btnClearFilters" class="btn btn-cancel-search btn-sm">
+                                <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                            </button>
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="ri-filter-line me-1"></i> @Resource1.Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- OTP Modal: shared for both roles -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otpModalLabel">@Resource2.EnterOTP</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="otpForm">
+                <input type="hidden" id="otpEntityId" name="id" value="@Model.Id" />
+                <input type="hidden" id="otpRole" name="role" value="" />
+
+                <textarea id="otpNotes" name="Notes" placeholder="@Resource1.Notes"
+                    class="form-control otp-digit text-center fs-4" value="" rows="3"></textarea>
+                <div class="modal-body text-center">
+                    <p>@Resource2.PleaseEnterOTPToConfirmSignature</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        @for (int i = 0; i < 4; i++)
+                        {
+                            <input inputmode="numeric" maxlength="1" class="form-control otp-digit text-center fs-4"
+                                style="width:60px;" />
+                        }
+                    </div>
+                    <div class="invalid-feedback text-center mt-2" style="display:none;">Enter a valid 4-digit code.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel-search" data-bs-dismiss="modal">@Resource2.Back ??
+                        "Close"</button>
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Resource1.Delete_Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>@Resource1.are_you_sure_Delete <strong id="projName"></strong>؟</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" name="id" id="projId" />
+                    <button type="button" class="btn btn-cancel-search"
+                        data-bs-dismiss="modal">@Resource1.Cancel</button>
+                    <button type="submit" class="btn btn-success">@Resource1.Yes_delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteInfoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">@Resource2.Sorry</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <div id="deleteInfoMessage" class=" text-center"></div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-cancel-search" data-bs-dismiss="modal">@Resource1.Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openPrintPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput').value);
+            const dateFrom = encodeURIComponent(document.getElementById('dateFrom').value);
+            const dateTo = encodeURIComponent(document.getElementById('dateTo').value);
+            var countRecords = document.getElementById('NewCountRecords').value;
+            if (countRecords && countRecords > 3999) {
+                showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+            }
+            else {
+                const url = `/Admin/ScientificProjects/Print?searchTerm=${searchTerm}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+                //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                const printWindow = window.open(
+                    url,
+                    'printWindow',
+                    'width=1000,height=800,noopener,noreferrer'
+                );
+            }
+        }
+
+
+    </script>
+    <script>
+        function openExcelPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput').value);
+            const dateFrom = encodeURIComponent(document.getElementById('dateFrom').value);
+            const dateTo = encodeURIComponent(document.getElementById('dateTo').value);
+            const url = `/Admin/ScientificProjects/createExcelReport_Download?searchTerm=${searchTerm}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+            window.open(url, '_self');
+        }
+
+
+    </script>
+    <script>
+        $(document).on("click", ".show-delete-info", function () {
+            var message = $(this).data("message"); // take message from data-attribute
+            $("#deleteInfoMessage").text(message);
+
+            var modal = new bootstrap.Modal(document.getElementById("deleteInfoModal"));
+            modal.show();
+        });
+
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            // $(document).on('click', '.signature-trigger', function () {
+            //     const role = $(this).data('role');
+            //     const id = $(this).data('id');
+            //     const notes = $(this).data('notes');
+            //     const titleModalLabel = $(this).data('titleLabel');
+
+
+            //     openOtpModal(role, id, notes,titleModalLabel);
+            //     console.log({role, id, notes,titleModalLabel});
+            // });
+
+            //  function openOtpModal(role,id,notes,titleModalLabel) {
+            //     $('#otpRole').val(role);
+            //     $('#otpEntityId').val(id);
+            //     $('#otpNotes').val(notes);
+            //     const managerTitle = "@Html.Raw(Resource1.EnterOTP + " " + Resource1.ManagerSignature)";
+            //     const activityMonitorTitle = "@Html.Raw(Resource1.EnterOTP + " " + Resource1.SupervisorSignature)";
+            //     if(role=='manager'){
+            //         $('#otpModalLabel').text(managerTitle);
+            //     }else if(role=='activityMonitor'){
+            //         $('#otpModalLabel').text(activityMonitorTitle);
+            //     }else{
+            //       $('#otpModalLabel').text('Enter OTP');
+            //     }
+
+
+            //     // Send OTP
+            //     $.ajax({
+            //         url: '/Admin/ScientificProjects/SendOtp',
+            //         type: 'POST',
+            //         data: { id: $('#otpEntityId').val(), role: role },
+            //         success: function (response) {
+            //             if (response.success) {
+            //                 const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+            //                 otpModal.show();
+            //             } else {
+            //                 alert('Failed to send OTP.');
+            //             }
+            //         },
+            //         error: function () {
+            //             alert('Error sending OTP.');
+            //         }
+            //     });
+            // }
+            // //$('#activityMonitorSignatureSection').on('click', function () { openOtpModal('activityMonitor'); });
+            // //$('#managerSignatureSection').on('click', function () { openOtpModal('manager'); });
+
+            // // OTP form logic
+            // const otpModalEl = document.getElementById('otpModal');
+            // if (!otpModalEl) return;
+            // const otpModal = new bootstrap.Modal(otpModalEl, { backdrop: 'static', keyboard: false });
+            // const otpDigits = Array.from(otpModalEl.querySelectorAll('.otp-digit'));
+            // const otpForm = document.getElementById('otpForm');
+            // const otpInvalid = otpModalEl.querySelector('.invalid-feedback');
+
+            // otpForm.addEventListener('submit', async function (e) {
+            //     e.preventDefault();
+            //     const code = otpDigits.map(d => d.value.trim()).join('');
+            //     const id = document.getElementById('otpEntityId')?.value;
+            //     const role = document.getElementById('otpRole')?.value;
+
+            //     if (!/^\d{4}$/.test(code)) {
+            //         otpDigits.forEach(d => d.classList.add('is-invalid'));
+            //         otpInvalid.style.display = 'block';
+            //         return;
+            //     }
+
+            //     otpDigits.forEach(d => d.classList.remove('is-invalid'));
+            //     otpInvalid.style.display = 'none';
+
+            //     try {
+            //         const response = await fetch('/Admin/ScientificProjects/ValidateOtp', {
+            //             method: 'POST',
+            //             headers: { 'Content-Type': 'application/json' },
+            //             body: JSON.stringify({ id: id, code: code, role: role })
+            //         });
+            //         const result = await response.json();
+
+            //         if (result.success) {
+            //             otpModal.hide();
+            //             // Optionally reload page or update signature section
+            //             location.reload();
+            //         } else {
+            //             otpDigits.forEach(d => d.classList.add('is-invalid'));
+            //             otpInvalid.textContent = result.message || "Invalid OTP.";
+            //             otpInvalid.style.display = 'block';
+            //         }
+            //     } catch (err) {
+            //         alert('OTP validation failed.');
+            //     }
+            // });
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#dateFrom').val(filters.dateFrom);
+                $('#dateTo').val(filters.dateTo);
+                $('#pageSizeSelect').val(filters.pageSize);
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#dateFrom').val('');
+                $('#dateTo').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    dateFrom: $('#dateFrom').val(),
+                    dateTo: $('#dateTo').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var searchTerm = $('#searchTermInput').val();
+                var dateFrom = $('#dateFrom').val();
+                var dateTo = $('#dateTo').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/ScientificProjects/Index',
+                    type: 'GET',
+                    data: { searchTerm, dateFrom, dateTo, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#recordsCount').text(newCountRecords);
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+
+}

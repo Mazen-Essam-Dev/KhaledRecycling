@@ -1,0 +1,786 @@
+﻿@model ExchangeProofVM
+@{
+    ViewData["Title"] = Resource2.ExchangeProof2 ?? " ";
+    ViewData["Title ListIndex"] = Resource2.CashDisbursementVoucherList ?? " ";
+
+    var boolManagerSignature = Model.ManagerSigniture != null && !string.IsNullOrEmpty(Model.ManagerSigniture.ImagePath);
+    var boolAccountantSigniture = Model.AccountantSigniture != null && !string.IsNullOrEmpty(Model.AccountantSigniture.ImagePath);
+    var bool2And = (boolAccountantSigniture && boolManagerSignature);
+    var MakeEditOpen = (!boolAccountantSigniture || (!bool2And && Model.IsUserLogedInISManager));
+    var NoEdit = !MakeEditOpen;
+    // compute details total for initial render
+    decimal _detailsTotal = 0m;
+    if (Model?.Details != null && Model.Details.Any())
+    {
+        _detailsTotal = Model.Details.Sum(d => d.Amount ?? 0m);
+    }
+}
+<script>
+    function printDiv(divId) {
+      window.print();
+      document.body.innerHTML = originalPage;
+      location.reload();
+    }
+</script>
+<style>
+    .overflow-table {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .overflow-table::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .overflow-table::-webkit-scrollbar-thumb {
+            background-color: green;
+            border-radius: 2px;
+        }
+
+        .overflow-table::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+    .container {
+        width: 100% !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+
+    th, td {
+        border: 1px solid #000 !important;
+        padding: 1px !important;
+    }
+
+    @@media print {
+        * {
+            max-width: 100% !important;
+        }
+
+        html, body {
+            width: 100%;
+            overflow: visible !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .overflow-table {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .print-none,
+        .custom-navbar {
+            display: none !important;
+        }
+
+        body {
+            background: #fff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-size: 12px;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #printArea {
+            width: 800px !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+        }
+
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .flex-fill {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+        }
+
+        table {
+            width: 100% !important;
+            table-layout: fixed !important;
+            box-shadow: none !important;
+            border-collapse: collapse !important;
+        }
+
+        th, td {
+            border: 1px solid #000 !important;
+            padding: 1px !important;
+        }
+
+        input {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            -webkit-appearance: none;
+        }
+    }
+</style>
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap print-none">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">
+                        وحدة إدارة الماليات
+                    </a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/CashDisbursementVoucher/Index">@ViewData["Title ListIndex"]</a></li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">
+                        @ViewData["Title"]
+                    </a>
+                </li>
+            </ol>
+
+        </nav>
+    </div>
+    <div class="col-md-6">
+                <div class="d-flex align-items-center justify-content-end gap-2">
+                   
+            <button href="#" onclick="printDiv('printArea'); return false;" class="print-btn btn btn-success btn-sm print-none @(bool2And ? "" : "d-none")" title="طباعة">
+                <i class="fa fa-print me-1"></i> طباعة
+            </button>
+
+            @if (MakeEditOpen)
+            {
+                    <button id="btnSaveRows" href="#" onclick="saveExchangeRows(); return false;" class="print-btn btn btn-success btn-sm @(bool2And ? "d-none" : "")" title="حفظ الصفوف">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> حفظ
+                    </button>
+            }
+
+                    <a asp-action="Index" class="btn btn-cancel-search btn-sm btn-sm">
+                        <i class="fa-solid fa-arrow-left me-1"></i> رجوع
+                    </a>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="container" id="printArea">
+        <div class="inner-container mt-3 mb-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap  border-bottom py-3  mb-3 border-black">
+                <div class="d-flex justify-content-between align-items-center flex-fill">
+                    <div style="text-align:center">
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                        <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+                    </div>
+                </div>
+                <div class="flex-fill text-center">
+                    <center>
+                        <img src="~/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+                    </center>
+                </div>
+                <div class="d-flex justify-content-end align-items-center flex-fill">
+                    <div style="text-align:center">
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                        <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-3 w-100">
+                <div class="w-50 mx-auto text-center fs-4 py-1 fw-bold " style="color:#af1717">
+سند صرف / شيك / تحويل                </div>
+                <div class="w-50 mx-auto text-center fs-4 py-1 fw-bold " style="color:#af1717">
+                    Payment Voucher / Cheque / Transfer
+                </div>
+            </div>
+
+            <div class="my-1 w-100">
+               
+            </div>
+
+
+            <form asp-action="ExchangeProof" method="post" class="mt-2 mb-4 text-start" id="mainForm">
+
+                <div class="d-flex justify-content-center text-center">
+                    <input type="text" value="@(Model.DocumentNo?.ToString("00000") ?? "00000")" readonly class="fw-bold text-center text-danger" style="background-color:#f2f2f2 !important; border-top: 0; border-left: 0; border-right: 0; font-weight:bold; padding-top:5px !important; padding-bottom:5px !important; cursor: not-allowed;" />
+                    <input asp-for="DocumentNo" type="hidden" />
+                </div>
+             
+                <input hidden asp-for="CashDisbursementVoucherId" />
+                <input hidden asp-for="Id" />
+                <!-- based on  -->
+                <div class="row d-flex align-items-center my-2">
+                    <div class="col-3  fs-5 fw-normal">
+                        <label class="text-black" for="basedOn">   بناءا على   </label>
+                    </div>
+                    <div class="col-6">
+                        <input asp-for="BasedOn" type="text" readonly="@(NoEdit ? "readonly" : null)" class=" @(NoEdit ? "disabled" : "")w-100 border-dashed border-bottom border-1 border-black text-center" style="border-top: 0; border-left: 0; border-right: 0; width:100%" />
+                    </div>
+                    <div class="col-3 text-end fs-4 fw-normal" style="direction:ltr;">
+                        <label class="text-black "  for="basedOn">Based on </label>
+                    </div>
+                </div>
+                <!-- it was -->
+                <div class="row d-flex align-items-center my-2">
+                    <div class="col-3  fs-5 fw-normal">
+                        <labe class="text-black" for="itWas">تقرر </labe>
+                    </div>
+                    <div class="col-6">
+                        <input asp-for="ItWas" type="text" readonly="@(NoEdit ? "readonly" : null)" class="@(NoEdit ? "disabled" : "") w-100 border-dashed border-bottom border-1 border-black text-center" style="border-top: 0; border-left: 0; border-right: 0; width:100%" />
+                    </div>
+                    <div class="col-3 text-end  fs-4 fw-normal" style="direction:ltr;">
+                        <label class="text-black" for="itWas">It Was</label>
+                    </div>
+                </div>
+                <!-- Amount O -->
+                <div class="row d-flex align-items-center my-2">
+                    <div class="col-3  fs-5 fw-normal">
+                        <label class="text-black" for="Amount">مبلغ وقدره</label>
+                    </div>
+                    <div class="col-6">
+                        <input asp-for="Amount" type="text"  readonly="@(NoEdit ? "readonly" : null)" class="@(NoEdit ? "disabled" : "") w-100 border-dashed border-bottom border-1 border-black text-center" style="border-top: 0; border-left: 0; border-right: 0; width:100%" />
+                    </div>
+                    <div class="col-3 text-end  fs-4 fw-normal" style="direction:ltr;">
+                        <label class="text-black" for="Amount">Amount</label>
+                    </div>
+                </div>
+                <!-- By -->
+                <div class="row d-flex align-items-center my-2">
+                    <div class="col-3  fs-5 fw-normal">
+                        <label class="text-black" for="By">بموجب </label>
+                    </div>
+                    <div class="col-6">
+                        <input asp-for="By" type="text" readonly="@(NoEdit ? "readonly" : null)" class=" @(NoEdit ? "disabled" : "")w-100 border-dashed border-bottom border-1 border-black text-center" style="border-top: 0; border-left: 0; border-right: 0; width:100%" />
+                    </div>
+                    <div class="col-3 text-end  fs-4 fw-normal" style="direction:ltr;">
+                        <label class="text-black" for="By">By</label>
+                    </div>
+                </div>
+                <!--Bank & Date-->
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row d-flex align-items-center my-2">
+                            <div class="col-3  fs-5 fw-normal">
+                                <label class="text-black" for="Date">التاريخ</label>
+                            </div>
+                            <div class="col-6">
+                                <input asp-for="Date" type="date" readonly="@(NoEdit ? "readonly" : null)" class="@(NoEdit ? "disabled" : "") w-100 border-dashed border-bottom border-1 border-black text-center" style="border-top: 0; border-left: 0; border-right: 0; width:100%" />
+                            </div>
+                            <div class="col-3text-end  fs-4 fw-normal" style="direction:ltr;">
+                                <label class="text-black" for="Date">Date</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row d-flex align-items-center my-2">
+                            <div class="col-3 fs-5 fw-normal">
+                                <label class="text-black" for="Bank">البنك</label>
+                            </div>
+                            <div class="col-6">
+                                <input asp-for="Bank" type="text" readonly="@(NoEdit ? "readonly" : null)" class=" @(NoEdit ? "disabled" : "") w-100 border-dashed border-bottom border-1 border-black text-center" style="border-top: 0; border-left: 0; border-right: 0; width:100%" />
+                            </div>
+                            <div class="col-3 text-end  fs-4 fw-normal" style="direction:ltr;">
+                                <label class="text-black" for="Bank">Bank</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Being -->
+                <div class="row d-flex align-items-center my-2">
+                    <div class="col-3  fs-5 fw-normal">
+                        <label class="text-black" for="Being">وذلك عن</label>
+                    </div>
+                    <div class="col-6">
+                        <input asp-for="Being" type="text" readonly="@(NoEdit ? "readonly" : null)" class="@(NoEdit ? "disabled" : "")  w-100 border-dashed border-bottom border-1 border-black text-center" style="border-top: 0; border-left: 0; border-right: 0; width:100%" />
+                    </div>
+                    <div class="col-3 text-end  fs-4 fw-normal" style="direction:ltr;">
+                        <label class="text-black" for="Being">Being</label>
+                    </div>
+                </div>
+            </form>
+            <div class="mb-3 w-100" style="margin: 0 auto 0.5rem auto !important;">
+                <div class="d-flex justify-content-end">
+                    <button id="btnAddRow"
+                            type="button"
+                            class="btn btn-sm btn-primary print-none">
+                        إضافة +
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="overflow-table">
+                <table id="exchangeTable" class="text-center table">
+                    <thead>
+                        <tr>
+                            <th style="background-color:#eee;color:#000 !important">خصماً من حساب رقم</th>
+                            <th style="background-color:#eee;color:#000 !important">الرصيد الحالي</th>
+                            <th style="background-color:#eee;color:#000 !important">
+                                <div class="small budgetYearHeader">موازنة @((Model?.Date != null) ? Model.Date.Value.Year : DateTime.Now.Year)</div>
+                                <div style="background-color:#eee;color:#000 !important">البند / الباب</div>
+                            </th>
+                            <th class="red-bg" style="background-color:#af1717;color:#fff !important">المبلغ</th>
+                            <th style="background-color:#eee;color:#000 !important">نقدا / شيك</th>
+                            <th class="red-bg" style="background-color:#af1717;color:#fff !important">الرصيد</th>
+                            <th class="print-none" style="background-color:#eee;color:#000 !important">إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="exchangeTbody">
+                        <!-- dynamic rows rendered by JS -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="last-row">
+                            <td class="redtext" colspan="5" style="color:#af1717;background-color:#eee;font-weight:500;">
+                                المجموع :  <span id="totalTafqeet">@Html.Raw(TafqeetHelper.Tafqeet(_detailsTotal, CurrencyHelper.AED_Main_Ar, CurrencyHelper.AED_Sub_Ar))</span>
+                            </td>
+                            <td class="red-bg" style="background-color:#af1717;color:#fff !important;  text-align:center;">
+                                <input id="totalAmount" readonly type="text" value="@_detailsTotal.ToString("F2")" style="color:#fff !important;  text-align:center; border: 0; background: transparent;" />
+                            </td>
+                            <td class="print-none"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <input type="hidden" id="exchangeRowsJson" />
+            <hr class="mb-4" style="border-color: #000000;"/>
+            
+           
+            
+
+            @if (Model.CashDisbursementVoucherId != 0)
+            {
+                <!-- Signature Section -->
+                <div class="row">
+                    <!-- accountant Signature (Activities/Membership Supervisor) -->
+                    <div class="col-6 text-center">
+                        <label class="form-label fw-semibold text-black ">
+                            توقيع المحاسب :  <span class="fw-normal text-black fs-5">@Model.AccountantFullName</span>
+                       </label>
+                       @if(Model.isSavedFull)
+                       {
+                            @if (Model.Id > 0) // in Edit Page
+                            {
+                                @if (Model.AccountantSigniture != null && !string.IsNullOrEmpty(Model.AccountantSigniture.ImagePath))
+                                {
+                                    <div class="small text-muted">
+                                        <img src="~/@Model.AccountantSigniture.ImagePath" class="img-fluid" style="height: 70px;" alt="Trainer Signature" />
+                                    </div>
+                                }
+                                else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.Accountant && await PermissionScanner.CheckLoggedUserIfHasSignature())
+                                {
+                                    <div id="accountantSignatureSection" class="signature-trigger" role="button" tabindex="0" style="cursor:pointer;">
+                                        <span>إضغط هنا للتوقيع</span>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                    <!-- Manager Signature -->
+                    <div class="col-6 text-center">
+                        <label class="form-label fw-semibold text-black">
+                            توقيع المدير : <span class="fw-normal text-black fs-5">@Model.ManagerFullName</span>
+                        </label>
+                        <div class="small text-muted">
+                            @if(Model.isSavedFull)
+                            {
+                                @if (Model.AccountantSigniture != null && !string.IsNullOrEmpty(Model.AccountantSigniture.ImagePath))
+                                {
+                                    if (Model.ManagerSigniture != null && !string.IsNullOrEmpty(Model.ManagerSigniture.ImagePath))
+                                    {
+                                        <img src="~/@Model.ManagerSigniture.ImagePath" class="img-fluid" style="height: 70px;" alt="Manager Signature" />
+                                    }
+                                    else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.Manager && await PermissionScanner.CheckLoggedUserIfHasSignature())
+                                    {
+                                        <div id="managerSignatureSection" class="signature-trigger" role="button" tabindex="0" style="cursor:pointer;">
+                                            <span>إضغط هنا للتوقيع</span>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            }
+            <!-- OTP Modal: shared for both roles -->
+            <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="otpModalLabel">أدخل رمز التحقق</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form id="otpForm">
+                            <input type="hidden" id="otpEntityId" name="id" value="@Model.Id" />
+                            <input type="hidden" id="otpRole" name="role" value="" />
+                            <div class="modal-body text-center">
+                                <p>الرجاء إدخال رمز التحقق لتأكيد التوقيع</p>
+                                <div class="d-flex justify-content-center gap-2">
+                                    @for (int i = 0; i < 4; i++)
+                                    {
+                                        <input inputmode="numeric" maxlength="1" class="form-control otp-digit text-center fs-4" style="width:60px;" />
+                                    }
+                                </div>
+                                <div class="invalid-feedback text-center mt-2" style="display:none;">الرجاء إدخال رمز صالح</div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn-cancel-search btn" data-bs-dismiss="modal">إغلاق</button>
+                                <button type="submit" class="btn btn-success">تأكيد</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const otpInputs = Array.from(document.querySelectorAll("#otpModal .otp-digit")).reverse(); // reverse order for RTL
+            const otpModal = document.getElementById("otpModal");
+            const invalidFeedback = document.querySelector("#otpModal .invalid-feedback");
+
+            otpInputs.forEach((input, index) => {
+                input.addEventListener("input", (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, ""); // only digits
+                    if (e.target.value && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus(); // move left (since reversed)
+                    }
+                });
+
+                input.addEventListener("keydown", (e) => {
+                    if (e.key === "Backspace" && !input.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+            });
+
+            otpModal.addEventListener("shown.bs.modal", () => {
+                otpInputs.forEach(i => i.value = "");
+                otpInputs[0].focus();
+                invalidFeedback.style.display = "none";
+            });
+
+            document.getElementById("otpForm").addEventListener("submit", function (e) {
+                const otpValue = otpInputs.map(i => i.value).reverse().join(""); // restore normal order
+                if (otpValue.length < 4) {
+                    e.preventDefault();
+                    invalidFeedback.style.display = "block";
+                    return false;
+                }
+                invalidFeedback.style.display = "none";
+                console.log("OTP entered:", otpValue);
+            });
+        });
+    </script>
+
+
+        <script>
+            $(document).ready(function () {
+
+            const noEdit = "@Html.Raw(NoEdit)";
+            console.log(noEdit);
+        if(noEdit == "True"){
+            $("#DocumentNo").prop("disabled", true);
+            $("#DocumentNo").prop("readonly", true);
+            $("#BasedOn").prop("disabled", true);
+            $("#ItWas").prop("disabled", true);
+            $("#Amount").prop("disabled", true);
+            $("#By").prop("disabled", true);
+            $("#Date").prop("disabled", true);
+            $("#Bank").prop("disabled", true);
+            $("#Being").prop("disabled", true);
+            }
+
+                function openOtpModal(role) {
+                    $('#otpRole').val(role);
+                    // Send OTP
+                    $.ajax({
+                        url: '/Admin/MonthlyAdministrativeReport/SendOtp',
+                        type: 'POST',
+                        data: { id: $('#otpEntityId').val(), role: role },
+                        success: function (response) {
+                            if (response.success) {
+                                const otpModal = new bootstrap.Modal(document.getElementById('otpModal'));
+                                otpModal.show();
+                            } else {
+                                alert('Failed to send OTP.');
+                            }
+                        },
+                        error: function () {
+                            alert('Error sending OTP.');
+                        }
+                    });
+                }
+                $('#accountantSignatureSection').on('click', function () { openOtpModal('accountant'); });
+                $('#managerSignatureSection').on('click', function () { openOtpModal('manager'); });
+
+                // OTP form logic
+                const otpModalEl = document.getElementById('otpModal');
+                if (!otpModalEl) return;
+                const otpModal = new bootstrap.Modal(otpModalEl, { backdrop: 'static', keyboard: false });
+                const otpDigits = Array.from(otpModalEl.querySelectorAll('.otp-digit'));
+                const otpForm = document.getElementById('otpForm');
+                const otpInvalid = otpModalEl.querySelector('.invalid-feedback');
+
+                otpForm.addEventListener('submit', async function (e) {
+                    e.preventDefault();
+                    const code = otpDigits.map(d => d.value.trim()).join('');
+                    const id = document.getElementById('otpEntityId')?.value;
+                    const role = document.getElementById('otpRole')?.value;
+
+                    if (!/^\d{4}$/.test(code)) {
+                        otpDigits.forEach(d => d.classList.add('is-invalid'));
+                        otpInvalid.style.display = 'block';
+                        return;
+                    }
+
+                    otpDigits.forEach(d => d.classList.remove('is-invalid'));
+                    otpInvalid.style.display = 'none';
+
+                    try {
+                        const response = await fetch('/Admin/CashDisbursementVoucher/ExchangeProofRequestValidateOtp', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ id: id, code: code, role: role })
+                        });
+                        const result = await response.json();
+
+                        if (result.success) {
+                            otpModal.hide();
+                            // Optionally reload page or update signature section
+                            location.reload();
+                        } else {
+                            otpDigits.forEach(d => d.classList.add('is-invalid'));
+                            otpInvalid.textContent = result.message || "Invalid OTP.";
+                            otpInvalid.style.display = 'block';
+                        }
+                    } catch (err) {
+                        alert('OTP validation failed.');
+                    }
+                });
+            });
+        </script>
+}
+        <script>
+            function printPage() {
+                const overlay = document.getElementById('loadingOverlay');
+
+                if (overlay) {
+                    setTimeout(() => { overlay.style.display = 'none'; }, 500);
+                }
+                setTimeout(() => { window.print(); }, 800);
+            }
+
+            // Exchange rows client-side management
+            (function () {
+                let rows = [];
+                // server-side initial rows JSON (safe projection)
+                const initialRows = @Html.Raw(System.Text.Json.JsonSerializer.Serialize((Model?.Details ?? new List<FougeraClub.Areas.Admin.ViewModels.CashDisbursementVoucher.ExchangeProofDetailVM>()).Select(d => new {
+                    AccountNo = d.AccountNo ?? "",
+                    CurrentBalance = d.CurrentBalance ?? 0m,
+                    Item = d.Item ?? "",
+                    Amount = d.Amount ?? 0m,
+                    PaymentType = d.PaymentType ?? "",
+                    Balance = d.Balance ?? 0m
+                }))) ;
+
+                function loadRows() {
+                    // no localStorage usage; rows will be initialized from server-side `initialRows` if present
+                    rows = [];
+                }
+
+                function saveToLocalStorage() {
+                    // persist rows only to hidden input for server binding (do not use localStorage)
+                    $('#exchangeRowsJson').val(JSON.stringify(rows));
+                }
+
+            function updateTotal() {
+                const total = rows.reduce((s, r) => s + (parseFloat(r.Amount || 0) || 0), 0);
+                $('#totalAmount').val(total.toFixed(2));
+                // update tafqeet using client-side Arabic number to words
+                const words = arabicTafqeet(total);
+                $('#totalTafqeet').text(words);
+            }
+
+            // Simple Arabic number to words (tafqeet) for amounts up to millions
+            function arabicTafqeet(amount) {
+                if (isNaN(amount) || amount === 0) return 'صفر درهم';
+                const ones = ['','واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة'];
+                const tens = ['','عشر','عشرون','ثلاثون','أربعون','خمسون','ستون','سبعون','ثمانون','تسعون'];
+                const teens = ['عشرة','أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر'];
+
+                function twoDigits(n) {
+                    n = parseInt(n,10);
+                    if (n < 10) return ones[n];
+                    if (n >=10 && n < 20) return teens[n-10];
+                    const o = n % 10;
+                    const t = Math.floor(n/10);
+                    if (o === 0) return tens[t];
+                    return ones[o] + ' و ' + tens[t];
+                }
+
+                function threeDigits(n) {
+                    n = parseInt(n,10);
+                    const h = Math.floor(n/100);
+                    const rem = n % 100;
+                    let parts = [];
+                    if (h > 0) {
+                        if (h === 1) parts.push('مائة');
+                        else if (h === 2) parts.push('مئتان');
+                        else parts.push(ones[h] + ' مائة');
+                    }
+                    if (rem > 0) parts.push(twoDigits(rem));
+                    return parts.join(' و ');
+                }
+
+                function chunkNumber(n) {
+                    // returns [millions, thousands, hundreds]
+                    const millions = Math.floor(n / 1000000);
+                    const thousands = Math.floor((n % 1000000) / 1000);
+                    const hundreds = n % 1000;
+                    return { millions, thousands, hundreds };
+                }
+
+                const integer = Math.floor(Math.abs(amount));
+                const cents = Math.round((Math.abs(amount) - integer) * 100);
+                const ch = chunkNumber(integer);
+                const parts = [];
+
+                if (ch.millions > 0) {
+                    if (ch.millions === 1) parts.push('مليون');
+                    else if (ch.millions === 2) parts.push('مليونان');
+                    else parts.push(threeDigits(ch.millions) + ' ملايين');
+                }
+                if (ch.thousands > 0) {
+                    if (ch.thousands === 1) parts.push('ألف');
+                    else if (ch.thousands === 2) parts.push('ألفان');
+                    else parts.push(threeDigits(ch.thousands) + ' آلاف');
+                }
+                if (ch.hundreds > 0) {
+                    parts.push(threeDigits(ch.hundreds));
+                }
+
+                let mainPart = parts.join(' و ');
+                if (!mainPart) mainPart = 'صفر';
+
+                if (cents > 0) {
+                    return mainPart + ' درهم' + ' و ' + twoDigits(cents) + ' فلس';
+                }
+
+                return mainPart + ' درهم';
+            }
+
+                function renderRows() {
+                    const $tb = $('#exchangeTbody');
+                    $tb.empty();
+                    rows.forEach((r, idx) => {
+                        const tr = $('<tr>');
+                        // 1 - account number (string)
+                        tr.append($('<td>').html('<input class="form-control form-control-sm text-center accountNo" value="' + (r.AccountNo || '') + '" />'));
+                        // 2 - current balance (decimal)
+                        tr.append($('<td>').html('<input type="number" min="0" step="0.01" class="form-control form-control-sm text-center currentBalance" value="' + (r.CurrentBalance || '') + '" />'));
+                        // 3 - item / chapter (string)
+                        const itemCellHtml = '<input class="form-control form-control-sm text-center item" placeholder="البند / الموازنة" value="' + (r.Item || '') + '" />';
+                        tr.append($('<td>').html(itemCellHtml));
+                        // 4 - amount (decimal)
+                        tr.append($('<td>').html('<input type="number" min="0" step="0.01" class="form-control form-control-sm text-center amount" value="' + (r.Amount || '') + '" />'));
+                        // 5 - payment type (string)
+                        tr.append($('<td>').html('<input class="form-control form-control-sm text-center paymentType" value="' + (r.PaymentType || '') + '" />'));
+                        // 6 - balance (decimal)
+                        tr.append($('<td>').html('<input type="number" min="0" step="0.01" class="form-control form-control-sm text-center balance" value="' + (r.Balance || '') + '" />'));
+
+                        const $actions = $('<td class="print-none">');
+                        const $del = $('<button type="button" class="btn btn-sm btn-outline-danger" title="حذف">').html('<i class="fa fa-trash"></i>');
+                        $actions.append($del);
+                        tr.append($actions);
+
+                        // events
+                        $del.on('click', function () {
+                            if (!confirm('هل أنت متأكد من حذف هذا السجل؟')) return;
+                            rows.splice(idx, 1);
+                            renderRows();
+                            updateTotal();
+                        });
+
+                        // input events
+                        tr.on('input', 'input', function () {
+                            rows[idx].AccountNo = tr.find('.accountNo').val();
+                            rows[idx].CurrentBalance = parseFloat(tr.find('.currentBalance').val() || 0);
+                            rows[idx].Item = tr.find('.item').val();
+                            rows[idx].Amount = parseFloat(tr.find('.amount').val() || 0);
+                            rows[idx].PaymentType = tr.find('.paymentType').val();
+                            rows[idx].Balance = parseFloat(tr.find('.balance').val() || 0);
+                            updateTotal();
+                        });
+
+                        $tb.append(tr);
+                    });
+                    saveToLocalStorage();
+                }
+
+                function addRow() {
+                    rows.push({ AccountNo: '', CurrentBalance: 0, Item: '', Amount: 0, PaymentType: '', Balance: 0 });
+                    renderRows();
+                    const $last = $('#exchangeTbody tr').last();
+                    $last.find('.accountNo').focus();
+                }
+
+                window.saveExchangeRows = function () {
+                    saveToLocalStorage();
+                    // remove previously added detail inputs
+                    $('#mainForm').find('input[name^="Details"]').remove();
+                    // append hidden inputs for model binding: Details[index].Property
+                    rows.forEach((r, idx) => {
+                        const prefix = `Details[${idx}].`;
+                        $('<input>').attr({ type: 'hidden', name: prefix + 'AccountNo', value: r.AccountNo || '' }).appendTo('#mainForm');
+                        $('<input>').attr({ type: 'hidden', name: prefix + 'CurrentBalance', value: r.CurrentBalance ?? '' }).appendTo('#mainForm');
+                        $('<input>').attr({ type: 'hidden', name: prefix + 'Item', value: r.Item || '' }).appendTo('#mainForm');
+                        $('<input>').attr({ type: 'hidden', name: prefix + 'Amount', value: r.Amount ?? '' }).appendTo('#mainForm');
+                        $('<input>').attr({ type: 'hidden', name: prefix + 'PaymentType', value: r.PaymentType || '' }).appendTo('#mainForm');
+                        $('<input>').attr({ type: 'hidden', name: prefix + 'Balance', value: r.Balance ?? '' }).appendTo('#mainForm');
+                    });
+                    // submit the main form to send ExchangeProof + Details to server
+                    $('#mainForm').submit();
+                };
+
+                // init
+                loadRows();
+                // if localStorage empty, initialize from server-side details
+                if ((!rows || rows.length === 0) && Array.isArray(initialRows) && initialRows.length > 0) {
+                    rows = initialRows.map(r => ({
+                        AccountNo: r.AccountNo || '',
+                        CurrentBalance: parseFloat(r.CurrentBalance) || 0,
+                        Item: r.Item || '',
+                        Amount: parseFloat(r.Amount) || 0,
+                        PaymentType: r.PaymentType || '',
+                        Balance: parseFloat(r.Balance) || 0
+                    }));
+                }
+                renderRows();
+                updateTotal();
+
+                // bind add
+                $('#btnAddRow').on('click', function () { addRow(); });
+
+                // update budget year header when Date changes
+                $('#Date').on('change input', function () {
+                    const dateVal = $(this).val();
+                    const year = dateVal ? (new Date(dateVal)).getFullYear() : (new Date()).getFullYear();
+                    $('.budgetYearHeader').text('موازنة ' + year);
+                });
+
+                // set initial budget year header
+                (function () {
+                    const dateVal = $('#Date').val();
+                    const year = dateVal ? (new Date(dateVal)).getFullYear() : (new Date()).getFullYear();
+                    $('.budgetYearHeader').text('موازنة ' + year);
+                })();
+
+            })();
+        </script>

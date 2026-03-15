@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>Purchase Order Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Purchase Order Module – Full Documentation</h1>
+
+<!-- ================= Controller Overview ================= -->
+<section>
+<table>
+    <h2>PurchaseOrderController – Overview</h2>
+    <tr><th>Purpose</th><td>Manage purchase orders with supplier integration, auto-code generation, and OTP approval workflow.</td></tr>
+    <tr><th>Area</th><td>Admin</td></tr>
+    <tr><th>Authorization</th><td>AdminAuthorize</td></tr>
+    <tr><th>Dependencies</th>
+        <td>
+            IPurchaseOrderService<br>
+            IMapper
+        </td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= OTP Workflow ================= -->
+<section>
+<table>
+    <h2>OTP Approval Workflow</h2>
+    <tr><th>OTP Role</th><td>Manager only</td></tr>
+    <tr><th>On Create</th><td>Notification sent to Manager</td></tr>
+    <tr><th>On Update</th><td>Updated notification sent to Manager</td></tr>
+    <tr><th>First Signature</th><td>Manager signs first</td></tr>
+    <tr><th>After Signature</th>
+        <td>
+            Editing disabled for all users<br>
+            Delete button disabled<br>
+            Print enabled
+        </td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Controller Actions ================= -->
+<section>
+<table>
+    <h2>Controller Actions</h2>
+    <tr><th>Index</th>
+        <td>
+            List purchase orders<br>
+            Filters: Supplier, DateFrom, DateTo<br>
+            Pagination: 50 items<br>
+            AJAX partial view supported
+        </td>
+    </tr>
+    <tr><th>AddEdit (GET)</th>
+        <td>
+            Create / Edit purchase order<br>
+            Auto-generate purchase order code<br>
+            Load supplier dropdown
+        </td>
+    </tr>
+    <tr><th>AddEdit (POST)</th>
+        <td>
+            Validate model state<br>
+            Preserve code on validation failure<br>
+            Redirect logic based on create/edit
+        </td>
+    </tr>
+    <tr><th>Delete</th>
+        <td>
+            HTTP POST only<br>
+            Deletes order and related items
+        </td>
+    </tr>
+    <tr><th>Details</th>
+        <td>
+            Read-only view<br>
+            Supplier and financial details
+        </td>
+    </tr>
+    <tr><th>PrintDetails</th>
+        <td>
+            Printable purchase order<br>
+            Used for official documentation
+        </td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Reporting ================= -->
+<section>
+<table>
+    <h2>Reporting & Export</h2>
+    <tr><th>Print</th>
+        <td>
+            Printer-friendly list<br>
+            Same filters as Index<br>
+            No pagination
+        </td>
+    </tr>
+    <tr><th>Excel Export</th>
+        <td>
+            Columns: Order Code, Supplier Name, Date<br>
+            Bilingual (AR / EN)<br>
+            File name format:<br>
+            <code>PurchaseOrderList_YYYYMMDD_HHmmss.xlsx</code>
+        </td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Service Overview ================= -->
+<section>
+<table>
+    <h2>PurchaseOrderService – Overview</h2>
+    <tr><th>Namespace</th><td>Application.Services.Admin</td></tr>
+    <tr><th>Interface</th><td>IPurchaseOrderService</td></tr>
+    <tr><th>Dependencies</th>
+        <td>
+            IUnitOfWork<br>
+            IWebHostEnvironment<br>
+            IHttpContextAccessor
+        </td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Service Methods ================= -->
+<section>
+<table>
+    <h2>Service Core Methods</h2>
+    <tr><th>GetAllAsync</th><td>Retrieve all purchase orders with signatures</td></tr>
+    <tr><th>GetByIdAsync</th><td>Get order with items and signature</td></tr>
+    <tr><th>GetAllSuppliersAsync</th><td>Return supplier list (Arabic / English)</td></tr>
+    <tr><th>AddAsync</th><td>Create order and calculate totals</td></tr>
+    <tr><th>UpdateAsync</th><td>Update order and replace items</td></tr>
+    <tr><th>DeleteAsync</th><td>Delete order and items</td></tr>
+</table>
+</section>
+
+<!-- ================= Auto Code ================= -->
+<section>
+<table>
+    <h2>Auto Code Generation</h2>
+    <tr>
+        <th>Logic</th>
+        <td>
+            Sequential numeric codes<br>
+            Start from 188 if empty<br>
+            Collision check before assignment
+        </td>
+    </tr>
+    <tr>
+        <th>Example</th>
+        <td><code>188 → 189 → 190</code></td>
+    </tr>
+</table>
+</section>
+
+<!-- ================= Entities ================= -->
+<section>
+<table>
+    <h2>PurchaseOrder Entity</h2>
+    <tr><th>Id</th><td>Primary Key (long)</td></tr>
+    <tr><th>PurchaseOrderCode</th><td>Unique code (string, max 50)</td></tr>
+    <tr><th>SupplierId</th><td>Supplier reference (int?)</td></tr>
+    <tr><th>Date</th><td>Order date (DateOnly?)</td></tr>
+    <tr><th>HasVAT</th><td>Enable VAT (bool)</td></tr>
+    <tr><th>VATValue</th><td>VAT percentage (decimal)</td></tr>
+    <tr><th>OrderTotal</th><td>Total without VAT</td></tr>
+    <tr><th>OrderTotalWithVAT</th><td>Total including VAT</td></tr>
+    <tr><th>SignatureId</th><td>Manager signature ID</td></tr>
+</table>
+</section>
+
+<section>
+<table>
+    <h2>PurchaseOrderItem Entity</h2>
+    <tr><th>PurchaseOrderItemId</th><td>Primary Key</td></tr>
+    <tr><th>PurchaseOrderId</th><td>Foreign Key</td></tr>
+    <tr><th>ItemName</th><td>Item description</td></tr>
+    <tr><th>Quantity</th><td>Item quantity</td></tr>
+    <tr><th>SinglePrice</th><td>Unit price</td></tr>
+</table>
+</section>
+
+<!-- ================= ViewModels ================= -->
+<section>
+<table>
+    <h2>PurchaseOrderVM</h2>
+    <tr><th>PurchaseOrderCode</th><td>Read-only auto generated</td></tr>
+    <tr><th>SupplierId</th><td>Selected supplier</td></tr>
+    <tr><th>Date</th><td>Order date</td></tr>
+    <tr><th>HasVAT</th><td>Enable VAT</td></tr>
+    <tr><th>VATValue</th><td>VAT percentage</td></tr>
+    <tr><th>OrderTotal</th><td>Total without VAT</td></tr>
+    <tr><th>OrderTotalWithVAT</th><td>Total with VAT</td></tr>
+    <tr><th>Items</th><td>Collection of PurchaseOrderItemVM</td></tr>
+</table>
+</section>
+
+<!-- ================= Views ================= -->
+<section>
+<table>
+    <h2>Views Summary</h2>
+    <tr><th>AddEdit</th><td>Create / Edit with dynamic items and VAT calculation</td></tr>
+    <tr><th>Index</th><td>List, filter, print, export</td></tr>
+    <tr><th>_ListPartial</th><td>AJAX table rendering with pagination</td></tr>
+    <tr><th>Details</th><td>Read-only order with totals, VAT, and signature</td></tr>
+</table>
+</section>
+
+<!-- Updates -->
+<h2>Updates And Additions</h2>
+<table>
+    <caption>Attachments Modal ajax,Js</caption>
+    <tr>
+        <th>Location</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>controller</td><td>GetPurchaseOrderAttachments</td><td>Display all salary Attachments in modal</td></tr>
+    <tr><td>controller</td><td>UploadPurchaseOrderFiles</td><td>delete and add updated attachments of salary</td></tr>
+    <tr><td>Service</td><td>GetAttachmentsAsync</td><td>Retrieve salary attachments</td></tr>
+    <tr><td>Service</td><td>UploadAttachmentsAsync</td><td>Upload salary attachments</td></tr>
+    <tr><td>DTO</td><td>PurchaseOrderAttachmentDTO</td><td>attachment Object of his attachments</td></tr>
+    <tr><td>DTO</td><td>PurchaseOrderAttachmentsDTO</td><td>this Main Id and list of first</td></tr>
+    <tr><td>VMS</td><td>PurchaseOrderAttachmentVM</td><td>attachment Object of his attachments</td></tr></tr>
+    <tr><td>VMS</td><td>PurchaseOrderAttachmentsVM</td><td>this Main Id and list of first</td></tr>
+    <tr><td>Views</td><td>_PurchaseOrderAttachmentsModal</td><td>[for add & remove attachments in modal with ajax and js]</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

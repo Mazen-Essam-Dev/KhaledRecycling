@@ -1,0 +1,311 @@
+@using FougeraClub.Areas.Admin.ViewModels.Engineer
+@model EngineerVM
+
+@{
+    ViewData["Title pakage"] = @Resource1.EngineersAssociationManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.EngineerList ?? " ";
+    ViewData["Title Single"] = @Resource2.EngineerData ??" ";
+}
+
+<!-- Breadcrumb Navigation Column -->
+
+    <div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+        <div class="col-md-6">
+            <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                    <li class="breadcrumb-item">
+                        <a href="#">@ViewData["Title pakage"]</a>
+                    </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Engineer/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                    <li class="breadcrumb-item">
+                        <a href="#">@ViewData["Title Single"]</a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+
+    <div class="col-6 d-flex justify-content-end align-items-center gap-2 ">
+        <div>
+            <button type="button"
+                    class="btn btn-success btn-sm ms-auto"
+                    onclick="openPrintPage()">
+                <i class="fa fa-print me-1"></i> @Resource2.Print
+            </button>
+            <script>
+                function openPrintPage() {
+                    const id = encodeURIComponent(document.getElementById('Id').value);
+
+                    const url = `/Admin/Engineer/PrintDetails?id=${id}`;
+
+                    //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                    // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                    const printWindow = window.open(
+                        url,
+                        'printWindow',
+                        'width=1000,height=800,noopener,noreferrer'
+                    );
+                }
+
+            </script>
+        </div>
+        <div>
+            <a class="btn btn-cancel-search btn-sm px-2" href="/Admin/Engineer/index">
+@Resource2.Back<i class="fa-solid fa-arrow-left me-1"></i>
+            </a>
+        </div>
+    </div>
+    </div>
+<div class="card border-0 shadow-sm rounded-3 p-3">
+    <div class="container-fluid pl-3 pr-3 pb-3">
+        <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+            <div class="d-flex align-items-center">
+                <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                    <span class="fa-solid fa-user-gear me-1 text-ico"></span>
+                    @ViewData["Title Single"]
+                </h4>
+            </div>
+            <div class="d-flex align-items-center gap-3 flex-wrap text-end">
+                <div class="text-center">
+                    <span class="small text-success d-block fs-4">@Resource2.Code</span>
+                    <span class="fw-semibold">@Model?.Code</span>
+                </div>
+                <div class="text-center">
+                    @if (!string.IsNullOrEmpty(Model?.ProfileImagePath))
+                    {
+                        <div class="img-hover position-relative">
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#ProfileImageModal">
+                                <i class="fas fa-eye icon-eye"></i>
+                                <img src="~/@Model?.ProfileImagePath"
+                                     class="rounded-circle border border-2 object-fit-cover preview"
+                                     style="width: 60px; height: 60px;"
+                                     alt="profile picture" />
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex justify-content-center align-items-center rounded  border"
+                             style="width: 60px; height: 60px;">
+                            <i class="fa-solid fa-user text-success fs-5"></i>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model?.ProfileImagePath))
+                    {
+                        <div class="modal fade" id="ProfileImageModal" tabindex="-1" aria-labelledby="ProfileImageModal" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.ProfileImagePath"
+                                             class="img-fluid rounded"
+                                             style="max-height: 200px;"
+                                             alt="@Resource2.UploadProfileImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+               
+            </div>
+        </div>
+        <hr/>
+<input hidden asp-for="Id" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-left sec-title">
+            <div class="lg-title">
+                <h1>@Resource1.BasicData</h1>
+            </div>
+            <div class="title-sep-left"></div>
+            <div class="title-sep-sm-left"></div>
+        </div>
+    </div>
+</div>
+
+        <div class="row c-edit-form mb-3">
+            <div class="col-md-6 mb-2">
+                <label asp-for="FullName" class="form-label mb-1">@Resource2.Name</label>
+                <input asp-for="FullName" readonly class="form-control w-100" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="NationalityId" class="form-label mb-1">@Resource2.Nationality</label>
+                <select asp-for="NationalityId" disabled class="form-select w-100" asp-items="Model?.NationalityList">
+                    <option value="">-- @Resource2.SelectNationality --</option>
+                </select>
+                <span asp-validation-for="NationalityId" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="Specialization" class="form-label mb-1">@Resource2.Specialization</label>
+                <input asp-for="Specialization" readonly class="form-control w-100" />
+                <span asp-validation-for="Specialization" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="GraduationYear" class="form-label mb-1">@Resource2.GraduationYear</label>
+                <input asp-for="GraduationYear" readonly type="number" class="form-control w-100" />
+                <span asp-validation-for="GraduationYear" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="DateOfBirth" class="form-label mb-1">@Resource1.DateOfBirth</label>
+                <div class="input-icon-left">
+                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                    <input asp-for="DateOfBirth" hidden readonly type="date" class="form-control w-100" />
+                    <input value="@Model?.DateOfBirth?.ToString("d")?.Replace("/", "-")" readonly type="text" class="form-control w-100" />
+                </div>
+                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="Email" class="form-label mb-1">@Resource1.Email</label>
+                <input asp-for="Email" readonly class="form-control w-100" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="Position" class="form-label mb-1">@Resource2.Profession</label>
+                <input asp-for="Position" readonly class="form-control w-100" />
+                <span asp-validation-for="Position" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="PhoneNumber" class="form-label mb-1">@Resource1.PhoneNumber</label>
+                <input asp-for="PhoneNumber" readonly type="text" class="form-control w-100 dir-left" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+
+           
+                <input asp-for="Mobile" readonly type="hidden" class="form-control w-100 dir-left" />
+               
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="WorkAddress" class="form-label mb-1">@Resource1.WorkLocation</label>
+                <input asp-for="WorkAddress" readonly class="form-control w-100" />
+                <span asp-validation-for="WorkAddress" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="Address" class="form-label mb-1">@Resource1.Address</label>
+                <input asp-for="Address" readonly class="form-control w-100" />
+                <span asp-validation-for="Address" class="text-danger small"></span>
+            </div>
+        </div>
+
+
+
+@* <div class="row">
+    <div class="col-md-12">
+        <div class="text-left sec-title">
+            <div class="lg-title">
+                <h1>@Resource2.PassportInfo</h1>
+            </div>
+            <div class="title-sep-left"></div>
+            <div class="title-sep-sm-left"></div>
+        </div>
+    </div>
+</div>
+<div class="row c-edit-form mb-3">
+
+
+            <div class="col-md-6">
+                <label class="form-label  mb-1" asp-for="PassportNumber"> @Resource1.PassportNumber </label>
+                <input asp-for="PassportNumber" readonly type="text" class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label  mb-1" asp-for="PassportExpiryDate"> @Resource1.PassportExpiryDate </label>
+               
+                <div class="input-icon-left">
+                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                    <input asp-for="PassportExpiryDate" readonly type="date" class="form-control green-border form-control-sm filter-bordered valid" />
+                </div>
+            </div>
+        </div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-left sec-title">
+            <div class="lg-title">
+                    <h1>@Resource2.IdInfo</h1>
+            </div>
+            <div class="title-sep-left"></div>
+            <div class="title-sep-sm-left"></div>
+        </div>
+    </div>
+</div> *@
+
+@* <div class="row c-edit-form mb-3">
+            <div class="col-md-6">
+                <label class="form-label  mb-1" asp-for="IdNumber">@Resource1.NationalIdNumber</label>
+                <input asp-for="IdNumber" type="text" readonly maxlength="18" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label  mb-1" asp-for="IdReleaseLocation"> @Resource2.PlaceOfIssue</label>
+                <input asp-for="IdReleaseLocation" readonly class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label  mb-1" asp-for="IdExpiryDate"> @Resource1.NationalIdExpiryDate </label>
+                <div class="input-icon-left">
+                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                    <input asp-for="IdExpiryDate" readonly type="date" class="form-control green-border form-control-sm filter-bordered valid"/>
+                </div>
+            </div>
+ </div> *@
+
+
+@* 
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-left sec-title">
+            <div class="lg-title">
+                <h1>@Resource2.FinancialInfo</h1>
+            </div>
+            <div class="title-sep-left"></div>
+            <div class="title-sep-sm-left"></div>
+        </div>
+    </div>
+</div>
+<div class="row c-edit-form mb-3">
+            <div class="col-md-3">
+                <label class="form-label  mb-1" asp-for="Salary"> @Resource2.Salary</label>
+                <input asp-for="Salary" type="number" readonly class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label class="form-label  mb-1" asp-for="BankName">@Resource1.BankName</label>
+                <input asp-for="BankName" readonly class="form-control" />
+            </div>
+            <div class="col-md-6">
+                <label class="form-label  mb-1" asp-for="BankAccountNo"> @Resource1.BankAccountNumber </label>
+                <input asp-for="BankAccountNo" readonly class="form-control" />
+            </div>
+
+        </div> *@
+
+
+
+    
+        <div class="row ">
+
+            <div class="col-md-12 form-group">
+                <label class="form-label  mb-1" asp-for="Notes">@Resource1.Notes</label>
+                <textarea asp-for="Notes" readonly class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+</div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

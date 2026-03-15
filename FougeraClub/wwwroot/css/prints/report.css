@@ -1,0 +1,72 @@
+﻿.footer-container {
+    width: 100%;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.footer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    .footer-top .center {
+        flex: 1;
+        text-align: center;
+        font-weight: bold;
+        color: black;
+    }
+
+.footer-line {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 8px 0;
+}
+
+.footer-bottom {
+    text-align: left;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* الفوتر الذي يظهر في كل الصفحات */
+.print-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 10px 20px;
+    border-top: 1px solid #000;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* لإعطاء مساحة تحت الصفحة لكل الصفحات */
+@media print {
+    body {
+        margin-bottom: 100px !important;
+    }
+}
+
+/* Ensure table headers/footers repeat and footer space reserved on printed pages */
+@media print {
+    thead { display: table-header-group; }
+    tfoot { display: table-footer-group; }
+    /* prevent rows from breaking across pages when possible */
+    tr { page-break-inside: avoid; }
+}
+
+/* 🔥 إخفاء الفوتر في الصفحة الأخيرة فقط */
+@page :last {
+    margin-bottom: 0 !important;
+}
+
+@media print {
+    .print-footer:last-of-type {
+        display: none !important;
+    }
+}

@@ -1,0 +1,191 @@
+﻿@using System.Globalization
+@model PaginatedList<LogsVM>
+@{
+    ViewData["Title"] = "@Resource1.LogsUnite";
+    ViewData["Title pakage"] = "Logs Unite";
+
+    var lang = SessionHelper.GetCurrentLanguage();
+
+    var allMembersName = ViewBag.allMembersName as IEnumerable<SelectListItem>;
+
+
+    var culture_ar = new CultureInfo("ar"); // ex: "ar" أو "en"
+    var culture_en = new CultureInfo("en-GB"); // ex: "ar" أو "en"
+
+    var PerformedAnOperation_Ar = (Resource2.ResourceManager.GetString("PerformedAnOperation", culture_ar));
+    var InPage_Ar = (Resource2.ResourceManager.GetString("InPage", culture_ar));
+    var PerformedAnOperation_En = (Resource2.ResourceManager.GetString("PerformedAnOperation", culture_en));
+    var InPage_En = (Resource2.ResourceManager.GetString("InPage", culture_en));
+}
+
+<input type="hidden" id="NewCountRecords" value="@ViewBag.CountRecords" />
+<!-- Page Size Selector -->
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                    <th style="width:12%;">@Resource2.Username</th>
+                    <th style="width:8%;">@Resource2.Type</th>
+                    <th style="width:7%;">@Resource1.Date</th>
+                    <th style="width:7%;">@Resource1.Time</th>
+                    <th style="width:66%;">@Resource2.Description</th>
+                </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Items.Any())
+            {
+                var filtered = Model.Items.Where(l => {
+                    var a = (l.NameAr ?? "");
+                    var e = (l.NameEn ?? "");
+                    return !(a.Contains("صفحة خطأ") || a.Contains("عرض صفحة خطأ") || e.ToLower().Contains("error"));
+                }).ToList();
+                foreach (var log in filtered)
+                {
+                    <tr data-id="@log?.Id">
+                        @if (string.IsNullOrEmpty(log.UserFullName))
+                        {
+                            var memberName = allMembersName?.Where(mem => mem.Value.ToString() == log.UserId).FirstOrDefault()?.Text;
+                            log.UserFullName = !string.IsNullOrEmpty(memberName) ? memberName : (Resource1.NotFoundNow ?? "Not Found");
+                        }
+                        <td data-label="@Resource2.Username">
+                            <span class="fw-medium">@log.UserFullName</span>
+                        </td>
+                        <td data-label="@Resource2.Type">
+                            @{
+                                var userKindLabel = "";
+                                var currentLang = SessionHelper.GetCurrentLanguage();
+                                if (log.UserKind == "Member")
+                                {
+                                    userKindLabel = Resource1.member ?? "Member";
+                                }
+                                else
+                                {
+                                    userKindLabel = currentLang == "ar" ? "مستخدم نظام" : "System User";
+                                }
+                            }
+                            <span>@userKindLabel</span>
+                        </td>
+                        <td data-label="@Resource1.Date">
+                            <span>@log.RequestTime.Date.ToString("yyyy-MMMM-dd")</span>
+                        </td>
+                        <td data-label="@Resource1.Time">
+                            <span>@log.RequestTime.ToString("hh:mm:ss tt")</span>
+                        </td>
+                        @* <td style="text-align: center;" data-label="@Resource1.Process">
+                            @Resource2.PerformedAnOperation
+                            @{
+                                var key = log.Controller + "s";
+                                if (log.Controller.Contains("."))
+                                {
+                                    key = log.Controller.Substring(0, log.Controller.IndexOf('.'));
+                                }
+                                var controllerNameResource =
+                                string.IsNullOrEmpty(Resource2.ResourceManager.GetString(key))
+                                ? Resource1.ResourceManager.GetString(key)
+                                : Resource2.ResourceManager.GetString(key);
+                                if (string.IsNullOrEmpty(controllerNameResource))
+                                {
+                                    controllerNameResource =
+                                    string.IsNullOrEmpty(Resource1.ResourceManager.GetString(log.Controller))
+                                    ? Resource2.ResourceManager.GetString(log.Controller)
+                                    : Resource1.ResourceManager.GetString(log.Controller);
+                                }
+                                var actionText = Resource2.ResourceManager.GetString(log.Action)
+                                    ?? Resource1.ResourceManager.GetString(log.Action);
+                                if (!string.IsNullOrEmpty(log.LogTarget))
+                                {
+                                    <span class="fw-bold">@(actionText ?? log.Action) (@log.LogTarget)</span>
+                                }
+                                else
+                                {
+                                    <span class="fw-bold">@(actionText ?? log.Action)</span>
+                                }
+                            }
+                            @Resource2.InPage
+                            <span class="fw-bold">@(controllerNameResource ?? log.Controller)</span>
+                        </td> *@
+
+                        <td class="fw-bold" style="text-align: center;" data-label="@Resource1.Process">
+                                
+                            @Html.Raw(
+                                ((lang == "ar") ? log.NameAr : log.NameEn)
+                                ?.Replace(@InPage_En??"__", $"<span style='font-weight:normal;'>{InPage_En}</span>")
+                                ?.Replace(@PerformedAnOperation_En ?? "__", $"<span style='font-weight:normal;'>{PerformedAnOperation_En}</span>")
+                                ?.Replace(@InPage_Ar ?? "__", $"<span style='font-weight:normal;'>{InPage_Ar}</span>")
+                                ?.Replace(@PerformedAnOperation_Ar ?? "__", $"<span style='font-weight:normal;'>{PerformedAnOperation_Ar}</span>")
+                                )
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoData</h5>
+                            <p class="mb-0">@Resource2.GoToCreatePage</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<!-- Pagination -->
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.PageIndex - 1)">
+                @Resource2.Previous
+            </a>
+        </li>
+
+        @{
+            int maxVisiblePages = 20;
+            int startPage = Math.Max(1, Model.PageIndex - 5);
+            int endPage = Math.Min(Model.TotalPages, startPage + maxVisiblePages - 1);
+
+            // Adjust start page if we're near the end
+            if (endPage - startPage + 1 < maxVisiblePages && startPage > 1)
+            {
+                startPage = Math.Max(1, endPage - maxVisiblePages + 1);
+            }
+        }
+
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.PageIndex + 1)">
+                @Resource2.Next
+            </a>
+        </li>
+    </ul>
+</nav>

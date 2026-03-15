@@ -1,0 +1,464 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Role
+@model List<PermissionVM>
+@{
+    ViewData["Title"] = @Resource2.RolePermissions;
+    ViewData["Title pakage"] = "وحدة إدارة المستخدمين";
+    ViewData["Title ListIndex"] = Resource1.UserGroups ?? " ";
+    var role = ViewBag.Role as string;
+
+    var groupedPermissions = Model
+        .GroupBy(p => p.Name.Split('.')[0]) // Controller name
+        .OrderBy(g => g.Key);
+}
+<!-- Breadcrumb & Record Count -->
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-6">
+        <nav aria-label="breadcrumb" class="ms-2">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Roles/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+</div>
+
+    <div class="card mt-3">
+        
+        <div>
+            <form method="post" id="roleForm">
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3 p-3">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <i class="fa-solid fas fa-user-cog me-1 text-ico"></i>
+                            @Resource2.RolePermissions
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="fas fa-save me-1"></i> @Resource2.Save
+                    </button>
+                    <a asp-action="Index" class="btn btn-cancel-search btn-sm">
+                        @Resource2.Back  <i class="fas fa-arrow-left me-1"></i>
+                    </a>
+                </div>
+            </div>
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger">
+                        @TempData["ErrorMessage"]
+                    </div>
+                }
+                <input type="hidden" name="roleName" value="@role" />
+
+                <!-- Role name display -->
+            <div class="p-3">
+                <div class="role-display rounded shadow-sm c-edit-form p-3">
+                    <span class="role-label mt-2">@Resource2.RoleName:</span>
+                    @* @if (role != Role.SuperAdmin.ToString())
+                    {
+                        <input type="text" name="newRoleName" value="@role" class="form-control" />
+                    }
+                    else
+                    {
+                        <span class="role-name">@role</span>
+                    } *@
+                    <input type="text" name="newRoleName" value="@role" class="form-control" />
+                </div>
+            </div>
+                <!-- Grid container for permissions categories -->
+            <div class="claims-grid p-3">
+                    @foreach (var group in groupedPermissions)
+                    {
+                        var controllerName = group.Key;
+                        var collapseId = $"collapse_{controllerName}";
+                        var key = controllerName + "s";
+                        var controllerNameResource =
+                        string.IsNullOrEmpty(Resource2.ResourceManager.GetString(key))
+                        ? Resource1.ResourceManager.GetString(key)
+                        : Resource2.ResourceManager.GetString(key);
+                        if (string.IsNullOrEmpty(controllerNameResource))
+                        {
+                            controllerNameResource =
+                            string.IsNullOrEmpty(Resource1.ResourceManager.GetString(controllerName)) ?
+                            Resource2.ResourceManager.GetString(controllerName) :
+                            Resource1.ResourceManager.GetString(controllerName);
+                        }
+                    <div class="claims-card">
+                            <div class="card-header" style="background-color: #f5f5f5">
+                                <h3>@(controllerNameResource ?? controllerName)</h3>
+                                <!-- Select All Checkbox for this category -->
+                                <label class="modern-checkbox select-all ">
+                                    <input type="checkbox" data-group="@controllerName">
+                                    <span class="checkmark d-inline- mx-1"></span>
+                                    @Resource1.SelectAll
+                                </label>
+                            </div>
+
+                            <!-- List of individual permissions -->
+                            <div class="claims-list row g">
+                                @foreach (var permission in group)
+                                {
+                                    var index = Model.IndexOf(permission);
+                                    var actionName = permission.Name.Split('.')[1];
+
+                                    <!-- Get the localized action name -->
+                                    var actionNameResource = string.IsNullOrEmpty(Resource2.ResourceManager.GetString(actionName)) ?
+                                    Resource1.ResourceManager.GetString(actionName) : Resource2.ResourceManager.GetString(actionName);
+
+
+                                    <label class="col-6 modern-checkbox claim-item ">
+                                        <input type="hidden" name="permissions[@index].Name" value="@permission.Name" />
+                                        <input type="checkbox" name="permissions[@index].Selected" value="true" @(permission.Selected ? "checked" : "") class="group-@controllerName" />
+                                        <span class="checkmark"></span>
+                                        <span class="claim-label">@(actionNameResource ?? actionName)</span>
+                                    </label>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+<style>
+    /* Modern UI Styles */
+    #roleForm .page-content {
+        background-color: #f8f9fa;
+        min-height: calc(100vh - 70px);
+    }
+
+    #roleForm .page-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    #roleForm .modern-claims-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+        #roleForm .modern-claims-header h2 {
+            margin: 0;
+            color: #f5f5f5;
+            font-weight: 600;
+        }
+
+            #roleForm .modern-claims-header h2 i {
+                margin-right: 10px;
+                color: #47a744;
+            }
+
+    #roleForm .header-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    #roleForm .modern-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s;
+        border: none;
+        cursor: pointer;
+    }
+
+        #roleForm .modern-btn i {
+            margin-right: 8px;
+        }
+
+        #roleForm .modern-btn.primary {
+            background-color: #47a744;
+            color: white;
+        }
+
+            #roleForm .modern-btn.primary:hover {
+                background-color: #09bb89;
+            }
+
+        #roleForm .modern-btn.secondary {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+
+            #roleForm .modern-btn.secondary:hover {
+                background-color: #6c757d;
+                color: #fff;
+            }
+
+    #roleForm .role-display {
+     
+    
+    }
+
+    #roleForm .role-label {
+        color: var(--primary-dark);
+        font-weight: 500;
+        color:var(--highdmin-primary);
+   
+    }
+
+    #roleForm .role-name {
+        font-weight: 600;
+        color: #f5f5f5;
+        font-size: 1.1rem;
+    }
+
+    #roleForm .claims-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+    }
+
+    #roleForm .claims-card {
+        border: 1px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+
+    #roleForm .card-header {
+        padding:0;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+    }
+
+        #roleForm .card-header h3 {
+            margin: 0;
+            flex-grow: 1;
+            font-size: 1rem;
+            color: #000;
+            padding-inline: 10px;
+        }
+
+        #roleForm .card-header i {
+            color: var(--highdmin-teal);
+            font-size: 20px;
+        }
+ 
+
+    #roleForm .claims-list {
+        padding: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    #roleForm .modern-checkbox {
+        display: flex;
+        align-items: center;
+        position: relative;
+        padding: 10px;
+        margin-bottom:0;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s;
+    }
+
+        #roleForm .modern-checkbox:hover {
+      
+        }
+
+        #roleForm .modern-checkbox input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+    #roleForm .checkmark {
+        position: relative;
+        height: 20px;
+        width: 20px;
+        background-color: #fff;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        @* margin-inline: 12px; *@
+        transition: all 0.2s;
+    }
+
+    #roleForm .modern-checkbox input[type="checkbox"]:checked ~ .checkmark {
+        background-color: #47a744;
+        border-color: #47a744;
+    }
+
+    #roleForm .checkmark:after {
+        content: "";
+        position: absolute;
+        display: none;
+    }
+
+    #roleForm .modern-checkbox input[type="checkbox"]:checked ~ .checkmark:after {
+        display: block;
+    }
+
+    #roleForm .modern-checkbox .checkmark:after {
+        left: 6px;
+        top: 2px;
+        width: 5px;
+        height: 10px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+    }
+
+    #roleForm .claim-label {
+        font-size: 12px;
+        color: #495057;
+        padding-inline: 8px;
+    }
+
+    #roleForm .select-all {
+        background: transparent;
+        margin-left: auto;
+        font-weight: normal;
+        color: #000;
+        white-space: nowrap;
+    }
+    /* Responsive adjustments */
+    @@media (max-width: 992px) {
+        .claims-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+    }
+
+    @@media (max-width: 768px) {
+        .modern-claims-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        #roleForm .header-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        #roleForm .claims-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Initialize select all functionality for each group
+            document.querySelectorAll('.select-all input').forEach(selectAllCheckbox => {
+                const group = selectAllCheckbox.dataset.group;
+
+                // Get all checkboxes in this group using the correct class selector
+                const groupCheckboxes = document.querySelectorAll(`.group-${group}`);
+
+                // Function to update the select all checkbox state
+                function updateSelectAllState() {
+                    const checkedCount = Array.from(groupCheckboxes).filter(cb => cb.checked).length;
+                    const totalCount = groupCheckboxes.length;
+
+                    if (checkedCount === 0) {
+                        selectAllCheckbox.checked = false;
+                        selectAllCheckbox.indeterminate = false;
+                    } else if (checkedCount === totalCount) {
+                        selectAllCheckbox.checked = true;
+                        selectAllCheckbox.indeterminate = false;
+                    } else {
+                        selectAllCheckbox.checked = false;
+                        selectAllCheckbox.indeterminate = true;
+                    }
+                }
+
+                // Handle select all checkbox click
+                selectAllCheckbox.addEventListener('change', function() {
+                    const isChecked = this.checked;
+
+                    groupCheckboxes.forEach(checkbox => {
+                        checkbox.checked = isChecked;
+
+                        // Trigger change event for any additional handlers
+                        const changeEvent = new Event('change', { bubbles: true });
+                        checkbox.dispatchEvent(changeEvent);
+                    });
+
+                    // Clear indeterminate state
+                    this.indeterminate = false;
+                });
+
+                // Handle individual checkbox changes
+                groupCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        updateSelectAllState();
+                    });
+                });
+
+                // Initialize the select all state
+                updateSelectAllState();
+            });
+
+            // Handle form submission to ensure proper model binding
+            const form = document.querySelector('form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+
+                    // Ensure all checkboxes have proper values for model binding
+                    document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                        // Skip select-all checkboxes as they're not part of the model
+                        if (checkbox.closest('.select-all')) {
+                            return;
+                        }
+                        // For ASP.NET Core model binding, we need to ensure the checkbox
+                        // has a corresponding hidden input with the same name
+                        const existingHidden = checkbox.parentNode.querySelector(`input[type="hidden"][name="${checkbox.name}"]`);
+                        if (!existingHidden && checkbox.name) {
+                            // Create hidden input for proper model binding
+                            const hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = checkbox.name;
+                            hiddenInput.value = 'false';
+                            // Insert before the checkbox
+                            checkbox.parentNode.insertBefore(hiddenInput, checkbox);
+                        }
+                    });
+                });
+            }
+
+            // Optional: Add visual feedback when hovering over select all
+            document.querySelectorAll('.select-all').forEach(selectAllLabel => {
+                selectAllLabel.addEventListener('mouseenter', function() {
+                    const group = this.querySelector('input').dataset.group;
+                    document.querySelectorAll(`.group-${group}`).forEach(cb => {
+                        cb.closest('.modern-checkbox').style.backgroundColor = '#f8f9fa';
+                    });
+                });
+
+                selectAllLabel.addEventListener('mouseleave', function() {
+                    const group = this.querySelector('input').dataset.group;
+                    document.querySelectorAll(`.group-${group}`).forEach(cb => {
+                        cb.closest('.modern-checkbox').style.backgroundColor = '';
+                    });
+                });
+            });
+        });
+    </script>
+}

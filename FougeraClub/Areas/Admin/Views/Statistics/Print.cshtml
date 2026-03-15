@@ -1,0 +1,353 @@
+﻿@model StatisticsVM
+@using FougeraClub.Areas.Admin.ViewModels.Statistics
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+}
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard | Highdmin - Responsive Bootstrap 5 Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Font-Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+    <link href="~/css/index.css" rel="stylesheet" />
+    <!-- Vendor css -->
+    <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+    <!-- SweetAlert2  https://cdn.jsdelivr.net/npm/sweetalert2@11-->
+    <script src="~/assets/js/sweetalert2@11.js"></script>
+
+    <!-- cdn chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Your global delete handler -->
+    <script src="~/js/swal-delete.js"></script>
+
+    <!-- App css -->
+    @{
+        var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
+    }
+    @if (lang == "ar")
+    {
+        <link href="~/assets/css/app-rtl.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+    else
+    {
+        <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+
+
+    <link href="~/spinner/style.css" rel="stylesheet" />
+    <script src="~/spinner/spinner.js"></script>
+
+    <!-- Icons css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/config.js"></script>
+    <style>
+    @@media print {
+    /* A3 */
+    @@page {
+        size: A3 Portrait !important;
+        margin: 0; /* Margins: None */
+    }
+
+    /* background Checked */
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    html {
+        zoom: 0.97; /* Chrome */
+    }
+
+    /* zoom  */
+    body {
+        transform: scale(0.97);
+        transform-origin: top center;
+        width: 103%;
+    }
+}
+
+    </style>
+</head>
+
+<div id="report">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+    <!-- Official Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- headline Title -->
+
+                <div class="container">
+                    <div class="row">
+                <div class="col-12">
+
+                    <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                        <!-- Page title section -->
+                        <div class="flex-grow-1">
+                            <div class="d-flex align-items-center gap-2">
+                                <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                                    <span class="fa fa-chart-simple me-2 text-ico"></span>
+                                    @Resource1.Statistics
+                                </h4>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="icon_box_all style_one shadow-sm rounded-3 ">
+                                <div class="icon_content  icon_centers ">
+                                    <div class="icon">
+                                        <span class="fas fa-bullhorn fs-2"></span>
+                                    </div>
+                                    <div class="txt_content">
+                                        <h3> @Resource1.TotalActivityParticipants</h3>
+                                        <p class="fw-bold"> @Model.TotalInActivities</p>
+                                    </div>
+                                </div>
+                                <div class="shape-decoration"></div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="icon_box_all style_one shadow-sm rounded-3 ">
+                                <div class="icon_content  icon_centers ">
+                                    <div class="icon">
+                                        <span class="fas fa-book-open fs-2"></span>
+                                    </div>
+                                    <div class="txt_content">
+                                        <h3>@Resource1.TotalCourseParticipants</h3>
+                                        <p class="fw-bold">@Model.TotalInCourses</p>
+                                    </div>
+                                </div>
+                                <div class="shape-decoration"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                                <span class="fa fa-chart-pie me-2 text-ico"></span>
+                                @Resource1.AgePercentagesofParticipants
+                            </h4>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="container">
+                    <div class="row">
+                        @foreach (var age in Model.AgeGroupStats)
+                        {
+                            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
+                                <div class="icon_box_all style_one shadow-sm rounded-3 ">
+                                    <div class="text-left sec-title">
+                                        <div class="lg-title">
+                                            <h1>@age.Label</h1>
+                                        </div>
+                                        <div class="title-sep-left"></div>
+                                        <div class="title-sep-sm-left"></div>
+                                    </div>
+
+                                    <div>
+                                        <h3>@age.Percentage%</h3>
+                                        <p class="fw-bold">@age.Count @Resource1.Participants</p>
+                                    </div>
+
+                                    <div class="shape-decoration"></div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+                <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                                <span class="fas fa-bookmark me-2 text-ico"></span>
+                                @Resource1.Courseparticipationforeachdepartment
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        @foreach (var course in Model.CourseDepartmentCategoryStats)
+                        {
+
+                            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                                <div class="icon_box_all style_one shadow-sm rounded-3 ">
+                                    <div class="text-left sec-title">
+                                        <div class="lg-title">
+                                            <h1>@course.Label</h1>
+                                        </div>
+                                        <div class="title-sep-left"></div>
+                                        <div class="title-sep-sm-left"></div>
+                                    </div>
+
+                                    <div>
+                                        <h3>@course.Percentage%</h3>
+                                        <p class="fw-bold">@course.Count @Resource1.Participants</p>
+                                    </div>
+
+                                    <div class="shape-decoration"></div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+
+
+
+                <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                                <span class="fas fa-venus-mars me-2 text-ico"></span>
+                                @Resource1.RatioMalesFemales
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    <div class="row">
+
+                        @foreach (var gender in Model.GenderStats)
+                        {
+
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="icon_box_all style_one shadow-sm rounded-3 ">
+                                    <div class="text-left sec-title">
+                                        <div class="lg-title">
+                                            <h1>@gender.Label</h1>
+                                        </div>
+                                        <div class="title-sep-left"></div>
+                                        <div class="title-sep-sm-left"></div>
+                                    </div>
+
+                                    <div>
+                                        <h3>@gender.Percentage%</h3>
+                                        <p class="fw-bold">@gender.Count @Resource1.Participants</p>
+                                    </div>
+
+                                    <div class="shape-decoration"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center">
+                            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                                <span class="fas fa-globe me-2 text-ico"></span>
+                                @Resource1.RatioResidentsCitizens
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container" style="max-height:40px !important;">
+                    <div class="row">
+                        @foreach (var residentsOrCitizen in Model.ResidentsAndCitizensStats)
+                        {
+
+                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                                <div class="icon_box_all style_one shadow-sm rounded-3 ">
+                                    <div class="text-left sec-title">
+                                        <div class="lg-title">
+                                            <h1>@residentsOrCitizen.Label</h1>
+                                        </div>
+                                        <div class="title-sep-left"></div>
+                                        <div class="title-sep-sm-left"></div>
+                                    </div>
+
+                                    <div>
+                                        <h3>@residentsOrCitizen.Percentage%</h3>
+                                        <p class="fw-bold">@residentsOrCitizen.Count @Resource1.Participants</p>
+                                    </div>
+
+                                    <div class="shape-decoration"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+            <div class="text-center"
+                 style="margin-top:-20px; border-top:1px solid #333; font-size:20px;">
+                <p style="margin:0;">Printed by:  @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</p>
+            </div>
+        </div>
+
+        </div>
+
+
+
+    <script>
+
+        // This Part Is Important
+        window.addEventListener('load', () => {
+            // loadTable();
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+
+        // Close window after printing
+        window.onafterprint = function () {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        };
+    </script>
+</div>

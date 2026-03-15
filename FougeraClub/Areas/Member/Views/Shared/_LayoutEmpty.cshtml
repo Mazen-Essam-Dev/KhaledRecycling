@@ -1,0 +1,196 @@
+﻿@using Application.Interfaces.Member
+@inject IAccountService _accountService
+
+
+<!DOCTYPE html>
+<html lang="en">
+@{
+    var lang = Context?.Session.GetString("CurrentCulture") ?? "ar";
+
+    var currentPath = Context?.Request.Path.Value?.ToLower();
+    var email = Context?.Session?.GetString("Email");
+    var member = new MemberEntity();
+    if (email != null)
+    {
+        member = await _accountService.GetMemberByEmailAsync(email);
+    }
+}
+<!-- Mirrored from coderthemes.com/highdmin/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:56:45 GMT -->
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard | Highdmin - Responsive Bootstrap 5 Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Vendor css -->
+    <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+    <!-- App css -->
+    @if (lang == "ar")
+    {
+        <link href="~/ar/assets/css/bootstrap.rtl.min.css" rel="stylesheet" />
+        <link href="~/ar/assets/css/index-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/en/assets/css/bootstrap.rtl.min.css" rel="stylesheet" />
+        <link href="~/en/assets/css/index-ltr.css" rel="stylesheet" />
+    }
+
+    <link href="~/assets/css/newMemberArea.css" rel="stylesheet" type="text/css" />
+
+    <!-- Icons css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/config.js"></script>
+</head>
+
+<body>
+    <!-- Begin page -->
+    <!-- Sidenav Menu End -->
+    <!-- Color Top line -->
+    @* <div class="color-line"></div> *@
+
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+        <div class=" content page-content">
+            <div class="page-container">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
+    @* footer *@
+    <footer style="direction: rtl;">
+        <div class="footer-content" style="direction: rtl;">
+            <div class="footer-left">
+                <img src="~/ar/assets/images/foter-logo-co.png" alt="logo" class="footer-logo">
+                <span>Powered by</span>
+            </div>
+            <div class="footer-right">
+                <p>Copyright ©2025 <a href="index.html">FUJAIRAH SCIENCE CLUB</a> All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Vendor js -->
+    <script src="~/assets/js/vendor.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <!-- Apex Chart js -->
+    <script src="~/assets/vendor/apexcharts/apexcharts.min.js"></script>
+
+    <!-- Projects Analytics Dashboard App js -->
+    <script src="~/assets/js/pages/dashboard.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+    @using System.Text.Json
+    @using System.Text.Encodings.Web
+    @using Infrastructure.Repositories.InterfacesDB
+    @using Microsoft.AspNetCore.Html
+
+    @{
+        var toastMessageResource = Context.Session.GetString("ToastMessage");
+        string toastMessage = null;
+
+        if (!string.IsNullOrEmpty(toastMessageResource))
+        {
+            var property = typeof(Resource2).GetProperty(toastMessageResource);
+            toastMessage = property?.GetValue(null, null)?.ToString();
+        }
+
+        var toastType = Context.Session.GetString("ToastType");
+        var toastKey = Context.Session.GetString("ToastKey");
+
+        // Clean up session
+        Context.Session.Remove("ToastMessage");
+        Context.Session.Remove("ToastType");
+        Context.Session.Remove("ToastKey");
+    }
+
+    <script>
+        $(function () {
+            @{
+                        // Serialize safely
+                        var jsonOptions = new JsonSerializerOptions
+                        {
+                                    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                        };
+
+                        var messageJson = Html.Raw(JsonSerializer.Serialize(toastMessage, jsonOptions));
+                        var typeJson = Html.Raw(JsonSerializer.Serialize(toastType, jsonOptions));
+                        var keyJson = Html.Raw(JsonSerializer.Serialize(toastKey, jsonOptions));
+            }
+
+            var msg = @messageJson;
+            var type = @typeJson;
+            var key = @keyJson;
+             var icon = '';
+            if (msg && msg !== "") {
+                toastr.options = {
+                    closeButton: true,
+                    progressBar: true,
+                    newestOnTop: true,
+                    preventDuplicates: true,
+                    positionClass: "toast-top-center", // More natural placement
+                    showDuration: 300,
+                    hideDuration: 500,
+                    timeOut: 4000,
+                    extendedTimeOut: 2000,
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    showMethod: "fadeIn",
+                    hideMethod: "fadeOut"
+                };
+
+                switch (type) {
+                     case "success":
+                    icon = '<i class="fas fa-check-circle"></i> ';
+                    toastr.success(msg);
+                    break;
+                case "error":
+                    icon = '<i class="fas fa-exclamation-circle"></i> ';
+                    toastr.error(msg);
+                    break;
+                case "info":
+                    icon = '<i class="fas fa-info-circle"></i> ';
+                    toastr.info(msg);
+                    break;
+                case "warning":
+                    icon = '<i class="fas fa-exclamation-triangle"></i> ';
+                    toastr.warning(msg);
+                    break;
+                default:
+                    toastr.info(msg);
+                    break;
+
+                }
+            }
+        });
+    </script>
+</body>
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:56:48 GMT -->
+</html>
+

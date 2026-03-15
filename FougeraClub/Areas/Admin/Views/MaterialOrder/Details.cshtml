@@ -1,0 +1,502 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.MaterialOrder
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@using Application.Helpers
+@using System.Security.Claims
+@inject UserManager<ApplicationUser> UserManager
+@model MaterialOrderVM
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    ViewData["Title"] = Resource1.MaterialOrder;
+    ViewData["Title pakage"] = @Resource1.MaterialOrderManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.MaterialOrderList ?? " ";
+    ViewData["Title Single"] = "تفاصيل طلب المواد";
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+
+    var totalWithVatGlobal = 0.00m;
+    var VATTotalGlobal = 0.00m;
+    var totalAllGlobal = 0.00m;
+    var VATValueGlobal = 0.00m;
+
+    var boolTrainerSignature = Model?.SignatureUser != null && !string.IsNullOrEmpty(Model.SignatureUser.ImagePath);
+    var boolManagerSignature = Model?.SignatureManager != null && !string.IsNullOrEmpty(Model.SignatureManager.ImagePath);
+}
+
+
+<!-- Breadcrumb -->
+<div class="row my-3 d-flex justify-content-between align-items-center print-none ">
+    <div class="col-md-6 d-flex align-items-center flex-wrap justify-content-strat">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title pakage"]</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/MaterialOrder">@ViewData["Title ListIndex"]</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title Single"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-6 d-flex align-items-center justify-content-end gap-1 flex-wrap">
+        @if (boolTrainerSignature && boolManagerSignature)
+        {
+            <button onclick="printDiv('printArea')" ;="" return="" false;"="" class="print-btn btn btn-success btn-sm">
+                <i class="fa fa-print me-1"></i>@Resource2.Print
+            </button>
+        }
+
+        <a asp-action="Index" class="btn-cancel-search btn-sm btn">
+            @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<div class="print-container" id="printArea">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black border-bottom p-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 19px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center mb-2 me-2">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width: 110px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#a98a5b; font-size: 19px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 19px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="custom-rectangle d-flex justify-content-center align-items-center m-auto">
+        <div class="fw-bold">
+            طلب مواد رقم
+            (@(Model?.MaterialOrderCode ?? "لا يوجد"))
+        </div>
+    </div>
+
+    <div class="px-4 mt-4 fw-semibold" style="text-align: right;">
+        <p class="mb-1">
+            بتاريخ : @(Model?.Date?.ToString("dd/MM/yyyy") ?? DateTime.Now.ToString("dd/MM/yyyy"))
+        </p>
+        <p class="mb-1">القسم : @Model?.Department?.NameAr</p>
+    </div>
+
+    <div class="print-background mt-4 px-2">
+        <table class="table w-100 table-bordered">
+            <thead>
+                <tr class="">
+                    <th class="bg-yellow text-center" style="width:5%">م</th>
+                    <th class="bg-yellow text-center" style="width:45%">البيان</th>
+                    <th class="bg-yellow text-center" style="width:15%">الكمية</th>
+                    <th class="bg-yellow text-center" style="width:15%">سعر الوحدة</th>
+                    <th class="bg-yellow text-center" style="width:20%">الإجمالي</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model?.Items != null)
+                {
+                    var index = 0;
+
+                    decimal totalAll = 0.00m;
+                    foreach (var detail in Model.Items)
+                    {
+                        var price = detail.SinglePrice ?? 0.00m;
+                        var qty = detail.Quantity ?? 0;
+                        var totalRecord = price * qty;
+                        totalAll += totalRecord;
+                        <tr>
+                            <td class="bg-yellow text-center">@(index + 1)</td>
+
+                            <td>@detail.ItemName</td>
+                            <td class="text-center">@qty</td>
+                            <td class="text-center">@price.ToString("0.00")</td>
+                            <td class="text-center">@totalRecord.ToString("0.00")</td>
+                        </tr>
+                        index++;
+
+                    }
+
+
+
+                    <tr>
+                        <td colspan="4" class="fw-bold text-danger" style="text-align:right;">
+                            <div>المبلغ الاجمالي للمواد: @TafqeetHelper.Tafqeet(totalAll, CurrencyHelper.AED_Main_Ar, CurrencyHelper.AED_Sub_Ar)</div>
+                        </td>
+                        <td class="text-center fw-bold" style="vertical-align: middle;">
+                            @totalAll.ToString("0.00")
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <!-- Empty rows for print -->
+                    @for (int r = 0; r < 5; r++)
+                    {
+                        <tr style="height:30px;">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="px-2 mt-2" style="direction: rtl; margin-bottom: 3rem;">
+
+        <!-- قسم التوقيعات -->
+        <div class="d-flex " style="padding-top: 8px;">
+
+            <!-- مقدم الطلب -->
+            <div class="col ">
+
+                <!-- يمين -->
+                <div class="d-flex align-items-center gap-2 mt-3 fw-semibold " style="height:70px">
+                    <span> مقدم الطلب: </span>
+                    <span>@(Model?.TrainerName)</span>
+                </div>
+
+                <div class="d-flex gap-2 mt-3 fw-semibold W-75 ">
+                    <span>ملاحـظــــــــــات: </span>
+                    <span>@Model?.Notes?.Trim()</span>
+                </div>
+
+            </div>
+
+            <div class="col">
+
+
+                <div class="d-flex align-items-center gap-2 mt-3">
+
+                    <span class="black fw-semibold m-0">
+                        التوقيع:
+                    </span>
+
+                    @if (boolTrainerSignature)
+                    {
+                        <img src="~/@Model?.SignatureUser?.ImagePath"
+                             class="img-fluid"
+                             style="height:70px;" />
+                    }
+                    else if (currentUser?.Id == Model?.UserId && await PermissionScanner.CheckLoggedUserIfHasSignature())
+                    {
+
+
+                        <div id="trainerSignatureSection"
+                             class="signature-trigger "
+                             role="button"
+                             tabindex="0"
+                             style="cursor:pointer;height:70px; display:flex; align-items:center; justify-content:center;">
+
+
+
+                            <span>إضغط هنا للتوقيع</span>
+                        </div>
+
+                    }
+                    else
+                    {
+                        <div
+                             class="signature-trigger "
+                             style="cursor:pointer;height:70px; display:flex; align-items:center; justify-content:center;">
+                        </div>
+                    }
+
+                </div>
+                <div class="d-flex align-items-center gap-2 mt-3">
+
+                    <span class="black fw-semibold m-0">
+                        مدير النادي:
+                    </span>
+
+
+                    @if (boolManagerSignature)
+                    {
+                        <img src="~/@Model?.SignatureManager?.ImagePath"
+                             class="img-fluid"
+                             style="height:70px;" />
+                    }
+                    else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.Manager
+                    && await PermissionScanner.CheckLoggedUserIfHasSignature() && boolTrainerSignature)
+                    {
+                        <div id="managerSignatureSection"
+                             class="signature-trigger"
+                             role="button"
+                             tabindex="0"
+                             style="cursor:pointer;">
+                            إضغط هنا للتوقيع
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+
+    <!-- OTP Modal -->
+    <div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otpModalLabel">@Resource2.EnterOTP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form id="otpForm">
+                    <input type="hidden" id="otpEntityId" name="id" value="@Model?.Id" />
+                    <input type="hidden" id="otpRole" name="role" value="" />
+                    <div class="modal-body text-center">
+                        <p>@Resource2.PleaseEnterOTPToConfirmSignature</p>
+                        <div class="d-flex justify-content-center gap-2">
+                            @for (int i = 0; i < 4; i++)
+                            {
+                                <input inputmode="numeric" maxlength="1"
+                                       class="form-control otp-digit text-center fs-4"
+                                       style="width:60px;" />
+                            }
+                        </div>
+                        <div class="invalid-feedback text-center mt-2" style="display:none;">
+                            @Resource2.EnterValidDigitsCode
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Resource2.Close</button>
+                        <button type="submit" class="btn btn-success">@Resource2.Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+<style>
+
+    .custom-rectangle {
+        width: 157px;
+        height: 50px;
+        background-color: white;
+        border: 4px solid #dcbf4f;
+    }
+
+    .black {
+        color: #4C4C5C;
+    }
+
+    .print-container {
+        max-width: 100% !important;
+        margin: 50px 15px;
+        background: white;
+        padding: 30px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: transparent;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: right;
+        border: 1px solid #64635E;
+        color: #4C4C5C !important;
+    }
+
+    table.table th {
+        border: 1px solid #64635E !important;
+        color: #4C4C5C !important;
+    }
+
+    .bg-yellow {
+        background-color: rgb(230, 223, 188) !important;
+    }
+
+
+    @@media print {
+
+        body {
+            background: #fff !important;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        .print-none,
+        nav,
+        header,
+        aside,
+        footer,
+        .sidebar,
+        .app-sidebar,
+        .main-sidebar,
+        .navbar,
+        .topbar,
+        .breadcrumb,
+        .btn,
+        button,
+        a.btn,
+        .modal,
+        .modal-backdrop {
+            display: none !important;
+        }
+
+        #printArea,
+        .print-container {
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        table {
+            box-shadow: none !important;
+        }
+
+        th.bg-yellow {
+            background-color: rgb(230, 223, 188) !important;
+        }
+
+        @@page {
+            margin: 10mm;
+        }
+    }
+</style>
+<script>
+    function printDiv(divId) {
+      window.print();
+      document.body.innerHTML = originalPage;
+      location.reload();
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        (function () {
+            const otpModalEl = document.getElementById('otpModal');
+            if (!otpModalEl) return;
+
+            const otpModal = new bootstrap.Modal(otpModalEl, { backdrop: 'static', keyboard: false });
+            const otpDigits = Array.from(otpModalEl.querySelectorAll('.otp-digit')).reverse(); // reverse for RTL
+            const otpForm = document.getElementById('otpForm');
+            const otpInvalid = otpModalEl.querySelector('.invalid-feedback');
+
+            // Navigate between OTP inputs
+            otpDigits.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, ''); // digits only
+                    if (e.target.value && index < otpDigits.length - 1) {
+                        otpDigits[index + 1].focus(); // move left in RTL
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && index > 0) {
+                        otpDigits[index - 1].focus();
+                    }
+                });
+            });
+
+            // Reset inputs on modal show
+            otpModalEl.addEventListener('shown.bs.modal', () => {
+                otpDigits.forEach(i => i.value = '');
+                otpDigits[0].focus();
+                otpInvalid.style.display = 'none';
+                otpDigits.forEach(d => d.classList.remove('is-invalid'));
+            });
+
+            // Function to open OTP modal for a given role
+            function openOtpModal(role) {
+                document.getElementById('otpRole').value = role;
+                fetch('/Admin/MaterialOrder/SendOtp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        otpModal.show();
+                    } else {
+                        alert('Failed to send OTP.');
+                    }
+                })
+                .catch(err => console.error('Error sending OTP:', err));
+            }
+
+            // Trainer signature trigger
+            const trainerSection = document.getElementById('trainerSignatureSection');
+            if (trainerSection) {
+                trainerSection.addEventListener('click', () => openOtpModal('Trainer'));
+                trainerSection.addEventListener('keypress', e => {
+                    if (e.key === 'Enter' || e.key === ' ') { trainerSection.click(); e.preventDefault(); }
+                });
+            }
+
+            // Manager signature trigger
+            const managerSection = document.getElementById('managerSignatureSection');
+            if (managerSection) {
+                managerSection.addEventListener('click', () => openOtpModal('Manager'));
+                managerSection.addEventListener('keypress', e => {
+                    if (e.key === 'Enter' || e.key === ' ') { managerSection.click(); e.preventDefault(); }
+                });
+            }
+
+            // Validate OTP on submit
+            otpForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const code = otpDigits.map(d => d.value.trim()).reverse().join(''); // restore normal order
+                const id = document.getElementById('otpEntityId')?.value;
+                const role = document.getElementById('otpRole')?.value;
+
+                if (!/^\d{4}$/.test(code)) {
+                    otpDigits.forEach(d => d.classList.add('is-invalid'));
+                    otpInvalid.textContent = 'Please enter a valid 4-digit OTP';
+                    otpInvalid.style.display = 'block';
+                    return;
+                }
+
+                otpDigits.forEach(d => d.classList.remove('is-invalid'));
+                otpInvalid.style.display = 'none';
+
+                try {
+                    const response = await fetch('/Admin/MaterialOrder/ValidateOtp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: parseInt(id), code: code, role: role })
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        otpModal.hide();
+                        location.reload();
+                    } else {
+                        otpDigits.forEach(d => d.classList.add('is-invalid'));
+                        otpInvalid.textContent = result.message || 'Invalid OTP.';
+                        otpInvalid.style.display = 'block';
+                    }
+                } catch (err) {
+                    console.error('OTP validation failed:', err);
+                }
+            });
+
+        })();
+    });
+</script>

@@ -1,0 +1,109 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Activity
+@model ActivityVM
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+
+<div class="modal-header">
+    <h5 class="modal-title" id="activityDetailsLabel">@Resource1.ActivityDetails</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+    <form>
+        <!-- Title -->
+        <div class="row mb-3">
+            @if (lang == "ar")
+            {
+                <div class="col-md-12">
+                    <label for="title" class="form-label">@Resource2.ActivityTitleAr</label>
+                    <input type="text" class="form-control" id="title" value="@Model.TitleAr" readonly>
+                </div>
+            }
+            else
+            {
+                <div class="col-md-12">
+                    <label for="title" class="form-label">@Resource2.ActivityTitleEn</label>
+                    <input type="text" class="form-control" id="title" value="@Model.TitleEn" readonly>
+                </div>
+            }
+        </div>
+
+        <!-- Dates -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="startDate" class="form-label">@Resource1.ActivityDate</label>
+                <input type="text" class="form-control" id="startDate" value="@Model.StartDate?.ToString("d")?.Replace("/","-")" readonly>
+            </div>
+            <div class="col-md-6">
+                <label for="endDate" class="form-label">@Resource1.ActivityDuration</label>
+                <input type="text" class="form-control" id="Duration" value="@Model.ActivityDuration" readonly>
+                <input type="text" hidden class="form-control" id="endDate" value="@Model.EndDate?.ToString("d")?.Replace("/","-")" readonly>
+            </div>
+        </div>
+
+        <!-- Age -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="age" class="form-label">@Resource2.Ages</label>
+                @* <input type="text" class="form-control" id="age" value="@($"{Resource2.Above} {Model.MinimumAge} {Resource2.Years}")" readonly> *@
+                <input type="text" class="form-control" id="age" value="@(Model.MinimumAge)" readonly>
+
+            </div>
+        </div>
+
+        <!-- Location -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="location" class="form-label">@Resource2.Location</label>
+                <input type="text" class="form-control" id="location" value="@Model.Location" readonly>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label for="description" class="form-label">@Resource1.ActivityDetails1</label>
+                <textarea class="form-control" id="description" rows="3" readonly>@Model.Description</textarea>
+            </div>
+        </div>
+
+        <!-- File Attachment -->
+        <div class="row">
+            <div class="col-md-12 mb-6">
+                <label class="form-label">@* @Resource1.CurrentAttachment *@ @Resource1.For_more_details_ClickHere</label>
+                @* <div class="">
+                    @if (Model.AttachmentPath != null)
+                    {
+                        <a class="btn btn-success btn-sm" id="attachmentPath" href="../../@Model.AttachmentPath" target="_blank">
+                            @Resource1.View_File1
+                        </a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-success btn-sm disabled" id="attachmentPath" href="#" target="_self">
+                            @Resource1.View_File1
+                        </a>
+                    }
+                </div> *@
+                <div>
+                    @if (Model.AttachmentPath != null)
+                    {
+                        <a href="../../@Model.AttachmentPath" target="_blank" class="btn btn-success btn-smy">
+                            <i class="fa fa-file-pdf"></i> @Resource1.View_File1
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">@Resource1.NoFileAttached</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">@Resource2.Close</button>
+</div>

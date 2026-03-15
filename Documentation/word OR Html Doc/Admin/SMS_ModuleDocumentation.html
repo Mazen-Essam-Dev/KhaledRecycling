@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>SMS Management - Full Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<!-- ================= SMS Controller Overview ================= -->
+<table>
+    <tr><h2>SMSController – Overview</h2></tr>
+    <tr><th>Purpose</th><td>Manage SMS messaging, member targeting, message logging, and reporting</td></tr>
+    <tr><th>Area</th><td>Admin</td></tr>
+    <tr><th>Authorization</th><td>AdminAuthorize</td></tr>
+</table>
+
+<!-- ================= Controller Dependencies ================= -->
+<table>
+    <tr><h2>SMSController – Dependencies</h2></tr>
+    <tr><th>Dependency</th><th>Responsibility</th></tr>
+    <tr><td>ISMSService</td><td>SMS business logic and gateway integration</td></tr>
+    <tr><td>IMemberService</td><td>Member data access</td></tr>
+    <tr><td>IMapper</td><td>AutoMapper object mapping</td></tr>
+    <tr><td>IConfiguration</td><td>Application configuration</td></tr>
+</table>
+
+<!-- ================= Controller Actions ================= -->
+<table>
+    <tr><h2>SMSController – Actions</h2></tr>
+    <tr><th>Action</th><th>HTTP</th><th>Description</th></tr>
+    <tr><td>SendSMS</td><td>GET</td><td>Test endpoint with hardcoded recipient and message</td></tr>
+    <tr><td>Send</td><td>POST</td><td>Main AJAX endpoint for sending SMS messages</td></tr>
+    <tr><td>Members</td><td>GET</td><td>Member listing and selection for SMS targeting</td></tr>
+    <tr><td>MessagesLogs</td><td>GET</td><td>Searchable SMS message history</td></tr>
+    <tr><td>PrintMessagesLogs</td><td>GET</td><td>Printable SMS message logs</td></tr>
+    <tr><td>createExcelReport_Download</td><td>GET</td><td>Export SMS logs to Excel</td></tr>
+</table>
+
+<!-- ================= SMS Status Enum ================= -->
+<table>
+    <tr><h2>SMSStatus Enumeration</h2></tr>
+    <tr><th>Value</th><th>Name</th><th>Display</th><th>Description</th></tr>
+    <tr><td>0</td><td>Success</td><td>Localized</td><td>Message delivered successfully</td></tr>
+    <tr><td>1</td><td>Fail</td><td>Localized</td><td>Message delivery failed</td></tr>
+</table>
+
+<!-- ================= SMS Service Overview ================= -->
+<table>
+    <tr><h2>SMSService – Overview</h2></tr>
+    <tr><th>Purpose</th><td>SMS sending, delivery tracking, logging, and gateway integration</td></tr>
+    <tr><th>Layer</th><td>Service Layer</td></tr>
+</table>
+
+<!-- ================= Service Dependencies ================= -->
+<table>
+    <tr><h2>SMSService – Dependencies</h2></tr>
+    <tr><th>Dependency</th><th>Description</th></tr>
+    <tr><td>SmsSettings</td><td>Gateway configuration via IOptions</td></tr>
+    <tr><td>HttpClient</td><td>SMS API communication</td></tr>
+    <tr><td>IUnitOfWork</td><td>Database persistence and transactions</td></tr>
+</table>
+
+<!-- ================= Service Methods ================= -->
+<table>
+    <tr><h2>SMSService – Core Methods</h2></tr>
+    <tr><th>Method</th><th>Returns</th><th>Description</th></tr>
+    <tr><td>GetAllAsync</td><td>IEnumerable&lt;SMS&gt;</td><td>Retrieve all SMS messages with receivers</td></tr>
+    <tr><td>SendMessageAsync</td><td>Task</td><td>Send SMS in broadcast or targeted mode</td></tr>
+    <tr><td>GetAllMessagesLogsAsync</td><td>IEnumerable&lt;MessageLogDTO&gt;</td><td>Retrieve full message history</td></tr>
+    <tr><td>SendSMSAsync</td><td>bool</td><td>Direct gateway SMS sending</td></tr>
+</table>
+
+<!-- ================= Core Entities ================= -->
+<table>
+    <tr><h2>OTP Entity</h2></tr>
+    <tr><th>Property</th><th>Type</th><th>Constraint</th><th>Description</th></tr>
+    <tr><td>Id</td><td>int</td><td>Key</td><td>Primary key</td></tr>
+    <tr><td>Code</td><td>string</td><td>MaxLength(128)</td><td>Hashed OTP value</td></tr>
+    <tr><td>CreateAt</td><td>DateTime</td><td>Required</td><td>Creation time</td></tr>
+    <tr><td>ExpireAt</td><td>DateTime</td><td>Required</td><td>Expiration time</td></tr>
+    <tr><td>IsUsed</td><td>bool</td><td>Default false</td><td>Usage status</td></tr>
+</table>
+
+<table>
+    <tr><h2>SMS Entity</h2></tr>
+    <tr><th>Property</th><th>Type</th><th>Constraint</th><th>Description</th></tr>
+    <tr><td>Id</td><td>int</td><td>Key</td><td>Primary key</td></tr>
+    <tr><td>Text</td><td>string</td><td>—</td><td>SMS content</td></tr>
+    <tr><td>SendingDate</td><td>DateTime</td><td>Default Now</td><td>Send timestamp</td></tr>
+    <tr><td>IsDeliveredSMS</td><td>SMSStatus</td><td>Enum</td><td>Overall delivery status</td></tr>
+</table>
+
+<table>
+    <tr><h2>SMSReceiver Entity</h2></tr>
+    <tr><th>Property</th><th>Type</th><th>Constraint</th><th>Description</th></tr>
+    <tr><td>ReceiverId</td><td>int</td><td>Required</td><td>Member ID</td></tr>
+    <tr><td>PhoneNumber</td><td>string</td><td>MaxLength(20)</td><td>Recipient phone</td></tr>
+    <tr><td>IsDelivered</td><td>SMSStatus</td><td>Enum</td><td>Individual delivery status</td></tr>
+</table>
+
+<!-- ================= DTOs ================= -->
+<table>
+    <tr><h2>DTOs</h2></tr>
+    <tr><th>DTO</th><th>Purpose</th><th>Key Fields</th><th>Usage</th></tr>
+    <tr><td>MessageLogDTO</td><td>SMS logging</td><td>MemberName, Message, Status</td><td>Reports and analytics</td></tr>
+    <tr><td>SendingDTO</td><td>SMS sending</td><td>Message, ReceiverIds</td><td>Service communication</td></tr>
+    <tr><td>SMSReceiverDTO</td><td>Recipient info</td><td>PhoneNumber</td><td>Delivery tracking</td></tr>
+    <tr><td>SmsSettings</td><td>Gateway config</td><td>BaseUrl, UserId, Sender</td><td>External integration</td></tr>
+</table>
+
+<!-- ================= ViewModels ================= -->
+<table>
+    <tr><h2>ViewModels</h2></tr>
+    <tr><th>ViewModel</th><th>Purpose</th><th>Key Properties</th><th>Context</th></tr>
+    <tr><td>MessageLogVM</td><td>Display logs</td><td>Message, Status, Date</td><td>Logs UI</td></tr>
+    <tr><td>SendingVM</td><td>Send SMS</td><td>Message, ReceiverIds</td><td>Members UI</td></tr>
+    <tr><td>SMSVM</td><td>SMS management</td><td>Text, Status, Receivers</td><td>Admin UI</td></tr>
+    <tr><td>OtpValidationRequest</td><td>OTP validation</td><td>Code, Role</td><td>Security flows</td></tr>
+</table>
+
+<!-- ================= Views ================= -->
+<table>
+    <tr><h2>SMS Management Views</h2></tr>
+    <tr><th>View</th><th>Purpose</th></tr>
+    <tr><td>Members</td><td>Member selection and SMS composition</td></tr>
+    <tr><td>_MembersListPartial</td><td>Member table rendering</td></tr>
+    <tr><td>MessagesLogs</td><td>SMS history and reporting</td></tr>
+    <tr><td>_MessagesLogsListPartial</td><td>Logs table rendering</td></tr>
+    <tr><td>PrintMessagesLogs</td><td>Printable logs report</td></tr>
+</table>
+
+<!-- ================= Business Workflow ================= -->
+<table>
+    <tr><h2>SMS Business Workflow</h2></tr>
+    <tr><th>Step</th><th>Description</th></tr>
+    <tr><td>1</td><td>Select members or broadcast to all</td></tr>
+    <tr><td>2</td><td>Compose SMS message</td></tr>
+    <tr><td>3</td><td>Send via AJAX</td></tr>
+    <tr><td>4</td><td>Gateway delivery per recipient</td></tr>
+    <tr><td>5</td><td>Status logging and audit trail</td></tr>
+    <tr><td>6</td><td>Reporting via UI, print, or Excel</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

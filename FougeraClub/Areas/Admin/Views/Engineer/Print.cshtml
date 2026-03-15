@@ -1,0 +1,173 @@
+﻿@model IQueryable<EngineerVM>
+@using FougeraClub.Areas.Admin.ViewModels.Engineer
+@using FougeraClub.Areas.Admin.ViewModels.MonthlyAdministrativeReport
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    @if (SessionHelper.GetCurrentLanguage() == "ar")
+    {
+        <link href="~/ar/assets/css/report-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/ar/assets/css/report-ltr.css" rel="stylesheet" />
+    }
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="~/css/prints/report.css" rel="stylesheet">
+    <style>
+        @@media print {
+
+
+            #report thead th {
+                background-color: #47A644 !important;
+                color: white !important;
+                border-color: #c4c1c1 !important;
+            }
+        }
+    </style>
+</head>
+<div id="report">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+    <!-- Official Header -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <h2 class="text-danger">@Resource1.EngineerList2</h2>
+        @* <p class="text-muted"> @AppDubaiTime.Now.ToString("HH:mm d", System.Globalization.CultureInfo.InvariantCulture)</p> *@
+    </div>
+    <table class="table table-bordered  align-middle" style="table-layout: fixed; width: 100%;">
+        <thead class="table-dark">
+            <tr>
+                <th style="width: 180px;">@Resource2.Name</th>
+                <th style="width: 80px;">@Resource2.Profession</th>
+                <th style="width: 80px;">@Resource2.Nationality</th>
+                <th style="width: 80px;">@Resource2.GraduationYear</th>
+                <th style="width: 80px;">@Resource2.Specialization</th>
+                <th style="width: 130px;">@Resource1.MobileNumber</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var engineer in Model)
+            {
+                <tr>
+                    <td style="width: 180px;">
+                        @engineer.FullName
+                    </td>
+
+                    <td style="width: 80px;">
+                        @engineer.Position
+                    </td>
+
+                    <td style="width: 40px;">
+                        @(lang == "ar" ? engineer?.Nationality?.NameAr : engineer?.Nationality?.NameEn)
+                    </td>
+
+                    <td style="width: 40px; ">
+                        @engineer?.GraduationYear
+                    </td>
+
+                    <td style="width: 80px; ">
+                        @engineer?.Specialization
+                    </td>
+
+                    <td style="width: 130px;">
+                        @engineer?.PhoneNumber
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        <tfoot>
+            <tr style="border: none;">
+                <td colspan="2" style="min-height:300px !important;border: none !important;">
+                    <div class="footer-container" id="footer-container" style="color: rgba(0, 0, 0, 0) !important;">
+                        <div class="footer-top" id="footer-top">
+                            <div class="right">Time: </div>
+                            <div class="center" style="color: rgba(0, 0, 0, 0) !important;">Date: </div>
+                            <div class="left">Printed by: </div>
+                        </div>
+
+                        <div class="footer-bottom" id="footer-bottom">
+                            @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
+
+    </table>
+
+    <div class="print-footer">
+        <div class="footer-top">
+            <div class="right">Time: @AppDubaiTime.Now.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)</div>
+            <div class="center">Date: @AppDubaiTime.Now.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
+            <div class="left">
+                Printed by:
+                @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)
+            </div>
+        </div>
+        <hr class="footer-line">
+        <div class="footer-bottom">
+            @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+        </div>
+    </div>
+
+
+    <div class="text-center no-print mt-3">
+        <button class="btn btn-primary" onclick="window.print()">طباعة التقرير</button>
+        <button class="btn btn-danger ms-2" onclick="window.close()">إغلاق النافذة</button>
+    </div>
+    <script>
+
+        // This Part Is Important
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+        // Close window after printing
+        window.onafterprint = function () {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        };
+    </script>
+</div>

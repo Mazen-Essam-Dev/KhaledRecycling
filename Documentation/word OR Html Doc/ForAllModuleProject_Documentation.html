@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 40px;
+            background-color: #f9fafb;
+            color: #1f2937;
+        }
+        h1, h2, h3 {
+            color: #111827;
+            margin-top: 40px;
+        }
+        h1 {
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+        }
+        h2 {
+            border-left: 5px solid #2563eb;
+            padding-left: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 30px;
+            background-color: #ffffff;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 10px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: bold;
+        }
+		tr:nth-child(even) {
+            background-color: #f2f6fc;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .note {
+            background-color: #eef2ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px 15px;
+            margin: 20px 0;
+        }
+    </style>
+    <title>All Modules of This Project - Full Documentation</title>
+
+</head>
+
+<body>
+
+<h1>All Modules of This Project — Documentation</h1>
+
+<!-- ===================================================== -->
+<h2>Document Scope</h2>
+
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Coverage</td>
+        <td>All project modules, controllers, services, view models, and views</td>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Central reference for structure, behavior, and development rules</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Namespace & Dependencies</h2>
+
+<table>
+    <tr>
+        <th>Dependency</th>
+        <th>Usage</th>
+    </tr>
+    <tr>
+        <td>Application.Interfaces</td>
+        <td>Service and abstraction interfaces</td>
+    </tr>
+    <tr>
+        <td>Domain.Entities</td>
+        <td>Database entity models</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Required Libraries</h2>
+
+<table>
+    <tr>
+        <th>Library</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>Microsoft.AspNetCore.Mvc</td>
+        <td>Controllers, routing, actions, and MVC pipeline</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Controller Attributes Behavior</h2>
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>HttpPost / HttpPut / HttpDelete</td>
+        <td>Automatically logged in logsRequest table (Admin Area)</td>
+    </tr>
+    <tr>
+        <td>HttpGet</td>
+        <td>Not logged unless explicitly marked</td>
+    </tr>
+    <tr>
+        <td>[YesGet]</td>
+        <td>Forces HttpGet action to be logged</td>
+    </tr>
+    <tr>
+        <td>[NoLogging]</td>
+        <td>Excludes action from logsRequest table</td>
+    </tr>
+    <tr>
+        <td>[AdminAuthorize]</td>
+        <td>Restricts access to authorized users only</td>
+    </tr>
+    <tr>
+        <td>[IgnoreAction]</td>
+        <td>Excludes action from permission (claims) storage</td>
+    </tr>
+    <tr>
+        <td>[ValidateAntiForgeryToken]</td>
+        <td>Protects POST requests against CSRF attacks</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Routing Convention</h2>
+
+<table>
+    <tr>
+        <th>Routing Rule</th>
+        <th>Explanation</th>
+    </tr>
+    <tr>
+        <td>[Area("AreaName")]</td>
+        <td>Defines application area (Admin, Member, etc.)</td>
+    </tr>
+    <tr>
+        <td>[Route("Area/Controller/Action")]</td>
+        <td>Standardized route mapping for all controllers</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Constructor Injection</h2>
+
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Responsibility</th>
+    </tr>
+    <tr>
+        <td>IUnitOfWork</td>
+        <td>Centralized data access layer</td>
+    </tr>
+    <tr>
+        <td>IMapper</td>
+        <td>Entity to ViewModel mapping using AutoMapper</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Views & UI Standards</h2>
+
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Multi-language</td>
+        <td>Supported using ILanguageService injection</td>
+    </tr>
+    <tr>
+        <td>Tag Helpers</td>
+        <td>Used for inputs, labels, and validation messages</td>
+    </tr>
+    <tr>
+        <td>Client Validation</td>
+        <td>Enabled via _ValidationScriptsPartial</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Common Exceptions & Handling</h2>
+
+<table>
+    <tr>
+        <th>Error</th>
+        <th>Handling Behavior</th>
+    </tr>
+    <tr>
+        <td>404 NotFound</td>
+        <td>Returned when entity or id is missing</td>
+    </tr>
+    <tr>
+        <td>500 Server Error</td>
+        <td>Shown only in deployment mode</td>
+    </tr>
+    <tr>
+        <td>503 Not Authorized</td>
+        <td>Triggered when permission checks fail</td>
+    </tr>
+    <tr>
+        <td>DbUpdateException</td>
+        <td>Thrown on database save failure</td>
+    </tr>
+    <tr>
+        <td>ModelState Invalid</td>
+        <td>Prevents invalid form submissions</td>
+    </tr>
+    <tr>
+        <td>File Path Missing</td>
+        <td>Directory is auto-created</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Printing & Signature Rules</h2>
+
+<table>
+    <tr>
+        <th>Rule</th>
+        <th>Behavior</th>
+    </tr>
+    <tr>
+        <td>Printing Availability</td>
+        <td>Enabled only after all required signatures are signed</td>
+    </tr>
+    <tr>
+        <td>Multiple Signatures</td>
+        <td>All signatures must be completed</td>
+    </tr>
+    <tr>
+        <td>Partial Signature</td>
+        <td>Fake disabled Edit/Delete buttons shown</td>
+    </tr>
+    <tr>
+        <td>Save Button</td>
+        <td>Hidden if at least one signature exists</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Input Field Default Behavior</h2>
+
+<table>
+    <tr>
+        <th>Field Type</th>
+        <th>Default Placeholder</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>Decimal / Monetary</td>
+        <td>0.00</td>
+        <td>Prevents accidental edits</td>
+    </tr>
+    <tr>
+        <td>Integer</td>
+        <td>0</td>
+        <td>Clarifies default value</td>
+    </tr>
+    <tr>
+        <td>Phone / Mobile</td>
+        <td>971 prefix enforced</td>
+        <td>Standardizes phone numbers</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>UX Design Notes</h2>
+
+<table>
+    <tr>
+        <th>UX Principle</th>
+        <th>Implementation</th>
+    </tr>
+    <tr>
+        <td>Data Integrity</td>
+        <td>Disable edits after signatures</td>
+    </tr>
+    <tr>
+        <td>User Guidance</td>
+        <td>Clear placeholders for null values</td>
+    </tr>
+    <tr>
+        <td>Error Prevention</td>
+        <td>Validation before submission</td>
+    </tr>
+</table>
+
+<div class="note">
+    ✔ Consistent behavior across all modules<br>
+    ✔ Secure request handling<br>
+    ✔ Clear UX for financial and signed documents<br>
+    ✔ Enterprise-ready documentation standard
+</div>
+
+</body>
+</html>

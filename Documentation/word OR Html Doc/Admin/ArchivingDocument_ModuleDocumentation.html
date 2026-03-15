@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>Archiving Document System Documentation</title>	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Archiving Document System Documentation</h1>
+
+<!-- CONTROLLER TABLE -->
+<h2>ArchivingDocumentController - Action Methods</h2>
+<table>
+    <caption>Controller Actions</caption>
+    <tr>
+        <th>Action</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Notes / Features</th>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>Main document listing</td>
+        <td>searchTerm, type, dateFrom, dateTo, pagination</td>
+        <td>Advanced filtering, pagination (50 items), AJAX partial view, enum display names, date preservation</td>
+    </tr>
+    <tr>
+        <td>AddEdit (GET)</td>
+        <td>Display create/edit form</td>
+        <td>id (optional)</td>
+        <td>Populates DocumentType dropdown, maps existing entity, enum handling</td>
+    </tr>
+    <tr>
+        <td>AddEdit (POST)</td>
+        <td>Handle form submission</td>
+        <td>ArchivingDocumentVM model</td>
+        <td>Model validation, PDF file validation (type & 5MB), Anti-forgery token, redirects after save</td>
+    </tr>
+    <tr>
+        <td>Delete</td>
+        <td>Remove document</td>
+        <td>id</td>
+        <td>HTTP POST, service deletion, redirect to Index</td>
+    </tr>
+    <tr>
+        <td>Print</td>
+        <td>Printer-friendly list</td>
+        <td>Filters applied</td>
+        <td>Same filtering as Index, no pagination, [IgnoreAction]</td>
+    </tr>
+    <tr>
+        <td>createExcelReport_Download</td>
+        <td>Generate Excel report</td>
+        <td>Filters applied</td>
+        <td>Bilingual columns, timestamped XLSX, same filters as Index</td>
+    </tr>
+</table>
+
+<!-- SERVICE TABLE -->
+<h2>ArchivingDocumentService - Methods</h2>
+<table>
+    <caption>Service Methods</caption>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Notes / Behavior</th>
+    </tr>
+    <tr>
+        <td>GetAllAsync</td>
+        <td>Retrieve all documents</td>
+        <td>None</td>
+        <td>Returns IEnumerable&lt;ArchivingDocument&gt;, async</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync</td>
+        <td>Fetch document by ID</td>
+        <td>int id</td>
+        <td>Nullable return, repository lookup</td>
+    </tr>
+    <tr>
+        <td>AddAsync</td>
+        <td>Create new document with file</td>
+        <td>ArchivingDocument entity</td>
+        <td>File upload via FileHelper, stores PdfFilePath, commits transaction, returns new ID</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync</td>
+        <td>Update existing document</td>
+        <td>ArchivingDocument entity</td>
+        <td>Handles file replacement if uploaded, preserves path if no file, commits changes</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync</td>
+        <td>Delete document and PDF</td>
+        <td>int id</td>
+        <td>Deletes physical file, removes DB record, commits transaction</td>
+    </tr>
+</table>
+
+<!-- ENTITY TABLE -->
+<h2>ArchivingDocument Entity - Fields</h2>
+<table>
+    <caption>Entity Properties</caption>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Meaning / Usage</th>
+        <th>Notes</th>
+    </tr>
+    <tr><td>Id</td><td>int</td><td>Unique identifier</td><td>Primary key</td></tr>
+    <tr><td>Title</td><td>string</td><td>Document title/subject</td><td>Max length 200</td></tr>
+    <tr><td>Date</td><td>DateTime?</td><td>Date associated with document</td><td>Nullable</td></tr>
+    <tr><td>Authority</td><td>string</td><td>Issuing authority</td><td>Max length 200</td></tr>
+    <tr><td>DocumentReferenceNumber</td><td>string</td><td>Official reference number</td><td>Max length 200</td></tr>
+    <tr><td>Type</td><td>DocumentType?</td><td>Document classification</td><td>Enum-based</td></tr>
+    <tr><td>PdfFilePath</td><td>string</td><td>Path of uploaded PDF</td><td>Stored on server, not file itself</td></tr>
+    <tr><td>PdfFile</td><td>IFormFile (NotMapped)</td><td>Used for file upload</td><td>Not stored in DB</td></tr>
+</table>
+
+<!-- ENTITY EXAMPLE TABLE -->
+<h2>Example Documents</h2>
+<table>
+    <caption>Real Usage Example</caption>
+    <tr>
+        <th>Title</th>
+        <th>Authority</th>
+        <th>Reference No.</th>
+        <th>Date</th>
+        <th>Type</th>
+        <th>PDF</th>
+    </tr>
+    <tr><td>قرار تشكيل اللجنة</td><td>وزارة الشباب</td><td>2023/45</td><td>2023-09-15</td><td>صادر</td><td>uploads/Archive/123.pdf</td></tr>
+    <tr><td>تقرير سنوي</td><td>النادي الثقافي</td><td>N/A</td><td>2024-01-10</td><td>وارد</td><td>uploads/Archive/456.pdf</td></tr>
+</table>
+
+<!-- ENTITY vs VIEWMODEL TABLE -->
+<h2>ArchivingDocument vs ArchivingDocumentVM</h2>
+<table>
+    <caption>Entity vs ViewModel Comparison</caption>
+    <tr>
+        <th>Feature</th>
+        <th>Entity (ArchivingDocument)</th>
+        <th>ViewModel (ArchivingDocumentVM)</th>
+    </tr>
+    <tr><td>Stored in Database</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Used in UI / Views</td><td>Sometimes</td><td>Always</td></tr>
+    <tr><td>Validation Attributes</td><td>Minimal</td><td>Yes, localized</td></tr>
+    <tr><td>File Upload Handling</td><td>PdfFile (NotMapped)</td><td>PdfFile (NotMapped)</td></tr>
+    <tr><td>Dropdown List Support</td><td>No</td><td>Yes (TypeEnumList)</td></tr>
+    <tr><td>Display Enum Text</td><td>No</td><td>Yes (TypeText)</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

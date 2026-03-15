@@ -1,0 +1,114 @@
+@using Domain.DTOs.Admin.CashExchangeBond
+@using FougeraClub.Areas.Admin.ViewModels.CashExchangeBond
+@model CashExchangeBondAttachmentsVM
+<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <form asp-action="UploadCashExchangeBondFiles" method="post" enctype="multipart/form-data" id="attachmentsForm">
+            <div class="modal-header">
+                <h5 class="modal-title">@Resource2.UploadAttachments</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <input type="hidden" id="CashExchangeBondId" name="CashExchangeBondId" value="@Model.CashExchangeBondId" />
+
+
+            <div class="modal-body text-center">
+
+                <!-- Upload new attachment -->
+                <div class="row justify-content-center align-items-center mb-3">
+                    <div class="col-md-5">
+                        <input id="fileNameInput" class="form-control" placeholder="@Resource2.FileName" />
+                        <span id="fileNameSpan" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-5">
+                        <input id="fileInput" type="file" class="form-control text-center" accept=".pdf,.jpg,.jpeg,.png" />
+                        <span id="fileInputSpan" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="button" class="btn btn-success w-100" id="addFileBtn"><i class="fa-solid fa-plus me-1"></i>@Resource1.Add</button>
+                    </div>
+                </div>
+                <hr />                <!-- Preview added attachments before saving -->
+                <div id="attachmentsPreview" class="d-flex flex-wrap justify-content-center gap-3 mt-3">
+                    @if (Model.Attachments != null && Model.Attachments.Any())
+                    {
+                        @for (int i = 0; i < Model.Attachments.Count; i++)
+                        {
+                            var path = Model.Attachments[i].Path;
+                            var fileName = Model.Attachments[i].Name;
+                            var extension = System.IO.Path.GetExtension(path)?.ToLower();
+
+                            <div class="file-card text-center">
+                                <input hidden name="Attachments[@i].Path" value="@Model.Attachments[i].Path" type="text" />
+                                <button type="button" class="remove-btn" title="Remove">&times;</button>
+                                <a href="~/@path" target="_blank">
+                                    @if (extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".gif" || extension == ".bmp" || extension == ".webp")
+                                    {
+                                        <img src="~/@path"
+                                             alt="@fileName"
+                                             class="img-thumbnail"
+                                             style="width:90px;height:90px;object-fit:cover;border-radius:8px;" />
+                                    }
+                                    else if (extension == ".pdf")
+                                    {
+                                        <i class="fa-solid fa-file-pdf fa-5x"></i>
+                                    }
+                                    else
+                                    {
+                                        <i class="fa-solid fa-file fa-5x text-secondary"></i>
+                                    }
+                                </a>
+                                <div class="fw-bold mt-2">@fileName</div>
+                            </div>
+                        }
+                    }
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">@Resource1.Save</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">@Resource1.Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .file-card {
+        position: relative;
+        display: inline-block;
+        padding: 5px;
+        border-radius: 8px;
+        transition: box-shadow 0.2s ease-in-out;
+    }
+
+        .file-card:hover {
+            box-shadow: 0 0 6px rgba(0,0,0,0.15);
+        }
+
+    .remove-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: #af1717;
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        cursor: pointer;
+        font-size: 0.8rem;
+        line-height: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease-in-out, transform 0.1s;
+        z-index: 2;
+    }
+
+        .remove-btn:hover {
+            background: #da4d62;
+            transform: scale(1.1);
+        }
+
+</style>

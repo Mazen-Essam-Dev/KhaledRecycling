@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>Participations In Event Report Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<!-- ================= Controller Overview ================= -->
+<table>
+<h2>ParticipationsInEventReportController – Overview</h2>
+<tr><th>Purpose</th><td>Manages event participation reports with OTP approval, filtering, printing, and Excel export.</td></tr>
+<tr><th>Area</th><td>Admin</td></tr>
+<tr><th>Authorization</th><td>AdminAuthorize</td></tr>
+<tr><th>Dependencies</th><td>IParticipationsInEventReportService, IMapper</td></tr>
+</table>
+
+<!-- ================= Index ================= -->
+<table>
+<h2>Index Action</h2>
+<tr><th>Purpose</th><td>Main listing with filtering and pagination.</td></tr>
+<tr><th>Filters</th><td>Search (ReportTitle), DateFrom, DateTo.</td></tr>
+<tr><th>Pagination</th><td>50 records per page.</td></tr>
+<tr><th>AJAX</th><td>Returns partial view for AJAX requests.</td></tr>
+<tr><th>State</th><td>Filters preserved via ViewBag and sessionStorage.</td></tr>
+</table>
+
+<!-- ================= AddEdit GET ================= -->
+<table>
+<h2>AddEdit (GET)</h2>
+<tr><th>Purpose</th><td>Display create/edit participation report form.</td></tr>
+<tr><th>Parameter</th><td>Optional report ID.</td></tr>
+<tr><th>Flow</th><td>Load existing report for edit or new VM for add.</td></tr>
+</table>
+
+<!-- ================= AddEdit POST ================= -->
+<table>
+<h2>AddEdit (POST)</h2>
+<tr><th>Purpose</th><td>Handle create/update submission.</td></tr>
+<tr><th>Validation</th><td>ModelState validation.</td></tr>
+<tr><th>Redirect</th><td>Create → Index, Edit → same AddEdit page.</td></tr>
+</table>
+
+<!-- ================= Delete ================= -->
+<table>
+<h2>Delete Action</h2>
+<tr><th>Purpose</th><td>Delete participation report.</td></tr>
+<tr><th>Method</th><td>HTTP POST.</td></tr>
+<tr><th>Flow</th><td>Service deletion → Redirect to Index.</td></tr>
+</table>
+
+<!-- ================= Details & Print ================= -->
+<table>
+<h2>View-Only Operations</h2>
+<tr><th>Details</th><td>Read-only report view with activities, images, and signatures.</td></tr>
+<tr><th>PrintDetails</th><td>Printer-friendly single report view.</td></tr>
+<tr><th>Print</th><td>Printer-friendly list of reports.</td></tr>
+</table>
+
+<!-- ================= OTP System ================= -->
+<table>
+<h2>OTP Approval Workflow</h2>
+<tr><th>SendOtp</th><td>Sends OTP for trainer or manager approval.</td></tr>
+<tr><th>ValidateOtp</th><td>Validates OTP and applies digital signature.</td></tr>
+<tr><th>Security</th><td>NoLogging + Anti-forgery protection.</td></tr>
+<tr><th>UI</th><td>Bootstrap modal with AJAX verification.</td></tr>
+</table>
+
+<!-- ================= Excel Export ================= -->
+<table>
+<h2>Excel Export</h2>
+<tr><th>Purpose</th><td>Export filtered participation reports to Excel.</td></tr>
+<tr><th>Columns</th><td>ReportTitle, AdministrativeDepartment, Date.</td></tr>
+<tr><th>Localization</th><td>Arabic / English support.</td></tr>
+<tr><th>File Name</th><td>ParticipationsInEventList_YYYYMMDD_HHmmss.xlsx</td></tr>
+</table>
+
+<!-- ================= Service Overview ================= -->
+<table>
+<h2>ParticipationsInEventReportService</h2>
+<tr><th>Namespace</th><td>Application.Services.Admin</td></tr>
+<tr><th>Interface</th><td>IParticipationsInEventReportService</td></tr>
+<tr><th>Dependencies</th><td>IUnitOfWork, IWebHostEnvironment, IHttpContextAccessor</td></tr>
+</table>
+
+<!-- ================= Service Methods ================= -->
+<table>
+<h2>Service Core Methods</h2>
+<tr><th>Method</th><th>Description</th></tr>
+<tr><td>GetAllAsync</td><td>Retrieve all participation reports.</td></tr>
+<tr><td>GetByIdAsync</td><td>Retrieve report with details and signatures.</td></tr>
+<tr><td>AddAsync</td><td>Create report with image handling.</td></tr>
+<tr><td>UpdateAsync</td><td>Update report with image preservation.</td></tr>
+<tr><td>DeleteAsync</td><td>Delete report and cleanup files.</td></tr>
+</table>
+
+<!-- ================= Entities ================= -->
+<table>
+<h2>Entities</h2>
+<tr><th>ParticipationsInEventReport</th><td>Main report entity with images and dual approval.</td></tr>
+<tr><th>ParticipationsInEventReportDetail</th><td>Activity-level detail entity.</td></tr>
+</table>
+
+<!-- ================= ViewModels ================= -->
+<table>
+<h2>ViewModels</h2>
+<tr><th>ParticipationsInEventReportVM</th><td>Main form model with images, details, and signatures.</td></tr>
+<tr><th>ParticipationsInEventReportDetailVM</th><td>Activity name, action, and reason.</td></tr>
+</table>
+
+<!-- ================= Views ================= -->
+<table>
+<h2>Views</h2>
+<tr><th>AddEdit</th><td>Dynamic activities, image uploads, validation.</td></tr>
+<tr><th>Index</th><td>Search, filters, pagination, print, export.</td></tr>
+<tr><th>_ListPartial</th><td>AJAX table with permissions and pagination.</td></tr>
+<tr><th>Details</th><td>Detailed report with OTP signing.</td></tr>
+<tr><th>Print / PrintDetails</th><td>Print-optimized layouts.</td></tr>
+</table>
+
+<!-- ================= Flow Summary ================= -->
+<table>
+<h2>Module Flow Summary</h2>
+<tr><th>Step 1</th><td>User filters and views reports in Index.</td></tr>
+<tr><th>Step 2</th><td>Create or edit participation report.</td></tr>
+<tr><th>Step 3</th><td>Trainer and Manager OTP approvals.</td></tr>
+<tr><th>Step 4</th><td>Print or export reports.</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

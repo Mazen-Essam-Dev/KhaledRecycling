@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Cash Exchange Bond (CEB) Module</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Cash Exchange Bond (CEB) Module</h1>
+<section class="doc-section">
+
+<table class="doc-table">
+<thead>
+<tr><th colspan="2">CashExchangeBondController</th></tr>
+</thead>
+<tbody>
+<tr><td>Namespace</td><td>FougeraClub.Areas.Admin.Controllers</td></tr>
+<tr><td>Area</td><td>Admin</td></tr>
+<tr><td>Purpose</td><td>Manage Cash Exchange Bonds (CRUD, OTP, Attachments, Reports)</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th colspan="2">Controller Attributes</th></tr>
+</thead>
+<tbody>
+<tr><td>[AdminAuthorize]</td><td>Restricts access to admin users</td></tr>
+<tr><td>[Area("Admin")]</td><td>Defines admin routing scope</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>Dependency</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>ICashExchangeBondService</td><td>Business logic for bonds</td></tr>
+<tr><td>IMapper</td><td>Entity ↔ ViewModel mapping</td></tr>
+<tr><td>IHubContext&lt;NotificationHub&gt;</td><td>Real-time notifications</td></tr>
+<tr><td>INotificationService</td><td>Role-based notifications</td></tr>
+<tr><td>IHttpContextAccessor</td><td>Session & user context</td></tr>
+<tr><td>UserManager&lt;ApplicationUser&gt;</td><td>User info for signatures</td></tr>
+</tbody>
+</table>
+
+</section>
+
+<section class="doc-section">
+
+<table class="doc-table">
+<thead>
+<tr><h2>OTP Workflow – Document 1 (Cash Disbursement Request)</h2></tr>
+</thead>
+<tbody>
+<tr><th>Step</th><th>Role</th><th>Behavior</th></tr>
+<tr><td>New Add</td><td>Accountant</td><td>Notification sent</td></tr>
+<tr><td>First Sign</td><td>Accountant</td><td>Edit disabled except Manager</td></tr>
+<tr><td>Second Sign</td><td>Manager</td><td>Print enabled + Document 2 unlocked</td></tr>
+<tr><td>Edit After Sign</td><td>Manager</td><td>Accountant signature removed</td></tr>
+<tr><td>Delete Rule</td><td>All</td><td>Disabled after first signature</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><h2>OTP Workflow – Document 2 (Exchange Proof)</h2></tr>
+</thead>
+<tbody>
+<tr><th>Step</th><th>Role</th><th>Behavior</th></tr>
+<tr><td>When Doc2 Opened(Enabled)</td><td>Accountant</td><td>Notification sent</td></tr>
+<tr><td>First Sign</td><td>Accountant</td><td>Manager notified</td></tr>
+<tr><td>Second Sign</td><td>Manager</td><td>Print enabled + Document 3 unlocked</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><h2>OTP Workflow – Document 3 (Acknowledgment Receipt)</h2></tr>
+</thead>
+<tbody>
+<tr><th>Step</th><th>Role</th><th>Behavior</th></tr>
+<tr><td>When Doc3 Opened(Enabled)</td><td>Accountant</td><td>Notification sent</td></tr>
+<tr><td>Final Sign</td><td>Accountant</td><td>Print enabled – workflow complete</td></tr>
+</tbody>
+</table>
+
+</section>
+
+<section class="doc-section">
+
+<table class="doc-table">
+<thead>
+<tr><th>Action</th><th>Type</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td>Index</td><td>GET</td><td>List, filter, paginate bonds (AJAX supported)</td></tr>
+<tr><td>AddEdit</td><td>GET / POST</td><td>Create or update bond</td></tr>
+<tr><td>Details</td><td>GET</td><td>Detailed bond view with money text</td></tr>
+<tr><td>Receipt</td><td>GET</td><td>Printable receipt with signatures</td></tr>
+<tr><td>Delete</td><td>POST</td><td>Delete bond</td></tr>
+<tr><td>Print</td><td>GET</td><td>Printable filtered report</td></tr>
+<tr><td>CheckDate</td><td>POST (AJAX)</td><td>Month uniqueness validation</td></tr>
+<tr><td>MoneyText</td><td>POST (AJAX)</td><td>Convert money to AR / EN text</td></tr>
+<tr><td>CreateExcel</td><td>GET</td><td>Download Excel report</td></tr>
+<tr><td>SendOtp</td><td>POST</td><td>Send OTP for role</td></tr>
+<tr><td>ValidateOtp</td><td>POST</td><td>Validate OTP and save signature</td></tr>
+</tbody>
+</table>
+
+</section>
+
+<section class="doc-section">
+
+<table class="doc-table">
+<thead>
+<tr><th colspan="2">CashExchangeBondService</th></tr>
+</thead>
+<tbody>
+<tr><td>Namespace</td><td>Application.Services.Admin</td></tr>
+<tr><td>Implements</td><td>ICashExchangeBondService</td></tr>
+<tr><td>Purpose</td><td>Business logic, OTP, signatures, attachments</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>Dependency</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>IUnitOfWork</td><td>Database transactions</td></tr>
+<tr><td>IWebHostEnvironment</td><td>File storage paths</td></tr>
+<tr><td>IHttpContextAccessor</td><td>OTP & session handling</td></tr>
+<tr><td>ISMSService</td><td>SMS notifications</td></tr>
+<tr><td>ISMSForSendingOTPService</td><td>OTP delivery</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th>Method</th><th>Responsibility</th></tr>
+</thead>
+<tbody>
+<tr><td>GetAllAsync</td><td>Retrieve all bonds</td></tr>
+<tr><td>GetByIdAsync</td><td>Load bond with details</td></tr>
+<tr><td>AddAsync</td><td>Create bond</td></tr>
+<tr><td>UpdateAsync</td><td>Update bond</td></tr>
+<tr><td>DeleteAsync</td><td>Delete bond & details</td></tr>
+<tr><td>CheckIsMonthRegistedBefore</td><td>Prevent duplicate months</td></tr>
+<tr><td>SendOtpAsync</td><td>Generate & send OTP</td></tr>
+<tr><td>ValidateOtpAsync</td><td>Validate OTP & save signature</td></tr>
+<tr><td>UploadAttachmentsAsync</td><td>Manage bond attachments</td></tr>
+<tr><td>GetAttachmentsAsync</td><td>Load attachments</td></tr>
+</tbody>
+</table>
+
+</section>
+
+<section class="doc-section">
+
+<table class="doc-table">
+<thead>
+<tr><th colspan="2">CashExchangeBond (Main Entity)</th></tr>
+</thead>
+<tbody>
+<tr><td>Id</td><td>Primary Key</td></tr>
+<tr><td>Code</td><td>Bond reference code</td></tr>
+<tr><td>Date</td><td>Transaction date</td></tr>
+<tr><td>Money</td><td>Base amount</td></tr>
+<tr><td>Total</td><td>Total calculated amount</td></tr>
+<tr><td>PersonName</td><td>Disbursed to</td></tr>
+<tr><td>AboutText</td><td>Purpose</td></tr>
+<tr><td>Details</td><td>One-to-many detail rows</td></tr>
+<tr><td>Attachments</td><td>One-to-many attachments</td></tr>
+<tr><td>AccountantSignature</td><td>Approval</td></tr>
+<tr><td>ManagerSignature</td><td>Approval</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th colspan="2">CashExchangeBondDetail</th></tr>
+</thead>
+<tbody>
+<tr><td>DocumentNo</td><td>Reference number</td></tr>
+<tr><td>DocumentDate</td><td>Document date</td></tr>
+<tr><td>AccountNo</td><td>Accounting reference</td></tr>
+<tr><td>Particular</td><td>Description</td></tr>
+<tr><td>Money</td><td>Line amount</td></tr>
+</tbody>
+</table>
+
+<table class="doc-table">
+<thead>
+<tr><th colspan="2">CashExchangeBondAttachment</th></tr>
+</thead>
+<tbody>
+<tr><td>Name</td><td>File name</td></tr>
+<tr><td>Path</td><td>File path</td></tr>
+<tr><td>File</td><td>IFormFile (NotMapped)</td></tr>
+</tbody>
+</table>
+
+</section>
+
+<!-- Updates -->
+<h2>Updates And Additions</h2>
+<table>
+    <caption>Attachments Modal ajax,Js</caption>
+    <tr>
+        <th>Location</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>controller</td><td>GetCashExchangeBondAttachments</td><td>Display all salary Attachments in modal</td></tr>
+    <tr><td>controller</td><td>UploadCashExchangeBondFiles</td><td>delete and add updated attachments of salary</td></tr>
+    <tr><td>Service</td><td>GetAttachmentsAsync</td><td>Retrieve salary attachments</td></tr>
+    <tr><td>Service</td><td>UploadAttachmentsAsync</td><td>Upload salary attachments</td></tr>
+    <tr><td>DTO</td><td>CashExchangeBondAttachmentDTO</td><td>attachment Object of his attachments</td></tr>
+    <tr><td>DTO</td><td>CashExchangeBondAttachmentsDTO</td><td>this Main Id and list of first</td></tr>
+    <tr><td>VMS</td><td>CashExchangeBondAttachmentVM</td><td>attachment Object of his attachments</td></tr></tr>
+    <tr><td>VMS</td><td>CashExchangeBondAttachmentsVM</td><td>this Main Id and list of first</td></tr>
+    <tr><td>Views</td><td>_CashExchangeBondAttachmentsModal</td><td>[for add & remove attachments in modal with ajax and js]</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

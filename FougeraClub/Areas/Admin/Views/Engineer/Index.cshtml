@@ -1,0 +1,290 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Engineer
+@using FougeraClub.Areas.Admin.ViewModels.MonthlyAdministrativeReport
+@model PaginatedList<EngineerVM>
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    ViewData["Title"] = Resource1.EngineerList2;
+    ViewData["Title pakage"] = @Resource1.EngineersAssociationManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.EngineerList2 ?? " ";
+
+    var selectedId = ViewBag.selectedNationalityId?.ToString();
+    var nationalityList = ViewBag.Nationalities as List<SelectListItem> ?? new List<SelectListItem>();
+    var selectedGraduationYear = ViewBag.selectedGraduationYear;
+    var yearList = ViewBag.Years as List<SelectListItem> ?? new List<SelectListItem>();
+
+    var addPermission = PermissionScanner.ValidatePermission("Engineer", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("Engineer", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("Engineer", "Delete");
+}
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="recordsCount">@Model.Count</span>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+
+        <!-- Main card container for services data -->
+        <div class="card">
+            <!-- Card header with title and action buttons -->
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                <!-- Page title section -->
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <i class="fa-solid fa-user text-ico me-2"></i>
+                            @Resource1.EngineerList2
+                        </h4>
+                    </div>
+                </div>
+                <!-- Action buttons section (Print, Export, Add, Toggle) -->
+                <div class="d-flex align-items-center gap-2 flex-wrap" style="margin-left: 4px;">
+                    <!-- Print report button -->
+                    @if (addPermission)
+                    {
+                        <a asp-action="AddEdit" class="btn btn-outline-success btn-sm">
+                            <i class="fa fa-plus me-1"></i> @Resource2.CreateNew
+                        </a>
+                    }
+
+                    <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.Print
+                    </button>
+                    <!-- Print Export As Excel -->
+                    <a class="btn btn-success Excelbtn" onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-2"
+                            style="font-size:17px;"></i>@Resource1.createExcelReport_Download
+                    </a>
+                </div>
+                <script>
+                    function openPrintPage() {
+                        const searchTerm = encodeURIComponent(document.getElementById('searchTermInput').value);
+                        const selectedNationalityId = encodeURIComponent(document.getElementById('nationalitySelect').value);
+                        const selectedGraduationYear = encodeURIComponent(document.getElementById('graduationYearSelect').value);
+                        var countRecords = document.getElementById('NewCountRecords').value;
+                        if (countRecords && countRecords > 3999) {
+                            showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+                        }
+                        else {
+                            const url = `/Admin/Engineer/Print?searchTerm=${searchTerm}&selectedNationalityId=${selectedNationalityId}&selectedGraduationYear=${selectedGraduationYear}`;
+                            //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                            // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                            const printWindow = window.open(
+                                url,
+                                'printWindow',
+                                'width=1000,height=800,noopener,noreferrer'
+                            );
+                        }
+                    }
+                </script>
+                <script>
+                    function openExcelPage() {
+                        const searchTerm = encodeURIComponent(document.getElementById('searchTermInput').value);
+                        const selectedNationalityId = encodeURIComponent(document.getElementById('nationalitySelect').value);
+                        const selectedGraduationYear = encodeURIComponent(document.getElementById('graduationYearSelect').value);
+                        const url = `/Admin/Engineer/createExcelReport_Download?searchTerm=${searchTerm}&selectedNationalityId=${selectedNationalityId}&selectedGraduationYear=${selectedGraduationYear}`;
+                        window.open(url, '_self');
+
+                    }
+                </script>
+            </div>
+            <div class="rounded shadow-sm p-3">
+                <!-- Search Panel -->
+                <form method="get" id="studentFilterForm" class="filterImg rounded p-3">
+                    <!-- Left Column -->
+                    <div class="row">
+                        <!-- Search Box -->
+                        <div class="filter-dropdown col-md-4">
+                            <label for="searchTermInput" class="fw-semiboldm mb-1">@Resource2.Search:</label>
+                            <div class="search-box position-relative">
+                                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                                <input type="text" name="searchTerm" id="searchTermInput" value="@Model.SearchTerm"
+                                    class="form-control form-control-sm filter-bordered ps-4"
+                                    placeholder="@Resource2.Name @Resource2.Or @Resource2.PhoneNumber @Resource2.Or @Resource2.Specialization @Resource2.Or @Resource2.Profession ..." />
+                            </div>
+                        </div>
+                        <!-- Nationality Dropdown -->
+                        <div class="filter-dropdown col-md-4">
+                            <label for="nationalitySelect" class="fw-semibold mb-1">@Resource2.Nationality:</label>
+                            <select class="form-select form-select-sm filter-bordered" id="nationalitySelect" name="selectedNationalityId" style="width:100%">
+                                <option value="">@Resource2.All</option>
+                                @foreach (var item in nationalityList)
+                                {
+                                    <option value="@item.Value" selected="@(item.Value == selectedId ? "selected" : null)">
+                                        @item.Text
+                                    </option>
+                                }
+                            </select>
+                            <link href="/css/select2-custom.css" rel="stylesheet" />
+                            <script src="/js/select2-cdn-loader.js"></script>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    function initSelect2() {
+                                        if (window.jQuery && window.jQuery.fn && window.jQuery.fn.select2) {
+                                            $('#nationalitySelect').select2({
+                                                placeholder: 'إختر الجنسية',
+                                                allowClear: false,
+                                                width: 'resolve',
+                                                minimumResultsForSearch: 0
+                                            });
+                                        } else {
+                                            setTimeout(initSelect2, 100);
+                                        }
+                                    }
+                                    initSelect2();
+                                });
+                            </script>
+                        </div>
+                        <div class="filter-dropdown col-md-4">
+                            <label for="graduationYearSelect" class="fw-semibold mb-1">@Resource2.GraduationYear:</label>
+                            <div class="input-icon-left">
+                                <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+                                <select class=" form-select form-select-sm filter-bordered"
+                                name="selectedGraduationYear" id="graduationYearSelect">
+                                <option value="">@Resource2.ShowAll</option>
+                                @{
+                                    var GraduationYears = ViewBag.GraduationYears as List<int?>;
+                                }
+                                @if (GraduationYears != null && GraduationYears?.Count > 0)
+                                {
+                                    @foreach (var item in GraduationYears)
+                                    {
+                                        <option value="@item" selected="@(item == selectedGraduationYear ? "selected" : null)">
+                                            @item</option>
+                                    }
+                                }
+
+                                </select>
+                            </div>
+                        </div>
+                        <!-- Filter Action Buttons -->
+                        <div class="row p-0 mt-2">
+                            <div class="col d-flex justify-content-end gap-2 p-0">
+                                <button type="button" id="btnClearFilters" class="btn-cancel-search btn-sm btn">
+                                    <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                                </button>
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    <i class="ri-filter-line me-1"></i> @Resource1.Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#nationalitySelect').val(filters.selectedNationalityId);
+                $('#graduationYearSelect').val(filters.selectedGraduationYear);
+                $('#pageSizeSelect').val(filters.pageSize);
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#graduationYearSelect').val('');
+                $('#nationalitySelect').val('').trigger('change');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    selectedNationalityId: $('#nationalitySelect').val(),
+                    selectedGraduationYear: $('#graduationYearSelect').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var searchTerm = $('#searchTermInput').val();
+                var selectedNationalityId = $('#nationalitySelect').val();
+                var selectedGraduationYear = $('#graduationYearSelect').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/Engineer/Index',
+                    type: 'GET',
+                    data: { searchTerm, selectedNationalityId, selectedGraduationYear, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#recordsCount').text(newCountRecords);
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

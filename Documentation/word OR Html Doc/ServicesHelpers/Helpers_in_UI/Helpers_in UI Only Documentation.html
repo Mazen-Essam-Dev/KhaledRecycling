@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Helpers_in UI Only Documentation</title>
+    <link rel="stylesheet" href="../../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+</head>
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Helpers_in UI Only Documentation</h1>
+
+<h2>PaginatedList</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr>
+        <td>Generic pagination utility for efficient data handling in web applications with support for search, filtering, and pagination metadata.</td>
+    </tr>
+</table>
+
+<h3>Properties</h3>
+<table>
+    <tr><th>Property</th><th>Type</th><th>Description</th></tr>
+    <tr><td>Items</td><td>List&lt;T&gt;</td><td>Paginated items</td></tr>
+    <tr><td>PageIndex</td><td>int</td><td>Current page number</td></tr>
+    <tr><td>PageSize</td><td>int</td><td>Items per page</td></tr>
+    <tr><td>TotalPages</td><td>int</td><td>Total pages</td></tr>
+    <tr><td>Count</td><td>int</td><td>Items on current page</td></tr>
+    <tr><td>TotalCount</td><td>int</td><td>Total items across all pages</td></tr>
+    <tr><td>SearchTerm</td><td>string?</td><td>Search query</td></tr>
+    <tr><td>dateFrom</td><td>string?</td><td>Start date filter</td></tr>
+    <tr><td>dateTo</td><td>string?</td><td>End date filter</td></tr>
+    <tr><td>HasPreviousPage</td><td>bool</td><td>Indicates previous page exists</td></tr>
+    <tr><td>HasNextPage</td><td>bool</td><td>Indicates next page exists</td></tr>
+</table>
+
+<h3>Usage Example</h3>
+<table>
+    <tr><th>Example</th></tr>
+    <tr><td>
+<pre>
+var query = _context.Users.AsQueryable();
+var paginated = PaginatedList&lt;User&gt;.Create(query, pageIndex: 1, pageSize: 10);
+</pre>
+    </td></tr>
+</table>
+
+<h2>PermissionScanner</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Comprehensive permission management and role validation system for ASP.NET Core applications.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <tr><th>Method</th><th>Purpose</th></tr>
+    <tr><td>GetAllActionPermissions</td><td>Scans controllers to extract action permissions ("Controller.Action")</td></tr>
+    <tr><td>ValidatePermission</td><td>Checks if current user has permission for a given action</td></tr>
+    <tr><td>ValidateRoleNumber</td><td>Retrieves user's role number from session</td></tr>
+    <tr><td>CheckLoggedUserIfTrainer</td><td>Checks if logged-in user is associated with a trainer profile</td></tr>
+    <tr><td>CheckLoggedUserIfHasSignature</td><td>Checks if user has a digital signature</td></tr>
+</table>
+
+<h2>RadioButtonHelper</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Static helper to generate radio button lists from enums with localization support using DisplayAttribute.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <tr><th>Method</th><th>Purpose</th></tr>
+    <tr><td>GetDisplayName</td><td>Returns localized display name of an enum value</td></tr>
+    <tr><td>GetAllWithNames</td><td>Returns all enum values with IDs and names</td></tr>
+    <tr><td>GetRadioList</td><td>Generates SelectListItem collection for Razor radio buttons</td></tr>
+</table>
+
+<h2>RemoteAttributes</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Server-side validation for unique field constraints with EF and expression trees, supporting create/edit scenarios.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <tr><th>Method</th><th>Purpose</th></tr>
+    <tr><td>IsUnique&lt;T&gt;</td><td>Validates if property value is unique, excluding current entity when updating</td></tr>
+</table>
+
+<h2>SelectListHelper</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Generates SelectListItem collections from enums or entity lists with multi-language support and dynamic property mapping.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <tr><th>Method</th><th>Purpose</th></tr>
+    <tr><td>GetEnumSelectList</td><td>Creates enum-based SelectListItem collection</td></tr>
+    <tr><td>BindSelectList</td><td>Generates SelectList from entity list with language-aware text</td></tr>
+    <tr><td>BindSelectListIdString</td><td>String-based ID version of BindSelectList</td></tr>
+    <tr><td>BindSelectListWithDataFromUsers</td><td>Advanced dropdown joining entity and user data</td></tr>
+</table>
+
+<h2>SessionHelper</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr><td>Static utility for managing session data, focusing on language/culture settings and HTTP context access.</td></tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <tr><th>Method</th><th>Purpose</th></tr>
+    <tr><td>Configure</td><td>Initializes SessionHelper with IHttpContextAccessor</td></tr>
+    <tr><td>GetCurrentLanguage</td><td>Retrieves current language/culture from session, default "ar"</td></tr>
+</table>
+
+</main>
+
+<script defer src="../../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+</body>
+</html>

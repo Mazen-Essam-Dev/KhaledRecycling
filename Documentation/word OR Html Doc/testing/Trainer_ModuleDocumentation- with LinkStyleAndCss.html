@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing.css">
+  
+    <title>Trainer Management Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+
+<h1>Trainer Management Module Documentation</h1>
+
+<h2>TrainerController – Overview</h2>
+<p>
+ASP.NET Core Controller for managing trainers with user integration, department assignment,
+and comprehensive reporting capabilities.
+</p>
+
+<h3>Controller Configuration</h3>
+<table>
+    <tr>
+        <th>Setting</th>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td>Area</td>
+        <td>Admin</td>
+    </tr>
+    <tr>
+        <td>Authorization</td>
+        <td>AdminAuthorize</td>
+    </tr>
+    <tr>
+        <td>Dependencies</td>
+        <td>
+            ITrainerService<br>
+            IUnitOfWork<br>
+            IMapper
+        </td>
+    </tr>
+</table>
+
+<h2>Main CRUD Operations</h2>
+
+<h3>Index Action</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Main trainer listing with user integration</td>
+    </tr>
+    <tr>
+        <td>Data Structure</td>
+        <td>Join between Trainer and User entities</td>
+    </tr>
+    <tr>
+        <td>Search</td>
+        <td>Arabic/English trainer name, user-based filtering</td>
+    </tr>
+    <tr>
+        <td>Includes</td>
+        <td>Related Courses per trainer</td>
+    </tr>
+    <tr>
+        <td>UI Features</td>
+        <td>Pagination (50/page), AJAX partial views, department context</td>
+    </tr>
+</table>
+
+<h3>AddEdit (GET)</h3>
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Create or edit trainer form</td>
+    </tr>
+    <tr>
+        <td>User Selection</td>
+        <td>Dropdown excludes users already assigned as trainers</td>
+    </tr>
+    <tr>
+        <td>Department Assignment</td>
+        <td>Department dropdown population</td>
+    </tr>
+    <tr>
+        <td>Mode</td>
+        <td>Auto-detect create vs edit using ID</td>
+    </tr>
+</table>
+
+<h3>AddEdit (POST)</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Validation</td>
+        <td>ModelState validation with dropdown state retention</td>
+    </tr>
+    <tr>
+        <td>File Handling</td>
+        <td>PDF validation, max size 5MB</td>
+    </tr>
+    <tr>
+        <td>Redirect</td>
+        <td>Create → Index, Edit → same page</td>
+    </tr>
+</table>
+
+<h3>Delete</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Method</td>
+        <td>HTTP POST</td>
+    </tr>
+    <tr>
+        <td>Flow</td>
+        <td>Service deletion then redirect to Index</td>
+    </tr>
+</table>
+
+<h2>Reporting & Export Features</h2>
+
+<h3>Print</h3>
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Printer-friendly trainer list</td>
+    </tr>
+    <tr>
+        <td>Attribute</td>
+        <td>[IgnoreAction]</td>
+    </tr>
+    <tr>
+        <td>Behavior</td>
+        <td>Same search as Index without pagination</td>
+    </tr>
+</table>
+
+<h3>Excel Export</h3>
+<table>
+    <tr>
+        <th>Column</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Trainer Name</td>
+        <td>Localized Arabic / English</td>
+    </tr>
+    <tr>
+        <td>Phone</td>
+        <td>Trainer contact number</td>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td>User email / username</td>
+    </tr>
+    <tr>
+        <td>Department</td>
+        <td>Localized specialization</td>
+    </tr>
+</table>
+
+<h2>TrainerService – Core Operations</h2>
+
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>GetAllAsync()</td>
+        <td>Retrieve all trainers</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync(int)</td>
+        <td>Fetch trainer by ID</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync_byuserId(string)</td>
+        <td>Resolve trainer by Identity UserId</td>
+    </tr>
+</table>
+
+<h2>Trainer Entity</h2>
+
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Id</td>
+        <td>int</td>
+        <td>Primary key</td>
+    </tr>
+    <tr>
+        <td>DepartmentId</td>
+        <td>int</td>
+        <td>Department foreign key</td>
+    </tr>
+    <tr>
+        <td>UserId</td>
+        <td>string</td>
+        <td>Linked Identity user</td>
+    </tr>
+    <tr>
+        <td>Bio</td>
+        <td>string</td>
+        <td>Trainer biography</td>
+    </tr>
+    <tr>
+        <td>AttachmentPath</td>
+        <td>string</td>
+        <td>Certificates / documents</td>
+    </tr>
+</table>
+
+<h2>Trainer DTO – TrainersNameDTO</h2>
+
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Id</td>
+        <td>Trainer identifier</td>
+    </tr>
+    <tr>
+        <td>UserId</td>
+        <td>Associated user</td>
+    </tr>
+    <tr>
+        <td>FullNameAr</td>
+        <td>Arabic name</td>
+    </tr>
+    <tr>
+        <td>FullNameEn</td>
+        <td>English name</td>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td>Trainer email</td>
+    </tr>
+    <tr>
+        <td>PhoneNumber</td>
+        <td>Contact phone</td>
+    </tr>
+</table>
+
+<h2>Trainer ViewModels</h2>
+
+<table>
+    <tr>
+        <th>ViewModel</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>TrainerIndexVM</td>
+        <td>Main listing with pagination and departments</td>
+    </tr>
+    <tr>
+        <td>TrainerWithUserVM</td>
+        <td>Combines Trainer and User entities</td>
+    </tr>
+    <tr>
+        <td>TrainerVM</td>
+        <td>Create/Edit trainer with validation and uploads</td>
+    </tr>
+    <tr>
+        <td>TrainersNameVM</td>
+        <td>Lightweight selection model</td>
+    </tr>
+</table>
+
+<h2>Key System Benefits</h2>
+<div class="note">
+    • Strong Identity integration<br>
+    • Department-based specialization<br>
+    • Secure permission-driven UI<br>
+    • Print and Excel reporting<br>
+    • Scalable trainer–course relationships
+</div>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

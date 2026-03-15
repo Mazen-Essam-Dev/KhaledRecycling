@@ -1,0 +1,111 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Activity
+@using FougeraClub.Areas.Admin.ViewModels.Member
+@model MemberCoursesVM
+
+@{
+    ViewData["Title"] = Resource1.ParticipantsInActivity;
+    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.ParticipantsInActivity ?? " ";
+
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+
+<input type="hidden" id="NewCountRecords" value="@Model.Paginated.Count" />
+<input type="hidden" id="NewMemberId" value="@Model.memberId" />
+
+<!-- Page Size Selector -->
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.Paginated.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>@Resource2.StartDate</th>
+                <th>@Resource1.Department</th>
+                <th>@Resource2.Location</th>
+                <th>@Resource1.CourseTitle</th>
+                <th>@Resource2.Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Paginated != null && Model.Paginated.Items.Any())
+            {
+                @foreach (var course in Model.Paginated.Items)
+                {
+                    <tr>
+                        <td>@course.StartDate?.ToString("d")?.Replace("/","-")</td>
+                        <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? course?.Department?.NameAr : course?.Department?.NameEn)</td>
+                        <td>@course?.Location</td>
+                        <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? course?.TitleAr : course?.TitleEn)</td>
+                        <td class="text-center">
+
+                            <!-- View Course Details -->
+                            <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Details">
+                                <a href="" data-bs-toggle="modal"
+                                   data-bs-target="#showCourseModal"
+                                   data-course-id="@course.Id" class="btn show-course-btn btn-control btn-icon btn-sm rounded-circle">
+                                    <i class="fa-solid fa-eye fs-5"></i>
+                                </a>
+                            </span>
+
+                        </td>
+                    </tr>
+                }
+            }else
+            {
+                <tr>
+                    <td colspan="20" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoData</h5>
+                            <p class="mb-0">@Resource2.GoToCreatePage</p>
+                        </div>
+                    </td>
+                </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<div class="col-md-12">
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.Paginated.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.Paginated.PageIndex - 1)">
+                @Resource2.Previous
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.Paginated.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.Paginated.PageIndex ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.Paginated.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.Paginated.PageIndex + 1)">
+                @Resource2.Next
+            </a>
+        </li>
+    </ul>
+</nav>
+<div>

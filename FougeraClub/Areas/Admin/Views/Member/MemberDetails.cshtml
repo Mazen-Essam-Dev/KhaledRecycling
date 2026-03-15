@@ -1,0 +1,785 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Member
+@model MemberVM
+
+@{
+    ViewData["Title"] = @Resource2.MemberDetails ?? " ";
+    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.Members2 ?? " ";
+    ViewData["Title Single"] = @Resource2.MemberDetails ?? " ";
+}
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Member/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex align-items-center justify-content-end">
+            <a asp-area="Admin"
+               asp-controller="Member"
+               asp-action="PrintDetails"
+               asp-route-id="@Model?.Id"
+               target="_blank"
+               class="btn btn-success btn-sm">
+                <i class="fa fa-print me-1"></i> @Resource2.Print
+            </a>
+        </div>
+    </div>
+</div>
+<div class="card shadow-sm rounded-3 all-borders">
+    <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start">
+        <div class="flex-grow-1">
+            <div class="d-flex align-items-center gap-0">
+                <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                    <span class="fa fa-edit me-2 text-ico"></span>
+                    @ViewData["Title"]
+                </h4>
+            </div>
+        </div>
+        <div class="d-flex flex-column align-items-start gap-0">
+            <div>
+                <span class="small text-success">@Resource2.Code</span>
+                <span class="">
+                    @Model?.Code
+                </span>
+            </div>
+            <div>
+                <span class="small text-success">@Resource2.RegistrationDate</span>
+                <span class="">
+                    @Model?.RegistrationDate.ToString("dd MMM yyyy")
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class=" col-md-12 d-flex justify-content-center align-items-center flex-wrap mb-3 c-pro ">
+        <div class="d-flex align-items-center gap-3 position-relative mt-2 mb-1">
+            <div class="text-center">
+                @if (!string.IsNullOrEmpty(Model?.ProfileImage_TempFilePath))
+                {
+                    <div class="img-hover">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#profileImageModal">
+                            <i class="fas fa-eye icon-eye"></i>
+                            <img src="~/@Model?.ProfileImage_TempFilePath.Replace("wwwroot/", "")"
+                                 class="up-pic  object-fit-cover " alt="profile picture" id="preview" />
+                        </a>
+                    </div>
+                }
+                else if (!string.IsNullOrEmpty(Model?.ProfileImage_OldPath))
+                {
+                    <div class="img-hover">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#profileImageModal">
+                            <i class="fas fa-eye icon-eye"></i>
+                            <img src="~/@Model.ProfileImage_OldPath"
+                                 class="up-pic  object-fit-cover " alt="profile picture" id="preview" />
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-center align-items-center up-pic ">
+                        <i class="fa-solid fa-user text-muted"></i>
+                    </div>
+                }
+                <div class="hidden">
+                </div>
+                <span class="d-block mb-1 text-red fs-6"> @Resource3.MaximumImageSize3MB </span>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+    <form @* asp-action="AddEdit" method="post" enctype="multipart/form-data" *@>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input readonly asp-for="Id" hidden />
+            <input readonly asp-for="IdImage_TempFilePath" hidden />
+            <input readonly asp-for="Passport_TempFilePath" hidden />
+            <input readonly asp-for="ProfileImage_TempFilePath" hidden />
+            <input readonly asp-for="IdImage_OldPath" hidden />
+            <input readonly asp-for="Passport_OldPath" hidden />
+            <input readonly asp-for="ProfileImage_OldPath" hidden />
+            <input readonly asp-for="Code" hidden type="number" class="form-control" placeholder="@Resource2.Code" />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="text-left sec-title">
+                    <div class="lg-title">
+                        <h1>@Resource1.BasicData</h1>
+                    </div>
+                    <div class="title-sep-left"></div>
+                    <div class="title-sep-sm-left"></div>
+                </div>
+            </div>
+            </div>
+            <div class="c-edit-form mb-3">
+            <div class="row g-3 ">
+            <div class="col-md-3">
+                        <label asp-for="FullNameAr" class="form-label ">@Resource1.MemberNameAr</label>
+                        <input asp-for="FullNameAr" readonly class="form-control " placeholder="@Resource1.MemberNameAr" />
+                <span asp-validation-for="FullNameAr" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                    <label asp-for="FullNameEn" class="form-label ">@Resource1.MemberNameEn</label>
+
+                        <input asp-for="FullNameEn" readonly class="form-control " placeholder="@Resource1.MemberNameEn" />
+                <span asp-validation-for="FullNameEn" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="NationalityId" class="form-label">@Resource2.Nationality</label>
+                <select asp-for="NationalityId" disabled class="form-select" asp-items="Model?.NationalitiesList">
+                    <option value="">  @Resource1.NoExist  </option>
+                </select>
+                <span asp-validation-for="NationalityId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label d-block">@Resource2.Gender</label>
+                @foreach (var item in Html.GetEnumSelectList<Gender>() ?? Enumerable.Empty<SelectListItem>())
+                {
+                    if (Model?.GenderId?.ToString() == item.Value)
+                    {           
+                    var isChecked = Model?.GenderId?.ToString() == item.Value ? "checked" : "";
+                    <div class="form-check form-check-inline mt-1">
+                                <input class="form-check-input" type="radio" readonly disabled
+                               name="GenderId"
+                               id="gender_@item.Value"
+                               value="@item.Value"
+                               @(isChecked) />
+
+                        <label class="form-check-label" for="gender_@item.Value">@item.Text</label>
+                    </div>
+                    }
+                }
+                <span asp-validation-for="GenderId" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label d-block">@Resource2.Type</label>
+                @foreach (var item in Html.GetEnumSelectList<MemberTypeEnum>() ?? Enumerable.Empty<SelectListItem>())
+                {
+                    if (Model?.MemberTypeId?.ToString() == item.Value)
+                    {
+                        var isChecked = Model?.MemberTypeId?.ToString() == item.Value ? "checked" : "";
+                        <div class="form-check form-check-inline mt-1">
+                        <input class="form-check-input" type="radio" readonly disabled
+                                name="MemberTypeId"
+                                        id="MemberType_@item.Value"
+                                value="@item.Value"
+                                @(isChecked) />
+
+                                <label class="form-check-label" for="MemberType_@item.Value">@item.Text</label>
+                        </div>
+                    }
+                }
+                    <span asp-validation-for="MemberTypeId" class="text-danger small"></span>
+            </div>
+                    <div class="col-md-3 filter-dropdown">
+                <label asp-for="DateOfBirth" class="form-label ">@Resource2.DateOfBirth</label>
+                  <div class="input-icon-left">
+                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                            <input asp-for="DateOfBirth" readonly type="date" class="form-control green-border form-control-sm filter-bordered" id="DateOfBirth" placeholder="@Resource2.DateOfBirth" max="@AppDubaiTime.Now.AddDays(-1).ToString("d")?.Replace("/","-")" />
+                   </div>
+                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="Age" class="form-label ">@Resource2.Age</label>
+                <input asp-for="Age" readonly type="number" class="form-control " id="Age" placeholder="@Resource2.Age" />
+                <span asp-validation-for="Age" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-3" id="fatherPhoneWrapper" style="display: none;">
+                <label asp-for="FatherPhone" class="form-label "> @Resource2.FatherPhone</label>
+
+                        <input asp-for="FatherPhone" readonly class="form-control" inputmode="numeric" pattern="\d*" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="@Resource1.PhonePlaceholder_10" />
+                <span asp-validation-for="FatherPhone" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-3" id="motherPhoneWrapper" style="display: none;">
+                <label asp-for="MotherPhone" class="form-label ">@Resource2.MotherPhone</label>
+
+                        <input asp-for="MotherPhone" readonly class="form-control" inputmode="numeric" pattern="\d*" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="@Resource1.PhonePlaceholder_10" />
+                <span asp-validation-for="MotherPhone" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="PhoneNumber" class="form-label ">@Resource1.PhoneNumber</label>
+                        <input asp-for="PhoneNumber" readonly class="form-control" inputmode="numeric" pattern="\d*" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="@Resource1.PhonePlaceholder_10" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label asp-for="CityId" class="form-label">@Resource2.City</label>
+                <select asp-for="CityId" disabled class="form-select" asp-items="Model?.CitiesList">
+                    <option value=""> @Resource1.NoExist </option>
+                </select>
+                <span asp-validation-for="CityId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label d-block">@Resource2.Profession</label>
+                @foreach (var item in Html.GetEnumSelectList<Profession>() ?? Enumerable.Empty<SelectListItem>())
+                {
+                    if (Model?.ProfessionId?.ToString() == item.Value)
+                    {
+                        <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="ProfessionId" id="profession_@item.Value" readonly disabled
+                               value="@item.Value" @(Model.ProfessionId?.ToString() == item.Value ? "checked" : "") />
+                            <label class="form-check-label" for="profession_@item.Value">@item.Text</label>
+                        </div>
+                    }
+                }
+                <span asp-validation-for="ProfessionId" class="text-danger small"></span>
+            </div>
+            <div class="col-md-9" id="guardianProfessionWrapper" style="display: none;">
+                    <label asp-for="GuardianProfession" class="form-label">@Resource1.FatherProfession</label>
+
+                        <input readonly asp-for="GuardianProfession" class="form-control " id="GuardianProfession" placeholder="@Resource1.FatherProfession" />
+                <span asp-validation-for="GuardianProfession" class="text-danger small"></span>
+            </div>
+            <!-- Profession (User Job) — shown only if first option is selected -->
+            <div class="col-md-9" id="professionWrapper" style="display: none;">
+                    <label asp-for="Profession" class="form-label">@Resource2.Profession</label>
+
+                        <input readonly asp-for="Profession" class="form-control" id="Profession" placeholder="@Resource2.Profession" />
+                <span asp-validation-for="Profession" class="text-danger small"></span>
+            </div>
+            <div class="col-md-12">
+                <label asp-for="Address" class="form-label">@Resource2.Address</label>
+                <textarea readonly asp-for="Address" class="form-control" placeholder="@Resource2.Address" rows="3"></textarea>
+                <span asp-validation-for="Address" class="text-danger small"></span>
+            </div>
+        </div>
+            </div>
+
+
+
+
+        <div class="row g-3">
+      <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource2.IdInfo</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+
+                </div>
+            </div>
+
+                <div class="c-edit-form mb-3">
+                    <div class="row g-3">
+
+            <div class="col-md-6">
+                <label asp-for="IdNumber" class="form-label ">@Resource1.IdNumber1</label>
+                <input readonly asp-for="IdNumber" class="form-control " placeholder="@Resource1.IdNumber1" />
+                <span asp-validation-for="IdNumber" class="text-danger small"></span>
+            </div>
+
+                    <div class="col-md-6 filter-dropdown">
+                <label asp-for="IdExpiryDate" class="form-label ">@Resource2.IdExpiryDate</label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                            <input readonly asp-for="IdExpiryDate" type="date" class="form-control green-border form-control-sm filter-bordered valid" placeholder="@Resource2.IdExpiryDate" />
+                        </div>
+                <span asp-validation-for="IdExpiryDate" class="text-danger small"></span>
+            </div>
+ </div>
+ </div>
+
+
+
+
+
+
+
+
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource2.Qualifications</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+
+            <div class="col-md-6">
+                <label asp-for="AcademicQualification" class="form-label ">@Resource2.AcademicQualification</label>
+                        <input readonly asp-for="AcademicQualification" class="form-control" placeholder="@Resource2.AcademicQualification" />
+                <span asp-validation-for="AcademicQualification" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="EducationInstitution" class="form-label ">@Resource2.EducationInstitution</label>
+                <input readonly asp-for="EducationInstitution" class="form-control" placeholder="@Resource2.EducationInstitution" />
+                <span asp-validation-for="EducationInstitution" class="text-danger small"></span>
+            </div>
+
+
+            <div class="col-md-6">
+                <label asp-for="Hobby" class="form-label">@Resource2.Hobby</label>
+                        <textarea readonly asp-for="Hobby" class="form-control" placeholder="@Resource2.Hobby" rows="3"></textarea>
+                <span asp-validation-for="Hobby" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Languages" class="form-label">@Resource2.LanguagesYouSpeak</label>
+                        <textarea readonly asp-for="Languages" class="form-control" placeholder="@Resource2.Languages" rows="3"></textarea>
+                <span asp-validation-for="Languages" class="text-danger small"></span>
+            </div>
+        </div>
+            </div>
+
+
+
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource2.SocialMedia</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+
+            <div class="col-md-4">
+                <label asp-for="Facebook" class="form-label">@Resource2.Facebook</label>
+                        <input readonly asp-for="Facebook" class="form-control" placeholder="@Resource2.Facebook" />
+                <span asp-validation-for="Facebook" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Xplatform" class="form-label">@Resource2.Xplatform</label>
+                        <input readonly asp-for="Xplatform" class="form-control" placeholder="@Resource2.Xplatform" />
+                <span asp-validation-for="Xplatform" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label asp-for="Instagram" class="form-label">@Resource2.Instagram</label>
+                        <input readonly asp-for="Instagram" class="form-control" placeholder="@Resource2.Instagram" />
+                <span asp-validation-for="Instagram" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label d-block">@Resource2.HeardBy</label>
+                @foreach (var item in Html.GetEnumSelectList<HeardBySources>() ?? Enumerable.Empty<SelectListItem>())
+                {
+                    if (Model?.HeardBy?.ToString() == item.Value)
+                    {
+                        <div class="form-check form-check-inline">
+                            <input readonly class="form-check-input" type="radio" name="HeardBy" id="heardby_@item.Value" disabled
+                            value="@item.Value" @(Model.HeardBy?.ToString() == item.Value ? "checked" : "") />
+                            <label class="form-check-label text-black fw-normal" for="heardby_@item.Value">@item.Text</label>
+                        </div>
+                    }
+                }
+
+                <span asp-validation-for="HeardBy" class="text-danger small"></span>
+                <!-- Hidden input to submit the selected GenderId value -->
+                        <input type="hidden" readonly asp-for="HeardBy" value="@Model?.HeardBy" />
+
+            </div>
+
+            <div class="col-md-8">
+                        <input type="hidden" readonly name="License" id="LicenseHidden" value="false" />
+
+                        <div class="form-check form-check-inline mt-3">
+                    <!-- Checkbox shown to the user -->
+                            <input class="form-check-input" type="checkbox" readonly disabled
+                           id="License"
+                           value="true"
+                           @(Model.License.Value ? "checked" : "") />
+
+                            <label class="form-check-label text-black fw-normal" for="License">
+                        @Resource2.LicensePhotographSocialMedia
+                    </label>
+                </div>
+
+                <span asp-validation-for="License" class="text-danger small d-block"></span>
+            </div>
+        </div>
+            </div>
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource2.LoginData</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+            <div class="col-md-12">
+                <label asp-for="Email" class="form-label">@Resource2.Email</label>
+                        <input asp-for="Email" readonly class="form-control" placeholder="@Resource2.Email" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            @* <div class="col-md-6">
+                <div class="position-relative">
+                            <label asp-for="Password" class="form-label">@Resource2.NewPassword &nbsp;&nbsp;  <span class="text-danger small fs-6"> ( @Resource1.PasswordShouldBe3 )</span>  </label>
+                    <div class="input-group">
+                                <input asp-for="Password" readonly class="form-control" type="password" id="Password" />
+                                <button type="button" class="btn btn-outline-primary"
+                                onclick="togglePassword('Password', this)">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="position-relative">
+                    <label asp-for="ConfirmPassword" class="form-label">@Resource2.ConfirmNewPassword</label>
+
+                    <div class="input-group">
+                                <input asp-for="ConfirmPassword" readonly class="form-control" type="password" id="ConfirmPassword" />
+                                <button type="button" class="btn btn-outline-primary"
+                                onclick="togglePassword('ConfirmPassword', this)">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+            </div> *@
+                </div>
+            </div>
+
+
+
+
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource2.AttachedFiles</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+            <!-- Profile Image Section -->
+            <div class="col-md-4 d-none ">
+                <div class="mb-3">
+                    <div class="input-group mb-3  d-flex align-items-center">
+                                <input readonly asp-for="ProfileImage" type="file" class="form-control rounded-2 d-none" accept=".jpg,.jpeg,.png">
+
+                    </div>
+                    <div>
+                        <span class="d-inline-block mb-1 text-red"> @Resource3.MaximumImageSize3MB </span>
+                    </div>
+                    <span asp-validation-for="ProfileImage" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <!-- ID Image Section -->
+            <div class="col-md-6 ">
+                <div class="mb-3">
+
+                    @* <div class="input-group mb-3  d-flex align-items-center">
+                        <input readonly asp-for="IdImage" type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png">
+                        <label asp-for="IdImage" class="upload-file-rtl upload-file-ltr rounded-2 upload-file-hover"><i class="fa-solid fa-upload fa-xl"></i></label>
+                    </div> *@
+
+                    @if (!string.IsNullOrEmpty(Model?.IdImage_OldPath) || !string.IsNullOrEmpty(Model?.IdImage_TempFilePath))
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#idImageModal" class="eye-ii d-flex justify-content-start align-items-center gap-1">
+                            <i class="fa fa-eye"></i>
+                                <span class="text-black">
+                                @Resource2.IdImage
+                            </span>
+                        </a>
+                    }
+                    <div>
+                        <span class="d-inline-block mb-1 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                    </div>
+                    <span asp-validation-for="IdImage" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <!-- Passport Image Section -->
+            <div class="col-md-6">
+                <div class="mb-3">
+
+                    @* <div class="input-group mb-3  d-flex align-items-center">
+                         <input asp-for="PassportImage" type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png"> 
+                        <label asp-for="PassportImage" class="upload-file-rtl upload-file-ltr rounded-2 upload-file-hover"><i class="fa-solid fa-upload fa-xl"></i></label>
+                    </div> *@
+
+                    @if (!string.IsNullOrEmpty(Model?.Passport_OldPath) || !string.IsNullOrEmpty(Model?.Passport_TempFilePath))
+                    {
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#passportImageModal" class="eye-ii d-flex justify-content-start align-items-center gap-1">
+                            <i class="fa fa-eye"></i>
+                            <span class="text-black">
+                                @Resource2.PassportImage
+                            </span>
+                        </a>
+                    }
+
+                    <div>
+                        <span class="d-inline-block mb-1 text-red"> @Resource3.MaximumImageSize3MB </span>
+                    </div>
+                    <span asp-validation-for="PassportImage" class="text-danger small"></span>
+                </div>
+            </div>
+
+                    @if (!string.IsNullOrEmpty(Model?.ProfileImage_TempFilePath))
+                    {
+                        <div class="modal fade" id="profileImageModal" tabindex="-1" aria-labelledby="profileImageLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@Resource2.ProfileImage</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close1"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.ProfileImage_TempFilePath.Replace("wwwroot/", "")" class="img-fluid" alt="@Resource1.Photo" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (!string.IsNullOrEmpty(Model?.ProfileImage_OldPath))
+                    {
+                        <div class="modal fade" id="profileImageModal" tabindex="-1" aria-labelledby="profileImageLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@Resource2.ProfileImage</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close1"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.ProfileImage_OldPath" class="img-fluid" alt="@Resource1.Photo" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (!string.IsNullOrEmpty(Model?.IdImage_TempFilePath))
+                    {
+                        <div class="modal fade" id="idImageModal" tabindex="-1" aria-labelledby="idImageLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@Resource2.IdImage</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close1"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.IdImage_TempFilePath.Replace("wwwroot/", "")" class="img-fluid" alt="@Resource1.photo_identification_ID" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    }
+                    else if (!string.IsNullOrEmpty(Model?.IdImage_OldPath))
+                    {
+                        <div class="modal fade" id="idImageModal" tabindex="-1" aria-labelledby="idImageLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@Resource2.IdImage</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close1"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.IdImage_OldPath" class="img-fluid" alt="@Resource1.photo_identification_ID" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+
+                    @if (!string.IsNullOrEmpty(Model?.Passport_TempFilePath))
+                    {
+                        <div class="modal fade" id="passportImageModal" tabindex="-1" aria-labelledby="passportImageLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@Resource2.PassportImage</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close1"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.Passport_TempFilePath.Replace("wwwroot/", "")" class="img-fluid" alt="@Resource1.passport_picture" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(Model?.Passport_OldPath))
+                    {
+                        <div class="modal fade" id="passportImageModal" tabindex="-1" aria-labelledby="passportImageLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@Resource2.PassportImage</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close1"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="~/@Model.Passport_OldPath" class="img-fluid" alt="@Resource1.passport_picture" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                </div>
+            </div>
+    </form>
+    </div>
+</div>
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+          function togglePassword(inputId, button) {
+            const input = document.getElementById(inputId);
+            const icon = button.querySelector('i');
+
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+          document.addEventListener("DOMContentLoaded", function () {
+              const dobInput = document.getElementById("DateOfBirth");
+              const ageInput = document.getElementById("Age");
+
+              const fatherWrapper = document.getElementById("fatherPhoneWrapper");
+              const motherWrapper = document.getElementById("motherPhoneWrapper");
+              const fatherPhone = document.getElementById("FatherPhone");
+              const motherPhone = document.getElementById("MotherPhone");
+
+              function calculateAge() {
+                  const dob = new Date(dobInput.value);
+                  if (!isNaN(dob)) {
+                      const today = new Date();
+                      let age = today.getFullYear() - dob.getFullYear();
+                      const m = today.getMonth() - dob.getMonth();
+                      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                          age--;
+                      }
+
+                      ageInput.value = age;
+
+                      // Show/hide Father and Mother phone inputs based on age
+                      const showGuardianFields = age < 18;
+                      fatherWrapper.style.display = showGuardianFields ? "block" : "none";
+                      motherWrapper.style.display = showGuardianFields ? "block" : "none";
+                      fatherPhone.disabled = !showGuardianFields;
+                      motherPhone.disabled = !showGuardianFields;
+
+                      if (!showGuardianFields) {
+                          fatherPhone.value = "";
+                          motherPhone.value = "";
+                      }
+                  } else {
+                      ageInput.value = '';
+                      fatherWrapper.style.display = "none";
+                      motherWrapper.style.display = "none";
+                      fatherPhone.disabled = true;
+                      motherPhone.disabled = true;
+                      fatherPhone.value = "";
+                      motherPhone.value = "";
+                  }
+              }
+
+              dobInput.addEventListener("change", calculateAge);
+              calculateAge(); // Initial run
+          });
+
+          document.addEventListener("DOMContentLoaded", function () {
+              const professionRadios = document.querySelectorAll('input[name="ProfessionId"]');
+              const professionWrapper = document.getElementById("professionWrapper");
+              const guardianProfessionWrapper = document.getElementById("guardianProfessionWrapper");
+              const professionInput = document.getElementById("Profession");
+              const guardianProfessionInput = document.getElementById("GuardianProfession");
+
+              function toggleProfessionInputs() {
+                  const selected = document.querySelector('input[name="ProfessionId"]:checked');
+                  if (selected) {
+                    if (selected.value === professionRadios[0].value ||  selected.value === professionRadios[3].value) {
+                          professionWrapper.style.display = "block";
+                          guardianProfessionWrapper.style.display = "none";
+                          guardianProfessionInput.value = "";
+                      
+                    }else if (selected.value === professionRadios[1].value ) {
+                        professionWrapper.style.display = "none";
+                        guardianProfessionWrapper.style.display = "block";
+                        professionInput.value = "";
+                    }else {
+                          professionWrapper.style.display = "none";
+                          guardianProfessionWrapper.style.display = "none";
+                          professionInput.value = "";
+                          guardianProfessionInput.value = "";                      }
+                  }
+              }
+
+              professionRadios.forEach(radio => {
+                  radio.addEventListener("change", toggleProfessionInputs);
+              });
+
+              toggleProfessionInputs(); // Initial run
+          });
+
+        // ===================================================================
+              const ProfileImage = document.getElementById('ProfileImage');
+          const preview = document.getElementById('preview');
+
+
+            ProfileImage.addEventListener('change', function() {
+              const file = this.files[0];
+              if (file) {
+                  const reader = new FileReader();
+                  reader.onload = function(event) {
+                      preview.src = event.target.result;
+                      preview.style.display = 'block';
+
+                  }
+                  reader.readAsDataURL(file);
+              } else {
+                  preview.src = '';
+                  preview.style.display = 'none';
+
+              }
+          });
+
+    </script>
+}

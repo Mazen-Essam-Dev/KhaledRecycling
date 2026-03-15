@@ -1,0 +1,104 @@
+﻿@using Domain.Resources
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:58:21 GMT -->
+<head>
+    <meta charset="utf-8" />
+    <title>@Resource2.FougeraClubManagementSystem</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Vendor css -->
+    <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/index.css" rel="stylesheet" />
+    
+    <!-- App css -->
+    @{
+        var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
+    }
+    @if (lang == "ar")
+    {
+        @* <link href="~/assets/css/app-rtl.min.css" rel="stylesheet" type="text/css" id="app-style" /> *@
+        <link href="~/ar/assets/css/bootstrap.rtl.min.css" rel="stylesheet" />
+        <link href="~/ar/assets/css/index-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        @* <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" /> *@
+        <link href="~/en/assets/css/bootstrap.rtl.min.css" rel="stylesheet" />
+        <link href="~/en/assets/css/index-ltr.css" rel="stylesheet" />
+    }
+
+    <!-- Icons css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/config.js"></script>
+</head>
+
+<body>
+    @* navbar *@
+
+    <nav class="custom-navbar">
+        <!-- Left Section (Toggle + Brand) -->
+        <div class="navbar-left">
+            <a class="navbar-brand" href="/Admin/Home/Index">
+                <img src="~/ar/assets/images/logo-ar.png" alt="Logo" />
+            </a>
+            <h4 class="navbar-title">@Resource2.FougeraClub</h4>
+        </div>
+
+      
+    </nav>
+
+    <div class="dashboard">
+
+        <div class=" content page-content">
+            <div class="page-container">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <footer class="py-1 border-top bg-white shadow-sm mt-3">
+        <div class="container-fluid">
+            <div class="row align-items-center" dir="ltr">
+                <!-- Left-aligned copyright -->
+                <div class="col text-end text-muted d-none d-md-block d-lg-block">
+                    <small style="font-size: 0.75rem;">
+                        © @AppDubaiTime.Now.Year Smart Vision IT Solutions - All rights reserved.
+                    </small>
+                </div>
+
+                <!-- Right-aligned logo -->
+                <div class="col-auto ms-auto d-flex align-items-center gap-2">
+                    <small class="text-muted" style="font-size: 0.75rem;">Powered by</small>
+                    <img src="~/ar/assets/images/foter-logo-co.png" alt="logo" class="footer-logo">
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+
+    <!-- Vendor js -->
+    <script src="~/assets/js/vendor.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @* footer *@
+</body>
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:58:21 GMT -->
+</html>

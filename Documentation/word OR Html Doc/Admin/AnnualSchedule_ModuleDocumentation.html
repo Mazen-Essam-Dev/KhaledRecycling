@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+   <title>Annual Schedule Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Annual Schedule Documentation</h1>
+
+<!-- ENTITY TABLE -->
+<h2>AnnualSchedule Entity - Field Breakdown</h2>
+<table>
+    <caption>AnnualSchedule Fields</caption>
+    <tr>
+        <th>Field Name</th>
+        <th>Type</th>
+        <th>Meaning</th>
+        <th>Notes</th>
+    </tr>
+    <tr><td>Id</td><td>int</td><td>Unique identifier</td><td>Primary key</td></tr>
+    <tr><td>Item</td><td>string (max 200)</td><td>The title or name of the schedule entry</td><td>Example: "Training Programs", "Community Events"</td></tr>
+    <tr><td>Statement</td><td>string (max 1000)</td><td>Description or explanation of the item</td><td>Used to clarify purpose or context</td></tr>
+    <tr><td>Previous</td><td>decimal?</td><td>Value from the previous year</td><td>Used to compare changes over time</td></tr>
+    <tr><td>Current</td><td>decimal?</td><td>Value from the current year</td><td>Represents present performance</td></tr>
+    <tr><td>Record</td><td>decimal?</td><td>Actual recorded / achieved value</td><td>Could be the result after execution or evaluation</td></tr>
+    <tr><td>Status</td><td>string (max 200)</td><td>General state or evaluation of the item</td><td>Example: "Completed", "In Progress", "Pending"</td></tr>
+    <tr><td>Day</td><td>DateTime?</td><td>Date associated with the record</td><td>Used when tied to a specific event date</td></tr>
+    <tr><td>year</td><td>string (max 200)</td><td>The year the schedule applies to</td><td>Example: "2024" or "2024/2025"</td></tr>
+</table>
+
+<!-- ENTITY EXAMPLE -->
+<h2>Common Interpretation Example</h2>
+<table>
+    <caption>Performance Comparison</caption>
+    <tr>
+        <th>Item</th>
+        <th>Previous</th>
+        <th>Current</th>
+        <th>Record</th>
+        <th>Status</th>
+    </tr>
+    <tr><td>Training Courses</td><td>25</td><td>30</td><td>32</td><td>Completed</td></tr>
+    <tr><td>Community Volunteer Events</td><td>12</td><td>14</td><td>10</td><td>In Progress</td></tr>
+</table>
+
+<!-- VIEWMODEL TABLE -->
+<h2>AnnualScheduleVM - ViewModel Fields</h2>
+<table>
+    <caption>AnnualScheduleVM Properties</caption>
+    <tr>
+        <th>Property</th>
+        <th>Meaning</th>
+        <th>User Input</th>
+        <th>Validation Applied</th>
+    </tr>
+    <tr><td>Id</td><td>Unique identifier (edit/update)</td><td>No</td><td>None</td></tr>
+    <tr><td>Item</td><td>Schedule entry title</td><td>Yes</td><td>Required, Max length = 200</td></tr>
+    <tr><td>Statement</td><td>Description/clarification</td><td>Yes</td><td>Required, Max length = 1000</td></tr>
+    <tr><td>Previous</td><td>Previous year value</td><td>Yes</td><td>Required, Numeric</td></tr>
+    <tr><td>Current</td><td>Current year value</td><td>Yes</td><td>Required, Numeric</td></tr>
+    <tr><td>Record</td><td>Final outcome</td><td>Yes</td><td>Required, Numeric</td></tr>
+    <tr><td>Status</td><td>Overall state</td><td>Yes</td><td>Required, Max length = 200</td></tr>
+    <tr><td>Day</td><td>Date of the record</td><td>Yes</td><td>Required, Date format</td></tr>
+    <tr><td>year</td><td>Associated year</td><td>Optional</td><td>Max length = 200</td></tr>
+</table>
+
+<h2>AnnualScheduleVM Example (Arabic)</h2>
+<table>
+    <caption>Example Interpretation</caption>
+    <tr>
+        <th>البند (Item)</th>
+        <th>السابق (Previous)</th>
+        <th>الحالي (Current)</th>
+        <th>السجل (Record)</th>
+        <th>الحالة (Status)</th>
+    </tr>
+    <tr><td>الأنشطة التطوعية</td><td>12</td><td>14</td><td>16</td><td>مكتمل</td></tr>
+    <tr><td>الدورات التدريبية</td><td>20</td><td>22</td><td>19</td><td>قيد التنفيذ</td></tr>
+</table>
+
+<!-- CONTROLLER TABLE -->
+<h2>AnnualScheduleController - Actions</h2>
+<table>
+    <caption>Controller Action Methods</caption>
+    <tr>
+        <th>Action</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Features / Notes</th>
+    </tr>
+    <tr><td>Index</td><td>Main listing page</td><td>searchTerm, selectedYear, pagination</td><td>Year filter, search, pagination, AJAX partial view support</td></tr>
+    <tr><td>AddEdit (GET)</td><td>Display form for create/edit</td><td>id (optional)</td><td>Localized day name display, maps entity to VM</td></tr>
+    <tr><td>AddEdit (POST)</td><td>Handle create/update</td><td>AnnualScheduleVM model</td><td>Model validation, year extraction, redirects after save</td></tr>
+    <tr><td>Details</td><td>Read-only view</td><td>id</td><td>Localized day name, ignores route for direct access</td></tr>
+    <tr><td>Delete</td><td>Remove record</td><td>id</td><td>HTTP POST, redirects to Index, safe deletion</td></tr>
+    <tr><td>Print</td><td>Printer-friendly list</td><td>Filters applied</td><td>Same filtering as Index, no pagination</td></tr>
+    <tr><td>createExcelReport_Download</td><td>Generate Excel report</td><td>Filters applied</td><td>Bilingual columns, timestamped file, error handling</td></tr>
+</table>
+
+<!-- SERVICE TABLE -->
+<h2>AnnualScheduleService - Methods</h2>
+<table>
+    <caption>Service Methods</caption>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Notes / Behavior</th>
+    </tr>
+    <tr><td>GetAllAsync</td><td>Retrieve all records</td><td>None</td><td>Returns IEnumerable&lt;AnnualSchedule&gt;, async/non-blocking</td></tr>
+    <tr><td>GetByIdAsync</td><td>Get specific record by ID</td><td>int id</td><td>Nullable return for not found, repository lookup</td></tr>
+    <tr><td>AddAsync</td><td>Add new record</td><td>AnnualSchedule entity</td><td>Saves entity, commits transaction, returns new ID</td></tr>
+    <tr><td>UpdateAsync</td><td>Update existing record</td><td>AnnualSchedule entity</td><td>Checks existence, updates values, commits changes</td></tr>
+    <tr><td>DeleteAsync</td><td>Delete record</td><td>int id</td><td>Checks existence, deletes, commits transaction safely</td></tr>
+    <tr><td>SaveImageAsync</td><td>Save uploaded image file</td><td>IFormFile file</td><td>Creates folder if missing, generates GUID filename, returns relative path</td></tr>
+    <tr><td>DeleteImageFile</td><td>Delete stored image file</td><td>string relativePath</td><td>Validates existence, deletes safely</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

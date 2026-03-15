@@ -1,0 +1,113 @@
+﻿@model MaintenanceClubVM
+@using Domain.Resources
+@using FougeraClub.Areas.Admin.ViewModels.MaintenanceClub
+@using Infrastructure.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    ViewData["Title"] = @Resource1.MaintenanceClub;
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet" />
+    <link href="~/assets/css/reportlayout.css" rel="stylesheet" />
+    <title>@ViewData["Title"]</title>
+</head>
+
+
+
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+            <div class="d-flex justify-content-between align-items-center flex-fill">
+                <div style="text-align:center">
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                    <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+                </div>
+            </div>
+            <div class="flex-fill text-center">
+                <center>
+                    <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+                </center>
+            </div>
+            <div class="d-flex justify-content-end align-items-center flex-fill">
+                <div style="text-align:center">
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                    <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+                </div>
+            </div>
+        </div>
+
+
+        <main class="mt-3 mb-3" dir="rtl">
+            <div class="report-content gx-3  ">
+                <div class="details">
+                    <div class="pt-3 pb-3 pe-5  d-flex flex-column ">
+                        <h5>@Resource1.MaintenanceTitle</h5>
+                        <span>@Model?.Title</span>
+                    </div>
+                </div>
+                <div class="  details">
+                    <div class="pt-3 pb-3 pe-5  d-flex flex-column ">
+                        <h5>@Resource1.MaintenanceDate</h5>
+                        <span>@Model?.Date?.ToString("d")?.Replace("/","-")</span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="report-content gx-3  ">
+                <div class="  details ">
+                    <div class="pt-3 pb-3 pe-5  d-flex flex-column ">
+                        <h5>@Resource1.MaintenanceTime</h5>
+                        <span>@Model?.Time</span>
+                    </div>
+                </div>
+                <div class="  details">
+                    <div class="pt-3 pb-3 pe-5  d-flex flex-column ">
+                        <h5>@Resource1.MaintenanceDescription</h5>
+                        <span>@Model?.Details</span>
+                    </div>
+                </div>
+            </div>
+
+
+        </main>
+    </div>
+
+    <div class="footer">
+        <p class="PrintedBy">Printed by : <span> @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+    </div>
+
+    <script>
+
+        // This Part Is Important
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+         // Close window after printing
+            window.onafterprint = function() {
+                setTimeout(function() {
+                    window.close();
+                }, 500);
+            };
+    </script>
+</body>
+
+</html>

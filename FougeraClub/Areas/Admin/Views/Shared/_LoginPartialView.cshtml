@@ -1,0 +1,593 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Infrastructure.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ApplicationUser user = null;
+    IList<string> roles = new List<string>();
+    string role = "User";
+    bool isRtl = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.IsRightToLeft;
+
+    if (SignInManager.IsSignedIn(User))
+    {
+        user = await UserManager.GetUserAsync(User);
+
+        if (user != null)
+        {
+            roles = await UserManager.GetRolesAsync(user);
+            role = roles.FirstOrDefault() ?? "User";
+        }
+    }
+}
+
+<style>
+    :root {
+        --primary-color: #47A644;
+        --primary-dark: #47A644;
+        --primary-light: #e8f5e9;
+        --primary-hover: #09b080;
+        --secondary-color: #6c757d;
+        --bg-color: #f5f5f5;
+        --text-color: #202020;
+        --text-light: #7f8c8d;
+        --border-color: #e0e0e0;
+        --hover-bg: rgba(46, 204, 113, 0.08);
+        --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        --radius: 12px;
+    }
+
+    [dir="rtl"] {
+        text-align: right;
+    }
+
+    [dir="ltr"] {
+        text-align: left;
+    }
+
+    .user-profile-dropdown {
+        position: relative;
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        margin-right: auto;
+       
+    }
+    .profile-toggle {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 5px 8px 15px;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+        .profile-toggle:hover {
+           
+        }
+
+    .avatar-container {
+        position: relative;
+        display: flex;
+    }
+
+    .profile-icon {
+        font-size: 1.1rem;
+        color: var(--primary-dark);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: var(--transition);
+    }
+
+    .profile-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: none;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .avatar-container.has-image .profile-avatar {
+        display: block;
+    }
+
+    .avatar-container.has-image .profile-icon {
+        display: none;
+    }
+
+    .online-indicator {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 12px;
+        height: 12px;
+        background-color: #800000;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+    }
+
+    [dir="rtl"] .online-indicator {
+        right: auto;
+        left: 0;
+    }
+
+    .profile-info {
+        line-height: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .username {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-color);
+    }
+
+    .user-role {
+        font-size: 12px;
+        color: var(--primary-dark);
+        text-transform: capitalize;
+    }
+
+    .dropdown-arrow {
+        border-right: var(--primary-dark);
+        transition: transform 0.3s ease;
+        color: var(--primary-dark);
+        font-size: 18px;
+    }
+    .profile-dropdown-menu {
+        width: 250px;
+        position: absolute;
+        top: 100%;
+        background: var(--bg-color);
+        -webkit-border-bottom-right-radius: 10px;
+        -webkit-border-bottom-left-radius: 10px;
+        -moz-border-radius-bottomright: 10px;
+        -moz-border-radius-bottomleft: 10px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+        box-shadow: var(--shadow);
+        padding:10px;
+        margin-top: 4px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(10px);
+        transition: var(--transition);
+        z-index: 1000;
+        overflow: hidden;
+        }
+    [dir="ltr"] .profile-dropdown-menu {
+        right: 10px;
+    }
+
+    [dir="rtl"] .profile-dropdown-menu {
+         left: 15px; 
+    }
+
+    .user-profile-dropdown.active .profile-dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        animation: fadeInUp 0.25s ease;
+    }
+
+    .user-profile-dropdown.active .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .dropdown-header {
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+       
+    }
+
+    .avatar-wrapper {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .large-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+    }
+
+    .avatar-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: var(--transition);
+        color: white;
+    }
+
+    .avatar-wrapper:hover .avatar-overlay {
+        opacity: 1;
+    }
+
+    .avatar-wrapper:hover .large-avatar {
+        transform: scale(1.05);
+    }
+
+    .dropdown-user-info {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .dropdown-username {
+        font-weight: 500;
+        font-size: 15px;
+        color: var(--text-color);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dropdown-useremail {
+        font-size: 13px;
+        color: var(--text-light);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .dropdown-item, .logout-btn {
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 14px;
+        transition: var(--transition);
+        cursor: pointer;
+        width: 100%;
+        box-sizing: border-box;
+        position: relative;
+        gap: 12px;
+    }
+
+    [dir="rtl"] .dropdown-item,
+    [dir="rtl"] .logout-btn {
+        flex-direction: row-reverse;
+    }
+
+    .dropdown-item:hover, .logout-btn:hover {
+        background: var(--hover-bg);
+        color: var(--primary-dark);
+        padding-left: 24px;
+        padding-right: 16px;
+    }
+
+    [dir="rtl"] .dropdown-item:hover,
+    [dir="rtl"] .logout-btn:hover {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .dropdown-icon {
+        font-size: 18px;
+        color: var(--primary-color);
+        flex-shrink: 0;
+    }
+
+    .dropdown-item span, .logout-btn span {
+        flex: 1;
+    }
+
+    .selected-indicator {
+        color: var(--primary-color);
+        font-size: 18px;
+        margin-left: auto;
+    }
+
+    [dir="rtl"] .selected-indicator {
+        margin-left: 0;
+        margin-right: auto;
+    }
+
+    .language-switcher .dropdown-item.active {
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        font-weight: 600;
+    }
+
+    .logout-form {
+        border-top: 1px solid #fff;
+        width: 100%;
+    }
+
+    .logout-btn {
+        background: none;
+        border: none;
+        text-align: inherit;
+        font: inherit;
+    }
+
+    /* Mobile Responsiveness */
+
+    @@media (max-width: 768px) {
+        .profile-dropdown-menu {
+            /* width: calc(100% - 40px); /* Account for the margin */ 
+            width:250px;
+            border-radius: var(--radius);
+            position: fixed;
+            top: 7%;  /*the past value auto*/
+            bottom: auto;
+            left: 20px; /* Added space on mobile */ 
+            border-bottom: none; 
+             border-left: none; 
+             border-right: none; 
+            transform: translateY(100%);
+             /* animation: slideUp 0.6s ease; */
+             max-height: 80vh; 
+            overflow-y: auto;
+            margin: 0;   /*Reset margin for mobile */
+           
+
+        }
+
+        [dir="rtl"] .profile-dropdown-menu {
+             right: auto; 
+        }
+
+        [dir="ltr"] .profile-dropdown-menu {
+            /* right: auto; */
+            left:auto;
+        }
+
+        .user-profile-dropdown.active .profile-dropdown-menu {
+            transform: translateY(0);
+        }
+
+        @@keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .profile-info {
+            display: none;
+        }
+
+        .profile-toggle {
+            padding: 8px;
+        }
+    }
+
+    /* Animation for avatar loading */
+    @@keyframes pulse {
+        @@0% {
+            opacity: 0.6;
+        }
+
+        @@50% {
+            opacity: 1;
+        }
+
+        @@100% {
+            opacity: 0.6;
+        }
+    }
+
+    .profile-avatar.loading {
+        animation: pulse 1.5s infinite;
+        background: #f0f0f0;
+    }
+</style>
+
+
+@if (user != null)
+{
+    <div class="user-profile-dropdown" dir="@(isRtl ? "rtl" : "ltr")">
+        <!-- Toggle -->
+        <div class="profile-toggle" id="userProfileDropdown">
+            <div class="avatar-container">
+                <img src="~/assets/images/default-user.jpg" alt="User Avatar"
+                     class="profile-avatar" data-user-id="@user.Id" />
+                <i class="ri-user-3-line profile-icon"></i>
+                @* <div class="online-indicator"></div> *@
+            </div>
+            <div class="profile-info">
+                <span class="username">@user.FullNameAr</span>
+                <span class="user-role">@role</span>
+            </div>
+            <i class="dropdown-arrow ri-arrow-down-s-line"></i>
+        </div>
+
+        <!-- Dropdown Menu -->
+        <div class="profile-dropdown-menu ">
+            <!-- Header -->
+            <div class="dropdown-header">
+                <div class="avatar-wrapper">
+                    <img src="~/assets/images/default-user.jpg"
+                         class="large-avatar profile-avatar" data-user-id="@user.Id" />
+                    <div class="avatar-overlay">
+                        <i class="ri-camera-line"></i>
+                    </div>
+                </div>
+                <div class="dropdown-user-info">
+                    <span class="dropdown-username">@user.UserName</span>
+                    @* <span class="dropdown-useremail">@user.Email</span> *@
+                </div>
+            </div>
+
+
+            <!-- Language Switch -->
+           <div class="language-switcher" style="display:none">
+                <a asp-controller="Home" asp-action="ChangeLanguage" asp-route-lang="ar" class="dropdown-item @(isRtl ? "active" : "")">
+                    <i class="ri-translate dropdown-icon"></i>
+                    <span>العربية</span>
+                    @if (isRtl)
+                    {
+                        <i class="ri-check-line selected-indicator"></i>
+                    }
+                </a>
+                @* <a asp-controller="Home" asp-action="ChangeLanguage" asp-route-lang="en" class="dropdown-item @(!isRtl ? "active" : "")">
+                    <i class="ri-translate dropdown-icon"></i>
+                    <span>English</span>
+                    @if (!isRtl)
+                    {
+                        <i class="ri-check-line selected-indicator"></i>
+                    }
+                </a> *@
+            </div>
+          
+                <a asp-area="Admin" asp-controller="Account" asp-action="AddEdit" asp-route-id="@user.Id" class="dropdown-item">
+                    <i class="ri-user-line dropdown-icon"></i>
+                    <span>@Domain.Resources.Resource1.MyData</span>
+                </a>
+            
+            
+            <!-- Logout -->
+            <form asp-area="Identity" asp-page="/Account/Logout" class="logout-form">
+                <button type="submit" class="logout-btn">
+                    <i class="ri-logout-box-r-line dropdown-icon"></i>
+                    <span>@Resource2.Logout</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+}
+else
+{
+    @* <p class="text-danger">User not found.</p> *@
+    <!-- Logout As User not found -->
+    <!-- Inside a page Logout as Partial it only appears there -->
+    <form asp-area="Identity"
+          asp-page="/Account/Logout"
+          method="post"
+          class="logout-form"
+          id="logoutForm"
+          asp-route-returnUrl="@Url.Action("Index","Home")">
+        <button type="submit" class="logout-btn" hidden>
+            <i class="ri-logout-box-r-line dropdown-icon"></i>
+            <span>@Resource2.Logout</span>
+        </button>
+    </form>
+
+    <script>
+        window.addEventListener('load', function () {
+           // If the code is inside the Layout, activate these two lines to restrict it to the/Account/Logout page only
+          // if (!location.pathname.toLowerCase().endsWith('/account/logout')) return;
+
+          const form = document.getElementById('logoutForm') || document.querySelector('form.logout-form');
+          if (!form) return;
+          // requestSubmit is better because it triggers submit events if they exist
+          if (form.requestSubmit) form.requestSubmit();
+          else form.submit();
+        });
+    </script>
+}
+
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const dropdown = document.querySelector('.user-profile-dropdown');
+        const toggle = document.querySelector('.profile-toggle');
+        const isRtl = document.querySelector('html').getAttribute('dir') === 'rtl';
+
+        // Toggle dropdown
+        if (toggle) {
+            toggle.addEventListener('click', function (e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('active');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function (e) {
+            if (dropdown.classList.contains('active') && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Load avatar dynamically
+        const profileAvatars = document.querySelectorAll('.profile-avatar[data-user-id]');
+
+         profileAvatars.forEach(profileAvatar => {
+            const avatarContainer = profileAvatar.closest('.avatar-container') ||
+                                  profileAvatar.closest('.dropdown-header');
+            const userId = profileAvatar.getAttribute('data-user-id');
+            const defaultImagePath = '~/assets/images/default-user.jpg';
+
+            // Add loading state
+            profileAvatar.classList.add('loading');
+
+            @* fetch(`/User/GetUserById?id=${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch user data');
+                    return response.json();
+                })
+                .then(user => {
+                    if (user.imagePath && user.imagePath !== defaultImagePath) {
+                        const img = new Image();
+                        img.onload = function() {
+                            profileAvatar.src = user.imagePath.startsWith('/') ?
+                                user.imagePath : '/' + user.imagePath;
+                            profileAvatar.classList.remove('loading');
+                            if (avatarContainer) avatarContainer.classList.add('has-image');
+                        };
+                        img.onerror = function() {
+                            profileAvatar.classList.remove('loading');
+                        };
+                        img.src = user.imagePath.startsWith('/') ?
+                            user.imagePath : '/' + user.imagePath;
+                    } else {
+                        profileAvatar.classList.remove('loading');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading profile image:', error);
+                    profileAvatar.classList.remove('loading');
+                }); *@
+        }); 
+
+        // Add click handler for avatar change (optional)
+        const avatarWrapper = document.querySelector('.avatar-wrapper');
+        if (avatarWrapper) {
+            avatarWrapper.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Avatar change functionality would go here');
+                // Implement avatar change logic
+            });
+        }
+    });
+</script>
+        

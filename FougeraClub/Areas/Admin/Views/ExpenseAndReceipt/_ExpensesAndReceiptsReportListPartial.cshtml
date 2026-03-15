@@ -1,0 +1,93 @@
+﻿
+@using FougeraClub.Areas.Admin.ViewModels.ExpenseAndReceipts
+@model ExpensesAndReceiptsReportVM
+
+@{
+    ViewData["Title"] = @Resource2.Expenses2 ?? " ";
+}
+<input type="hidden" id="NewCountRecords" value="@Model?.PaginatedExpensesAndReceipts?.Count" />
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            <option value="@s" selected="@(s == Model?.PaginatedExpensesAndReceipts?.PageSize)">@s</option>
+        }
+        <option value="@Model?.PaginatedExpensesAndReceipts?.Count" selected="@(Model?.PaginatedExpensesAndReceipts?.PageSize == Model?.PaginatedExpensesAndReceipts?.Count)">@Resource2.All</option>
+    </select>
+
+</nav>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th>@Resource2.Date</th>
+                <th>@Resource1.Description</th>
+                <th>@Resource1.DocumentAuthority</th>
+                <th>@Resource2.Deposit</th>
+                <th>@Resource2.Withdrawal</th>
+                <th>@Resource2.Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model == null || Model.PaginatedExpensesAndReceipts == null || !Model.PaginatedExpensesAndReceipts.Items.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoData</h5>
+                            <p class="mb-0">@Resource2.SelectYearAndMonthFirst</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            else
+                {
+                <tr class="bg-grey">
+                    <td></td>
+                    <th>@Resource2.BeginningBalance</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th>@(Model.BeginningBalance.ToString("F2"))</th>
+                </tr>
+                foreach (var item in Model.PaginatedExpensesAndReceipts.Items)
+                {
+                    <tr>
+                        <td>@item.Date.ToString("d")?.Replace("/","-")</td>
+                        <td>@item.Notes</td>
+                        <td>@item.SupplierName</td>
+                        <td>@(item.Deposit == 0 ? " " : item.Deposit.ToString("F2")) </td>
+                        <td>@(item.Withdrawal == 0 ? " " : item.Withdrawal.ToString("F2")) </td>
+                        <td>@(item.Balance == 0 ? " " : item.Balance.ToString("F2")) </td>
+                    </tr>
+                }
+                <tr class="bg-grey">
+                    <td></td>
+                    <th>@Resource2.EndingBalance</th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th>@(Model.EndingBalance.ToString("F2"))</th>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.PaginatedExpensesAndReceipts.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.PaginatedExpensesAndReceipts.PageIndex - 1)">@Resource2.Previous</a>
+        </li>
+        @for (int i = 1; i <= Model.PaginatedExpensesAndReceipts.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PaginatedExpensesAndReceipts.PageIndex ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.PaginatedExpensesAndReceipts.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.PaginatedExpensesAndReceipts.PageIndex + 1)">@Resource2.Next</a>
+        </li>
+    </ul>
+</nav>

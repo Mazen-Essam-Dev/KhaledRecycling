@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  <title>Account Member - Full Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Account Member - Full Module Documentation</h1>
+
+<!-- ===================================================== -->
+<h2>Account Controller – Overview</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Area</td>
+        <td>Member</td>
+    </tr>
+    <tr>
+        <td>Route</td>
+        <td>/Member/Account/[action]</td>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Handles authentication, registration, profile management, and document processing</td>
+    </tr>
+    <tr>
+        <td>Architecture</td>
+        <td>MVC with Service Layer abstraction</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Dependencies & Services</h2>
+
+<table>
+    <tr>
+        <th>Service</th>
+        <th>Responsibility</th>
+    </tr>
+    <tr>
+        <td>IAccountService</td>
+        <td>Registration, authentication, image handling</td>
+    </tr>
+    <tr>
+        <td>IUnitOfWork</td>
+        <td>Database transactions and repositories</td>
+    </tr>
+    <tr>
+        <td>IHttpContextAccessor</td>
+        <td>Session and HTTP context access</td>
+    </tr>
+    <tr>
+        <td>IMapper</td>
+        <td>DTO ↔ ViewModel ↔ Entity mapping</td>
+    </tr>
+    <tr>
+        <td>IMemberService</td>
+        <td>Member code generation and admin logic</td>
+    </tr>
+    <tr>
+        <td>IOCRService</td>
+        <td>OCR text extraction from ID images</td>
+    </tr>
+    <tr>
+        <td>IWebHostEnvironment</td>
+        <td>Path resolution and environment awareness</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Core Controller Methods</h2>
+
+<h3>IDClassification_Json</h3>
+<table>
+    <tr>
+        <th>Step</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>File Validation</td>
+        <td>Null and size validation</td>
+    </tr>
+    <tr>
+        <td>AI Classification</td>
+        <td>ML model identifies document type</td>
+    </tr>
+    <tr>
+        <td>Confidence Threshold</td>
+        <td>90% minimum required</td>
+    </tr>
+    <tr>
+        <td>OCR Processing</td>
+        <td>Extracts text using IOCRService</td>
+    </tr>
+    <tr>
+        <td>Cleanup</td>
+        <td>Deletes temporary files</td>
+    </tr>
+</table>
+
+<h3>Register</h3>
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Dropdown Setup</td>
+        <td>Gender, nationality, city, profession</td>
+    </tr>
+    <tr>
+        <td>Member Code</td>
+        <td>Generated automatically</td>
+    </tr>
+    <tr>
+        <td>Image Handling</td>
+        <td>Session-based temporary storage</td>
+    </tr>
+    <tr>
+        <td>Validation</td>
+        <td>Form + image validation</td>
+    </tr>
+    <tr>
+        <td>Auto Login</td>
+        <td>User logged in after successful registration</td>
+    </tr>
+</table>
+
+<h3>Login & Logout</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Implementation</th>
+    </tr>
+    <tr>
+        <td>Credential Validation</td>
+        <td>Email + password check</td>
+    </tr>
+    <tr>
+        <td>Account Status</td>
+        <td>Suspended accounts blocked</td>
+    </tr>
+    <tr>
+        <td>Session Token</td>
+        <td>GUID-based authentication token</td>
+    </tr>
+    <tr>
+        <td>Logout</td>
+        <td>Session cleared completely</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Account Service – Overview</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Namespace</td>
+        <td>Application.Services.Member</td>
+    </tr>
+    <tr>
+        <td>Implements</td>
+        <td>IAccountService</td>
+    </tr>
+    <tr>
+        <td>Pattern</td>
+        <td>Service + Repository + Session</td>
+    </tr>
+</table>
+
+<h3>Service Methods</h3>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>RegisterAsync</td>
+        <td>Validates and registers new members</td>
+    </tr>
+    <tr>
+        <td>ValidateUserAsync</td>
+        <td>Authenticates user credentials</td>
+    </tr>
+    <tr>
+        <td>GetMemberByEmailAsync</td>
+        <td>Fetch member for profile management</td>
+    </tr>
+    <tr>
+        <td>UpdateMemberAsync</td>
+        <td>Updates member data</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Member Entity – Core Fields</h2>
+
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Id</td>
+        <td>int</td>
+        <td>Primary key</td>
+    </tr>
+    <tr>
+        <td>Code</td>
+        <td>int?</td>
+        <td>Unique member code</td>
+    </tr>
+    <tr>
+        <td>FullNameAr</td>
+        <td>string</td>
+        <td>Arabic full name</td>
+    </tr>
+    <tr>
+        <td>FullNameEn</td>
+        <td>string</td>
+        <td>English full name</td>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td>string</td>
+        <td>Authentication email</td>
+    </tr>
+    <tr>
+        <td>Password</td>
+        <td>string</td>
+        <td>Hashed password</td>
+    </tr>
+    <tr>
+        <td>Suspended</td>
+        <td>bool</td>
+        <td>Account status</td>
+    </tr>
+</table>
+
+<h3>Image Fields</h3>
+<table>
+    <tr>
+        <th>Field</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>ProfileImagePath</td>
+        <td>Stored profile image path</td>
+    </tr>
+    <tr>
+        <td>IdImagePath</td>
+        <td>ID document image path</td>
+    </tr>
+    <tr>
+        <td>PassportImagePath</td>
+        <td>Passport image path</td>
+    </tr>
+</table>
+
+<h1>Member View Models & Views Documentation</h1>
+
+<!-- ===================================================== -->
+<h2>Member View Models – Overview</h2>
+
+<table>
+    <tr>
+        <th>ViewModel</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>MemberRegisterVM</td>
+        <td>New member registration with strict validation</td>
+    </tr>
+    <tr>
+        <td>MemberEditVM</td>
+        <td>Edit existing member profile</td>
+    </tr>
+    <tr>
+        <td>MemberVM</td>
+        <td>General member data representation</td>
+    </tr>
+    <tr>
+        <td>MemberLoginVM</td>
+        <td>Authentication model</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Common ViewModel Features</h2>
+
+<table>
+    <tr>
+        <th>Category</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>Identification</td>
+        <td>ID, Code, Arabic & English names</td>
+    </tr>
+    <tr>
+        <td>Contact</td>
+        <td>Phone numbers, email, address</td>
+    </tr>
+    <tr>
+        <td>Demographics</td>
+        <td>Nationality, gender, date of birth</td>
+    </tr>
+    <tr>
+        <td>Professional</td>
+        <td>Education, profession</td>
+    </tr>
+    <tr>
+        <td>Images</td>
+        <td>Profile, ID, passport images</td>
+    </tr>
+    <tr>
+        <td>Validation</td>
+        <td>IValidatableObject with business rules</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Validation Framework</h2>
+
+<table>
+    <tr>
+        <th>Validation Type</th>
+        <th>Implementation</th>
+    </tr>
+    <tr>
+        <td>Localization</td>
+        <td>Resource-based multilingual messages</td>
+    </tr>
+    <tr>
+        <td>Custom Attributes</td>
+        <td>LocalizedRequired, InThePast, NotInThePast</td>
+    </tr>
+    <tr>
+        <td>Regex Rules</td>
+        <td>Arabic/English names, ID number format</td>
+    </tr>
+    <tr>
+        <td>Business Rules</td>
+        <td>Age restrictions, ID expiry validation</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>MemberRegisterVM</h2>
+
+<h3>Registration Rules</h3>
+<table>
+    <tr>
+        <th>Rule</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>ID Number Format</td>
+        <td>UAE format (XXX-XXXX-XXXXXXX-X)</td>
+    </tr>
+    <tr>
+        <td>Uniqueness</td>
+        <td>Email, phone number, ID number</td>
+    </tr>
+    <tr>
+        <td>Password Policy</td>
+        <td>Strong password with confirmation</td>
+    </tr>
+    <tr>
+        <td>ID Expiry</td>
+        <td>Must be a future date</td>
+    </tr>
+</table>
+
+<h3>Special Fields</h3>
+<table>
+    <tr>
+        <th>Field</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>g1–g4</td>
+        <td>ID number segmentation</td>
+    </tr>
+    <tr>
+        <td>ConfirmPassword</td>
+        <td>Password verification</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>MemberEditVM</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Unique Validation</td>
+        <td>Disabled for existing data</td>
+    </tr>
+    <tr>
+        <td>Password</td>
+        <td>No confirmation required</td>
+    </tr>
+    <tr>
+        <td>Images</td>
+        <td>Optional replacement</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>MemberVM</h2>
+
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Navigation Properties</td>
+        <td>Nationality, City entities</td>
+    </tr>
+    <tr>
+        <td>Lists</td>
+        <td>Dropdown data sources</td>
+    </tr>
+    <tr>
+        <td>Status Tracking</td>
+        <td>Registration date and suspension</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>MemberLoginVM</h2>
+
+<table>
+    <tr>
+        <th>Field</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Email</td>
+        <td>Login identifier</td>
+    </tr>
+    <tr>
+        <td>Password</td>
+        <td>Authentication credential</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Member Views – Overview</h2>
+
+<table>
+    <tr>
+        <th>View</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>Register.cshtml</td>
+        <td>Member registration</td>
+    </tr>
+    <tr>
+        <td>Edit.cshtml</td>
+        <td>Profile editing</td>
+    </tr>
+    <tr>
+        <td>Login.cshtml</td>
+        <td>User authentication</td>
+    </tr>
+    <tr>
+        <td>PrintDetails.cshtml</td>
+        <td>Printable member report</td>
+    </tr>
+    <tr>
+        <td>Password.cshtml</td>
+        <td>Password management</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Register.cshtml – Key Sections</h2>
+
+<table>
+    <tr>
+        <th>Section</th>
+        <th>Content</th>
+    </tr>
+    <tr>
+        <td>Personal Information</td>
+        <td>Names, gender, nationality, DOB</td>
+    </tr>
+    <tr>
+        <td>ID Information</td>
+        <td>Segmented UAE ID with expiry</td>
+    </tr>
+    <tr>
+        <td>Authentication</td>
+        <td>Email, password, confirmation</td>
+    </tr>
+    <tr>
+        <td>Attachments</td>
+        <td>Profile, ID, passport images</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>PrintDetails.cshtml</h2>
+
+<table>
+    <tr>
+        <th>Feature</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Layout</td>
+        <td>Two-column printable layout</td>
+    </tr>
+    <tr>
+        <td>Images</td>
+        <td>Profile, ID, passport</td>
+    </tr>
+    <tr>
+        <td>Auto Print</td>
+        <td>Triggers print dialog on load</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Security & Internationalization</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Implementation</th>
+    </tr>
+    <tr>
+        <td>Localization</td>
+        <td>Resource-based bilingual support</td>
+    </tr>
+    <tr>
+        <td>RTL/LTR</td>
+        <td>Dynamic layout switching</td>
+    </tr>
+    <tr>
+        <td>Validation</td>
+        <td>Client & server-side</td>
+    </tr>
+    <tr>
+        <td>CSRF</td>
+        <td>Anti-forgery tokens</td>
+    </tr>
+</table>
+
+
+<!-- ===================================================== -->
+<h2>Key System Benefits</h2>
+
+<div class="note">
+    • Secure session-based authentication<br>
+    • AI-powered ID classification & OCR<br>
+    • Robust image management workflow<br>
+    • Clean service-layer separation<br>
+    • Fully internationalized (Arabic / English)<br>
+	• Strong validation and security rules<br>
+    • Clean ViewModel separation<br>
+    • Printable and admin-friendly views<br>
+    • Scalable and maintainable UI architecture
+</div>
+
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

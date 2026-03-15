@@ -1,0 +1,232 @@
+﻿@model MemberRegisterVM
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Resource1.LoginMember</title>
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="~/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css" />
+    <!-- Custom CSS -->
+    <link href="~/assets/css/memberlogin.css" rel="stylesheet" />
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* Custom radio button style with hollow circle */
+        #languageSelector .form-check-input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #198754;
+            border-radius: 50%;
+            background-color: transparent;
+            cursor: pointer;
+            position: relative;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        #languageSelector .form-check-input[type="radio"]:checked {
+            background-color: transparent;
+            border-color: #198754;
+        }
+
+        #languageSelector .form-check-input[type="radio"]:checked::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #198754;
+        }
+
+        #languageSelector .form-check-input[type="radio"]:focus {
+            box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+            border-color: #198754;
+        }
+    </style>
+</head>
+
+<body>
+            <div class="container-page">
+
+
+                <div class="form-con">
+                    <div class="form">
+                        <!-- Logo -->
+                        <div class="px-3 d-flex flex-column align-items-center">
+                            <img class="logo-img" src="~/assets/images/logo.png" alt="">
+                            <h1 class="h3 text-black fs-4 text-font-family fw-bold">@Resource2.FougeraClub</h1>
+                        </div>
+                <div class="divider">
+                    <h4 class="  text-center text-font-family fs-6 px-2 fw-bold text-black">@Resource2.LogIntoYourAccount</h4>
+                </div>
+                        <form asp-action="Login" method="post" id="account">
+                            <!-- Validation summary -->
+                            <div asp-validation-summary="ModelOnly" class="text-danger text-font-family d-flex justify-content-center my-2 py-2 fw-bold"></div>
+                                 <div class="form-mobile">
+                                <!-- Email -->
+                                <div>
+                                    <div class="input-box">
+                                        <input asp-for="Email" type="email" required class="forms-control text-font-family" style="direction:rtl;" placeholder="@Resource2.Email" />
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </div>
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <!-- Password -->
+                                <div class= "position-relative">
+                                    <i class="fa fa-eye position-absolute top-50 start-0 translate-middle-y cursor-pointer"
+                                       style="cursor:pointer; z-index: 2;"
+                                       onclick="togglePassword('Password', this)"></i>
+                                    <div class="input-box">
+                                        <input asp-for="Password" class="text-font-family ps-5" type="password" id="Password" placeholder="@Resource2.Password" required />
+                                        <i class="fa-solid fa-lock"></i>
+                                    </div>
+                                    <span asp-validation-for="Password" class="text-danger small"></span>
+                                </div>
+                            
+                                <!-- Language selector: English / Arabic -->
+                                @{
+                                    var currentLang = SessionHelper.GetCurrentLanguage();
+                                }
+                                <div class="mt-3 d-flex align-items-center justify-content-center gap-3" id="languageSelector">
+                            <div class="form-check">
+                                <label class="form-check-label text-font-family" for="langAr">العربية</label>
+
+                                <input class="form-check-input" type="radio" name="langChoice" id="langAr" value="ar"
+                                       @(currentLang == "ar" ? "checked" : "") />
+                            </div>
+                                    <div class="form-check">
+                                <label class="form-check-label text-font-family" for="langEn">English</label>
+
+                                                <input class="form-check-input" type="radio" name="langChoice" id="langEn" value="en"
+                                                    @(currentLang != null && currentLang.StartsWith("en") ? "checked" : "") />
+                                    </div>
+                                  
+                                </div>
+
+                                <button class="btn text-white text-font-family loadind-btn" onclick="sessionStorage.clear(); localStorage.clear();">
+                                    <div class="login">@Resource2.Submit</div>
+                                    <div class="spinner loader d-none">
+                                        <div class="bounce1"></div>
+                                        <div class="bounce2"></div>
+                                        <div class="bounce3"></div>
+                                    </div>
+                                </button>
+                            </div>
+                        </form>
+                        <!-- Links -->
+                        <div class="d-flex justify-content-center">
+                            <div class="links text-center">
+                                <a class="sign-up" href="/Member/Account/Register">@Resource2.DontHaveAccount</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              
+            </div>
+
+
+    <!-- Scripts -->
+    <script src="~/bootstrap/bootstrap-5.3.8-dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const form = document.getElementById("account");
+        const loader = document.querySelector(".loader");
+        const loginText = document.querySelector(".login");
+
+        form.addEventListener("submit", async function (e) {
+            // Show loading when user submits
+            loader.classList.remove("d-none");
+            loginText.classList.add("d-none");
+
+            // Allow normal form submit
+            // Wait a small delay for UI to update
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            // The form will now submit and reload/redirect
+            // If an error occurs (like validation), Razor will rerender the page with error messages.
+            // So we detect if that happens and hide the loader again.
+        });
+
+        // After page reload (when validation errors appear)
+        window.addEventListener("DOMContentLoaded", function () {
+            const validationSummary = document.querySelector("[asp-validation-summary]");
+            // If there are validation errors, hide loader again
+            if (validationSummary && validationSummary.textContent.trim() !== "") {
+                loader.classList.remove("d-block");
+                loader.classList.add("d-none");
+                loginText.classList.remove("d-none");
+            }
+        });
+          // Toggle password visibility
+          function togglePassword(inputId, iconElement) {
+              const input = document.getElementById(inputId);
+              if (input.type === "password") {
+                  input.type = "text";
+                  iconElement.classList.remove("fa-eye");
+                  iconElement.classList.add("fa-eye-slash");
+              } else {
+                  input.type = "password";
+                  iconElement.classList.remove("fa-eye-slash");
+                  iconElement.classList.add("fa-eye");
+              }
+          }
+    </script>
+    <script>
+        // Loading button animation
+        const loadingBtn = document.querySelector(".loadind-btn");
+        if (loadingBtn) {
+            loadingBtn.addEventListener("click", function () {
+                const loader = document.querySelector(".spinner");
+                const loginText = document.querySelector(".login");
+                loader.classList.remove('d-none');
+                loginText.classList.add('d-none');
+            });
+        }
+
+        // Toggle password visibility
+        function togglePassword(inputId, iconElement) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                iconElement.classList.remove("fa-eye");
+                iconElement.classList.add("fa-eye-slash");
+            } else {
+                input.type = "password";
+                iconElement.classList.remove("fa-eye-slash");
+                iconElement.classList.add("fa-eye");
+            }
+        }
+
+        // Language switcher with radio buttons
+        document.addEventListener('DOMContentLoaded', function () {
+            const enRadio = document.getElementById('langEn');
+            const arRadio = document.getElementById('langAr');
+            
+            if (enRadio && arRadio) {
+                enRadio.addEventListener('change', function () {
+                    if (this.checked) {
+                        window.location.href = '/Member/Home/ChangeLanguage?lang=en';
+                    }
+                });
+                arRadio.addEventListener('change', function () {
+                    if (this.checked) {
+                        window.location.href = '/Member/Home/ChangeLanguage?lang=ar';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

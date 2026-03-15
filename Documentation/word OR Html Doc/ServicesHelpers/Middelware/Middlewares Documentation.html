@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Middlewares Documentation</title>
+
+    <link rel="stylesheet" href="../../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Middlewares Documentation</h1>
+
+<h2>NotificationMiddleware Documentation</h2>
+
+<h3>File Structure</h3>
+<table>
+    <tr>
+        <th>Component</th>
+        <th>File</th>
+    </tr>
+    <tr>
+        <td>NotificationMiddleware</td>
+        <td>NotificationMiddleware.cs</td>
+    </tr>
+</table>
+
+<h3>Core Class</h3>
+<table>
+    <tr>
+        <th>Class</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>NotificationMiddleware</td>
+        <td>
+            ASP.NET Core middleware that automatically handles toast notifications
+            for CRUD operations by intercepting HTTP responses and storing
+            session-based messages.
+        </td>
+    </tr>
+</table>
+
+<h3>Constructor Dependencies</h3>
+<table>
+    <tr>
+        <th>Dependency</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>RequestDelegate next</td>
+        <td>Invokes the next middleware in the pipeline</td>
+    </tr>
+</table>
+
+<h3>Methods</h3>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+    </tr>
+    <tr>
+        <td>InvokeAsync</td>
+        <td>
+            Processes HTTP requests and sets toast notifications
+            based on controller action results.
+        </td>
+        <td>
+            <strong>HttpContext context</strong><br>
+            <strong>IStringLocalizer</strong> for localization
+        </td>
+    </tr>
+</table>
+
+<h3>Operation Detection Logic</h3>
+<table>
+    <tr>
+        <th>Condition</th>
+        <th>Behavior</th>
+    </tr>
+    <tr>
+        <td>HTTP Method</td>
+        <td>Processes POST requests only</td>
+    </tr>
+    <tr>
+        <td>Area</td>
+        <td>Excludes Identity area requests</td>
+    </tr>
+    <tr>
+        <td>Status Code</td>
+        <td>Triggers notifications on 302 redirects</td>
+    </tr>
+    <tr>
+        <td>Route Analysis</td>
+        <td>Detects CRUD action from route values</td>
+    </tr>
+</table>
+
+<h3>Action-Specific Notifications</h3>
+<table>
+    <tr>
+        <th>Action</th>
+        <th>Condition</th>
+        <th>Toast Key</th>
+        <th>Toast Type</th>
+    </tr>
+    <tr>
+        <td>AddEdit</td>
+        <td>No ID</td>
+        <td>ToastAdd</td>
+        <td>Success</td>
+    </tr>
+    <tr>
+        <td>AddEdit</td>
+        <td>With ID</td>
+        <td>ToastEdit</td>
+        <td>Success</td>
+    </tr>
+    <tr>
+        <td>Create</td>
+        <td>—</td>
+        <td>ToastAdd</td>
+        <td>Success</td>
+    </tr>
+    <tr>
+        <td>Edit</td>
+        <td>—</td>
+        <td>ToastEdit</td>
+        <td>Success</td>
+    </tr>
+    <tr>
+        <td>Delete</td>
+        <td>—</td>
+        <td>ToastDelete</td>
+        <td>Error</td>
+    </tr>
+    <tr>
+        <td>Other</td>
+        <td>—</td>
+        <td>ToastDone</td>
+        <td>Success</td>
+    </tr>
+</table>
+
+<h3>Error Handling</h3>
+<table>
+    <tr>
+        <th>Status Code</th>
+        <th>Toast Key</th>
+        <th>Toast Type</th>
+    </tr>
+    <tr>
+        <td>500</td>
+        <td>ToastFailed</td>
+        <td>Error</td>
+    </tr>
+</table>
+
+<h3>Session Storage</h3>
+<table>
+    <tr>
+        <th>Session Key</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>ToastMessage</td>
+        <td>Localized notification text</td>
+    </tr>
+    <tr>
+        <td>ToastType</td>
+        <td>Visual style (success / error)</td>
+    </tr>
+    <tr>
+        <td>ToastKey</td>
+        <td>Unique toast identifier</td>
+    </tr>
+</table>
+
+<h3>Middleware Registration</h3>
+<pre><code>// Program.cs
+app.UseMiddleware&lt;NotificationMiddleware&gt;();
+</code></pre>
+
+<h2>RequestLoggingMiddleware Documentation</h2>
+
+<h3>File Structure</h3>
+<table>
+    <tr>
+        <th>Component</th>
+        <th>File</th>
+    </tr>
+    <tr>
+        <td>RequestLoggingMiddleware</td>
+        <td>RequestLoggingMiddleware.cs</td>
+    </tr>
+    <tr>
+        <td>NoLoggingAttribute</td>
+        <td>Attribute for excluding logging</td>
+    </tr>
+    <tr>
+        <td>YesGetAttribute</td>
+        <td>Attribute for including GET logging</td>
+    </tr>
+</table>
+
+<h3>Constructor Dependencies</h3>
+<table>
+    <tr>
+        <th>Dependency</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>RequestDelegate</td>
+        <td>Next middleware in pipeline</td>
+    </tr>
+    <tr>
+        <td>ILogger</td>
+        <td>Application logging</td>
+    </tr>
+    <tr>
+        <td>IHttpContextAccessor</td>
+        <td>HTTP context access</td>
+    </tr>
+</table>
+
+<h3>Logging Rules</h3>
+<table>
+    <tr>
+        <th>Rule</th>
+        <th>Behavior</th>
+    </tr>
+    <tr>
+        <td>Status Codes</td>
+        <td>Logs only 200 and 302 responses</td>
+    </tr>
+    <tr>
+        <td>GET Requests</td>
+        <td>Excluded unless [YesGet] is applied</td>
+    </tr>
+    <tr>
+        <td>NoLogging</td>
+        <td>Respects [NoLogging] attribute</td>
+    </tr>
+    <tr>
+        <td>Area Support</td>
+        <td>Handles Admin and Member areas separately</td>
+    </tr>
+</table>
+
+<h3>Middleware Registration</h3>
+<pre><code>// Program.cs
+app.UseMiddleware&lt;RequestLoggingMiddleware&gt;();
+</code></pre>
+
+</main>
+
+<script defer src="../../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,137 @@
+﻿@model SupplierVM
+@{
+    ViewData["Title pakage"] = @Resource1.SuppliersManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.SuppliersList ?? " ";
+    ViewData["Title Single"] = ((Model.Id == 0) ? @Resource1.AddSupplier : @Resource1.EditSupplier) ?? " ";
+    ViewData["Title"] = (Model.Id == 0) ? @Resource1.AddSupplier : @Resource1.EditSupplier;
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-user-tie me-1 text-ico"></span>
+                @((Model.Id == 0) ? @Resource1.AddSupplier : @Resource1.EditSupplier)
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-end" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/Supplier/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+
+
+
+<div class="card all-borders p-3">
+    <div class="c-edit-form  rounded">
+
+        <form asp-action="AddEdit" method="post">
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row">
+                <div class="col-md-4 mb-3 d-flex align-items-center">
+                    <label class="form-label mb-4 me-1 asteriskRequired"></label>
+                    <div class="form-check form-check-inline me-3">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="SupplierCategoryId"
+                               id="catGeneral"
+                               value="1"
+                               @(Model.SupplierCategoryId == 1 ? "checked" : "")>
+                        <label class="form-check-label" for="catGeneral">
+                            موردين
+                        </label>
+                    </div>
+
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input"
+                               type="radio"
+                               name="SupplierCategoryId"
+                               id="catSpecial"
+                               value="2"
+                               @(Model.SupplierCategoryId == 2 ? "checked" : "")>
+                        <label class="form-check-label" for="catSpecial">
+                            جهات  
+                        </label>
+                    </div>
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="SupplierNameAr" class="form-label asteriskRequired">@Resource1.SupplierName</label>
+                    <input asp-for="SupplierNameAr" class="form-control" />
+                    <span asp-validation-for="SupplierNameAr" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="SupplierNameEn" class="form-label asteriskRequired">@Resource1.SupplierNameEn</label>
+                    <input asp-for="SupplierNameEn" class="form-control" />
+                    <span asp-validation-for="SupplierNameEn" class="text-danger"></span>
+                </div>
+                </div>
+
+                <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="Email" class="form-label">@Resource1.Email</label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="Phone" class="form-label">@Resource1.PhoneNumber</label>
+                    <input asp-for="Phone" class="form-control" inputmode="numeric" pattern="\d*" placeholder="@Resource1.PhonePlaceholder_10" oninput="this.value=this.value.replace(/\D/g,'')" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <label for="Mobile" class="form-label">@Resource1.MobileNumber</label>
+                    <input asp-for="Mobile" class="form-control" inputmode="numeric" pattern="\d*" placeholder="@Resource1.PhonePlaceholder_10" oninput="this.value=this.value.replace(/\D/g,'')" />
+                    <span asp-validation-for="Mobile" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-12 mb-3">
+                    <label for="VATNumber" class="form-label">@Resource1.VATNumber</label>
+                    <input asp-for="VATNumber" class="form-control" inputmode="numeric" pattern="\d*" maxlength="50" oninput="this.value=this.value.replace(/\D/g,'')" />
+                    <span asp-validation-for="VATNumber" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label for="Address" class="form-label">@Resource1.Address</label>
+                    <textarea asp-for="Address" class="form-control"></textarea>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label for="Description" class="form-label">@Resource1.Description2</label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+
+               
+            </div>
+
+            <div class="d-flex justify-content-end mt-1">
+                <button type="submit" class="btn btn-success  me-2">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                </button>
+                <a asp-action="Index" class="btn btn-cancel-search">
+                    @Resource2.Back  <i class="fa-solid fa-arrow-left me-1"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

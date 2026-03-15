@@ -1,0 +1,70 @@
+﻿@using FougeraClub.Areas.Member.ViewModels
+@model CourseVM
+
+@{
+    ViewData["Title"] = @Resource1.CourseRate2;
+    var selectedRate = Model.selectedRate;
+}
+
+<div class="container mt-5">
+    <h4 class="text-warning border-bottom border-danger pb-2 pe-2">@Resource1.CourseRate2</h4>
+
+        <form id="ratingForm" asp-action="DoRate" method="post">
+            <input type="hidden" id="ratingValue" name="ratingValue" value="" />
+            <input type="hidden" name="id" value="@Model.Id" />
+        <div style="display: flex; gap:10px; justify-content: center; align-items: center; height: 100%;">
+            <div style="text-align: center;">
+                <i class="@(selectedRate == 4 ? "fa-solid" : "fa-regular") fa-face-smile rating-icon" data-value="4" style="color:#D4BF16;font-size:250px; cursor:pointer;"></i>
+                <label class="form-label" style="font-size:25px;"> @Resource1.Excellent </label>
+            </div>
+            
+            <div style="text-align: center;">
+                <i class="@(selectedRate == 3 ? "fa-solid" : "fa-regular") fa-face-grin-stars rating-icon" data-value="3" style="color:#D4BF16;font-size:250px; cursor:pointer;"></i>
+                <label class="form-label" style="font-size:25px;"> @Resource1.Good </label>
+            </div>
+
+            <div style="text-align: center;">
+                <i class="@(selectedRate == 2 ? "fa-solid" : "fa-regular") fa-face-meh rating-icon" data-value="2" style="color:#D4BF16;font-size:250px; cursor:pointer;"></i>
+                <label class="form-label" style="font-size:25px;"> @Resource1.Fair </label>
+            </div>
+
+            <div style="text-align: center;">
+                <i class="@(selectedRate == 1 ? "fa-solid" : "fa-regular") fa-face-sad-tear rating-icon" data-value="1" style="color:#D4BF16;font-size:250px; cursor:pointer;"></i>
+                <label class="form-label" style="font-size:25px;"> @Resource1.UnHappy </label>
+            </div>
+        </div>
+        </form>
+
+   </div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            $(".rating-icon").click(function () {
+                // Remove solid from all
+                $(".rating-icon").each(function () {
+                    var classList = $(this).attr("class");
+                    classList = classList.replace("fa-solid", "fa-regular");
+                    $(this).attr("class", classList);
+                });
+
+                // Add solid to those who are compressed
+                var clickedIcon = $(this);
+                var classList = clickedIcon.attr("class");
+                classList = classList.replace("fa-regular", "fa-solid");
+                clickedIcon.attr("class", classList);
+
+                // Save value in hidden input
+                var value = clickedIcon.data("value");
+                $("#ratingValue").val(value);
+
+                // Send form
+                $("#ratingForm").submit();
+            });
+        });
+    </script>
+}

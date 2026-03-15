@@ -1,0 +1,217 @@
+﻿@using Domain.DTOs.Admin.SalaryManagement
+@using FougeraClub.Areas.Admin.ViewModels.SalaryManagement
+@model PaginatedList<SalaryManagementVM>
+@{
+    ViewData["Title"] = @Resource1.InventoryList;
+    ViewData["Title pakage"] = @Resource1.AnnualInventoryManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.InventoryList ?? " ";
+
+    var allyears = ViewBag.allYears as List<string?>;
+
+    var addPermission = PermissionScanner.ValidatePermission("SalaryManagement", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("SalaryManagement", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("SalaryManagement", "Delete");
+    
+    var AllEmployeesNames = ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>;
+
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+@{
+    var selectedEmployeeObj = ViewBag.selectedEmployee;
+    var selectedYearObj = ViewBag.selectedYear;
+    var selectedMonthObj = ViewBag.selectedMonth;
+    // Show prompt only when no filters are provided (no year, no month, no employee)
+    var showSelectPrompt = (selectedYearObj == null && selectedMonthObj == null && (selectedEmployeeObj == null || string.IsNullOrEmpty(selectedEmployeeObj?.ToString())));
+}
+
+<input type="hidden" id="NewCountRecords" value="@(showSelectPrompt ? 0 : Model.Count)" />
+<!-- Page Size Selector -->
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped" >
+        <thead>
+            <tr>
+                <th style="width: 15% !important;">@Resource1.Name</th>
+                <th style="width: 10% !important;">@Resource1.JobTitle1</th>
+                <th style="min-width: 100px !important;">@Resource1.Month1 / @Resource1.Year2</th>
+                <th style="min-width: 70px !important;">@Resource1.BasicSalary2</th>
+                <th style="min-width: 70px !important;">@Resource1.Allowances</th>
+                <th style="min-width: 70px !important;">@Resource1.TotalSalary2</th>
+                <th style="min-width: 70px !important;">@Resource1.WorkDays</th>
+                <th style="min-width: 70px !important;">@Resource1.AbsentDays</th>
+                <th style="min-width: 70px !important;">@Resource1.SickLeaveDays</th>
+                <th style="min-width: 70px !important;">@Resource1.AnnualLeaveDays</th>
+                <th style="min-width: 70px !important;">@Resource1.TotalDeductions</th>
+                <th style="min-width: 70px !important;">@Resource1.BonusesAndMissions</th>
+                <th style="min-width: 70px !important;">@Resource1.NetSalary</th>
+                <th>@Resource1.ControlTools</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (showSelectPrompt)
+            {
+                <tr>
+                    <td colspan="20" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 2.2rem;"></i>
+                            <h5 class="mt-3">@Resource1.NoData</h5>
+                            <p class="mb-0">الرجاء اختيار موظف او سنة و شهر أولا</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            else if (!Model.Items.Any())
+            {
+                <tr>
+                    <td colspan="20" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line"></i>
+                            <h5 class="mt-3">@Resource1.NoData</h5>
+                            <p class="mb-0">@Resource2.GoToCreatePage</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model.Items)
+                {
+
+                    var empName = lang == "ar" ? AllEmployeesNames?.Where(y => y.Id == item.EmployeeId)?.FirstOrDefault()?.FullNameAr : AllEmployeesNames?.Where(y => y.Id == item.EmployeeId)?.FirstOrDefault()?.FullNameEn;
+                    
+                            
+                DateTime dateMonth = new DateTime(2025, item.Month, 1);
+                    <tr>
+                        <td data-label="@Resource2.Name" onclick="window.location.href='/Admin/Employees/Details?id=@item.EmployeeId'" style="cursor:pointer;">
+                            <span class="text-decoration-underline">@empName</span>
+                        </td>
+                        <td>@item.JobTitle</td>
+                        <td>@dateMonth.ToString("MMMM") / @item.Year</td>
+                        <td>@((item.BasicSalary == null || item.BasicSalary == 0) ? "0" : item.BasicSalary)</td>
+                        <td>@((item.Allowances == null || item.Allowances == 0) ? "0" : item.Allowances)</td>
+                        <td>@((item.TotalSalary == null || item.TotalSalary == 0) ? "0" : item.TotalSalary)</td>
+                        <td>@(item.WorkDays ?? 0)</td>
+                        <td>@(item.AbsentDays ?? 0)</td>
+                        <td>@(item.SickLeaveDays ?? 0)</td>
+                        <td>@(item.AnnualLeaveDays ?? 0)</td>
+                        <td>@((item.TotalDeductions == null || item.TotalDeductions == 0) ? "0" : item.TotalDeductions)</td>
+                        <td>@((item.BonusesAndMissions == null || item.BonusesAndMissions == 0) ? "0" : item.BonusesAndMissions)</td>
+                        <td>@((item.NetSalary == null || item.NetSalary == 0) ? "0" : item.NetSalary)</td>
+                        <td>
+                            @*   @if (detailsPermission)
+                                            {
+                                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Details">
+                                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-soft-warning btn-icon btn-sm rounded-circle"><i class="fa fa-eye"></i></a>
+                                                </span>
+                                            } *@
+
+                            @* Attachment *@
+                            <span data-bs-toggle="tooltip" data-bs-title="@Resource1.Attachments">
+                                <button type="button"
+                                        class="btn-control btn-icon btn-sm rounded-circle open-salaryManagement-attachments-modal"
+                                        data-entity-id="@item.Id">
+                                    <i class="fa-solid fa-paperclip fs-5"></i>
+                                </button>
+                            </span>
+
+                            @if (editPermission)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Edit">
+                                    <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn-control btn-icon btn-sm rounded-circle"><i class="fa-solid fa-pen-to-square"></i></a>
+                                </span>
+                            }
+                            <!-- Delete ExternalWorkMission -->
+                            @if (deletePermission)
+                            {
+                                <form asp-action="Delete" asp-route-id="@item.Id" class="d-inline" method="post" data-swal="delete" data-message="@Resource1.Salary1 @Resource1.Employee @empName - @dateMonth.ToString("MMMM") / @item.Year">
+                                    @Html.AntiForgeryToken()
+                                    <span data-bs-toggle="tooltip" data-bs-title="@Resource1.Delete">
+                                        <button type="submit" class="btn-control btn-icon btn-sm rounded-circle">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </span>
+                                </form>
+                            }
+
+                        </td>
+                    </tr>
+                }
+
+                // Totals for the current page
+                                  
+                    var BasicSalary = Model.Items.Sum(y => y.BasicSalary??0m);
+                    var Allowances = Model.Items.Sum(y => y.Allowances ?? 0m);
+                    var TotalSalary = Model.Items.Sum(y => y.TotalSalary ?? 0m);
+                    var WorkDays = Model.Items.Sum(y => y.WorkDays);
+                    var AbsentDays = Model.Items.Sum(y => y.AbsentDays ?? 0);
+                    var SickLeaveDays = Model.Items.Sum(y => y.SickLeaveDays ?? 0);
+                    var AnnualLeaveDays = Model.Items.Sum(y => y.AnnualLeaveDays ?? 0);
+                    var TotalDeductions = Model.Items.Sum(y => y.TotalDeductions ?? 0m);
+                    var BonusesAndMissions = Model.Items.Sum(y => y.BonusesAndMissions ?? 0m);
+                    var NetSalary = Model.Items.Sum(y => y.NetSalary ?? 0m);
+                                    
+                                    
+
+                <tr class="bg-grey" style="font-weight:700; font-size:calc(1em + 1px);">
+                    <th style="color:red;" colspan="3" class="text-center"><strong>@Resource2.Total:</strong></th>
+
+
+
+                    <td class="text-center">@((BasicSalary == 0 || BasicSalary == null) ? "0" : BasicSalary.ToString("F2"))</td>
+                    <td class="text-center">@((Allowances == 0 || Allowances == null) ? "0" : Allowances.ToString("F2"))</td>
+                    <td class="text-center">@((TotalSalary == 0 || TotalSalary == null) ? "0" : TotalSalary.ToString("F2"))</td>
+                    <td class="text-center">@((WorkDays == 0 || WorkDays == null) ? "0" : WorkDays)</td>
+                    <td class="text-center">@((AbsentDays == 0 || AbsentDays == null) ? "0" : AbsentDays)</td>
+                    <td class="text-center">@((SickLeaveDays == 0 || SickLeaveDays == null) ? "0" : SickLeaveDays)</td>
+                    <td class="text-center">@((AnnualLeaveDays == 0 || AnnualLeaveDays == null) ? "0" : AnnualLeaveDays)</td>
+                    <td class="text-center">@((TotalDeductions == 0 || TotalDeductions == null) ? "0" : TotalDeductions.ToString("F2"))</td>
+                    <td class="text-center">@((BonusesAndMissions == 0 || BonusesAndMissions == null) ? "0" : BonusesAndMissions.ToString("F2"))</td>
+
+                    <th style="color:red;" class="text-center"><strong>@((NetSalary == 0 || NetSalary == null) ? "0" : NetSalary.ToString("F2"))</strong></th>
+
+                    <td></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.PageIndex - 1)">
+                @Resource2.Previous
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page"
+               data-page="@(Model.PageIndex + 1)">
+                @Resource2.Next
+            </a>
+        </li>
+    </ul>
+</nav>

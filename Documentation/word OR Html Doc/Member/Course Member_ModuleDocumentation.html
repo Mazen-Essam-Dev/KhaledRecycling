@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Course Member - Full Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Course Module – Member Area Documentation</h1>
+
+<!-- ===================================================== -->
+<h2>CourseController – Overview</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Area</td>
+        <td>Member</td>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Manages member interactions with courses (listing, subscription, rating, certificates)</td>
+    </tr>
+    <tr>
+        <td>Advanced Features</td>
+        <td>OCR, AI-based ID validation, SignalR notifications</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Controller Attributes</h2>
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>[MemberAuthorize]</td>
+        <td>Restricts access to authenticated members</td>
+    </tr>
+    <tr>
+        <td>[Area("Member")]</td>
+        <td>Registers controller in Member area</td>
+    </tr>
+    <tr>
+        <td>[Route("Member/[controller]/[action]")]</td>
+        <td>Defines explicit routing</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Injected Dependencies</h2>
+
+<table>
+    <tr>
+        <th>Dependency</th>
+        <th>Responsibility</th>
+    </tr>
+    <tr>
+        <td>IUnitOfWork</td>
+        <td>Database access and transaction management</td>
+    </tr>
+    <tr>
+        <td>IHttpContextAccessor</td>
+        <td>Session and user context access</td>
+    </tr>
+    <tr>
+        <td>ICourseService (Member)</td>
+        <td>Member-side course logic</td>
+    </tr>
+    <tr>
+        <td>ICourseService (Admin)</td>
+        <td>Certificate generation and reporting</td>
+    </tr>
+    <tr>
+        <td>IOCRService</td>
+        <td>ID card OCR text extraction</td>
+    </tr>
+    <tr>
+        <td>IHubContext&lt;NotificationHub&gt;</td>
+        <td>SignalR real-time notifications</td>
+    </tr>
+    <tr>
+        <td>INotificationService</td>
+        <td>Persistent notification handling</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Controller Actions</h2>
+
+<table>
+    <tr>
+        <th>Action</th>
+        <th>Purpose</th>
+        <th>Return Type</th>
+    </tr>
+    <tr>
+        <td>IDClassification_Json (POST)</td>
+        <td>AI-based ID image validation and OCR extraction</td>
+        <td>JSON</td>
+    </tr>
+    <tr>
+        <td>Index (GET)</td>
+        <td>Displays available courses with subscription state</td>
+        <td>View</td>
+    </tr>
+    <tr>
+        <td>TestSignalR (GET)</td>
+        <td>Sends test notifications to admin groups</td>
+        <td>JSON</td>
+    </tr>
+    <tr>
+        <td>GetCourse (GET)</td>
+        <td>Returns single course details via AJAX</td>
+        <td>JSON</td>
+    </tr>
+    <tr>
+        <td>Subscribe (GET)</td>
+        <td>Prepares subscription page with document validation</td>
+        <td>View</td>
+    </tr>
+    <tr>
+        <td>Subscribe (POST)</td>
+        <td>Handles course subscription and notifications & <strong>Check OCR Validation if Added a new ID Card #Commented#now</strong></td>
+        <td>Redirect</td>
+    </tr>
+    <tr>
+        <td>Rate (POST)</td>
+        <td>Stores member course rating</td>
+        <td>JSON</td>
+    </tr>
+    <tr>
+        <td>PrintCertificate (GET)</td>
+        <td>Generates printable course certificate</td>
+        <td>View</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Course Subscribe Order Logic</h2>
+
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Description</th>
+        <th>Then</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Member goes to sub in course but his ID Card Expired</td>
+        <td>when he goes to sub in course must enter new ID Card For the same person and not expired <strong>Checked by OCR but #Now Commented#</strong> </td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Member goes to sub in course but has ID Card Not Expired</td>
+        <td>when he goes to sub in course not requiring new ID Card </td>
+    </tr>
+   <tr>
+        <td>3</td>
+        <td>After member sub in this course</td>
+        <td> in superAdmin CousesSubs will apear there but <strong>needed SuperAdmin Accept this Sub or Reject</strong> and if choosed not able to change again <br><strong>after Choosed will apear in Member Area Courses</strong></td>
+    </tr>
+   <tr>
+        <td>4</td>
+        <td>Only if superAdmin Accepted this Sub </td>
+        <td>will apear in /Admin/Course/MembersCourse <strong>To allow Trainer marks students as present or absent</strong> and allowed this Member to Rate this Course</td>
+    </tr>
+	 <tr>
+        <td>5</td>
+        <td>Only after Trainer marks students as present </td>
+        <td>will apear in /Member/Course <strong>and his Certificate will allowed to download <span style="color:red">After Only </span>(Course Time Finished and he Rated And he Presented this Course) </strong></td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+
+<!-- ===================================================== -->
+<h2>CourseService – Member Area</h2>
+
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Description</th>
+        <th>Return</th>
+    </tr>
+    <tr>
+        <td>SubscribeAsync</td>
+        <td>Subscribes member to course</td>
+        <td>Task</td>
+    </tr>
+    <tr>
+        <td>AddRateAsync</td>
+        <td>Adds rating to course subscription</td>
+        <td>Task&lt;bool&gt;</td>
+    </tr>
+    <tr>
+        <td>GetAllAsync</td>
+        <td>Returns courses and member subscriptions</td>
+        <td>Tuple</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync</td>
+        <td>Fetches course by ID</td>
+        <td>Course?</td>
+    </tr>
+    <tr>
+        <td>AddAsync</td>
+        <td>Creates a new course</td>
+        <td>Task</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync</td>
+        <td>Updates existing course</td>
+        <td>Task</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync</td>
+        <td>Deletes a course</td>
+        <td>Task</td>
+    </tr>
+    <tr>
+        <td>Exists</td>
+        <td>Checks course existence</td>
+        <td>bool</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Course Entity</h2>
+
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Id</td>
+        <td>int</td>
+        <td>Primary key</td>
+    </tr>
+    <tr>
+        <td>DepartmentId</td>
+        <td>int?</td>
+        <td>Related department</td>
+    </tr>
+    <tr>
+        <td>TrainerId</td>
+        <td>int?</td>
+        <td>Assigned trainer</td>
+    </tr>
+    <tr>
+        <td>TitleAr / TitleEn</td>
+        <td>string?</td>
+        <td>Multilingual course titles</td>
+    </tr>
+    <tr>
+        <td>StartDate / EndDate</td>
+        <td>DateOnly?</td>
+        <td>Course duration</td>
+    </tr>
+    <tr>
+        <td>Location</td>
+        <td>string?</td>
+        <td>Course venue</td>
+    </tr>
+    <tr>
+        <td>AttachmentPath</td>
+        <td>string?</td>
+        <td>Course materials</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>CourseVM – Member ViewModel</h2>
+
+<table>
+    <tr>
+        <th>Category</th>
+        <th>Properties</th>
+    </tr>
+    <tr>
+        <td>Identification</td>
+        <td>Id, DepartmentId, TrainerId</td>
+    </tr>
+    <tr>
+        <td>Titles</td>
+        <td>TitleAr, TitleEn</td>
+    </tr>
+    <tr>
+        <td>Dates</td>
+        <td>StartDate, EndDate</td>
+    </tr>
+    <tr>
+        <td>Subscription State</td>
+        <td>Subscribed, Accepted, Attendance, selectedRate</td>
+    </tr>
+    <tr>
+        <td>Documents</td>
+        <td>IdImage, PassportImage, IdImagePath, PassportImagePath</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Course Views</h2>
+
+<table>
+    <tr>
+        <th>View</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>Index.cshtml</td>
+        <td>Course listing and management</td>
+    </tr>
+    <tr>
+        <td>Subscribe.cshtml</td>
+        <td>Course subscription form</td>
+    </tr>
+    <tr>
+        <td>Rate.cshtml</td>
+        <td>Course rating interface</td>
+    </tr>
+    <tr>
+        <td>PrintCertificate.cshtml</td>
+        <td>Certificate printing</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Key System Benefits</h2>
+
+<div class="note">
+    ✔ AI-based ID validation with OCR<br>
+    ✔ Secure document upload handling<br>
+    ✔ Real-time SignalR notifications<br>
+    ✔ Multilingual Arabic/English support<br>
+    ✔ Clean separation of Controller, Service, and Domain layers
+</div>
+
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

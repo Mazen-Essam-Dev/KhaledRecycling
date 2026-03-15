@@ -1,0 +1,14 @@
+.btn-control-dis {
+    /*background: var(--highdmin-gray-200) !important;*/
+    color: #ccc !important;
+    background-color: #eef2f700 !important;
+    opacity: 1;
+    /*border: 1px solid var(--highdmin-gray-200) !important;*/
+}
+
+    .btn-control-dis:hover {
+        /*background: var(--highdmin-gray-200) !important;*/
+        background-color: #eef2f700 !important;
+        color: #ccc !important;
+        /*border: 1px solid var(--highdmin-gray-200) !important;*/
+    }

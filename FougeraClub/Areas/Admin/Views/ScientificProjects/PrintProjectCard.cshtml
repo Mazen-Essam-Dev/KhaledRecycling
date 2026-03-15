@@ -1,0 +1,354 @@
+﻿@using Infrastructure.Identity
+@inject UserManager<ApplicationUser> UserManager
+@model ScientificProjectsVM
+@{
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title>Project Card</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<style>
+    body {
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background: #f0f2f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    .print-card {
+        max-width: 950px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 25px 30px;
+        border: 4px solid #09b080;
+        border-radius: 8px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+        position: relative;
+        page-break-inside: avoid;
+    }
+
+    .watermark {
+        position: absolute;
+        width:800px;
+        top: 31%;
+        left: 51%;
+        font-size: 63px;
+        font-weight: bold;
+        color: #4a90e2;
+        opacity: 0.08;
+        transform: translate(-50%, -50%) rotate(-30deg);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .print-header {
+        text-align: center;
+        /* margin-bottom: 10px; */
+    }
+
+        .print-header h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+    .meta-row {
+        display: flex;
+        justify-content: space-between;
+        margin: 15px 0 20px;
+        font-size: 13px;
+        color: #555;
+    }
+
+        .meta-row div {
+            background: #f9fafc;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: 600;
+        }
+
+    /* Info grid with Arabic on right, English on left */
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .info-item {
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: #fdfdfd;
+    }
+
+        .info-item strong {
+            display: block;
+            color: #2c3e50;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        /* Ensure Arabic text is right aligned */
+        .info-item.ar {
+            text-align: right;
+            direction: rtl;
+        }
+
+        .info-item.en {
+            text-align: left;
+            direction: ltr;
+        }
+
+    .text-blocks {
+        display: flex;
+        gap: 15px;
+        margin: 15px 0;
+    }
+
+    .text-block {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 10px;
+        font-size: 14px;
+        line-height: 1.4;
+        background: #fafafa;
+        min-height: 100px;
+        text-align: justify;
+    }
+
+        .text-block.ar {
+            text-align: right;
+            direction: rtl;
+        }
+
+        .text-block.en {
+            text-align: left;
+            direction: ltr;
+        }
+
+    .section-title {
+        text-align: center;
+        margin: 25px 0 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    /* Fixed 2x2 image grid */
+    .image-gallery {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 0px;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+        .image-gallery img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+
+    .footer {
+        margin-top: 25px;
+        text-align: right;
+        font-size: 12px;
+        color: #777;
+        border-top: 1px solid #eee;
+        padding-top: 5px;
+    }
+
+    @@media print {
+        @@page {
+            /* To still display Flex after Run Open Media Print */
+            .row {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                justify-content: space-between !important;
+            }
+
+            [class*="col-"] {
+                float: none !important;
+                display: block !important;
+                flex: 1 !important;
+                max-width: 100% !important;
+            }
+        }
+
+        * {
+            max-width: 100% !important;
+        }
+
+    body{
+        background: #fff;
+    }
+
+    .print-card {
+        box-shadow: none;
+            border: 2px solid #09b080;
+        /* margin: 0; */
+    }
+
+    .watermark {
+        font-size: 90px;
+    }
+
+    }
+</style>
+
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap print-none">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">
+                        المشاريع العلمية
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#">
+                        بطاقة فنية مشروع علمى
+                    </a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex align-items-center justify-content-end gap-2">
+            <a href="#" onclick="printPage(); return false;" class="print-btn btn btn-success btn-sm">
+                <i class="fa fa-print me-1"></i> @Resource2.Print
+            </a>
+            <a asp-action="Index" class="btn btn-cancel-search btn-sm back-btn">
+                @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<div class="print-card " id="report">
+
+
+
+    <div class="watermark">@Resource2.FougeraClub</div>
+
+    <div class="print-header">
+        <h1>@Resource1.ProjectCard2</h1>
+    </div>
+
+    <div class="meta-row">
+        <div>@Resource1.Date: @Model.DateByCalander?.ToString("d")?.Replace("/","-")</div>
+        <div>@Resource1.SerialCode: @Model.SerialCode</div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-item en">
+            <strong>Project Name</strong>
+            @Model.ProjectNameEn
+        </div>
+        <div class="info-item ar">
+            <strong>@Resource1.ProjectName</strong>
+            @Model.ProjectNameAr
+        </div>
+        <div class="info-item en">
+            <strong>Idea Owner</strong>
+            @Model.IdeaOwnerEn
+        </div>
+        <div class="info-item ar">
+            <strong>@Resource1.IdeaOwner</strong>
+            @Model.IdeaOwnerAr
+        </div>
+    </div>
+
+    <div class="text-blocks">
+        <div class="text-block en">
+            <strong>Idea</strong><br />
+            @Model.ProjectIdeaEN
+        </div>
+        <div class="text-block ar">
+            <strong>@Resource1.Idea</strong><br />
+            @Model.ProjectIdeaAr
+        </div>
+    </div>
+
+    <div class="section-title">@Resource2.ProjectImages</div>
+    <div class="image-gallery">
+
+        @{
+            var images = new List<string>();
+            if (!string.IsNullOrEmpty(Model?.FilePath1)) images.Add("/" + Model.FilePath1);
+            if (!string.IsNullOrEmpty(Model?.FilePath2)) images.Add("/" + Model.FilePath2);
+            if (!string.IsNullOrEmpty(Model?.FilePath3)) images.Add("/" + Model.FilePath3);
+            if (!string.IsNullOrEmpty(Model?.FilePath4)) images.Add("/" + Model.FilePath4);
+        }
+        @if(images.Count > 0)
+        {
+            @for (int i = 0; i < images.Count; i++)
+            {
+                <img src="~@(images[i])" alt="@Resource2.ProjectImage" />
+            }
+        }
+    </div>
+
+    <div class="footer">
+        <p class="PrintedBy">Printed by : <span> @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+    </div>
+</div>
+    <!-- Signature Section -->
+    @*<hr class="custom-hr" />
+    <div class="row g-3">
+        <!-- Trainer Signature (Activities/Membership Supervisor) -->
+        <div class="col-md-6 text-center">
+            <div role="button" tabindex="0" style="cursor:pointer;">
+                <label class="form-label fw-semibold">@Resource1.SupervisorSignature</label>
+                <div class="small text-muted">
+                    @if (Model.ActivityMonitorSigniture != null && !string.IsNullOrEmpty(Model.ActivityMonitorSigniture.ImagePath))
+                    {
+                        <img src="~/@Model.ActivityMonitorSigniture.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Activity Monitor Signature" />
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- Manager Signature -->
+        <div class="col-md-6 text-center">
+            <div role="button" tabindex="0" style="cursor:pointer;">
+                <label class="form-label fw-semibold">@Resource1.ManagerSignature</label>
+                <div class="small text-muted">
+                    @if (Model.ManagerSignature != null && !string.IsNullOrEmpty(Model.ManagerSignature.ImagePath))
+                    {
+                        <img src="~/@Model.ManagerSignature.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Manager Signature" />
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Generated by system • @AppDubaiTime.Now.ToString("dd MMM yyyy")
+    </div>
+</div>
+*@
+
+          
+
+
+<script>
+    window.addEventListener('load', () => {
+        setTimeout(() => window.print(), 600);
+    });
+</script>

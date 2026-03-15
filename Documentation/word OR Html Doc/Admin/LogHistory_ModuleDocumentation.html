@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>LogHistory Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<!-- LogHistoryController Overview -->
+<table>
+    <thead>
+        <tr>
+            <h2>LogHistoryController – Overview</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Controller Name</th>
+            <td>LogHistoryController</td>
+        </tr>
+        <tr>
+            <th>Framework</th>
+            <td>ASP.NET Core MVC</td>
+        </tr>
+        <tr>
+            <th>Primary Purpose</th>
+            <td>Comprehensive system log management with filtering, timeline view, and audit tracking</td>
+        </tr>
+        <tr>
+            <th>Core Features</th>
+            <td>Dual views, advanced search, member-user resolution, bulk operations</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Controller Configuration -->
+<table>
+    <thead>
+        <tr>
+            <h2>Controller Configuration</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Area</th>
+            <td>Admin</td>
+        </tr>
+        <tr>
+            <th>Authorization</th>
+            <td>AdminAuthorize Attribute</td>
+        </tr>
+        <tr>
+            <th>Dependencies</th>
+            <td>IUnitOfWork (Database access)</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Dual View Modes -->
+<table>
+    <thead>
+        <tr>
+            <h2>Dual View Modes</h2>
+        </tr>
+        <tr>
+            <th>View</th>
+            <th>Purpose</th>
+            <th>User Resolution</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Index (List View)</td>
+            <td>Paginated tabular display of logs</td>
+            <td>Application users only</td>
+        </tr>
+        <tr>
+            <td>Timeline View</td>
+            <td>Chronological activity stream</td>
+            <td>Users with member fallback</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Advanced Filtering -->
+<table>
+    <thead>
+        <tr>
+            <h2>Advanced Filtering System</h2>
+        </tr>
+        <tr>
+            <th>Filter Type</th>
+            <th>Description</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Text Search</td>
+            <td>Search in AR/EN names, users, controller, action</td>
+            <td>Case-insensitive</td>
+        </tr>
+        <tr>
+            <td>Member Search</td>
+            <td>Special logic for member-related keywords</td>
+            <td>Email-based resolution</td>
+        </tr>
+        <tr>
+            <td>Date Range</td>
+            <td>Inclusive request time filtering</td>
+            <td>DateFrom / DateTo</td>
+        </tr>
+        <tr>
+            <td>Noise Filtering</td>
+            <td>Excludes negotiate/system logs</td>
+            <td>Automatic</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Smart Member Search Logic -->
+<table>
+    <thead>
+        <tr>
+            <h2>Smart Member Search Logic</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Trigger Condition</th>
+            <td>Search term contains "عضو" or "Member"</td>
+        </tr>
+        <tr>
+            <th>Processing Logic</th>
+            <td>
+                <code>
+                    var Terms = searchTerm.Trim().Split(" - ");
+                </code>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- RequestLoggingMiddleware Overview -->
+<table>
+    <thead>
+        <tr>
+            <h2>RequestLoggingMiddleware – Overview</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Responsibility</th>
+            <td>Conditional request logging with role-based exclusions</td>
+        </tr>
+        <tr>
+            <th>Localization</th>
+            <td>Arabic & English log messages</td>
+        </tr>
+        <tr>
+            <th>Noise Reduction</th>
+            <td>Skips anonymous, GET, Master role, SignalR, and error requests</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Middleware Attributes -->
+<table>
+    <thead>
+        <tr>
+            <h2>Custom Logging Attributes</h2>
+        </tr>
+        <tr>
+            <th>Attribute</th>
+            <th>Purpose</th>
+            <th>Effect</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>NoLoggingAttribute</td>
+            <td>Disable logging</td>
+            <td>Controller or action excluded</td>
+        </tr>
+        <tr>
+            <td>YesGetAttribute</td>
+            <td>Allow GET logging</td>
+            <td>Overrides default GET skip</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Middleware Dependencies -->
+<table>
+    <thead>
+        <tr>
+            <h2>Middleware Constructor Dependencies</h2>
+        </tr>
+        <tr>
+            <th>Dependency</th>
+            <th>Type</th>
+            <th>Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>next</td>
+            <td>RequestDelegate</td>
+            <td>Continue request pipeline</td>
+        </tr>
+        <tr>
+            <td>logger</td>
+            <td>ILogger</td>
+            <td>Error logging</td>
+        </tr>
+        <tr>
+            <td>httpContextAccessor</td>
+            <td>IHttpContextAccessor</td>
+            <td>Session and user access</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Logs ViewModel -->
+<table>
+    <thead>
+        <tr>
+            <h2>LogsVM – ViewModel</h2>
+        </tr>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Id</td>
+            <td>int</td>
+            <td>Primary log identifier</td>
+        </tr>
+        <tr>
+            <td>UserId</td>
+            <td>string</td>
+            <td>User who performed the action</td>
+        </tr>
+        <tr>
+            <td>RequestTime</td>
+            <td>DateTime</td>
+            <td>Timestamp of request</td>
+        </tr>
+        <tr>
+            <td>Controller</td>
+            <td>string</td>
+            <td>Controller name</td>
+        </tr>
+        <tr>
+            <td>Action</td>
+            <td>string</td>
+            <td>Action name</td>
+        </tr>
+        <tr>
+            <td>LogTarget</td>
+            <td>string</td>
+            <td>Target entity identifier</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Views Summary -->
+<table>
+    <thead>
+        <tr>
+            <h2>LogHistory Views Summary</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Index.cshtml</th>
+            <td>Paginated logs list with filtering, printing, and export</td>
+        </tr>
+        <tr>
+            <th>_ListPartial.cshtml</th>
+            <td>AJAX-rendered logs table with pagination</td>
+        </tr>
+        <tr>
+            <th>PrintLogHistory.cshtml</th>
+            <td>Print-optimized logs report</td>
+        </tr>
+        <tr>
+            <th>Timeline.cshtml</th>
+            <td>Visual chronological timeline of activities</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Module Summary -->
+<table>
+    <thead>
+        <tr>
+            <h2>Module Summary</h2>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Audit Capability</th>
+            <td>Enterprise-grade request and activity tracking</td>
+        </tr>
+        <tr>
+            <th>Security</th>
+            <td>Admin-only access with role-based exclusions</td>
+        </tr>
+        <tr>
+            <th>Performance</th>
+            <td>Noise-free logging with smart filters</td>
+        </tr>
+        <tr>
+            <th>Localization</th>
+            <td>Full Arabic and English support</td>
+        </tr>
+    </tbody>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Monthly Administrative Report Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<!-- ================= Controller Overview ================= -->
+<table>
+<h2>Monthly Administrative Report Module Documentation – Overview</h2>
+<tr><th>Purpose</th><td>Controller responsible for managing monthly administrative reports with validation, OTP approval, printing, and exporting.</td></tr>
+<tr><th>Area</th><td>Admin</td></tr>
+<tr><th>Authorization</th><td>AdminAuthorize</td></tr>
+<tr><th>Dependencies</th><td>IMonthlyAdministrativeReportService, IMapper</td></tr>
+</table>
+
+<!-- ================= OTP Workflow ================= -->
+<table>
+<h2>OTP Approval Workflow</h2>
+<tr><th>Step</th><th>Description</th></tr>
+<tr><td>Initial Add</td><td>Notification sent to ActivityMonitor.</td></tr>
+<tr><td>New Quarter</td><td>Notification sent to Manager with quarter info.</td></tr>
+<tr><td>First Quarter of Year</td><td>Annual notification sent to Manager.</td></tr>
+<tr><td>First OTP Sign</td><td>ActivityMonitor signs, editing disabled for all except Manager, notification sent to Manager.</td></tr>
+<tr><td>Manager Edit</td><td>Manager update removes ActivityMonitor sign and sends update notification.</td></tr>
+<tr><td>Manager Validation</td><td>Editing disabled for all users and Print enabled.</td></tr>
+<tr><td>Delete Rule</td><td>Delete disabled after first OTP signature.</td></tr>
+</table>
+
+<!-- ================= Index ================= -->
+<table>
+<h2>Index Action</h2>
+<tr><th>Purpose</th><td>Main report listing with filtering and pagination.</td></tr>
+<tr><th>Filters</th><td>Year (from database), Month (1–12 localized).</td></tr>
+<tr><th>Pagination</th><td>50 records per page.</td></tr>
+<tr><th>UI</th><td>AJAX partial view loading, enum-to-text conversion.</td></tr>
+</table>
+
+<!-- ================= AddEdit GET ================= -->
+<table>
+<h2>AddEdit (GET)</h2>
+<tr><th>Purpose</th><td>Display create/edit form.</td></tr>
+<tr><th>Parameters</th><td>Optional report ID.</td></tr>
+<tr><th>Enum Support</th><td>MonthlyAdministrativeReportType dropdown.</td></tr>
+</table>
+
+<!-- ================= AddEdit POST ================= -->
+<table>
+<h2>AddEdit (POST)</h2>
+<tr><th>Purpose</th><td>Save or update monthly report.</td></tr>
+<tr><th>Validation</th><td>ModelState and month/year/type uniqueness.</td></tr>
+<tr><th>Business Rule</th><td>No duplicate reports per month/year/type.</td></tr>
+<tr><th>Redirect</th><td>Create → Index, Edit → AddEdit.</td></tr>
+</table>
+
+<!-- ================= Delete ================= -->
+<table>
+<h2>Delete Action</h2>
+<tr><th>Purpose</th><td>Remove report record.</td></tr>
+<tr><th>Method</th><td>HTTP POST.</td></tr>
+<tr><th>Flow</th><td>Service deletion then redirect to Index.</td></tr>
+</table>
+
+<!-- ================= View Only ================= -->
+<table>
+<h2>View-Only Operations</h2>
+<tr><th>Details</th><td>Read-only report details with enum text conversion.</td></tr>
+<tr><th>PrintDetails</th><td>Printable report view for official documentation.</td></tr>
+</table>
+
+<!-- ================= OTP APIs ================= -->
+<table>
+<h2>OTP Endpoints</h2>
+<tr><th>SendOtp</th><td>Initiates OTP for trainer or manager approval.</td></tr>
+<tr><th>ValidateOtp</th><td>Validates OTP and applies digital signature.</td></tr>
+<tr><th>Security</th><td>NoLogging and IgnoreAction attributes.</td></tr>
+</table>
+
+<!-- ================= Date Validation ================= -->
+<table>
+<h2>CheckDate Endpoint</h2>
+<tr><th>Purpose</th><td>AJAX validation for duplicate month/year/type.</td></tr>
+<tr><th>Returns</th><td>Boolean JSON result.</td></tr>
+<tr><th>Usage</th><td>Client-side validation.</td></tr>
+</table>
+
+<!-- ================= Reporting ================= -->
+<table>
+<h2>Print & Excel Export</h2>
+<tr><th>Print</th><td>Printer-friendly report list.</td></tr>
+<tr><th>Excel</th><td>Downloadable Excel with localized month and type.</td></tr>
+<tr><th>File Name</th><td>MonthlyAdministrativeReportList_YYYYMMDD_HHmmss.xlsx</td></tr>
+</table>
+
+<!-- ================= Service Overview ================= -->
+<table>
+<h2>MonthlyAdministrativeReportService</h2>
+<tr><th>Namespace</th><td>Application.Services.Admin</td></tr>
+<tr><th>Interface</th><td>IMonthlyAdministrativeReportService</td></tr>
+<tr><th>Dependencies</th><td>IUnitOfWork, IWebHostEnvironment, IHttpContextAccessor</td></tr>
+</table>
+
+<!-- ================= Service Methods ================= -->
+<table>
+<h2>Service Core Methods</h2>
+<tr><th>Method</th><th>Description</th></tr>
+<tr><td>GetAllAsync</td><td>Retrieve all reports.</td></tr>
+<tr><td>GetByIdAsync</td><td>Retrieve report with details and signatures.</td></tr>
+<tr><td>AddAsync</td><td>Create report with images.</td></tr>
+<tr><td>UpdateAsync</td><td>Update report with image preservation.</td></tr>
+<tr><td>DeleteAsync</td><td>Delete report and files.</td></tr>
+</table>
+
+<!-- ================= Enum ================= -->
+<table>
+<h2>MonthlyAdministrativeReportType Enum</h2>
+<tr><th>Activities</th><td>Value 1 – Activities report.</td></tr>
+<tr><th>Administrative</th><td>Value 2 – Administrative report.</td></tr>
+<tr><th>Localization</th><td>Display names from Resource2.</td></tr>
+</table>
+
+<!-- ================= ViewModels ================= -->
+<table>
+<h2>ViewModels</h2>
+<tr><th>MonthlyAdministrativeReportVM</th><td>Main form model with images, details, validation.</td></tr>
+<tr><th>MonthlyAdministrativeReportDetailVM</th><td>Activity-level details.</td></tr>
+</table>
+
+<!-- ================= Entities ================= -->
+<table>
+<h2>Entities</h2>
+<tr><th>MonthlyAdministrativeReport</th><td>Main report entity with images and approvals.</td></tr>
+<tr><th>MonthlyAdministrativeReportDetail</th><td>Activity tracking entity.</td></tr>
+</table>
+
+<!-- ================= DTOs ================= -->
+<table>
+<h2>DTOs</h2>
+<tr><th>MonthlyAdministrativeReportDetailDTO</th><td>Detail data transfer.</td></tr>
+<tr><th>MonthsOfYearsAnnualyDTO</th><td>Monthly summary.</td></tr>
+<tr><th>Annual DTOs</th><td>Quarterly and yearly reporting support.</td></tr>
+</table>
+
+<!-- ================= Views ================= -->
+<table>
+<h2>Views</h2>
+<tr><th>AddEdit</th><td>Dynamic activities, image upload, validation.</td></tr>
+<tr><th>Index</th><td>Filtering, pagination, print, Excel export.</td></tr>
+<tr><th>_ListPartial</th><td>AJAX table with actions and permissions.</td></tr>
+</table>
+
+<!-- ================= Flow Summary ================= -->
+<table>
+<h2>Module Flow Summary</h2>
+<tr><th>Step 1</th><td>Index filtering and listing.</td></tr>
+<tr><th>Step 2</th><td>Add/Edit report with activities.</td></tr>
+<tr><th>Step 3</th><td>OTP approval workflow.</td></tr>
+<tr><th>Step 4</th><td>Print and Excel export.</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

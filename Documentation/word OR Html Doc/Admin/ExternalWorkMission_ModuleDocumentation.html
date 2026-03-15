@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>External Work Mission Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>External Work Mission Module – Documentation</h1>
+
+<!-- Controller Overview -->
+<h2>Controller Overview</h2>
+<table>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td>Controller Name</td><td>ExternalWorkMissionController</td></tr>
+    <tr><td>Area</td><td>Admin</td></tr>
+    <tr><td>Authorization</td><td>AdminAuthorize</td></tr>
+    <tr><td>Dependencies</td><td>IExternalWorkMissionService, IMapper, IUnitOfWork</td></tr>
+    <tr><td>Purpose</td><td>Manage external work missions with employee assignment, mission types, and OTP approval</td></tr>
+</table>
+
+<!-- Controller Actions -->
+<h2>Controller Actions</h2>
+<table>
+    <tr>
+        <th>Action</th>
+        <th>Purpose</th>
+        <th>Key Features</th>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>Main mission listing</td>
+        <td>Employee search, date filters, AJAX pagination (50/page)</td>
+    </tr>
+    <tr>
+        <td>AddEdit (GET)</td>
+        <td>Display create/edit form</td>
+        <td>Employee dropdown, job title auto-display</td>
+    </tr>
+    <tr>
+        <td>AddEdit (POST)</td>
+        <td>Create or update mission</td>
+        <td>Mission types management, redirect logic</td>
+    </tr>
+    <tr>
+        <td>Delete</td>
+        <td>Delete mission</td>
+        <td>POST-only, service-based deletion</td>
+    </tr>
+    <tr>
+        <td>Details</td>
+        <td>Read-only mission details</td>
+        <td>IgnoreAction, employee context shown</td>
+    </tr>
+    <tr>
+        <td>PrintDetails</td>
+        <td>Printable mission details</td>
+        <td>Professional print layout</td>
+    </tr>
+    <tr>
+        <td>SendOtp</td>
+        <td>Initiate OTP approval</td>
+        <td>NoLogging, JSON response</td>
+    </tr>
+    <tr>
+        <td>ValidateOtp</td>
+        <td>Validate OTP approval</td>
+        <td>JSON result with status and message</td>
+    </tr>
+    <tr>
+        <td>Print</td>
+        <td>Printable mission list</td>
+        <td>No pagination, keeps filters</td>
+    </tr>
+    <tr>
+        <td>createExcelReport_Download</td>
+        <td>Export missions to Excel</td>
+        <td>Localized data, timestamped XLSX</td>
+    </tr>
+</table>
+
+<!-- Service Overview -->
+<h2>Service Overview</h2>
+<table>
+    <tr><th>Item</th><th>Details</th></tr>
+    <tr><td>Service Name</td><td>ExternalWorkMissionService</td></tr>
+    <tr><td>Dependencies</td><td>IUnitOfWork, IHttpContextAccessor</td></tr>
+    <tr><td>File Name Constant</td><td>ExternalWorkMissions</td></tr>
+    <tr><td>Responsibility</td><td>CRUD operations, mission type management, OTP approval</td></tr>
+</table>
+
+<!-- Service Methods -->
+<h2>Service Methods</h2>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>GetAllAsync</td>
+        <td>Retrieve all missions</td>
+        <td>Includes mission types</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync</td>
+        <td>Retrieve mission by ID</td>
+        <td>Includes employee, missions, signature</td>
+    </tr>
+    <tr>
+        <td>AddAsync</td>
+        <td>Create mission</td>
+        <td>Commits transaction and returns ID</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync</td>
+        <td>Update mission</td>
+        <td>Safe update with null checks</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync</td>
+        <td>Delete mission</td>
+        <td>Deletes mission and related mission types</td>
+    </tr>
+    <tr>
+        <td>GetAllEmplyeeNames</td>
+        <td>Load employee data</td>
+        <td>Used for dropdowns and search</td>
+    </tr>
+    <tr>
+        <td>UpdateNewMissionsType</td>
+        <td>Replace mission types</td>
+        <td>Removes old types and adds new ones</td>
+    </tr>
+</table>
+
+<!-- Mission Type Enum -->
+<h2>Mission Type Enumeration</h2>
+<table>
+    <tr>
+        <th>Value</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>1</td><td>Forum</td><td>Forum participation or organization</td></tr>
+    <tr><td>2</td><td>Conference</td><td>Conference attendance or hosting</td></tr>
+    <tr><td>3</td><td>Exhibition</td><td>Exhibition participation</td></tr>
+    <tr><td>4</td><td>Competition</td><td>Competition involvement</td></tr>
+    <tr><td>5</td><td>ClubEquipment</td><td>Club equipment missions</td></tr>
+    <tr><td>6</td><td>ExchangeOrDelivery</td><td>Exchange or delivery operations</td></tr>
+</table>
+
+<!-- ViewModel -->
+<h2>ExternalWorkMissionVM</h2>
+<table>
+    <tr><th>Category</th><th>Properties</th></tr>
+    <tr>
+        <td>Identification</td>
+        <td>Id, EmployeeId, SignatureIdApproved, Signature</td>
+    </tr>
+    <tr>
+        <td>Mission Details</td>
+        <td>MissionDate, MissionLocation, MissionCountry, MissionWorkDescription</td>
+    </tr>
+    <tr>
+        <td>Financial Info</td>
+        <td>PetroleumFees, FoodFees, MissionAllowance</td>
+    </tr>
+    <tr>
+        <td>Candidates</td>
+        <td>CandidateName1-4, CandidateAdj1-4</td>
+    </tr>
+    <tr>
+        <td>Relationships</td>
+        <td>Employee, Missions</td>
+    </tr>
+</table>
+
+<!-- Entity -->
+<h2>ExternalWorkMission Entity</h2>
+<table>
+    <tr><th>Category</th><th>Fields</th></tr>
+    <tr>
+        <td>Identification</td>
+        <td>Id, EmployeeId, SignatureIdApproved</td>
+    </tr>
+    <tr>
+        <td>Mission Data</td>
+        <td>MissionDate, MissionLocation, MissionCountry, MissionWorkDescription</td>
+    </tr>
+    <tr>
+        <td>Financial</td>
+        <td>PetroleumFees, FoodFees, MissionAllowance</td>
+    </tr>
+    <tr>
+        <td>Candidates</td>
+        <td>CandidateName1-4, CandidateAdj1-4</td>
+    </tr>
+    <tr>
+        <td>Relations</td>
+        <td>Employee, Missions</td>
+    </tr>
+</table>
+
+<!-- Mission Entity -->
+<h2>Mission Entity</h2>
+<table>
+    <tr><th>Property</th><th>Description</th></tr>
+    <tr><td>Id</td><td>Primary key</td></tr>
+    <tr><td>ExternalWorkMissionId</td><td>Parent mission reference</td></tr>
+    <tr><td>MessionKey</td><td>Mission type identifier</td></tr>
+</table>
+
+<!-- Views -->
+<h2>Views Overview</h2>
+<table>
+    <tr>
+        <th>View</th>
+        <th>Purpose</th>
+        <th>Key Features</th>
+    </tr>
+    <tr>
+        <td>AddEdit</td>
+        <td>Create/Edit mission</td>
+        <td>Employee auto-fill, validation, OTP lock</td>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>List missions</td>
+        <td>Search, filters, permissions, print, excel</td>
+    </tr>
+    <tr>
+        <td>_ListPartial</td>
+        <td>Render mission table</td>
+        <td>AJAX pagination, dynamic actions</td>
+    </tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>
+

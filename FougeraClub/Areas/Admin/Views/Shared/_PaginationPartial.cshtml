@@ -1,0 +1,59 @@
+﻿@model FougeraClub.Helpers.PaginatedList<object>  // Make this generic with T
+
+@{
+    var controller = ViewData["Controller"]?.ToString();
+    var area = ViewData["Area"]?.ToString();
+    var searchTerm = Model.SearchTerm;
+}
+
+
+<form method="get" class="row mb-3">
+    <div class="col-md-4">
+        <input type="text" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Search..." />
+    </div>
+    <div class="col-md-auto">
+        <button type="submit" class="btn btn-outline-primary">
+            <i class="fa fa-search"></i> Search
+        </button>
+    </div>
+</form>
+
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a class="page-link"
+               asp-area="@area"
+               asp-controller="@controller"
+               asp-action="Index"
+               asp-route-page="@(Model.PageIndex - 1)"
+               asp-route-searchTerm="@searchTerm">
+                Previous
+            </a>
+        </li>
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a class="page-link"
+                   asp-area="@area"
+                   asp-controller="@controller"
+                   asp-action="Index"
+                   asp-route-page="@i"
+                   asp-route-searchTerm="@searchTerm">
+                    @i
+                </a>
+            </li>
+        }
+
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a class="page-link"
+               asp-area="@area"
+               asp-controller="@controller"
+               asp-action="Index"
+               asp-route-page="@(Model.PageIndex + 1)"
+               asp-route-searchTerm="@searchTerm">
+                Next
+            </a>
+        </li>
+    </ul>
+</nav>

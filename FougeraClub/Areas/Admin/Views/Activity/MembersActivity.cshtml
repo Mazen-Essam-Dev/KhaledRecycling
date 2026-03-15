@@ -1,0 +1,246 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Activity
+@model SubscribedMemberInActivitiesVM
+@{
+    ViewData["Title"] = Resource1.ParticipantsInActivity;
+    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.ParticipantsInActivity ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.ActivitysIndex ?? " ";
+
+
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/Activity/Index">@ViewData["Title ListIndex"]</a></li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count & Actions -->
+    <div class="col-md-6 d-flex align-items-center flex-wrap justify-content-end">
+        <!-- Records Count -->
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto px-2 py-1">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="countRecords">  @Model.Members_Paginated.Count</span>
+        </div>
+    </div>
+</div>
+<input type="hidden" id="activityId" value="@Model.Activity?.Id"/>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <!-- Card header -->
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                        <i class="ri-calendar-schedule-fill me-1 text-ico"></i>
+                        @Resource1.ParticipantsInActivity
+                    </h4>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex align-items-center gap-2 flex-wrap justify-content-end">
+                    @{
+                        var countRecords = Model?.Members_Paginated?.Count;
+                    }
+                    @if (countRecords != null && countRecords > 3999)
+                    {
+                        // Toaster Can't Print more 3999 record
+                        <a onclick="showToastrCannotPrint();"
+                           class="btn btn-success">
+                            <i class="fa fa-print me-1"></i> @Resource2.Print 
+                        </a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-success Excelbtn" onclick="openPrintPage()">
+                            <i class="fa fa-print me-1"></i> @Resource2.Print 
+                        </button>
+                    }
+
+                    <!-- Print Export As Excel -->
+                    <a class="btn btn-success Excelbtn"
+                       onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-1" ></i>@Resource1.createExcelReport_Download 
+                    </a>
+                </div>
+            </div>
+            <script>
+                function openPrintPage() {
+                    const activityId = '@Model.Activity?.Id';
+                    var countRecords = '@Model?.Members_Paginated?.Count';
+                    if(countRecords && countRecords>3999){
+                        showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+                    }
+                    else{
+                        const url = `/Admin/Activity/PrintMembersActivity?ActivityId=${activityId}`;
+                        //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                        // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                        const printWindow = window.open(
+                            url,
+                            'printWindow',
+                            'width=1000,height=800,noopener,noreferrer'
+                        );
+                    }
+
+                }
+            </script>
+            <script>
+                function openExcelPage() {
+                    const activityId = '@Model.Activity?.Id';
+                    const url = `/Admin/Activity/createExcelReport_Download_MembersActivity?ActivityId=${activityId}`;
+
+                    window.open(url, '_self');
+                }
+            </script>
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="icon_box_all style_one shadow-sm rounded-3">
+                            <div class="text-left sec-title">
+                                <div class="lg-title">
+                                    <h1>@Resource1.ActivityTitle</h1>
+                                </div>
+                                <div class="title-sep-left"></div>
+                                <div class="title-sep-sm-left"></div>
+                            </div>
+
+                            <div>
+                                <p class="fw-bold">@(lang == "ar" ? Model.Activity?.TitleAr : Model.Activity?.TitleEn)</p>
+                            </div>
+
+                            <div class="shape-decoration"></div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="icon_box_all style_one shadow-sm rounded-3">
+                            <div class="text-left sec-title">
+                                <div class="lg-title">
+                                    <h1>@Resource2.StartDate</h1>
+                                </div>
+                                <div class="title-sep-left"></div>
+                                <div class="title-sep-sm-left"></div>
+                            </div>
+
+                            <div>
+                                <p class="fw-bold">@Model.Activity?.StartDate?.ToString("d")?.Replace("/", "-")</p>
+                            </div>
+
+                            <div class="shape-decoration"></div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                        <div class="icon_box_all style_one shadow-sm rounded-3">
+                            <div class="text-left sec-title">
+                                <div class="lg-title">
+                                    <h1>@Resource2.EndDate</h1>
+                                </div>
+                                <div class="title-sep-left"></div>
+                                <div class="title-sep-sm-left"></div>
+                            </div>
+
+                            <div>
+                                <p class="fw-bold">@Model.Activity?.EndDate?.ToString("d")?.Replace("/", "-")</p>
+                            </div>
+
+                            <div class="shape-decoration"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+            <div id="PartialNewListContainer">
+                @await Html.PartialAsync("_ListPartialMemberSubsInEvents", Model)
+            </div>
+    
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    activityId : $('#activityId').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').length ? $('#pageSizeSelect').val() : "",
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var activityId = $('#activityId').val();
+                var pageSize   = pageSizeOverride || $('#pageSizeSelect').length ? $('#pageSizeSelect').val() : "";
+
+                $.ajax({
+                    url: '/Admin/Activity/MembersActivity',
+                    type: 'GET',
+                    data: { activityId,page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+                        const newActivityId = $('#NewActivityId').val();
+                        $('#activityId').text(newActivityId);
+                        colorizeRows();
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

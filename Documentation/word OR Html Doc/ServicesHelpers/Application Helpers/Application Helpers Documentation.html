@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Application Helpers Documentation</title>
+
+    <link rel="stylesheet" href="../../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Application Helpers Documentation</h1>
+
+<h2>AppDubaiTime Helper</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr>
+        <td>
+            Static utility class providing Dubai timezone-aware date and time operations
+            for applications requiring consistent time handling in the UAE timezone.
+        </td>
+    </tr>
+</table>
+
+<h3>Core Properties</h3>
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Usage</th>
+    </tr>
+    <tr>
+        <td>Now</td>
+        <td>DateTime</td>
+        <td>Current date and time converted to Dubai timezone</td>
+        <td>Real-time Dubai time operations</td>
+    </tr>
+    <tr>
+        <td>Today</td>
+        <td>DateOnly</td>
+        <td>Dubai current date without time portion</td>
+        <td>Date-only business logic</td>
+    </tr>
+    <tr>
+        <td>NowOffset</td>
+        <td>DateTimeOffset</td>
+        <td>Dubai date and time with timezone offset preserved</td>
+        <td>Timezone-aware persistence</td>
+    </tr>
+</table>
+
+<h3>Conversion Methods</h3>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Implementation Details</th>
+    </tr>
+    <tr>
+        <td>ConvertToDubaiDateTime</td>
+        <td>Converts UTC DateTime to Dubai timezone</td>
+        <td>
+            Ensures UTC kind, converts using TimeZoneInfo.ConvertTimeFromUtc,
+            returns Dubai-localized DateTime
+        </td>
+    </tr>
+</table>
+
+<h3>Usage Example</h3>
+<table>
+    <tr><th>Example</th></tr>
+    <tr>
+        <td>
+<pre>
+var utcTime = new DateTime(2024, 1, 1, 10, 0, 0, DateTimeKind.Utc);
+var dubaiTime = AppDubaiTime.ConvertToDubaiDateTime(utcTime);
+</pre>
+        </td>
+    </tr>
+</table>
+
+<h2>ClaimsPrincipalExtensions</h2>
+
+<h3>Purpose</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr>
+        <td>
+            Provides extension methods for ClaimsPrincipal to simplify access
+            to authenticated user identity data and related database queries.
+        </td>
+    </tr>
+</table>
+
+<h3>Namespace & Dependencies</h3>
+<table>
+    <tr>
+        <th>Dependency</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Infrastructure.Repositories.InterfacesDB</td>
+        <td>Access to Unit of Work and repositories</td>
+    </tr>
+    <tr>
+        <td>Microsoft.EntityFrameworkCore</td>
+        <td>Async database queries</td>
+    </tr>
+    <tr>
+        <td>System.Security.Claims</td>
+        <td>User claims access</td>
+    </tr>
+</table>
+
+<h3>Helper Class</h3>
+<table>
+    <tr><th>Declaration</th></tr>
+    <tr>
+        <td>
+<pre>public static class ClaimsPrincipalExtensions</pre>
+        </td>
+    </tr>
+</table>
+
+<h3>GetUserId</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Retrieves authenticated user ID from claims</td>
+    </tr>
+    <tr>
+        <td>Claim Type</td>
+        <td>ClaimTypes.NameIdentifier</td>
+    </tr>
+    <tr>
+        <td>Return</td>
+        <td>string? (null if not authenticated)</td>
+    </tr>
+</table>
+
+<h3>GetUserPhoneNumberAsync</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Retrieves user phone number from database</td>
+    </tr>
+    <tr>
+        <td>Flow</td>
+        <td>
+            Extract UserId → Query Users table → Select PhoneNumber → Return async
+        </td>
+    </tr>
+</table>
+
+<h2>CurrencyHelper</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr>
+        <td>
+            Static helper providing Arabic and English currency definitions
+            for UAE Dirham with grammatical accuracy.
+        </td>
+    </tr>
+</table>
+
+<h3>CurrencyInfoDTO Structure</h3>
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>Singular</td><td>Single unit term</td></tr>
+    <tr><td>Dual</td><td>Two-unit grammatical form</td></tr>
+    <tr><td>Plural</td><td>Three or more units</td></tr>
+    <tr><td>IsMasculine</td><td>Grammatical gender</td></tr>
+    <tr><td>Suffix</td><td>Country designation</td></tr>
+    <tr><td>Language</td><td>Language identifier</td></tr>
+</table>
+
+<h3>Arabic Currency Definitions</h3>
+<table>
+    <tr>
+        <th>Unit</th>
+        <th>Singular</th>
+        <th>Dual</th>
+        <th>Plural</th>
+        <th>Suffix</th>
+    </tr>
+    <tr>
+        <td>Dirham</td>
+        <td>درهم</td>
+        <td>درهمان</td>
+        <td>دراهم</td>
+        <td>إماراتي</td>
+    </tr>
+    <tr>
+        <td>Fils</td>
+        <td>فلس</td>
+        <td>فلسان</td>
+        <td>فلوس</td>
+        <td>إماراتي</td>
+    </tr>
+</table>
+
+<h3>English Currency Definitions</h3>
+<table>
+    <tr>
+        <th>Unit</th>
+        <th>Singular</th>
+        <th>Plural</th>
+        <th>Suffix</th>
+    </tr>
+    <tr>
+        <td>Dirham</td>
+        <td>Dirham</td>
+        <td>Dirhams</td>
+        <td>UAE</td>
+    </tr>
+    <tr>
+        <td>Fils</td>
+        <td>Fils</td>
+        <td>Fils</td>
+        <td>UAE</td>
+    </tr>
+</table>
+
+<h2>EnumHelper</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr>
+        <td>
+            Utility class for retrieving DisplayAttribute values
+            from enum members with fallback behavior.
+        </td>
+    </tr>
+</table>
+
+<h3>GetDisplayName</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Returns display name or enum value</td>
+    </tr>
+    <tr>
+        <td>Signature</td>
+        <td>public static string GetDisplayName(Enum enumValue)</td>
+    </tr>
+</table>
+
+<h2>FileHelper</h2>
+
+<h3>Core Operations</h3>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+    </tr>
+    <tr><td>SaveImageAsync</td><td>Saves images with GUID naming</td></tr>
+    <tr><td>CheckFileIsPdf_5Mg_Async</td><td>Validates PDF (5MB)</td></tr>
+    <tr><td>CheckFileIsImage_3Mg_Async</td><td>Validates images (3MB)</td></tr>
+    <tr><td>DeleteImageFile</td><td>Deletes stored files</td></tr>
+    <tr><td>IsFileExist</td><td>Checks file existence</td></tr>
+</table>
+
+<h2>HashHelper</h2>
+
+<h3>ComputeSha256Hash</h3>
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Computes SHA-256 hash of input string</td>
+    </tr>
+    <tr>
+        <td>Return</td>
+        <td>Hexadecimal hash string</td>
+    </tr>
+</table>
+
+<h2>OTPHelper</h2>
+
+<h3>Methods</h3>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>SaveOtpAsync</td>
+        <td>Generates and stores hashed OTP with expiration</td>
+    </tr>
+    <tr>
+        <td>ValidateOtpAsync</td>
+        <td>Validates OTP and marks as used</td>
+    </tr>
+</table>
+
+<h2>TafqeetHelper</h2>
+
+<h3>Overview</h3>
+<table>
+    <tr><th>Description</th></tr>
+    <tr>
+        <td>
+            Converts numeric amounts to Arabic and English written text
+            with correct grammatical and currency rules.
+        </td>
+    </tr>
+</table>
+
+<h3>Main Method</h3>
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>Tafqeet</td>
+        <td>Routes conversion based on currency language</td>
+    </tr>
+</table>
+
+</main>
+
+<script defer src="../../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

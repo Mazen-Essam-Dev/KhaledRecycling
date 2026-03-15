@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Budget Item Management Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+
+<body>
+
+<h1>Budget Item Management Documentation</h1>
+
+<!-- CONTROLLER ACTIONS -->
+<h2>BudgetItemController - Action Methods</h2>
+<table>
+    <caption>Controller Actions</caption>
+    <tr>
+        <th>Action</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Notes / Features</th>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>Main budget item listing</td>
+        <td>searchTerm, pagination</td>
+        <td>Text & numeric search, combined OR logic, AJAX partial view, paginated list (50 items)</td>
+    </tr>
+    <tr>
+        <td>AddEdit (GET)</td>
+        <td>Display create/edit form</td>
+        <td>id (optional)</td>
+        <td>Auto-generate new ItemNumber on create, maps existing item on edit</td>
+    </tr>
+    <tr>
+        <td>AddEdit (POST)</td>
+        <td>Handle form submission</td>
+        <td>BudgetItemVM model</td>
+        <td>ModelState validation, Anti-forgery token, redirects to Index or edit form</td>
+    </tr>
+    <tr>
+        <td>Delete</td>
+        <td>Remove budget item</td>
+        <td>id</td>
+        <td>Service deletion, TempData feedback on failure, boolean result handling</td>
+    </tr>
+    <tr>
+        <td>Print</td>
+        <td>Printer-friendly list</td>
+        <td>Filters applied</td>
+        <td>Same search as Index, no pagination, [IgnoreAction]</td>
+    </tr>
+    <tr>
+        <td>createExcelReport_Download</td>
+        <td>Generate Excel report</td>
+        <td>Filters applied</td>
+        <td>Bilingual columns, timestamped XLSX file "BudgetItemsList_YYYYMMDD_HHmmss.xlsx"</td>
+    </tr>
+</table>
+
+<!-- SERVICE METHODS -->
+<h2>BudgetItemService - Methods</h2>
+<table>
+    <caption>Service Methods</caption>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Notes / Behavior</th>
+    </tr>
+    <tr>
+        <td>GetAllAsync</td>
+        <td>Retrieve all budget items</td>
+        <td>None</td>
+        <td>Returns IEnumerable&lt;BudgetItem&gt;</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync</td>
+        <td>Fetch budget item by ID</td>
+        <td>int id</td>
+        <td>Nullable return, repository lookup</td>
+    </tr>
+    <tr>
+        <td>AddAsync</td>
+        <td>Create new budget item</td>
+        <td>BudgetItem entity</td>
+        <td>Unique ItemNumber validation, auto-generation, transaction commit, returns new ID</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync</td>
+        <td>Update existing budget item</td>
+        <td>BudgetItem entity</td>
+        <td>Fetch existing, update values, commit transaction, null-check safety</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync</td>
+        <td>Remove budget item</td>
+        <td>int id</td>
+        <td>Try-catch, boolean result indicating success/failure, commits transaction</td>
+    </tr>
+    <tr>
+        <td>GenerateNewCode</td>
+        <td>Create unique sequential item numbers</td>
+        <td>None</td>
+        <td>Finds max existing code, increments by 1, fallback to 1000 on error</td>
+    </tr>
+</table>
+
+<!-- ENTITY TABLE -->
+<h2>BudgetItem Entity - Fields</h2>
+<table>
+    <caption>Database Model Properties</caption>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>Id</td><td>Primary key of the budget item</td></tr>
+    <tr><td>ItemNumber</td><td>Optional number/identifier for accounting or organization</td></tr>
+    <tr><td>ItemTitle</td><td>Name or title of budget item (max 200 chars)</td></tr>
+</table>
+
+<!-- VIEWMODEL TABLE -->
+<h2>BudgetItemVM - Fields</h2>
+<table>
+    <caption>Presentation Layer / UI Properties</caption>
+    <tr>
+        <th>Property</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>Id</td><td>Same as entity</td></tr>
+    <tr><td>ItemNumber</td><td>Shown in UI but optional, read-only for integrity</td></tr>
+    <tr><td>ItemTitle</td><td>Required in UI, localized validation</td></tr>
+    <tr><td>HasRelatedExpenseOrReceipt</td><td>Not stored in DB. Indicates if item is referenced elsewhere; may disable edit/delete</td></tr>
+</table>
+
+<!-- ENTITY vs VIEWMODEL COMPARISON -->
+<h2>BudgetItem vs BudgetItemVM</h2>
+<table>
+    <caption>Entity vs ViewModel Comparison</caption>
+    <tr>
+        <th>Feature</th>
+        <th>Entity (BudgetItem)</th>
+        <th>ViewModel (BudgetItemVM)</th>
+    </tr>
+    <tr><td>Stored in Database</td><td>Yes</td><td>No</td></tr>
+    <tr><td>Used in UI / Forms</td><td>Possibly</td><td>Always</td></tr>
+    <tr><td>Validation</td><td>No localized validation</td><td>Localized validation (Required)</td></tr>
+    <tr><td>Extra UI Logic</td><td>No</td><td>Yes (HasRelatedExpenseOrReceipt)</td></tr>
+</table>
+
+<!-- EXAMPLE USAGE TABLE -->
+<h2>Budget Item Example</h2>
+<table>
+    <caption>Sample Budget Items</caption>
+    <tr>
+        <th>Item Number</th>
+        <th>Item Title</th>
+    </tr>
+    <tr><td>1001</td><td>Office Supplies</td></tr>
+    <tr><td>1002</td><td>Travel Expenses</td></tr>
+    <tr><td>1003</td><td>Software Licenses</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

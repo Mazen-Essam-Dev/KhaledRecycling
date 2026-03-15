@@ -1,0 +1,383 @@
+﻿@using Domain.DTOs.Admin.SalaryManagement
+@using FougeraClub.Areas.Admin.ViewModels.ExternalWorkMission
+@model ExternalWorkMissionVM
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? Resource1.EditMission : Resource1.CreateMission;
+    ViewData["Title pakage"] = @Resource1.MissionsManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.ExternalWorkMissionList ?? " ";
+    ViewData["Title Single"] = (isEdit ? Resource1.EditMission : Resource1.CreateMission) ?? " ";
+
+    var AllEmployeesNames = ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>;
+    var AllMissionsChecked = Model?.Missions.Select(x => x.MessionKey).Distinct().ToList();
+}
+
+<!-- Breadcrumb -->
+<div class="col-6">
+   
+</div>
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa-solid fa-solid fa-briefcase me-1 text-ico"></span>
+                @ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/ExternalWorkMission/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title Single"]</a></li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="card">
+<div class="container-fluid p-3">
+            <form asp-action="AddEdit" method="post">
+
+            <input type="hidden" asp-for="Id" />
+            <!-- Section One: Basic Data -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource1.BasicData</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="c-edit-form mb-3">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label asp-for="MissionDate" class="form-label asteriskRequired">@Resource1.Date</label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                            <input asp-for="MissionDate" type="date" class="form-control green-border form-control-sm filter-bordered" />
+                        </div>
+                        <span asp-validation-for="MissionDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="EmployeeId" class="form-label asteriskRequired">@Resource1.Employee</label>
+                        <select asp-for="EmployeeId" id="EmployeeId" class="form-select">
+                            <option value="">-- @Resource1.SelectEmployee --</option>
+                            @if (SessionHelper.GetCurrentLanguage() == "ar")
+                            {
+                                @foreach (var emp in ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>)
+                                {
+                                    if (ViewBag.selectedEmployee == emp.Id)
+                                    {
+                                        <option value="@emp.Id" id="@emp.Id" selected="selected">@emp.FullNameAr</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@emp.Id" id="@emp.Id">@emp.FullNameAr</option>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var emp in ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>)
+                                {
+                                    if (ViewBag.selectedEmployee == emp.Id)
+                                    {
+                                        <option value="@emp.Id" id="@emp.Id" selected="selected">@emp.FullNameEn</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@emp.Id" id="@emp.Id">@emp.FullNameEn</option>
+                                    }
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="EmployeeId" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="job" class="form-label">@Resource1.Job</label>
+                        <input id="job" name="job" value="@ViewBag.selectedEmployeeJob" readonly class="form-control" />
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="MissionLocation" class="form-label asteriskRequired">@Resource1.MissionLocation</label>
+                        <input asp-for="MissionLocation" class="form-control" />
+                        <span asp-validation-for="MissionLocation" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6 mb-2">
+                        <label asp-for="MissionCountry" class="form-label asteriskRequired">@Resource1.MissionCountry</label>
+                        <input asp-for="MissionCountry" class="form-control" />
+                        <span asp-validation-for="MissionCountry" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label asp-for="MissionWorkDescription" class="form-label asteriskRequired">@Resource1.MissionWorkDescription</label>
+                        <textarea asp-for="MissionWorkDescription" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="MissionWorkDescription" class="text-danger small"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Section Two: Details of the work task -->
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="text-left sec-title">
+                            <div class="lg-title">
+                                <h1>@Resource1.MissionDetails</h1>
+                            </div>
+                            <div class="title-sep-left"></div>
+                            <div class="title-sep-sm-left"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-edit-form mb-3">
+                <div class="row">
+                        <div class="col-md-12 d-flex flex-wrap gap-3 align-items-center">
+                        <div class="form-check" style="padding-right:0 !important; padding-left:15px!important">
+                                <label class="form-check-label mt-1">@Resource1.MissionType  </label>
+                        </div>
+
+                            <div class="form-check  mt-1">
+                            @if (AllMissionsChecked?.Count > 0 && AllMissionsChecked.Contains((int)MissionType.Forum))
+                            {
+                                <input id="MT1" class="form-check-input " type="checkbox" checked="checked" name="MissionTypes" value="@((int)MissionType.Forum)" />
+                            }
+                            else
+                            {
+                                <input id="MT1" class="form-check-input" type="checkbox" name="MissionTypes" value="@((int)MissionType.Forum)" />
+                            }
+                                <label for="MT1" class="form-check-label text-black">@Resource1.Forum</label>
+                        </div>
+                        <div class="form-check  mt-1">
+                            @if (AllMissionsChecked?.Count > 0 && AllMissionsChecked.Contains((int)MissionType.Conference))
+                            {
+                                <input id="MT2" class="form-check-input" type="checkbox" checked="checked" name="MissionTypes" value="@((int)MissionType.Conference)" />
+                            }
+                            else
+                            {
+                                <input id="MT2" class="form-check-input" type="checkbox" name="MissionTypes" value="@((int)MissionType.Conference)" />
+                            }
+                                <label for="MT2" class="form-check-label text-black">@Resource1.Conference</label>
+                        </div>
+                        <div class="form-check  mt-1">
+                            @if (AllMissionsChecked?.Count > 0 && AllMissionsChecked.Contains((int)MissionType.Exhibition))
+                            {
+                                <input id="MT3" class="form-check-input" type="checkbox" checked="checked" name="MissionTypes" value="@((int)MissionType.Exhibition)" />
+                            }
+                            else
+                            {
+                                <input id="MT3" class="form-check-input" type="checkbox" name="MissionTypes" value="@((int)MissionType.Exhibition)" />
+                            }
+                                <label for="MT3" class="form-check-label text-black">@Resource1.Exhibition</label>
+                        </div>
+                        <div class="form-check  mt-1">
+                            @if (AllMissionsChecked?.Count > 0 && AllMissionsChecked.Contains((int)MissionType.Competition))
+                            {
+                                <input id="MT4" class="form-check-input" type="checkbox" checked="checked" name="MissionTypes" value="@((int)MissionType.Competition)" />
+                            }
+                            else
+                            {
+                                <input id="MT4" class="form-check-input" type="checkbox" name="MissionTypes" value="@((int)MissionType.Competition)" />
+                            }
+                                <label for="MT4" class="form-check-label text-black">@Resource1.Competition</label>
+                        </div>
+                        <div class="form-check  mt-1">
+                            @if (AllMissionsChecked?.Count > 0 && AllMissionsChecked.Contains((int)MissionType.ClubEquipment))
+                            {
+                                <input id="MT5" class="form-check-input" type="checkbox" checked="checked" name="MissionTypes" value="@((int)MissionType.ClubEquipment)" />
+                            }
+                            else
+                            {
+                                <input id="MT5" class="form-check-input" type="checkbox" name="MissionTypes" value="@((int)MissionType.ClubEquipment)" />
+                            }
+                                <label for="MT5" class="form-check-label text-black">@Resource1.ClubEquipment</label>
+                        </div>
+                        <div class="form-check  mt-1">
+                            @if (AllMissionsChecked?.Count > 0 && AllMissionsChecked.Contains((int)MissionType.ExchangeOrDelivery))
+                            {
+                                <input id="MT6" class="form-check-input" type="checkbox" checked="checked" name="MissionTypes" value="@((int)MissionType.ExchangeOrDelivery)" />
+                            }
+                            else
+                            {
+                                <input id="MT6" class="form-check-input" type="checkbox" name="MissionTypes" value="@((int)MissionType.ExchangeOrDelivery)" />
+                            }
+                                <label for="MT6" class="form-check-label text-black">@Resource1.ExchangeOrDelivery</label>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <!-- Section Three: Financial Fees -->
+                <div class="row ">
+                    <div class="col-md-12">
+                        <div class="text-left sec-title">
+                            <div class="lg-title">
+                                <h1>@Resource1.RequiredFees</h1>
+                            </div>
+                            <div class="title-sep-left"></div>
+                            <div class="title-sep-sm-left"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-edit-form mb-3">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <label asp-for="PetroleumFees" class="form-label">@Resource1.PetroleumFees</label>
+                        <input asp-for="PetroleumFees" placeholder="0" type="number" class="form-control" />
+                        <span asp-validation-for="PetroleumFees" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="FoodFees" class="form-label">@Resource1.FoodFees</label>
+                        <input asp-for="FoodFees" placeholder="0" type="number" class="form-control" />
+                        <span asp-validation-for="FoodFees" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="MissionAllowance" class="form-label">@Resource1.MissionAllowance</label>
+                        <input asp-for="MissionAllowance" placeholder="0" type="number" class="form-control" />
+                        <span asp-validation-for="MissionAllowance" class="text-danger small"></span>
+                    </div>
+                </div>
+                </div>
+                <!-- Section Four: Candidates for Participation -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="text-left sec-title">
+                            <div class="lg-title">
+                                <h1>@Resource1.Candidates</h1>
+                            </div>
+                            <div class="title-sep-left"></div>
+                            <div class="title-sep-sm-left"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="c-edit-form mb-3">
+                    <div class="row">
+                    @if (Model?.Id == 0 || (Model?.Id > 0 && (!string.IsNullOrEmpty(Model.CandidateName1) || !string.IsNullOrEmpty(Model.CandidateAdj1))))
+                    {
+                            <div class="col-md-6 mb-3">
+                            <label asp-for="CandidateName1" class="form-label">@Resource1.CandidateName</label>
+                            <input asp-for="CandidateName1" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateName1)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateName 1" />
+                            <span asp-validation-for="CandidateName1" class="text-danger small"></span>
+                        </div>
+
+                            <div class="col-md-6 mb-3">
+                            <label asp-for="CandidateAdj1" class="form-label">@Resource1.CandidateAdj</label>
+                            <input asp-for="CandidateAdj1" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateAdj1)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateAdj 1" />
+                            <span asp-validation-for="CandidateAdj1" class="text-danger small"></span>
+                        </div>
+                    }
+                    @if (Model?.Id == 0 || (Model?.Id > 0 && (!string.IsNullOrEmpty(Model.CandidateName2) || !string.IsNullOrEmpty(Model.CandidateAdj2))))
+                    {
+                            <div class="col-md-6 mb-3">
+                            <input asp-for="CandidateName2" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateName2)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateName 2" />
+                            <span asp-validation-for="CandidateName2" class="text-danger small"></span>
+                        </div>
+
+                            <div class="col-md-6 mb-3">
+                            <input asp-for="CandidateAdj2" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateAdj2)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateAdj 2" />
+                            <span asp-validation-for="CandidateAdj2" class="text-danger small"></span>
+                        </div>
+                    }
+                    @if (Model?.Id == 0 || (Model?.Id > 0 && (!string.IsNullOrEmpty(Model.CandidateName3) || !string.IsNullOrEmpty(Model.CandidateAdj3))))
+                    {
+                            <div class="col-md-6 mb-3">
+                            <input asp-for="CandidateName3" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateName3)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateName 3" />
+                            <span asp-validation-for="CandidateName3" class="text-danger small"></span>
+                        </div>
+
+                            <div class="col-md-6 mb-3">
+                            <input asp-for="CandidateAdj3" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateAdj3)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateAdj 3" />
+                            <span asp-validation-for="CandidateAdj3" class="text-danger small"></span>
+                        </div>
+                    }
+                    @if (Model?.Id == 0 || (Model?.Id > 0 && (!string.IsNullOrEmpty(Model.CandidateName4) || !string.IsNullOrEmpty(Model.CandidateAdj4))))
+                    {
+                        <div class="col-md-6 mb-3">
+                            <input asp-for="CandidateName4" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateName4)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateName 4" />
+                            <span asp-validation-for="CandidateName4" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <input asp-for="CandidateAdj4" type="@((Model?.Id > 0 && (string.IsNullOrEmpty(Model.CandidateAdj4)) ? "hidden" : "text"))" class="form-control" placeholder="@Resource1.CandidateAdj 4" />
+                            <span asp-validation-for="CandidateAdj4" class="text-danger small"></span>
+                        </div>
+                    }
+                </div>
+        </div>
+            <label asp-for="MissionWorkDescription" class="form-label mb-1">@Resource1.Notes</label>
+
+                    <textarea asp-for="MissionWorkDescription" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="MissionWorkDescription" class="text-danger small"></span>
+
+                    <div class="d-flex justify-content-end mt-4">
+                        @if (Model?.SignatureIdApproved == null)
+                        {
+                            <button type="submit" class="btn btn-success me-2">
+                                <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                            </button>
+                        }
+                        else
+                        {
+                            <a href="#" class="disabled btn btn-success me-2">
+                                <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                            </a>
+                        }
+                        <a asp-action="Index" class="btn  btn-cancel-search">
+                            @Resource2.Back<i class="fa-solid fa-arrow-left me-1"></i>
+                        </a>
+                    </div>
+            </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready( function () {
+            let money = document.getElementById("Money2").value;
+
+            GetMoneyText(money);
+            calculateTotal();
+            GetMoneySum2Text();
+        });
+        $('#EmployeeId').on('change', function () {
+            let empId = document.getElementById("EmployeeId").value;
+
+            GetjobTitle(empId);
+        });
+
+        function GetjobTitle(empId){
+            $.ajax({
+                url: '@Url.Action("GetJob", "ExternalWorkMission", new { area = "Admin" })',
+                type: 'POST',
+                data: {empId :empId },
+                headers: {
+                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (result) {
+                    $("#job").val("");
+                    if (result.status === true) {
+                        $("#job").val(result.jobTitle);
+                    } else {
+                    $("#job").val("");
+                    }
+                },
+                error: function () {
+                    $("#job").val("");
+                }
+            });
+        }
+    </script>
+
+
+}

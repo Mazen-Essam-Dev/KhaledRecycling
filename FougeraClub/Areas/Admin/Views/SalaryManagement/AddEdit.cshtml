@@ -1,0 +1,491 @@
+﻿@using Domain.DTOs.Admin.SalaryManagement
+@using FougeraClub.Areas.Admin.ViewModels.SalaryManagement
+@model SalaryManagementVM
+@{
+    ViewData["Title pakage"] = @Resource1.SalaryManagementUnitManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.payrollList ?? " ";
+    ViewData["Title Single"] = ((Model.Id == 0) ? @Resource1.AddNewSalaryManagement1 : @Resource1.EditSalaryManagement) ?? " ";
+
+    var AllEmployeesNames = ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>;
+    // var AllJobsNames = ViewBag.AllJobsNamesVM as IEnumerable<JobVM>;
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+
+<!-- Breadcrumb Navigation -->
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6 mb-2">
+        <div class="d-flex align-items-center">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-book me-2 text-ico"></span>
+                @ViewData["Title Single"]
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6 mb-2">
+        <nav class="d-flex align-items-center justify-content-end" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/SalaryManagement/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="card all-borders p-3">
+    <form id="salaryForm" asp-action="AddEdit" method="post">
+        <input type="hidden" asp-for="Id" />
+
+        @* Hidden fields depending on Add or Edit *@
+        @if (Model.Id == 0) // is Add Page
+        {
+            <input type="hidden" asp-for="JobTitle" />
+            <input type="hidden" asp-for="BasicSalary" />
+            <input type="hidden" asp-for="WorkDays" />
+            <input type="hidden" asp-for="ReducedWorkDays" id="ReducedWorkDays" />
+        }
+        else // is Edit Page
+        {
+            <input type="hidden" asp-for="JobTitle" />
+            <input type="hidden" asp-for="BasicSalary" />
+            <input type="hidden" asp-for="EmployeeId" />
+            <input type="hidden" asp-for="Month" />
+            <input type="hidden" asp-for="Year" />
+            <input type="hidden" asp-for="WorkDays" />
+            <input type="hidden" asp-for="ReducedWorkDays" id="ReducedWorkDays" />
+        }
+
+        @* Main form section - Now identical for both Add and Edit *@
+        <div class="row">
+            @if (Model.Id == 0) // Add Page - but with Edit form UI
+            {
+                <div class="col-md-12 mb-2">
+                    <label asp-for="EmployeeId" class="form-label asteriskRequired">@Resource1.Employee</label>
+                    <select asp-for="EmployeeId" id="EmployeeId" class="form-select"
+                            onchange="changeJobAndBasicSalary(); setTimeout(Update_totalSalary1, 50); setTimeout(onEmployeeOrYearChange, 50);">
+                        <option value="">-- @Resource1.SelectEmployee --</option>
+                        @if (SessionHelper.GetCurrentLanguage() == "ar")
+                        {
+                            @foreach (var emp in ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>)
+                            {
+                                if (ViewBag.selectedEmployee == emp.Id)
+                                {
+                                    <option value="@emp.Id" id="@emp.Id" selected="selected">@emp.FullNameAr</option>
+                                }
+                                else
+                                {
+                                    <option value="@emp.Id" id="@emp.Id">@emp.FullNameAr</option>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            @foreach (var emp in ViewBag.EmployeesNames as IEnumerable<EmployeesNameDTO>)
+                            {
+                                if (ViewBag.selectedEmployee == emp.Id)
+                                {
+                                    <option value="@emp.Id" id="@emp.Id" selected="selected">@emp.FullNameEn</option>
+                                }
+                                else
+                                {
+                                    <option value="@emp.Id" id="@emp.Id">@emp.FullNameEn</option>
+                                }
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="EmployeeId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label asp-for="Year" class="form-label asteriskRequired">@Resource1.Year</label>
+                    <div class="input-icon-left">
+                        <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+                        <select asp-for="Year" id="Year" class="form-select" onchange="onEmployeeOrYearChange();">
+                            <option value="">-- @Resource1.Select @Resource1.Year1 --</option>
+                            @* @for (int y = AppDubaiTime.Now.Year; y >= AppDubaiTime.Now.Year - 10; y--) *@
+                            @for (int y = 2025; y <= 2025 + 10; y++)
+                            {
+                                <option value="@y">@y</option>
+                            }
+                        </select>
+                    </div>
+                    <span asp-validation-for="Year" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label asp-for="Month" class="form-label asteriskRequired">@Resource1.Month</label>
+                    <div class="input-icon-left">
+                        <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+                        <select asp-for="Month" id="Month" class="form-select">
+                            <option value="">-- @Resource1.Select @Resource1.Month1 --</option>
+                        </select>
+                    </div>
+                    <span asp-validation-for="Month" class="text-danger small"></span>
+                </div>
+            }
+            else // Edit Page - unchanged
+            {
+                <div class="col-md-12  mb-2">
+                    <label asp-for="EmployeeId" class="form-label">@Resource1.Employee</label>
+                    <input id="EmployeeId2" name="EmployeeId2"
+                           value="@(lang == "ar"
+                                                                                     ? AllEmployeesNames?.Where(y => y.Id == Model.EmployeeId)?.FirstOrDefault()?.FullNameAr
+                                                                                     : AllEmployeesNames?.Where(y => y.Id == Model.EmployeeId)?.FirstOrDefault()?.FullNameEn)"
+                           class="form-control fw-bold bg-light" readonly />
+                    <span asp-validation-for="EmployeeId" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label asp-for="Year" class="form-label">@Resource1.Year</label>
+                    <input id="Year2" name="Year2" value="@(Model.Year)" class="form-control fw-bold bg-light" readonly />
+                    <span asp-validation-for="Year" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6 mb-2">
+                    <label asp-for="Month" class="form-label">@Resource1.Month</label>
+                    <input id="Month2" name="Month2"
+                           value="@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Model.Month)"
+                           class="form-control fw-bold bg-light" readonly />
+                    <span asp-validation-for="Month" class="text-danger small"></span>
+                </div>
+            }
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="JobTitle" class="form-label">@Resource1.JobTitle1</label>
+                @if (Model.Id == 0)
+                {
+                    <input id="jobTitleJS" class="form-control fw-bold bg-light" readonly />
+                }
+                else
+                {
+                    <input asp-for="JobTitle" class="form-control fw-bold bg-light" readonly />
+                }
+                <span asp-validation-for="JobTitle" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="BasicSalary" class="form-label">@Resource1.BasicSalary</label>
+                @if (Model.Id == 0)
+                {
+                    <input id="basicSalaryJS" name="basicSalaryJS" type="number"
+                           class="form-control only-decimal fw-bold bg-light" readonly />
+                }
+                else
+                {
+                    <input asp-for="BasicSalary" type="number"
+                           class="form-control only-decimal fw-bold bg-light" readonly />
+                }
+                <span asp-validation-for="BasicSalary" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="Allowances" class="form-label">@Resource1.Allowances2</label>
+                <input asp-for="Allowances" type="number" placeholder="0.00" class="form-control" />
+                <span asp-validation-for="Allowances" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="TotalSalary" class="form-label">@Resource1.TotalSalary</label>
+                <input asp-for="TotalSalary" type="number" placeholder="0.00"
+                       class="form-control only-decimal fw-bold bg-light" readonly />
+                <span asp-validation-for="TotalSalary" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="WorkDays" class="form-label">@Resource1.WorkDays</label>
+                <input id="WorkDaysDisplay" value="@Model.WorkDays" readonly type="number"
+                       class="form-control only-integer fw-bold bg-light" />
+                <span asp-validation-for="WorkDays" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="AbsentDays" class="form-label">@Resource1.AbsentDays2</label>
+                <input asp-for="AbsentDays" type="number" placeholder="0"
+                       class="form-control only-integer" />
+                <span asp-validation-for="AbsentDays" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="SickLeaveDays" class="form-label">@Resource1.SickLeaveDays1 (Days)</label>
+                <input asp-for="SickLeaveDays" type="number" placeholder="0"
+                       class="form-control only-integer" />
+                <span asp-validation-for="SickLeaveDays" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="AnnualLeaveDays" class="form-label">@Resource1.AnnualLeaveDays (Days)</label>
+                <input asp-for="AnnualLeaveDays" type="number" placeholder="0"
+                       class="form-control only-integer" />
+                <span asp-validation-for="AnnualLeaveDays" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="DeductionsAddition" class="form-label">@Resource1.DeductionsAddition</label>
+                <input asp-for="DeductionsAddition" type="number" placeholder="0.00"
+                       class="form-control " />
+                <span asp-validation-for="DeductionsAddition" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="TotalDeductions" class="form-label">@Resource1.TotalDeductions</label>
+                <input asp-for="TotalDeductions" type="number" placeholder="0.00"
+                       class="form-control only-decimal fw-bold bg-light" readonly />
+                <span asp-validation-for="TotalDeductions" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="BonusesAndMissions" class="form-label">@Resource1.BonusesAndMissions</label>
+                <input asp-for="BonusesAndMissions" type="number" placeholder="0.00"
+                       class="form-control " />
+                <span asp-validation-for="BonusesAndMissions" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="NetSalary" class="form-label fw-bold">@Resource1.NetSalary</label>
+                <input asp-for="NetSalary" type="number" placeholder="0.00"
+                       class="form-control only-decimal fw-bold bg-light" readonly />
+                <span asp-validation-for="NetSalary" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-12">
+                <div class="d-flex align-items-center justify-content-end gap-3 mt-3">
+                    <button type="submit" class="btn btn-success btn-sm px-3">
+                        <i class="fa-solid fa-floppy-disk me-1"></i> @Resource2.Save
+                    </button>
+
+                    <a class="btn btn-sm px-3 btn-cancel-search" href="/Admin/SalaryManagement">
+                        @Resource2.Back <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+
+            // 🔹 Integer numbers only (0-9)
+            $('.only-integer').on('input', function () {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+
+
+        });
+    </script>
+    <script>
+        function onEmployeeOrYearChange() {
+            const monthValueAr = '@Html.Raw($"-- {Resource1.Select} {Resource1.Month1} --")'
+            const employeeId = document.getElementById("EmployeeId").value;
+            const year = document.getElementById("Year").value;
+            const monthSelect = document.getElementById("Month");
+
+            // If either is empty, clear months
+            if (!employeeId || !year) {
+                monthSelect.innerHTML = '<option value="">'+monthValueAr+'</option>';
+                return;
+            }
+
+            // Send AJAX to get months
+            $.ajax({
+                url: '/Admin/SalaryManagement/GetAvailableMonths',
+                type: 'GET',
+                data: { employeeId: employeeId, year: year },
+                success: function (months) {
+                    monthSelect.innerHTML = '<option value="">'+monthValueAr+'</option>';
+                    if (months && months.length > 0) {
+                        months.forEach(m => {
+                            const option = document.createElement('option');
+                            option.value = m.value;
+                            option.text = m.text;
+                            monthSelect.appendChild(option);
+                        });
+                    }
+                },
+                error: function () {
+                    monthSelect.innerHTML = '<option value="">'+monthValueAr+'</option>';
+                }
+            });
+        }
+    </script>
+
+    @if (Model.Id == 0) // is Add Page
+    {
+        <script>
+            function changeJobAndBasicSalary() {
+                var selectedEmployeeId = document.getElementById('EmployeeId').value;
+
+                if (!selectedEmployeeId) {
+                    clearJobAndSalaryFields();
+                    return;
+                }
+
+                $.ajax({
+                    url: '/Admin/SalaryManagement/GetEmployeeJobAndSalary',
+                    type: 'GET',
+                    data: { employeeId: selectedEmployeeId },
+                    success: function (data) {
+                        if (data) {
+                            document.getElementById('jobTitleJS').value = data.jobTitle || '';
+                            document.getElementById('JobTitle').value = data.jobTitle || '';
+                            document.getElementById('basicSalaryJS').value = data.basicSalary || 0.00;
+                            document.getElementById('BasicSalary').value = data.basicSalary || 0.00;
+
+                        } else {
+                            clearJobAndSalaryFields();
+                        }
+                    },
+                    error: function () {
+                        clearJobAndSalaryFields();
+                        console.error('Error loading employee data');
+                    }
+                });
+            }
+
+            function clearJobAndSalaryFields() {
+                document.getElementById('jobTitleJS').value = '';
+                document.getElementById('JobTitle').value = '';
+                document.getElementById('basicSalaryJS').value = 0.00;
+                document.getElementById('BasicSalary').value = 0.00;
+            }
+        </script>
+
+    }
+    @if (Model.Id > 0) // is Edit Page
+    {
+        <script>
+            function changeJobAndBasicSalary() {
+                return ;
+            }
+        </script>
+    }
+
+    <script>
+
+        //decimal
+        const allowancesInput = document.querySelector('[name="Allowances"]');
+        const totalSalaryInput = document.querySelector('[name="TotalSalary"]');
+        const basicSalaryInput = document.querySelector('[name="BasicSalary"]');
+        const basicSalaryJSInput = document.querySelector('[name="basicSalaryJS"]');
+
+        // int
+        const workDaysInput = document.querySelector('[name="WorkDays"]'); // hidden/original input (will be overwritten with reduced value)
+        const workDaysDisplayEl = document.getElementById('WorkDaysDisplay'); // visible reduced display
+        // store initial workdays (original value) so we can compute reduced from it even after overwriting hidden input
+        const initialWorkDays = parseFloat(workDaysInput?.value) || 30;
+        const absentDaysInput = document.querySelector('[name="AbsentDays"]');
+        const sickLeaveDaysInput = document.querySelector('[name="SickLeaveDays"]');
+        const annualLeaveDaysInput = document.querySelector('[name="AnnualLeaveDays"]');
+
+        //decimal
+        const deductionsAdditionInput = document.querySelector('[name="DeductionsAddition"]');
+        const totalDeductionsInput = document.querySelector('[name="TotalDeductions"]');
+        const bonusesAndMissionsInput = document.querySelector('[name="BonusesAndMissions"]');
+        const netSalaryInput = document.querySelector('[name="NetSalary"]');
+
+         // event listeners
+        if (allowancesInput) allowancesInput.addEventListener('input', Update_totalSalary1);// 🔹 Calculate the TotalSalary1 directly when Change the value of allowances
+        if (basicSalaryInput) basicSalaryInput.addEventListener('input', Update_totalSalary1);// 🔹 Calculate the TotalSalary1 directly when Change the value of allowances
+        //if (workDaysInput) workDaysInput.addEventListener('input', Update_totalNetSalary);
+
+        // 🔹 Auto Calculate (theNetSalary , totalDeductions) directly when any Changes
+        document.querySelectorAll('[name="TotalSalary"], [name="WorkDays"], [name="AbsentDays"], [name="SickLeaveDays"] , [name="AnnualLeaveDays"] , [name="DeductionsAddition"] , [name="TotalDeductions"], [name="BonusesAndMissions"]').forEach(el => {
+            el.addEventListener('input', Update_totalNetSalary);
+        });
+
+        // Ensure hidden WorkDays is updated before submit in case user saves without triggering input events
+        const salaryFormEl = document.getElementById('salaryForm');
+        if (salaryFormEl) {
+            salaryFormEl.addEventListener('submit', function () {
+                try {
+                    const absent = parseFloat(absentDaysInput?.value) || 0;
+                    const sick = parseFloat(sickLeaveDaysInput?.value) || 0;
+                    const annual = parseFloat(annualLeaveDaysInput?.value) || 0;
+                    let displayed = initialWorkDays - absent - sick - annual;
+                    if (displayed < 0) displayed = 0;
+                    if (workDaysDisplayEl) workDaysDisplayEl.value = displayed;
+                    if (workDaysInput) workDaysInput.value = displayed;
+                } catch (e) { }
+            });
+        }
+
+        // 🔹 Calculate the TotalSalary1 directly when Change the value of allowances
+        function Update_totalSalary1(){
+            if (allowancesInput && totalSalaryInput && basicSalaryInput ) {
+                    // Read Values
+                    let basic= parseFloat(basicSalaryInput.value)  || 0.00;
+                    let allowances = parseFloat(allowancesInput.value) || 0.00;
+
+
+
+                    // Calculate TotalSalary1
+                    let totalSalary1 = basic + allowances;
+
+                    // update TotalSalary Value
+                    totalSalaryInput.value = totalSalary1.toFixed(2);
+
+                    // 🔹 Calculate the NetSalary , totalDeductions directly when any Change
+                    setTimeout(Update_totalNetSalary, 50);
+            }
+            else{
+                return;
+            }
+        }
+        // 🔹 Calculate the NetSalary , totalDeductions directly when any Change
+        function Update_totalNetSalary(){
+            if (!totalSalaryInput || !netSalaryInput || !totalDeductionsInput) return;
+                    // Read Values
+                    // decimal
+                    let basic= parseFloat(basicSalaryInput.value)  || 0.00;
+                    let allowances = parseFloat(allowancesInput.value) || 0.00;
+                    // int
+                                // Compute reduced/displayed workdays from the original initial value
+                                let absentDays = parseFloat(absentDaysInput.value) || 0;
+                                let sickLeaveDays = parseFloat(sickLeaveDaysInput.value) || 0;
+                                let annualLeaveDays = parseFloat(annualLeaveDaysInput.value) || 0;
+                                let displayedWorkDays = initialWorkDays - absentDays - sickLeaveDays - annualLeaveDays;
+                                if (displayedWorkDays < 0) displayedWorkDays = 0;
+                                if (workDaysDisplayEl) workDaysDisplayEl.value = displayedWorkDays;
+                                // set ReducedWorkDays hidden input (controller will use it to persist into WorkDays)
+                                const reducedHidden = document.getElementById('ReducedWorkDays');
+                                if (reducedHidden) reducedHidden.value = displayedWorkDays;
+
+                    // decimal
+                    let deductionsAddition= parseFloat(deductionsAdditionInput.value)  || 0.00;
+                    //let totalDeductions = parseFloat(totalDeductionsInput.value) || 0.00;
+                    let bonusesAndMissions = parseFloat(bonusesAndMissionsInput.value) || 0.00;
+                    //let netSalary = parseFloat(netSalaryInput.value) || 0.00;
+
+                    // Calculate TotalSalary1
+                    let totalSalary1 = basic + allowances;
+
+                    // Use constant 30 as divisor for deductions (do not change based on reduced displayed workdays)
+                    let absenceDeduction = (totalSalary1 / 30) * absentDays;
+
+                    // annual vacation deduction removed (no deduction applied for AnnualLeaveDays)
+                    let totalDeductions = absenceDeduction + deductionsAddition;
+                    let netSalary = totalSalary1 - totalDeductions + bonusesAndMissions;
+
+                    // update TotalSalary Value
+                    totalSalaryInput.value = totalSalary1.toFixed(2);
+
+                    // update TotalDeductions Value
+                    totalDeductionsInput.value = totalDeductions.toFixed(2);
+
+                    // update netSalary Value
+                    netSalaryInput.value = netSalary.toFixed(2);
+
+                    //console.log({ basic, allowances, workDays, absentDays, sickLeaveDays, annualLeaveDays, deductionsAddition, totalDeductions, bonusesAndMissions, netSalary });
+
+        }
+    </script>
+
+}

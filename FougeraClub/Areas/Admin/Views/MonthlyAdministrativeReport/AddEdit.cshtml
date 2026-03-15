@@ -1,0 +1,945 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.MonthlyAdministrativeReport
+@model MonthlyAdministrativeReportVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? Resource2.EditMonthlyAdministrativeReport : Resource2.CreateMonthlyAdministrativeReport;
+    ViewData["Title pakage"] = @Resource1.ExternalWorkMissionManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.MonthlyAdministrativeReportList ?? " ";
+    ViewData["Title Single"] = ((Model?.Id == 0) ? @Resource2.CreateMonthlyAdministrativeReport : @Resource2.EditMonthlyAdministrativeReport) ?? " ";
+}
+<!-- Breadcrumb Navigation Column -->
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa-solid fa-file text-ico me-1 text-ico"></span>
+                @ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/MonthlyAdministrativeReport/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="card">
+    <div class="p-3 container-fluid">
+        <form asp-action="AddEdit" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="TempFile1_Path" />
+            <input type="hidden" asp-for="TempFile2_Path" />
+            <input type="hidden" asp-for="TempFile3_Path" />
+            <input type="hidden" asp-for="TempFile4_Path" />
+            <input type="hidden" asp-for="TempFile5_Path" />
+            <input type="hidden" asp-for="TempFile6_Path" />
+            <input type="hidden" asp-for="Old1_Path" />
+            <input type="hidden" asp-for="Old2_Path" />
+            <input type="hidden" asp-for="Old3_Path" />
+            <input type="hidden" asp-for="Old4_Path" />
+            <input type="hidden" asp-for="Old5_Path" />
+            <input type="hidden" asp-for="Old6_Path" />
+            <input hidden id="idPage" name="idPage" value="@Model?.Id" />
+
+            <div class="row ">
+                <!-- Date -->
+                <div class="col-md-10 mb-2">
+                    <label asp-for="Date" class="form-label asteriskRequired fw-semibold">@Resource2.Date</label>
+                    <div class="input-icon-left">
+                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                        <input asp-for="Date" class="form-control green-border form-control-sm filter-bordered" type="date" id="DateInput" />
+                    </div>
+                    <span asp-validation-for="Date" class="text-danger small"></span>
+                </div>
+                <!-- Type -->
+                <div class="col-md-2 mb-2">
+                    <label class="form-label fw-semibold asteriskRequired d-block">@Resource2.Type</label>
+                    <div class="d-flex flex-wrap gap-3 mt-3">
+                        @foreach (var item in Model?.TypeEnumList ?? Enumerable.Empty<SelectListItem>())
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input typeradiobtn"
+                                       type="radio"
+                                       asp-for="Type"
+                                       id="TypeEnum_@item.Value"
+                                       value="@item.Value"
+                                       checked="@(Model?.Type.HasValue == true ? Model?.Type.Value.ToString() == item.Value : false)" />
+                                <label class="form-check-label" for="TypeEnum_@item.Value">@item.Text</label>
+                            </div>
+                        }
+                    </div>
+                    <span asp-validation-for="Type" id="typeValidVM" class="text-danger small"></span>
+                    <span id="TypeCheckResult" class="small"></span>
+                </div>
+                <!-- Administrative Department -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="AdministrativeDepartment" class="form-label asteriskRequired fw-semibold">@Resource2.AdministrativeDepartment</label>
+                    <input asp-for="AdministrativeDepartment" class="form-control" placeholder="@Resource2.AdministrativeDepartment" />
+                    <span asp-validation-for="AdministrativeDepartment" class="text-danger small"></span>
+                </div>
+
+                <!-- Report Title -->
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ReportTitle" class="form-label asteriskRequired fw-semibold">@Resource2.ReportTitle</label>
+                    <input asp-for="ReportTitle" class="form-control" placeholder="@Resource2.ReportTitle" />
+                    <span asp-validation-for="ReportTitle" class="text-danger small"></span>
+                </div>
+            </div>
+            <!-- Activities -->
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource2.AddActivities</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="c-edit-form mb-3">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label for="ActivityName" class="form-label asteriskRequired fw-semibold">@Resource1.ActivityName</label>
+                        <input id="ActivityName" class="form-control" type="text" />
+                        <span id="ActivityNameResult" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="ActivityStartDate" class="form-label asteriskRequired fw-semibold">@Resource2.ActivityStartDate</label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                            <input id="ActivityStartDate" class="form-control green-border form-control-sm filter-bordered" type="date" />
+                        </div>
+                        <span id="ActivityStartDateResult" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="ActivityEndDate" class="form-label asteriskRequired fw-semibold">@Resource2.ActivityEndDate</label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                            <input id="ActivityEndDate" class="form-control green-border form-control-sm filter-bordered" type="date" />
+                        </div>
+                        <span id="ActivityEndDateResult" class="text-danger small"></span>
+
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="NumberOfParticipants" class="form-label asteriskRequired fw-semibold">@Resource2.NumberOfParticipants</label>
+                        <input id="NumberOfParticipants" class="form-control" type="number" />
+                        <span id="NumberOfParticipantsResult" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label for="Reason" class="form-label asteriskRequired fw-semibold">@Resource1.ActivityReason1</label>
+                        <input id="Reason" class="form-control" type="text" />
+                        <span id="reasonResult" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-12 d-flex justify-content-end mt-3 mb-2">
+                        <button type="button" class="btn btn-success px-4" onclick="addRow()">
+                            <i class="fa-solid fa fa-plus-square me-2"></i> @Resource2.Add
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="table-responsive mt-3">
+                    <table class="table table-bordered table-hover align-middle table-striped">
+                        <thead class="table-light">
+                            <tr>
+                                <th>@Resource1.ActivityName</th>
+                                <th>@Resource2.NumberOfParticipants</th>
+                                <th>@Resource2.ActivityStartDate</th>
+                                <th>@Resource2.ActivityEndDate</th>
+                                <th>@Resource1.ActivityReason1</th>
+                                <th>@Resource2.Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="Details">
+                            @if (Model?.Details != null)
+                            {
+                                var index = 0;
+                                @if (Model.Id > 0)
+                                { //Edit --> text to Date in Type To Work
+                                    foreach (var detail in Model.Details)
+                                    {
+                                        <tr>
+                                            <td><input class="form-control" name="Details[@index].ActivityName" value="@detail.ActivityName" readonly /></td>
+                                            <td><input class="form-control" type="number" name="Details[@index].NumberOfParticipants" value="@detail.NumberOfParticipants" readonly /></td>
+                                            <td><input class="form-control" type="text" name="Details[@index].ActivityStartDate" value="@detail.ActivityStartDate?.ToString("yyyy-MM-dd")" readonly /></td>
+                                            <td><input class="form-control" type="text" name="Details[@index].ActivityEndDate" value="@detail.ActivityEndDate?.ToString("yyyy-MM-dd")" readonly /></td>
+                                            <td><input class="form-control" name="Details[@index].Reason" value="@detail.Reason" readonly /></td>
+                                            <td class="text-center"><button type="button" class="btn-control btn-icon btn-sm rounded-circle" onclick="removeRow(this)"><i class="fa-solid fa-trash fs-5"></i></button></td>
+                                        </tr>
+                                        index++;
+                                    }
+                                }
+                                else
+                                {//Add Readonly
+                                    foreach (var detail in Model.Details)
+                                    {
+                                        <tr>
+                                            <td><input class="form-control" name="Details[@index].ActivityName" value="@detail.ActivityName" readonly /></td>
+                                            <td><input class="form-control" type="number" name="Details[@index].NumberOfParticipants" value="@detail.NumberOfParticipants" readonly /></td>
+                                            <td><input class="form-control" type="text" name="Details[@index].ActivityStartDate" value="@detail.ActivityStartDate?.ToString("yyyy-MM-dd")" readonly /></td>
+                                            <td><input class="form-control"  type="text" name="Details[@index].ActivityEndDate" value="@detail.ActivityEndDate?.ToString("yyyy-MM-dd")" readonly /></td>
+                                            <td><input class="form-control" name="Details[@index].Reason" value="@detail.Reason" readonly /></td>
+                                            <td class="text-center"><button type="button" class="btn-control btn-icon btn-sm rounded-circle" onclick="removeRow(this)"><i class="fa-solid fa-trash fs-5"></i></button></td>
+                                        </tr>
+                                        index++;
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="20" class="text-center p-5">
+                                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                                            <h5 class="mt-3">@Resource1.NoData</h5>
+                                            <p class="mb-0">@Resource2.GoToCreatePage</p>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!--  Notes  -->
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource1.GeneralNotes</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="row">
+            <div class="col-12">
+                @* <label asp-for="Notes" class="form-label mb-1">@Resource1.GeneralNotes</label> *@
+                <textarea asp-for="Notes" placeholder="@Resource1.note11" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Notes" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images -->
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource2.ParticipationImages</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="c-edit-form mb-3">
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <!-- Image 1 Upload -->
+                        <div class="col-md-4 mb-2">
+                                <div class="input-group mb-2  d-flex align-items-center">
+                                    <input type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png" asp-for="Image1">
+                                    <label class=" rounded-2 upload-file-ltr upload-file-rtl upload-file-hover  " asp-for="Image1"><i class="fa-solid fa-upload fs-5 px-1"></i></label>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model?.TempFile1_Path) || !string.IsNullOrEmpty(Model?.Old1_Path) || !string.IsNullOrEmpty(Model?.Image1Path))
+                                {
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#Image1Modal" class="eye-ii">
+                                        <i class="fa fa-eye"></i> @Resource3.ViewImage
+                                    </a>
+                                }
+                                <div>
+                                    <span class="d-inline-block mb-1 fs-6 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                                </div>
+
+                                <span asp-validation-for="Image1" class="text-danger small"></span>
+                            
+                            <!-- Preview (edit only) -->
+                            @if (!string.IsNullOrEmpty(Model?.TempFile1_Path))
+                            {
+                                <div class="modal fade" id="Image1Modal" tabindex="-1" aria-labelledby="Image1Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.TempFile1_Path.Replace("wwwroot/", "")" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }                            
+                            else if (!string.IsNullOrEmpty(Model?.Old1_Path))
+                            {
+                                <div class="modal fade" id="Image1Modal" tabindex="-1" aria-labelledby="Image1Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Old1_Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Image1Path))
+                            {
+                                <div class="modal fade" id="Image1Modal" tabindex="-1" aria-labelledby="Image1Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Image1Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- Image 2 Upload -->
+                            <div class="col-md-4 mb-2">
+                          
+                                <div class="input-group mb-2  d-flex align-items-center">
+                                    <input type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png" asp-for="Image2">
+                                    <label class=" rounded-2 upload-file-ltr upload-file-rtl upload-file-hover   " asp-for="Image2"><i class="fa-solid fa-upload fs-5 px-1"></i></label>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model?.TempFile2_Path) || !string.IsNullOrEmpty(Model?.Old2_Path) || !string.IsNullOrEmpty(Model?.Image2Path))
+                                {
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#Image2Modal" class="eye-ii">
+                                        <i class="fa fa-eye"></i> @Resource3.ViewImage
+                                    </a>
+                                }
+                                <div>
+                                    <span class="d-inline-block mb-1 fs-6 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                                </div>
+                                <span asp-validation-for="Image2" class="text-danger small"></span>
+                      
+                            <!-- Preview (edit only) -->
+                            @if (!string.IsNullOrEmpty(Model?.TempFile2_Path))
+                            {
+                                <div class="modal fade" id="Image2Modal" tabindex="-1" aria-labelledby="Image2Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.TempFile2_Path.Replace("wwwroot/", "")" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Old2_Path))
+                            {
+                                <div class="modal fade" id="Image2Modal" tabindex="-1" aria-labelledby="Image2Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                    <img src="~/@Model.Old2_Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Image2Path))
+                            {
+                                <div class="modal fade" id="Image2Modal" tabindex="-1" aria-labelledby="Image2Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Image2Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- Image 3 Upload -->
+                            <div class="col-md-4 mb-2">
+                   
+                                <div class="input-group mb-2  d-flex align-items-center">
+                                    <input type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png" asp-for="Image3">
+                                    <label class=" rounded-2 upload-file-ltr upload-file-rtl upload-file-hover  " asp-for="Image3"><i class="fa-solid fa-upload fs-5 px-1"></i></label>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model?.TempFile3_Path) || !string.IsNullOrEmpty(Model?.Old3_Path) || !string.IsNullOrEmpty(Model?.Image3Path))
+                                {
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#Image3Modal" class="eye-ii">
+                                        <i class="fa fa-eye"></i> @Resource3.ViewImage
+                                    </a>
+                                }
+                                <div>
+                                    <span class="d-inline-block mb-1 fs-6 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                                </div>
+                                <span asp-validation-for="Image3" class="text-danger small"></span>
+                           
+                            <!-- Preview (edit only) -->
+                            @if (!string.IsNullOrEmpty(Model?.TempFile3_Path))
+                            {
+                                <div class="modal fade" id="Image3Modal" tabindex="-1" aria-labelledby="Image3Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.TempFile3_Path.Replace("wwwroot/", "")" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Old3_Path))
+                            {
+                                <div class="modal fade" id="Image3Modal" tabindex="-1" aria-labelledby="Image3Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Old3_Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Image3Path))
+                            {
+                                <div class="modal fade" id="Image3Modal" tabindex="-1" aria-labelledby="Image3Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Image3Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <!-- Image 4 Upload -->
+                        <div class="col-md-4 mb-2">
+                      
+                                <div class="input-group mb-2  d-flex align-items-center">
+                                    <input type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png" asp-for="Image4">
+                                    <label class=" rounded-2 upload-file-ltr upload-file-rtl upload-file-hover  " asp-for="Image4"><i class="fa-solid fa-upload fs-5 px-1"></i></label>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model?.TempFile4_Path) || !string.IsNullOrEmpty(Model?.Old4_Path) || !string.IsNullOrEmpty(Model?.Image4Path))
+                                {
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#Image4Modal" class="eye-ii">
+                                        <i class="fa fa-eye"></i> @Resource3.ViewImage
+                                    </a>
+                                }
+                                <div>
+                                    <span class="d-inline-block mb-1 fs-6 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                                </div>
+                                <span asp-validation-for="Image4" class="text-danger small"></span>
+                      
+                            <!-- Preview (edit only) -->
+                            @if (!string.IsNullOrEmpty(Model?.TempFile4_Path))
+                            {
+                                <div class="modal fade" id="Image4Modal" tabindex="-1" aria-labelledby="Image4Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.TempFile4_Path.Replace("wwwroot/", "")" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Old4_Path))
+                            {
+                                <div class="modal fade" id="Image4Modal" tabindex="-1" aria-labelledby="Image4Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Old4_Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Image4Path))
+                            {
+                                <div class="modal fade" id="Image4Modal" tabindex="-1" aria-labelledby="Image4Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Image4Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                                
+                        </div>
+
+                        <!-- Image 5 Upload -->
+                        <div class="col-md-4 mb-2">
+
+                            <div class="input-group mb-2  d-flex align-items-center">
+                                <input type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png" asp-for="Image5">
+                                <label class=" rounded-2 upload-file-ltr upload-file-rtl upload-file-hover  " asp-for="Image5"><i class="fa-solid fa-upload fs-5 px-1"></i></label>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model?.TempFile5_Path) || !string.IsNullOrEmpty(Model?.Old5_Path) || !string.IsNullOrEmpty(Model?.Image5Path))
+                            {
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#Image5Modal" class="eye-ii">
+                                    <i class="fa fa-eye"></i> @Resource3.ViewImage
+                                </a>
+                            }
+                            <div>
+                                <span class="d-inline-block mb-1 fs-6 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                            </div>
+                            <span asp-validation-for="Image5" class="text-danger small"></span>
+
+                            <!-- Preview (edit only) -->
+                            @if (!string.IsNullOrEmpty(Model?.TempFile5_Path))
+                            {
+                                <div class="modal fade" id="Image5Modal" tabindex="-1" aria-labelledby="Image5Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.TempFile5_Path.Replace("wwwroot/", "")" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Old5_Path))
+                            {
+                                <div class="modal fade" id="Image5Modal" tabindex="-1" aria-labelledby="Image5Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Old5_Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Image5Path))
+                            {
+                                <div class="modal fade" id="Image5Modal" tabindex="-1" aria-labelledby="Image5Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Image5Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Image 6 Upload -->
+                        <div class="col-md-4 mb-2">
+
+                            <div class="input-group mb-2  d-flex align-items-center">
+                                <input type="file" class="form-control rounded-2 " accept=".jpg,.jpeg,.png" asp-for="Image6">
+                                <label class=" rounded-2 upload-file-ltr upload-file-rtl upload-file-hover  " asp-for="Image6"><i class="fa-solid fa-upload fs-5 px-1"></i></label>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model?.TempFile6_Path) || !string.IsNullOrEmpty(Model?.Old6_Path) || !string.IsNullOrEmpty(Model?.Image6Path))
+                            {
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#Image6Modal" class="eye-ii">
+                                    <i class="fa fa-eye"></i> @Resource3.ViewImage
+                                </a>
+                            }
+                            <div>
+                                <span class="d-inline-block mb-1 fs-6 text-red"> @Resource3.MaximumImageSize3MB </span>
+
+                            </div>
+                            <span asp-validation-for="Image6" class="text-danger small"></span>
+
+                            <!-- Preview (edit only) -->
+                            @if (!string.IsNullOrEmpty(Model?.TempFile6_Path))
+                            {
+                                <div class="modal fade" id="Image6Modal" tabindex="-1" aria-labelledby="Image6Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.TempFile6_Path.Replace("wwwroot/", "")" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Old6_Path))
+                            {
+                                <div class="modal fade" id="Image6Modal" tabindex="-1" aria-labelledby="Image6Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Old6_Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(Model?.Image6Path))
+                            {
+                                <div class="modal fade" id="Image6Modal" tabindex="-1" aria-labelledby="Image6Modal" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">@Resource2.ProjectImage</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                <img src="~/@Model.Image6Path" class="img-fluid rounded" style="max-height: 200px;" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+
+
+                    </div>
+                    <!-- Actions -->
+                      
+                </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end mt-0">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                </button>
+                <a asp-action="Index" class="btn btn-cancel-search">
+                    @Resource2.Back<i class="fa-solid fa-arrow-left me-1"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let id = document.getElementById("Id").value;
+            let selectedType = $(this).val();
+            let selectedDate = document.getElementById("DateInput").value;
+            // let msgValid = "@Html.Raw(Resource1.Dateisvalid)";
+            let msgValid = " ";
+            let msgInvalid = "@Html.Raw(@Resource2.ReportIsExist)";
+            validateReportDate(id,selectedType,selectedDate,msgValid,msgInvalid);
+        });
+    </script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            function triggerValidation() {
+                let id = document.getElementById("Id")?.value;
+                let selectedType = $('.typeradiobtn:checked').val();
+                let selectedDate = document.getElementById("DateInput")?.value;
+
+                // const msgValid = "@Html.Raw(Resource1.Dateisvalid)";
+                const msgValid = " ";
+                const msgInvalid = "@Html.Raw(@Resource2.ReportIsExist)";
+
+                if (selectedType && selectedDate) {
+                    validateReportDate(id, selectedType, selectedDate, msgValid, msgInvalid);
+                }
+            }
+
+            // 1 تشغيل بعد تحميل الصفحة
+            triggerValidation();
+
+            // 2 تشغيل عند التغيير
+            $('.typeradiobtn, #DateInput').on('change', function () {
+                triggerValidation();
+            });
+
+        });
+
+
+        function validateReportDate(id,selectedType,selectedDate,msgValid,msgInvalid){
+            $.ajax({
+                url: '@Url.Action("CheckDate", "MonthlyAdministrativeReport", new { area = "Admin" })',
+                type: 'POST',
+                data: {id :id, date: selectedDate , type :selectedType},
+                headers: {
+                    "RequestVerificationToken": $('input[name="__RequestVerificationToken"]').val()
+                },
+                success: function (result) {
+                    $("#typeValidVM").text("");
+                    if (result === false) {
+                        $("#TypeCheckResult").text(msgValid)
+                        .removeClass("text-danger").addClass("text-success");
+                    } else {
+                        $("#TypeCheckResult").text(msgInvalid)
+                        .removeClass("text-success").addClass("text-danger");
+                    }
+                },
+                error: function () {
+                    $("#TypeCheckResult").text("⚠ Error checking date")
+                        .removeClass("text-success").addClass("text-warning");
+                }
+            });
+        }
+    </script>
+
+    <script>
+        let rowIndex = @Model?.Details?.Count() ?? 0;
+
+        function addRow() {
+            const idPage = document.getElementById("idPage").value;
+            const startMustBeInSameMonth = "@Html.Raw(Resource2.TheStartDateMustBeInSameMonth)";
+            const startMustBeInSameYear = "@Html.Raw(Resource1.TheStartDate_mustSameyear)";
+            const endMustBeInSameMonth = "@Html.Raw(Resource2.TheEndDateMustBeInSameMonth)";
+            const endMustBeInSameYear = "@Html.Raw(Resource2.TheEndDateMustBeInSameYear)";
+            const name = document.getElementById("ActivityName").value;
+            const participants = document.getElementById("NumberOfParticipants").value;
+            const start = document.getElementById("ActivityStartDate").value;
+            const end = document.getElementById("ActivityEndDate").value;
+            const reason = document.getElementById("Reason").value;
+
+            var dateInput = document.getElementById("DateInput").value;
+            var dateInputMonth = new Date(dateInput).getMonth() + 1; // Months are zero-based
+            var dateInputYear = new Date(dateInput).getYear() + 1; // Years are zero-based
+
+            // Convert to Date objects
+            var startDate = new Date(start);
+            var endDate = new Date(end);
+
+        // Validate both start & end
+        let flag = false;
+
+
+        if (!name) {
+            $("#ActivityNameResult").text("@Html.Raw(Resource1.Required)");
+            flag = true;
+        }else{
+            $("#ActivityNameResult").text("");
+        }
+
+        if (!start) {
+            $("#ActivityStartDateResult").text("@Html.Raw(Resource1.Required)");
+            flag = true;
+        }else if (startDate.getMonth() + 1 !== dateInputMonth){
+            document.getElementById("ActivityStartDateResult").innerText =startMustBeInSameMonth;
+            flag = true;
+        }
+        else if(startDate.getYear() + 1 !== dateInputYear) {
+            document.getElementById("ActivityStartDateResult").innerText =startMustBeInSameYear;
+            flag = true;
+        }        
+        else{
+            $("#ActivityStartDateResult").text("");
+        }
+
+        if (!end) {
+            $("#ActivityEndDateResult").text("@Html.Raw(Resource1.Required)");
+            flag = true;
+        }else if (endDate.getMonth() + 1 !== dateInputMonth) {
+            document.getElementById("ActivityEndDateResult").innerText = endMustBeInSameMonth;
+            flag = true;
+        }else if (endDate.getYear() + 1 !== dateInputYear) {
+            document.getElementById("ActivityEndDateResult").innerText = endMustBeInSameYear;
+            flag = true;
+        }else if (end < start) {
+            $("#ActivityEndDateResult").text("@Html.Raw(Resource1.EndDateMustAfterStartDate)");
+            flag = true;
+        }else{
+            $("#ActivityEndDateResult").text("");
+        }
+
+        if (!participants) {
+            $("#NumberOfParticipantsResult").text("@Html.Raw(Resource1.Required)");
+            flag = true;
+        }else{
+            $("#NumberOfParticipantsResult").text("");
+        }
+        if (!reason) {
+            $("#reasonResult").text("@Html.Raw(Resource1.Required)");
+            flag = true;
+        }else{
+            $("#reasonResult").text("");
+        }
+
+       
+
+        
+        if(flag){
+            return;
+        }
+
+            const tbody = document.getElementById("Details");
+
+            const row = document.createElement("tr");
+
+            if(idPage > 0)
+            { // Edit
+                row.innerHTML = `
+                    <td><input class="form-control" name="Details[${rowIndex}].ActivityName" value="${name}" readonly/></td>
+                    <td><input class="form-control" type="number" name="Details[${rowIndex}].NumberOfParticipants" value="${participants}"readonly /></td>
+                    <td><input class="form-control" type="text" name="Details[${rowIndex}].ActivityStartDate" value="${start}"readonly /></td>
+                    <td><input class="form-control" type="text" name="Details[${rowIndex}].ActivityEndDate" value="${end}"readonly /></td>
+                    <td><input class="form-control" name="Details[${rowIndex}].Reason" value="${reason}"readonly /></td>
+                    <td class="text-center"><button type="button" class="btn-control btn-icon btn-sm rounded-circle" onclick="removeRow(this)"><i class="fa-solid fa-trash fs-5"></i></button></td>
+                `;
+            }else{ // add ReadOnly
+                row.innerHTML = `
+                    <td><input class="form-control" name="Details[${rowIndex}].ActivityName" value="${name}" readonly /></td>
+                    <td><input class="form-control" type="number" name="Details[${rowIndex}].NumberOfParticipants" value="${participants}" readonly /></td>
+                    <td><input class="form-control" type="text" name="Details[${rowIndex}].ActivityStartDate" value="${start}" readonly /></td>
+                    <td><input class="form-control" type="text" name="Details[${rowIndex}].ActivityEndDate" value="${end}" readonly /></td>
+                    <td><input class="form-control" name="Details[${rowIndex}].Reason" value="${reason}" readonly /></td>
+                    <td class="text-center"><button type="button" class="btn-control btn-icon btn-sm rounded-circle" onclick="removeRow(this)"><i class="fa-solid fa-trash fs-5"></i></button></td>
+                `;
+            }
+            tbody.appendChild(row);
+            rowIndex++;
+
+            // Clear inputs
+            document.getElementById("ActivityName").value = "";
+            document.getElementById("NumberOfParticipants").value = "";
+            document.getElementById("ActivityStartDate").value = "";
+            document.getElementById("ActivityEndDate").value = "";
+            document.getElementById("Reason").value = "";
+        }
+
+        // Store the row to be deleted
+        let rowToDelete = null;
+        function removeRow(button) {
+            rowToDelete = button.closest("tr");
+            var modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        }
+
+        function confirmDeleteRow() {
+            if (rowToDelete) {
+                rowToDelete.remove();
+                // Reindex all rows
+                const rows = document.querySelectorAll("#Details tr");
+                rows.forEach((row, i) => {
+                    const inputs = row.querySelectorAll("input");
+                    inputs.forEach(input => {
+                        const name = input.getAttribute("name");
+                        if (name) {
+                            input.setAttribute("name", name.replace(/\[\d+\]/, `[${i}]`));
+                        }
+                    });
+                });
+                rowIndex = rows.length;
+                rowToDelete = null;
+            }
+            var modal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+            if (modal) modal.hide();
+        }
+    </script>
+
+    <!-- Delete Modal (matches other admin pages) -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@Resource2.ConfirmDelete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>هل أنت متأكد من أنك تريد حذف هذا العنصر؟ هذا الإجراء لا يمكن التراجع عنه.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-cancel-search" data-bs-dismiss="modal">@Resource2.Cancel</button>
+                    <button type="button" class="btn btn-success" onclick="confirmDeleteRow()">@Resource2.Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+}

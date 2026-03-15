@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+	    <title>Course Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Course Module Documentation</h1>
+
+<h2>Controller Configuration</h2>
+<table>
+    <tr><th>Attribute</th><th>Details</th></tr>
+    <tr><td>Area</td><td>Admin - Restricted to administrative users only</td></tr>
+    <tr><td>Authorization</td><td>AdminAuthorize attribute ensures proper authentication</td></tr>
+    <tr><td>Dependencies</td><td>
+        <ul>
+            <li>ICourseService: Core course business logic</li>
+            <li>ITrainerService: Trainer management</li>
+            <li>IUnitOfWork: Database operations</li>
+            <li>IMapper: AutoMapper for object mapping</li>
+            <li>IHttpContextAccessor: User context/session</li>
+            <li>IAuthorizationService: Permission validation</li>
+            <li>IOCRService: Document OCR processing</li>
+            <li>IHubContext&lt;NotificationHub&gt;: Real-time notifications</li>
+            <li>INotificationService: System notifications</li>
+        </ul>
+    </td></tr>
+</table>
+
+<h2>Role-Based Access System</h2>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>User Type Detection</td><td>
+        <ul>
+            <li>Trainer: Restricted to own courses</li>
+            <li>Admin: Full system access</li>
+            <li>Auto-detection via <code>GetThisTrainerId_IfTrainer_else_0()</code></li>
+        </ul>
+    </td></tr>
+    <tr><td>Permission-Based Features</td><td>
+        <ul>
+            <li>Attendance requires "Course/Attendance"</li>
+            <li>UI adapts dynamically based on role</li>
+            <li>Selective data exposure for user types</li>
+        </ul>
+    </td></tr>
+</table>
+
+<h2>Core Course Management</h2>
+<table>
+    <tr><th>Action</th><th>Details</th></tr>
+    <tr><td>Index</td><td>Main course listing, filtering, pagination, subscription tracking, optimized queries</td></tr>
+    <tr><td>AddEdit (GET/POST)</td><td>Course creation/modification, PDF validation, session-based return URL, file management</td></tr>
+    <tr><td>Delete</td><td>Removes course & subscriptions, cascade consideration, async operations</td></tr>
+</table>
+
+<h2>Member Subscription System</h2>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>MembersCourse</td><td>Shows members in course, attendance tracking, pagination, trainer info</td></tr>
+    <tr><td>SubscribedMembersInCourses</td><td>Subscription management, advanced filters, role-based data, optimized retrieval</td></tr>
+    <tr><td>Acceptance System</td><td>AJAX endpoint for accept/reject, JSON API, validation</td></tr>
+</table>
+
+<h2>Attendance Management</h2>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>Attendance Tracking</td><td>Real-time updates, boolean status, permission controlled, validation included</td></tr>
+</table>
+
+<h2>Reporting & Export System</h2>
+<table>
+    <tr><th>Type</th><th>Details</th></tr>
+    <tr><td>Print</td><td>Course/member lists, certificates, professional formatting, filtered data</td></tr>
+    <tr><td>Excel Export</td><td>Role-appropriate columns, bilingual headers, dynamic column inclusion, timestamped files</td></tr>
+</table>
+
+<h2>Certificate System</h2>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>PrintCertificate</td><td>Generates course completion certificates, integrates course/member data</td></tr>
+</table>
+
+<h2>Advanced Features</h2>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>Dynamic Trainer Loading</td><td>AJAX endpoint, department-based, bilingual names</td></tr>
+    <tr><td>Session Management</td><td>Return URL tracking, preserves filters & states</td></tr>
+    <tr><td>Search Implementation</td><td>Multi-field, case-insensitive, combined filters, optimized performance</td></tr>
+</table>
+
+<h2>Security & Validation</h2>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>File Validation</td><td>PDF only, 5MB limit, MIME type checks, temp storage, async handling</td></tr>
+    <tr><td>Model Validation</td><td>Full model state checks, CSRF protection, localized error messages</td></tr>
+    <tr><td>Permission Security</td><td>Role-based, dynamic permission checks, feature gating</td></tr>
+</table>
+
+<h2>API Design</h2>
+<table>
+    <tr><th>Endpoint</th><th>Details</th></tr>
+    <tr><td>JSON Endpoints</td><td>Subscription accept/reject, attendance updates, trainer loading, permission checks</td></tr>
+    <tr><td>Response Format</td><td>
+<pre>{
+  "success": true/false,
+  "message": "Descriptive message",
+  "data": {}
+}</pre>
+    </td></tr>
+</table>
+
+<h1>CourseService Documentation</h1>
+<table>
+    <tr><th>Operation</th><th>Details</th></tr>
+    <tr><td>GetAllAsync()</td><td>Retrieve all courses with related entities, eager loading, optimized queries</td></tr>
+    <tr><td>GetAllCoursesOfMemberAsync(memberId)</td><td>Retrieve member courses, active subscriptions only, includes department info</td></tr>
+    <tr><td>GetByIdAsync(id)</td><td>Fetch specific course with null safety</td></tr>
+    <tr><td>AddAsync(entity, file)</td><td>Create new course with optional file, atomic transaction, returns ID</td></tr>
+    <tr><td>UpdateAsync(entity, file)</td><td>Update course, file handling separated for controller flexibility</td></tr>
+    <tr><td>DeleteAsync(id)</td><td>Safely delete course after subscription checks, removes related files & subscriptions</td></tr>
+    <tr><td>DeleteSubscriptionAsync(id)</td><td>Delete individual member subscription with validation</td></tr>
+    <tr><td>SaveImageAsync(file)</td><td>Stores course attachments with unique naming, returns relative path</td></tr>
+    <tr><td>DeleteImageFile(path)</td><td>Removes physical attachment with safety checks</td></tr>
+</table>
+
+<h1>ViewModels</h1>
+<table>
+    <tr><th>ViewModel</th><th>Purpose</th><th>Key Properties</th></tr>
+    <tr><td>AcceptanceVM</td><td>Handles subscription accept/reject</td><td>SubscriptionId, State, value, Notes</td></tr>
+    <tr><td>CertificateVM</td><td>Certificate data</td><td>Id, MemberNameAr/En, GenderId, CourseTitleAr/En, StartDate, EndDate</td></tr>
+    <tr><td>CourseVM</td><td>Course management</td><td>Id, DepartmentId, TrainerId, TitleAr/En, Dates, Location, Description, AttachmentPath, IsSubscribed</td></tr>
+    <tr><td>MembersCourseVM</td><td>Aggregated course & members</td><td>Course, Trainer, Members, Members_Paginated, Subscriptions</td></tr>
+    <tr><td>SubscribedMemberCourseVMTrainer</td><td>Trainer view of subscriptions</td><td>paginated, UserIsTrainer, trainerSelect, Trainer, TrainersList</td></tr>
+    <tr><td>SubscribedMemberCourseVM</td><td>Member subscription tracking</td><td>MemberFullNameAr/En, MemberIdNumber, CourseTitleAr/En, SubscriptionId, Acceptance, Attendance, TrainerFullNameAr/En</td></tr>
+</table>
+
+<h1>DTOs</h1>
+<table>
+    <tr><th>DTO</th><th>Purpose</th><th>Key Properties</th></tr>
+    <tr><td>AcceptanceDTO</td><td>Subscription accept/reject</td><td>SubscriptionId, State, value, Notes</td></tr>
+    <tr><td>CertificateDTO</td><td>Certificate data</td><td>MemberNameAr/En, GenderId, CourseTitleAr/En, StartDate, EndDate</td></tr>
+    <tr><td>SubscribedMemberCourseDTO</td><td>Member subscription tracking</td><td>MemberFullNameAr/En, MemberId, SubscriptionId, Acceptance, Attendance, Course info, Trainer info</td></tr>
+</table>
+
+<h1>MembersCourse Module</h1>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>ViewModel</td><td>MembersCourseVM</td></tr>
+    <tr><td>Pagination</td><td>50,100,150 per page; previous/next buttons; maintains state via AJAX</td></tr>
+    <tr><td>Filters</td><td>Text search, nationality, date range, trainer</td></tr>
+    <tr><td>Attendance</td><td>AJAX updates via checkboxes, permission-controlled</td></tr>
+    <tr><td>Print/Export</td><td>Print views, Excel export, max 3999 records for print</td></tr>
+</table>
+
+<h1>Subscribed Members In Courses Module</h1>
+<table>
+    <tr><th>Feature</th><th>Details</th></tr>
+    <tr><td>Filters & Search</td><td>Text search, date range, nationality dropdown, AJAX reload</td></tr>
+    <tr><td>Participant Table</td><td>Name, Nationality ID, Mobile, Email, Attendance/Approval; AJAX updates</td></tr>
+    <tr><td>Permissions</td><td>Delete, Accept, Rate, Edit member data</td></tr>
+    <tr><td>Pagination & Page Size</td><td>Previous/Next, 50/100/150 items, state preserved</td></tr>
+</table>
+
+<h1>FougeraClub MVC Admin Summary</h1>
+<table>
+    <tr><th>Module</th><th>Purpose</th><th>Key Notes</th></tr>
+    <tr><td>Account</td><td>User account management</td><td>ResetPasswordVM, SignatureVM, localized validation</td></tr>
+    <tr><td>Courses</td><td>Add/Edit courses</td><td>Multilingual titles, validation, file upload, AJAX trainer load</td></tr>
+    <tr><td>Validation & Permissions</td><td>Model & role-based validation</td><td>LocalizedRequired, NotInThePast, PermissionScanner</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

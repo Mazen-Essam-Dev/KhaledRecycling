@@ -1,0 +1,11 @@
+﻿@model string?
+
+@if (!string.IsNullOrEmpty(Model))
+{
+    <div class="mb-3">
+        <label class="form-label">Current Image</label>
+        <div>
+            <img src="~/@Model" class="img-thumbnail" style="max-height: 150px;" />
+        </div>
+    </div>
+}

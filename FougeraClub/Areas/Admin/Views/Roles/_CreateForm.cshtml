@@ -1,0 +1,30 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Role
+@model RoleFormVM
+<div class="card">
+    <div class="col-md-12">
+        <div class="text-left sec-title">
+            <div class="lg-title">
+                <h1>@Domain.Resources.Resource2.CreateRole</h1>
+            </div>
+            <div class="title-sep-left"></div>
+            <div class="title-sep-sm-left"></div>
+        </div>
+    </div>
+    <div class="card-body c-edit-form mb-3">
+        <form method="post" asp-action="Create" >
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-10">
+                    <label asp-for="Name" class="form-label fw-semibold">@Domain.Resources.Resource2.RoleName</label>
+                    <input asp-for="Name" class="form-control" placeholder="@Domain.Resources.Resource2.RoleName ..." />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-md-2 d-flex justify-content-end d-flex align-items-center  flex-wrap mt-3">
+                    <button type="submit" class="btn btn-success w-100">
+                        إضافة   +
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

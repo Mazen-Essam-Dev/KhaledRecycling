@@ -1,0 +1,194 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Activity
+@model IEnumerable<ActivityVM>
+@using Microsoft.AspNetCore.Identity
+@using Infrastructure.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.Email ?? "Unknown User";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    @if (SessionHelper.GetCurrentLanguage() == "ar")
+    {
+        <link href="~/ar/assets/css/report-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/ar/assets/css/report-ltr.css" rel="stylesheet" />
+    }
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="~/css/prints/report.css" rel="stylesheet">
+</head>
+<div id="report">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+
+    <!-- Official Header -->
+    @*     <div class="print-header">
+        <table>
+            <tr>
+                <td width="33%" style="padding-left:50px!important">
+                    <strong>دولة الإمارات العربية المتحدة</strong><br />
+                    نادي الفجيرة العلمي
+                </td>
+                <td width="33%" style="text-align: center;">
+                    <img src="~/assets/images/logo.png" class="logo" onerror="this.style.display='none'" />
+                </td>
+                <td width="33%">
+                    <strong>United Arab Emirates</strong><br />
+                    Fujairah Science Club
+                </td>
+            </tr>
+        </table>
+    </div> *@
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h2 class="text-danger">@Resource2.Activities</h2>
+            @* <p class="text-muted"> @AppDubaiTime.Now.ToString("HH:mm d", System.Globalization.CultureInfo.InvariantCulture)</p> *@
+        </div>
+
+
+
+        <table class="table table-bordered  align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Resource1.ActivityTitle</th>
+                    <th>@Resource1.StartDate</th>
+                    <th>@Resource1.Location</th>
+                    <th>@Resource1.ActivityDuration</th>
+                    <th>@Resource1.Ages</th>
+                    <th>@Resource1.SubscriptionCount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var Activity in Model)
+                {
+                    <tr>
+                        <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? Activity.TitleAr : Activity.TitleEn)</td>
+                        <td>@Activity.StartDate?.ToString("d")?.Replace("/","-")</td>
+                        <td>@Activity.Location</td>
+                        <td>@Activity.ActivityDuration</td>
+                        @* <td>@($"{Resource2.Above} {Activity.MinimumAge} {Resource1.Year1}")</td> *@
+                        <td>@($"{Activity.MinimumAge}")</td>
+                        <td>@Activity.SubscriptionCount</td>
+                    </tr>
+                }
+            </tbody>
+
+             <tfoot>
+                <tr style="border: none;">
+                    <td colspan="2" style="min-height:300px !important;border: none !important;">
+                        <div class="footer-container" id="footer-container" style="color: rgba(0, 0, 0, 0) !important;">
+                            <div class="footer-top" id="footer-top">
+                                <div class="right">Time: </div>
+                                <div class="center" style="color: rgba(0, 0, 0, 0) !important;">Date: </div>
+                                <div class="left">Printed by: </div>
+                            </div>
+
+                            <div class="footer-bottom" id="footer-bottom">
+                                @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+
+        </table>
+
+        <div class="print-footer">
+            <div class="footer-top">
+                <div class="right">
+                    Time: @AppDubaiTime.Now.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="center">Date: @AppDubaiTime.Now.ToString("dd/MM/yy", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="left">
+                    Printed by:
+                    @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)
+                </div>
+            </div>
+            <hr class="footer-line">
+            <div class="footer-bottom">
+                @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+            </div>
+        </div>
+
+        @* <div class="footer mt-3" >
+            <div class="footer-container">
+                <div class="footer-top">
+                    <div class="right">Time: @AppDubaiTime.Now.ToString("HH:mm")</div>
+                    <div class="center">Date: @AppDubaiTime.Now.ToString("dd/MM/yyyy")</div>
+                    <div class="left">Printed by: @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)</div>
+                </div>
+
+                <hr class="footer-line">
+
+                <div class="footer-bottom">
+                    @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+                </div>
+            </div>
+        </div> *@
+
+
+
+        @* <div class="footer text-center"
+            style="margin-top:12px; border-top:1px solid #333; padding-top:8px; font-size:10px;">
+            <p style="margin:0;">Printed by: @((currentUserName.IndexOf("@") > 1) ?
+                                currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName) |
+                @AppDubaiTime.Now.ToString("dd/MM/yy HH:mm:ss")</p>
+        </div> *@
+
+        <div class="text-center no-print mt-3">
+            <button class="btn btn-primary" onclick="window.print()">طباعة التقرير</button>
+            <button class="btn btn-danger ms-2" onclick="window.close()">إغلاق النافذة</button>
+        </div>
+    </div>
+
+    <script>
+
+        // This Part Is Important
+        window.addEventListener('load', () => {
+            // loadTable();
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+
+        // Close window after printing
+        window.onafterprint = function () {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        };
+    </script>
+</div>

@@ -1,0 +1,172 @@
+﻿@model CourseVM
+
+@{
+    ViewData["Title"] = @Resource1.Subscribe_To_Courses;
+}
+
+<div class="content">
+    <div class="title d-flex  mt-2 ms-4 ">
+        <div class="menu-btn" id="menu-icon">
+            <i class="fa-solid fa-bars" id="menu-icon"></i>
+        </div>
+        <h3>@Resource1.Subscribe_To_Courses</h3>
+    </div>
+
+    <div class="content-inner">
+        <div class="data-part mt-3 pt-3">
+            <div class="container">
+                <form asp-action="Subscribe" method="post" enctype="multipart/form-data">
+                    <input type="hidden" asp-for="Id" />
+                    <!-- Hidden Fields -->
+                    <input type="hidden" asp-for="IdImagePath" />
+                    <input type="hidden" asp-for="PassportImagePath" />
+                    <input hidden type="hidden" asp-for="PassportImage_TempFilePath" />
+                    <input hidden type="hidden" asp-for="IdImage_TempFilePath" />
+                    <input hidden type="hidden" asp-for="isHasIDCard" />
+                    <input hidden type="hidden" asp-for="isHasPassport" />
+                    <input hidden type="hidden" asp-for="isNotExpired" />
+                    <input hidden type="hidden" asp-for="StartDate" />
+                    <input hidden type="hidden" asp-for="EndDate" />
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <!-- Event Date Section -->
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <label asp-for="StartDate" class="form-label">@Resource2.DateFrom</label>
+                            <input id="s" name="s" value="@Model.StartDate?.ToString("d")?.Replace("/", "-")" type="text"
+                                class="form-control " readonly>
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EndDate" class="form-label">@Resource2.DateTo</label>
+                            <input id="e" name="e" value="@Model.EndDate?.ToString("d")?.Replace("/", "-")" type="text"
+                                class="form-control " readonly>
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Event Title Section -->
+                    <div class="row mb-2">
+                        <div class="col-md-12">
+                            <label asp-for="Title" class="form-label">@Resource1.CourseTitle</label>
+                            <input asp-for="Title" type="text" class="form-control " readonly>
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!-- Image Uploads Section -->
+                    <div class="row">
+
+
+                        <!-- ID Image -->
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="IdImage" class="form-label">@Resource2.IdImage</label>
+                            <input asp-for="IdImage" type="file" class="form-control" accept=".jpg, .jpeg, .png" />
+
+                            @* Preview *@
+                            @if (!string.IsNullOrEmpty(Model.IdImage_TempFilePath))
+                            {
+                                <img src="~/@Model.IdImage_TempFilePath.Replace("wwwroot/", "")" class="img-thumbnail mt-2"
+                                    style="max-height:140px;" />
+                            }
+
+                            <span asp-validation-for="IdImage" class="text-danger small"></span>
+                        </div>
+
+
+                        <!-- Passport Image -->
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="PassportImage" class="form-label">@Resource1.passport_picture</label>
+                            <input asp-for="PassportImage" type="file" class="form-control"
+                                accept=".jpg, .jpeg, .png" />
+
+                            @* Preview *@
+                            @if (!string.IsNullOrEmpty(Model.PassportImage_TempFilePath))
+                            {
+                                <img src="~/@Model.PassportImage_TempFilePath.Replace("wwwroot/", "")"
+                                    class="img-thumbnail mt-2" style="max-height:140px;" />
+                            }
+
+                            <span asp-validation-for="PassportImage" class="text-danger small"></span>
+                        </div>
+
+                    </div>
+                    @* <div class="row mb-2">
+                        <input hidden type="hidden" asp-for="IdImagePath" />
+                        <input hidden type="hidden" asp-for="PassportImagePath" />
+                        <input hidden type="hidden" asp-for="isHasIDCard" />
+                        <input hidden type="hidden" asp-for="isHasPassport" />
+                        <input hidden type="hidden" asp-for="isNotExpired" />
+
+                        @if ((Model.isHasIDCard.HasValue && Model.isHasIDCard == false) || (Model.isNotExpired.HasValue && Model.isNotExpired == false))
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="IdImage" class="form-label d-flex justify-content-between"> @Resource2.IdImage</label>
+                                <input asp-for="IdImage" type="file" class="form-control" accept=".jpg, .jpeg, .png" />
+                                <span asp-validation-for="IdImage" class="text-danger small"></span>
+                            </div>
+                        }
+
+                        
+                        @if (Model.isHasPassport.HasValue && Model.isHasPassport == false)
+                        {
+                            <div class="col-md-6">
+                                <label asp-for="PassportImage" class="form-label d-flex justify-content-between"> @Resource2.PassportImage</label>
+                                <input asp-for="PassportImage" type="file" class="form-control" accept=".jpg, .jpeg, .png" />
+                                <span asp-validation-for="PassportImage" class="text-danger small"></span>
+                            </div>
+                        }
+                    </div> *@
+
+                    <div class="mb-2">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeCheck" required>
+
+                            <label class="form-check-label" for="agreeCheck">
+                                @Resource1.I_have_read_and_agree_to_terms_and_conditions
+
+                                <a href="~/assets/الشروط و الأحكام.pdf" target="_blank">
+                                    @Resource1.terms
+                                </a>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Register Button -->
+                    <div class="text-center"
+                        style="display: flex;justify-content: center;align-content: center;gap: 5px;">
+                        <button type="submit" id="submitBtn" class="all-btn btn " disabled>@Resource1.Save</button>
+                        <a asp-action="Index" class="btn btn-outline-secondary"
+                            style="margin-top: 5px;padding-left: 30px;padding-right: 30px;">
+                            <i class="bi bi-x-circle"></i> @Resource2.Back
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // This script is to activate the save button when the terms are approved
+    document.getElementById('agreeCheck').addEventListener('change', function () {
+        document.getElementById('submitBtn').disabled = !this.checked;
+    });
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        const checkbox = document.getElementById("agreeCheck");
+        const submitBtn = document.getElementById("submitBtn");
+
+        checkbox.addEventListener("change", function () {
+            submitBtn.disabled = !this.checked;
+        });
+    </script>
+}

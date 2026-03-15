@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Member Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<!-- ================= MemberController ================= -->
+<table>
+<h2>Member Module Documentation</h2>
+<tr><th>Overview</th><td>ASP.NET Core controller for full member lifecycle management, filtering, reporting, and course tracking.</td></tr>
+<tr><th>Area</th><td>Admin</td></tr>
+<tr><th>Authorization</th><td>AdminAuthorize</td></tr>
+<tr><th>Dependencies</th><td>IMemberService, IUnitOfWork, IMapper, ICourseService</td></tr>
+</table>
+
+<table>
+<h2>Controller Actions</h2>
+<tr><th>Action</th><th>Description</th></tr>
+<tr><td>Index</td><td>Member listing with multi-criteria filtering, pagination, course indicators, AJAX partial loading.</td></tr>
+<tr><td>AddEdit (GET)</td><td>Load create/edit form, generate member code, populate dropdowns.</td></tr>
+<tr><td>AddEdit (POST)</td><td>Create or update member, format UAE phone number, validate model.</td></tr>
+<tr><td>Delete</td><td>Permanently remove member.</td></tr>
+<tr><td>Suspend</td><td>Toggle member suspension via AJAX.</td></tr>
+<tr><td>MemberCourses</td><td>Display courses enrolled by a member.</td></tr>
+<tr><td>GetCourse</td><td>AJAX course details endpoint.</td></tr>
+</table>
+
+<table>
+<h2>Phone Number Formatting Logic</h2>
+<tr>
+<th>Code</th>
+<td>
+<code>
+entity.PhoneNumber = entity.PhoneNumber?.Replace(" ", "");<br>
+if(entity.PhoneNumber != null && !entity.PhoneNumber.StartsWith("971"))<br>
+entity.PhoneNumber = "971" + entity.PhoneNumber;
+</code>
+</td>
+</tr>
+</table>
+
+<!-- ================= MemberService ================= -->
+<table>
+<h2>MemberService Documentation</h2>
+<tr><th>Overview</th><td>Business logic layer for member management, images, code generation, suspension.</td></tr>
+<tr><th>Namespace</th><td>Application.Services.Admin</td></tr>
+<tr><th>Interface</th><td>IMemberService</td></tr>
+<tr><th>Dependencies</th><td>IUnitOfWork, ICompareService</td></tr>
+</table>
+
+<table>
+<h2>Service Methods</h2>
+<tr><th>Method</th><th>Responsibility</th></tr>
+<tr><td>GetAllAsync</td><td>Retrieve members with nationality.</td></tr>
+<tr><td>GetByIdAsync</td><td>Get member with full relations.</td></tr>
+<tr><td>AddAsync</td><td>Create member, save images, generate code.</td></tr>
+<tr><td>UpdateAsync</td><td>Update member with conditional image replacement.</td></tr>
+<tr><td>DeleteAsync</td><td>Delete member and files.</td></tr>
+<tr><td>SuspendAsync</td><td>Toggle suspension.</td></tr>
+</table>
+
+<table>
+<h2>Image Save Logic</h2>
+<tr>
+<th>Code</th>
+<td>
+<code>
+entity.ProfileImagePath = entity.ProfileImage == null ? "" :
+await FileHelper.SaveImageAsync(entity.ProfileImage, FileName);
+</code>
+</td>
+</tr>
+</table>
+
+<!-- ================= Member Entity ================= -->
+<table>
+<h2>MemberEntity</h2>
+<tr><th>Namespace</th><td>Domain.Entities</td></tr>
+<tr><th>Purpose</th><td>Stores all member personal, contact, document, and security data.</td></tr>
+</table>
+
+<table>
+<h2>Entity Properties</h2>
+<tr><th>Category</th><th>Fields</th></tr>
+<tr><td>Basic</td><td>Id, Code</td></tr>
+<tr><td>Names</td><td>FullNameAr, FullNameEn</td></tr>
+<tr><td>Identity</td><td>IdNumber, IdExpiryDate, DateOfBirth, Age</td></tr>
+<tr><td>Contact</td><td>PhoneNumber, FatherPhone, MotherPhone</td></tr>
+<tr><td>Education</td><td>AcademicQualification, EducationInstitution</td></tr>
+<tr><td>Profession</td><td>ProfessionId, Profession, GuardianProfession</td></tr>
+<tr><td>Location</td><td>CityId, Address</td></tr>
+<tr><td>Social</td><td>Facebook, Instagram, Xplatform</td></tr>
+<tr><td>Documents</td><td>ProfileImage, IdImage, PassportImage</td></tr>
+<tr><td>Status</td><td>RegistrationDate, Suspended</td></tr>
+</table>
+
+<!-- ================= MemberDTO ================= -->
+<table>
+<h2>MemberDTO</h2>
+<tr><th>Namespace</th><td>Domain.DTOs</td></tr>
+<tr><th>Purpose</th><td>Lightweight data transfer object for reports and APIs.</td></tr>
+</table>
+
+<table>
+<h2>DTO Fields</h2>
+<tr><th>Field</th><th>Description</th></tr>
+<tr><td>Code</td><td>Member code</td></tr>
+<tr><td>FullNameAr</td><td>Arabic name</td></tr>
+<tr><td>FullNameEn</td><td>English name</td></tr>
+<tr><td>NationalityId</td><td>Nationality reference</td></tr>
+<tr><td>IdNumber</td><td>ID number</td></tr>
+<tr><td>DateOfBirth</td><td>Birth date</td></tr>
+<tr><td>Age</td><td>Calculated age</td></tr>
+</table>
+
+<!-- ================= ViewModels ================= -->
+<table>
+<h2>Member ViewModels</h2>
+<tr><th>ViewModel</th><th>Purpose</th></tr>
+<tr><td>MemberVM</td><td>Main Add/Edit member model with validation.</td></tr>
+<tr><td>MemberCoursesVM</td><td>Paginated member course container.</td></tr>
+</table>
+
+<table>
+<h2>MemberVM Sections</h2>
+<tr><th>Section</th><th>Included Data</th></tr>
+<tr><td>Basic</td><td>Names, Gender, Nationality, DOB, Age</td></tr>
+<tr><td>Contact</td><td>Phones, Address, City</td></tr>
+<tr><td>Education</td><td>Qualification, Institution</td></tr>
+<tr><td>Security</td><td>Email, Password, ConfirmPassword</td></tr>
+<tr><td>Files</td><td>Profile, ID, Passport uploads</td></tr>
+<tr><td>Status</td><td>RegistrationDate, Suspended</td></tr>
+</table>
+
+<!-- ================= Index & ListPartial ================= -->
+<table>
+<h2>Member Index & ListPartial</h2>
+<tr><th>Feature</th><th>Description</th></tr>
+<tr><td>Filtering</td><td>Search, Gender, Nationality, Registration Date</td></tr>
+<tr><td>Pagination</td><td>AJAX paging with page size control</td></tr>
+<tr><td>Permissions</td><td>Edit, Suspend, Delete per role</td></tr>
+<tr><td>Indicators</td><td>ID expired & expiring badges</td></tr>
+<tr><td>Exports</td><td>Excel & Print with filters</td></tr>
+</table>
+
+<!-- ================= Member Courses ================= -->
+<table>
+<h2>Member Courses Module</h2>
+<tr><th>Capability</th><th>Details</th></tr>
+<tr><td>Listing</td><td>Paginated course list per member</td></tr>
+<tr><td>Details</td><td>AJAX modal with attachments</td></tr>
+<tr><td>Export</td><td>Excel and print reports</td></tr>
+<tr><td>Localization</td><td>Arabic & English dynamic rendering</td></tr>
+</table>
+
+<table>
+<h2>Printing & Reporting</h2>
+<tr><th>Report</th><th>Purpose</th></tr>
+<tr><td>Print</td><td>Filtered member list</td></tr>
+<tr><td>PrintDetails</td><td>Printable member profile</td></tr>
+<tr><td>PrintMemberCourses</td><td>Member course history</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

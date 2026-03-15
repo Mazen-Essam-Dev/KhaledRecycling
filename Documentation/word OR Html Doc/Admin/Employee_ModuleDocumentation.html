@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Employee Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<h1>Employee Module Documentation</h1>
+
+<h2>EmployeeProfile Mapping Configurations</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Source</th>
+            <th>Destination</th>
+            <th>Direction</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>EmployeeVM</td>
+            <td>Employee</td>
+            <td>ReverseMap() – supports both ways</td>
+        </tr>
+        <tr>
+            <td>EmployeeAttachmentsVM</td>
+            <td>EmployeeAttachmentsDTO</td>
+            <td>ReverseMap() – supports both ways</td>
+        </tr>
+        <tr>
+            <td>AttachmentVM</td>
+            <td>AttachmentDTO</td>
+            <td>ReverseMap() – supports both ways</td>
+        </tr>
+        <tr>
+            <td>EmployeeAttachment</td>
+            <td>AttachmentVM</td>
+            <td>ReverseMap() – supports both ways</td>
+        </tr>
+        <tr>
+            <td>EmployeeAttachment</td>
+            <td>EmployeeAttachmentsVM</td>
+            <td>ReverseMap() – supports both ways</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>AttachmentVM Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Id</td>
+            <td>int</td>
+            <td>The unique identifier of the attachment.</td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>string?</td>
+            <td>The display name of the attachment.</td>
+        </tr>
+        <tr>
+            <td>Path</td>
+            <td>string?</td>
+            <td>The file path of the attachment (max length 300).</td>
+        </tr>
+        <tr>
+            <td>File</td>
+            <td>IFormFile?</td>
+            <td>The uploaded file object. Null if no file is uploaded.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>EmployeeAttachmentsVM Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>EmployeeId</td>
+            <td>int</td>
+            <td>The unique identifier of the employee.</td>
+        </tr>
+        <tr>
+            <td>Attachments</td>
+            <td>List&lt;AttachmentVM&gt;?</td>
+            <td>A list of attachment view models associated with the employee. Can be null.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Employee Model Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Constraints / Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Id</td>
+            <td>int</td>
+            <td>Unique identifier for the employee.</td>
+            <td>Primary key 🔑</td>
+        </tr>
+        <tr>
+            <td>Code</td>
+            <td>string</td>
+            <td>Unique employee code.</td>
+            <td>Required</td>
+        </tr>
+        <tr>
+            <td>FullName</td>
+            <td>string?</td>
+            <td>Full name of the employee.</td>
+            <td>MaxLength(100)</td>
+        </tr>
+        <tr>
+            <td>PhoneNumber</td>
+            <td>string?</td>
+            <td>Contact phone number.</td>
+            <td>MaxLength(20)</td>
+        </tr>
+        <tr>
+            <td>NationalityId</td>
+            <td>int?</td>
+            <td>Foreign key referencing Nationality.</td>
+            <td>Optional</td>
+        </tr>
+        <tr>
+            <td>DepartmentId</td>
+            <td>int?</td>
+            <td>Foreign key referencing Department.</td>
+            <td>Optional</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>string?</td>
+            <td>Email address.</td>
+            <td>MaxLength(100)</td>
+        </tr>
+        <tr>
+            <td>JobTitle</td>
+            <td>string?</td>
+            <td>Job or role title.</td>
+            <td>MaxLength(100)</td>
+        </tr>
+        <tr>
+            <td>Address</td>
+            <td>string?</td>
+            <td>Home or work address.</td>
+            <td>MaxLength(200)</td>
+        </tr>
+        <tr>
+            <td>PassportNumber</td>
+            <td>string?</td>
+            <td>Passport number.</td>
+            <td>MaxLength(50)</td>
+        </tr>
+        <tr>
+            <td>PassportExpiryDate</td>
+            <td>DateOnly?</td>
+            <td>Passport expiration date.</td>
+            <td>Optional 📅</td>
+        </tr>
+        <tr>
+            <td>NationalIdNumber</td>
+            <td>string?</td>
+            <td>National ID number.</td>
+            <td>MaxLength(50)</td>
+        </tr>
+        <tr>
+            <td>NationalIdExpiryDate</td>
+            <td>DateOnly?</td>
+            <td>National ID expiration date.</td>
+            <td>Optional 📅</td>
+        </tr>
+        <tr>
+            <td>BankAccountNumber</td>
+            <td>string?</td>
+            <td>Bank account number.</td>
+            <td>MaxLength(50)</td>
+        </tr>
+        <tr>
+            <td>BankName</td>
+            <td>string?</td>
+            <td>Bank name.</td>
+            <td>MaxLength(100)</td>
+        </tr>
+        <tr>
+            <td>PhotoPath</td>
+            <td>string?</td>
+            <td>Path to employee's profile photo.</td>
+            <td>MaxLength(200)</td>
+        </tr>
+        <tr>
+            <td>Salary</td>
+            <td>double?</td>
+            <td>Salary amount.</td>
+            <td>Nullable 💰</td>
+        </tr>
+        <tr>
+            <td>Notes</td>
+            <td>string?</td>
+            <td>Additional notes.</td>
+            <td>No length constraint ✍️</td>
+        </tr>
+        <tr>
+            <td>Type</td>
+            <td>int</td>
+            <td>Type identifier (permanent/trainer/contractor).</td>
+            <td>Required; role-based logic</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Employee Model Relationships</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Navigation Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Courses</td>
+            <td>ICollection&lt;Course&gt;</td>
+            <td>Courses conducted or attended by the employee.</td>
+        </tr>
+        <tr>
+            <td>Department</td>
+            <td>Department?</td>
+            <td>Department to which the employee belongs.</td>
+        </tr>
+        <tr>
+            <td>Nationality</td>
+            <td>Nationality?</td>
+            <td>Nationality of the employee.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>EmployeeAttachment Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Id</td>
+            <td>int</td>
+            <td>Primary key for the attachment.</td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>string?</td>
+            <td>Name of the attachment. Max length 100.</td>
+        </tr>
+        <tr>
+            <td>Path</td>
+            <td>string?</td>
+            <td>File path of the attachment. Max length 300.</td>
+        </tr>
+        <tr>
+            <td>File</td>
+            <td>IFormFile?</td>
+            <td>Used for uploading the file via forms. Not mapped to DB.</td>
+        </tr>
+        <tr>
+            <td>EmployeeId</td>
+            <td>int</td>
+            <td>Foreign key referencing the employee.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>AttachmentDTO Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Id</td>
+            <td>int</td>
+            <td>Unique identifier of the attachment.</td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>string?</td>
+            <td>Name or title of the attachment.</td>
+        </tr>
+        <tr>
+            <td>Path</td>
+            <td>string?</td>
+            <td>Path to the saved file (max 300 chars).</td>
+        </tr>
+        <tr>
+            <td>File</td>
+            <td>IFormFile?</td>
+            <td>The actual uploaded file.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>EmployeeAttachmentsDTO Properties</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>EmployeeId</td>
+            <td>int</td>
+            <td>The unique identifier of the employee.</td>
+        </tr>
+        <tr>
+            <td>Attachments</td>
+            <td>List&lt;AttachmentDTO&gt;?</td>
+            <td>A list of attachments for the employee. Can be null.</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- Controller Actions Table -->
+<h2>EmployeesController Actions</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Action</th>
+            <th>Signature</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Index</td>
+            <td><code>public async Task&lt;IActionResult&gt; Index(string? searchTerm, DateOnly? dateFrom, DateOnly? dateTo, int page = 1, int pageSize = 50)</code></td>
+            <td>Displays paginated employee list with optional filters. Returns View or PartialView with EmployeeVM.</td>
+        </tr>
+        <tr>
+            <td>AddEdit (GET)</td>
+            <td><code>public async Task&lt;IActionResult&gt; AddEdit(int? id)</code></td>
+            <td>Displays form to add or edit employee. Populates nationality dropdowns.</td>
+        </tr>
+        <tr>
+            <td>AddEdit (POST)</td>
+            <td><code>[HttpPost] public async Task&lt;IActionResult&gt; AddEdit(EmployeeVM model)</code></td>
+            <td>Handles submission for creating/updating employee. Validates file uploads.</td>
+        </tr>
+        <tr>
+            <td>Details</td>
+            <td><code>[IgnoreAction] public async Task&lt;IActionResult&gt; Details(int id)</code></td>
+            <td>Displays full details of a single employee. Preserves previous URL.</td>
+        </tr>
+        <tr>
+            <td>PrintDetails</td>
+            <td><code>[IgnoreAction] public async Task&lt;IActionResult&gt; PrintDetails(int id)</code></td>
+            <td>Returns a printable view of employee details.</td>
+        </tr>
+        <tr>
+            <td>GetEmployeeAttachments</td>
+            <td><code>public async Task&lt;IActionResult&gt; GetEmployeeAttachments(int id)</code></td>
+            <td>Returns a partial view of employee attachments.</td>
+        </tr>
+        <tr>
+            <td>UploadEmployeeFiles</td>
+            <td><code>[HttpPost] public async Task&lt;IActionResult&gt; UploadEmployeeFiles(EmployeeAttachmentsVM model)</code></td>
+            <td>Handles uploading of employee attachments.</td>
+        </tr>
+        <tr>
+            <td>Delete</td>
+            <td><code>[HttpPost] public async Task&lt;IActionResult&gt; Delete(int id)</code></td>
+            <td>Deletes an employee by ID. Redirects back to Index.</td>
+        </tr>
+        <tr>
+            <td>Print</td>
+            <td><code>[IgnoreAction] public async Task&lt;IActionResult&gt; Print(string? searchTerm, DateOnly? dateFrom, DateOnly? dateTo, int page = 1, int pageSize = 50)</code></td>
+            <td>Returns printable employee list filtered by search term and dates.</td>
+        </tr>
+        <tr>
+            <td>createExcelReport_Download</td>
+            <td><code>[IgnoreAction] public async Task&lt;IActionResult&gt; createExcelReport_Download(string? searchTerm, DateOnly? dateFrom, DateOnly? dateTo, int page = 1, int pageSize = 50)</code></td>
+            <td>Generates and downloads Excel report of employees filtered by search term/date range.</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- EmployeeService Methods Table -->
+<h2>EmployeeService Methods</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Method</th>
+            <th>Signature</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>HasRelatedObjectsInDb</td>
+            <td><code>public async Task&lt;bool&gt; HasRelatedObjectsInDb(int empId)</code></td>
+            <td>Checks if employee has related records in other tables (ExternalWorkMissions, SalaryManagements, EmployeeAttachments).</td>
+        </tr>
+        <tr>
+            <td>GetAllAsync</td>
+            <td><code>public async Task&lt;IEnumerable&lt;Employee&gt;&gt; GetAllAsync()</code></td>
+            <td>Returns all employees including their Nationality.</td>
+        </tr>
+        <tr>
+            <td>GetByIdAsync</td>
+            <td><code>public async Task&lt;Employee?&gt; GetByIdAsync(int id)</code></td>
+            <td>Returns a single employee by ID.</td>
+        </tr>
+        <tr>
+            <td>AddAsync</td>
+            <td><code>public async Task&lt;int&gt; AddAsync(Employee entity)</code></td>
+            <td>Adds a new employee. Saves employee photo if provided.</td>
+        </tr>
+        <tr>
+            <td>UpdateAsync</td>
+            <td><code>public async Task UpdateAsync(Employee entity)</code></td>
+            <td>Updates an existing employee. Handles image replacement if new photo uploaded.</td>
+        </tr>
+        <tr>
+            <td>DeleteAsync</td>
+            <td><code>public async Task DeleteAsync(int id)</code></td>
+            <td>Deletes an employee by ID and removes associated photo file from disk.</td>
+        </tr>
+        <tr>
+            <td>UploadAttachmentsAsync</td>
+            <td><code>public async Task UploadAttachmentsAsync(EmployeeAttachmentsDTO model)</code></td>
+            <td>Handles uploading employee attachments. Deletes old files removed from list and saves new files.</td>
+        </tr>
+        <tr>
+            <td>GetAttachmentsAsync</td>
+            <td><code>public async Task&lt;IEnumerable&lt;EmployeeAttachment&gt;&gt; GetAttachmentsAsync(int empId)</code></td>
+            <td>Retrieves all attachments for a specific employee.</td>
+        </tr>
+    </tbody>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

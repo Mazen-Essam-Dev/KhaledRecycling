@@ -1,0 +1,340 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.PurchaseOrder
+@using System.Globalization
+@model PurchaseOrderVM
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+</head>
+<body>
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+    <main>
+
+        <h5 class="text-center text-danger text-center text-decoration-underline mt-3">
+            طلب شراء محلى
+        </h5>
+        <h5 class="text-center text-danger text-center text-decoration-underline">
+            Local Purshase Order
+        </h5>
+        <h5 class="text-center text-danger text-center text-decoration-underline">
+            @Model.PurchaseOrderCode
+        </h5>
+        
+        <div class="row g-3 py-2 px-4 d-flex align-items-center">
+
+            <!-- Date -->
+            <div class="col-4">
+                <label asp-for="Date" class="form-label fw-semibold">@Resource2.Date</label>
+                <input asp-for="Date" class="form-control text-start" type="date" readonly />
+            </div>
+            <div class="col-8">
+                <div class="row d-flex align-items-center pt-4">
+                    <div class="col-3 text-center fs-4 fw-normal">
+                        <label for="fullname">الي</label>
+                    </div>
+                    <div class="col-6">
+                        <input value="@(lang == "ar" ? Model.suppliers?.Where(y => y.Id == Model.SupplierId).FirstOrDefault()?.SupplierNameAr : Model.suppliers?.Where(y => y.Id == Model.SupplierId).FirstOrDefault()?.SupplierNameEn)" id="fullname" type="text" class="w-100 border-dashed border-bottom border-1 border-black text-center custom-input" />
+                    </div>
+                    <div class="col-3 text-center fs-4 fw-normal" style="direction:ltr;">
+                        <label for="fullname">To</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="custom-hr" />
+
+        <div class="d-flex justify-content-between mb-2">
+            <div>
+                يرجى تزويد المواد / الخدمات المذكورة ادناه
+            </div>
+            <div>
+                Please supply and deliver the under items / service
+            </div>
+        </div>
+
+        <div class="print-background">
+            <table class="table w-100">
+                <thead>
+                    <tr>
+                        <th class="bg-yellow text-center" style="width:18%">الإجمالي<br>Total</th>
+                        <th class="bg-yellow text-center" style="width:17%">السعر<br>Price</th>
+                        <th class="bg-yellow text-center" style="width:8%">الكمية<br>Qty</th>
+                        <th class="bg-yellow text-center" style="width:50%">البيان<br>Particulars</th>
+                        <th class="bg-yellow text-center" style="width:7%">الرقم<br>NO</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model?.Items != null)
+                    {
+                        var index = 0;
+                        decimal totalAll = 0.00m;
+                        decimal VATTotal = 0.00m;
+                        var VATValue = Model.VATValue.Value;
+                        var hasVAT = Model.HasVAT;
+                        foreach (var detail in Model.Items)
+                        {
+                            if (detail.SinglePrice == null) detail.SinglePrice = 0.00m;
+                            if (detail.Quantity == null) detail.Quantity = 0;
+                            var totalRecord = detail.SinglePrice.Value * detail.Quantity.Value;
+                            totalAll = totalAll + totalRecord;
+                            <tr>
+                                <td>@totalRecord.ToString("0.00")</td>
+                                <td>@detail.SinglePrice?.ToString("0.00")</td>
+                                <td>@detail.Quantity?.ToString("0")</td>
+                                <td>@detail.ItemName</td>
+                                <td class="text-center">@(index + 1)</td>
+                            </tr>
+                            index++;
+                        }
+                        <tr style="height:35px;">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>@totalAll.ToString("0.00")</td>
+                            <td colspan="2" style="text-align:right;">@Resource1.TotalWithoutVAT</td>
+                            <td colspan="2" style="text-align:right;"></td>
+                        </tr>
+                        if (hasVAT)
+                        {
+                            VATTotal = VATValue * totalAll;
+                            <tr>
+                                <td>@(VATTotal.ToString("0.00"))</td>
+                                <td colspan="2" style="text-align:right;">@(lang == "ar" ? $"% VAT {(VATValue * 100).ToString("0")}" : $"VAT {(VATValue * 100).ToString("0")} %")</td>
+                                <td colspan="2" style="text-align:right;"></td>
+                            </tr>
+                        }
+                        else
+                        {
+                            VATTotal = 0.00m;
+                            <tr>
+                                <td>@(VATTotal.ToString("0.00"))</td>
+                                <td colspan="2" style="text-align:right;">VAT</td>
+                                <td colspan="2" style="text-align:right;"></td>
+                            </tr>
+                        }
+
+                        var totalWithVat = totalAll + VATTotal;
+                        <tr>
+                            <td>AED @(totalWithVat.ToString("0.00"))</td>
+                            <td colspan="2" style="text-align:right;">الإجمالي<br>Total</td>
+                            <td colspan="2" style="text-align:right;">
+                                <div>
+                                    <div>@TafqeetHelper.Tafqeet(totalWithVat, CurrencyHelper.AED_Main_Ar, CurrencyHelper.AED_Sub_Ar)</div>
+                                    <div>@TafqeetHelper.Tafqeet(totalWithVat, CurrencyHelper.AED_Main_En, CurrencyHelper.AED_Sub_En)</div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+            <div class="mx-auto">
+
+                @if (Model?.Signature != null)
+                {
+                    <div class="col-md-4 text-center">
+                        <div class="signature-trigger" role="button" tabindex="0" style="cursor:pointer;">
+                            <label class="form-label fw-semibold">المدير / Manager</label>
+                            <div class="small text-muted">
+                                @if (!string.IsNullOrEmpty(Model?.Signature.ImagePath))
+                                {
+                                    <div class="col-md-10 mg-2 mt-1 ms-3 m-4">
+                                        <div class="card shadow-sm">
+                                            <div class="card-body text-center">
+                                                <img src="~/@Model?.Signature.ImagePath" class="img-fluid rounded" style="max-height: 200px;" alt="Upload one" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
+<style>
+
+    .custom-input {
+        border: none;
+        outline: none;
+        background-color: transparent;
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        direction: rtl; /* Right to Left */
+    }
+
+    .container {
+        width: 90%;
+        margin: 50px auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: transparent;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    th, td {
+        padding: 12px;
+        text-align: right; /* Right-aligned for Arabic text */
+        border: 1px solid #ddd;
+    }
+
+        td:nth-child(1), th:nth-child(1) {
+            width: 200px; /* Column 1: الاسم */
+        }
+
+    .bg-yellow {
+        background-color: rgb(230, 223, 188) !important;
+    }
+
+    @@media print {
+        /* Set page size and remove margins for printing */
+        h5{
+            font-size:16px !important;
+        }
+
+        header, footer {
+            page-break-after: avoid;
+            page-break-before: avoid;
+        }
+
+        body {
+            color: black;
+            direction: rtl;
+        }
+
+        .header-container {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 150% !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+        th, td {
+            border: 1px solid #000 !important;
+            padding: 8px !important;
+            text-align: right;
+            font-size: 14px;
+        }
+
+            td:nth-child(1), th:nth-child(1) {
+                width: 200px !important;
+            }
+
+        .bg-yellow {
+            background-color: #e6dfbc !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        /* Hide elements not needed in print */
+        img {
+            max-height: 150px !important;
+            object-fit: cover;
+            page-break-inside: avoid;
+        }
+        /* Optional: avoid breaking images across pages */
+        .d-flex {
+            page-break-inside: avoid;
+        }
+        /* Hide unnecessary parts for printing (if needed) */
+        header, footer {
+            page-break-inside: avoid;
+        }
+        /* Remove any interactivity or animations */
+        * {
+            transition: none !important;
+            animation: none !important;
+        }
+    }
+</style>
+
+
+<script>
+
+    // This Part Is Important
+    window.addEventListener('load', () => {
+        setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+        setTimeout(() => window.print(), 800);
+    });
+     // Close window after printing
+        window.onafterprint = function() {
+            setTimeout(function() {
+                window.close();
+            }, 500);
+        };
+</script>

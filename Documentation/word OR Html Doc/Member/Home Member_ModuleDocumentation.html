@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+    <title>Home Member - Full Moduel Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Home Member - Full Moduel Documentation</h1>
+
+<!-- ===================================================== -->
+<h2>Member HomeController Overview</h2>
+
+<table>
+    <tr>
+        <th>Item</th>
+        <th>Value</th>
+    </tr>
+    <tr>
+        <td>Namespace</td>
+        <td>FougeraClub.Areas.Member.Controllers</td>
+    </tr>
+    <tr>
+        <td>Controller</td>
+        <td>HomeController</td>
+    </tr>
+    <tr>
+        <td>Area</td>
+        <td>Member</td>
+    </tr>
+    <tr>
+        <td>Base Route</td>
+        <td>Member/Home/[action]</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Controller Responsibilities</h2>
+
+<table>
+    <tr>
+        <th>Responsibility</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Dashboard Rendering</td>
+        <td>Displays the main member home dashboard</td>
+    </tr>
+    <tr>
+        <td>Courses & Activities</td>
+        <td>Fetches member-related courses and activities</td>
+    </tr>
+    <tr>
+        <td>Localization</td>
+        <td>Handles Arabic / English language switching</td>
+    </tr>
+    <tr>
+        <td>Error Handling</td>
+        <td>Displays custom error pages for HTTP errors</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Injected Dependencies</h2>
+
+<table>
+    <tr>
+        <th>Dependency</th>
+        <th>Type</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>_unitOfWork</td>
+        <td>IUnitOfWork</td>
+        <td>Centralized repository access</td>
+    </tr>
+    <tr>
+        <td>_accountService</td>
+        <td>IAccountService</td>
+        <td>Member account and authentication logic</td>
+    </tr>
+    <tr>
+        <td>_activityService</td>
+        <td>IActivityService</td>
+        <td>Retrieves member activities</td>
+    </tr>
+    <tr>
+        <td>_courseService</td>
+        <td>ICourseService</td>
+        <td>Retrieves member courses</td>
+    </tr>
+    <tr>
+        <td>_httpContextAccessor</td>
+        <td>IHttpContextAccessor</td>
+        <td>Session and HTTP context access</td>
+    </tr>
+    <tr>
+        <td>_mapper</td>
+        <td>IMapper</td>
+        <td>Entity → ViewModel mapping</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Controller Attributes</h2>
+
+<table>
+    <tr>
+        <th>Attribute</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>[Area("Member")]</td>
+        <td>Registers controller under Member area</td>
+    </tr>
+    <tr>
+        <td>[Route("Member/[controller]/[action]")]</td>
+        <td>Defines route pattern</td>
+    </tr>
+    <tr>
+        <td>[YesGet]</td>
+        <td>Custom attribute Save this Get(action) to (Logs) <strong>as by default Any Get No Save in Logs</strong> </td>
+    </tr>
+    <tr>
+        <td>[MemberAuthorize]</td>
+        <td>Restricts access to authenticated members</td>
+    </tr>
+    <tr>
+        <td>[IgnoreAction], [AllowAnonymous]</td>
+        <td>Excludes actions from authorization</td>
+    </tr>
+	<tr>
+        <td>[NoLogging]</td>
+        <td>Excludes actions from Saving in (Logs)</td>
+    </tr>
+	
+</table>
+
+<!-- ===================================================== -->
+<h2>Main Action — Index (Dashboard)</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Details</th>
+    </tr>
+    <tr>
+        <td>HTTP Method</td>
+        <td>GET</td>
+    </tr>
+    <tr>
+        <td>Authorization</td>
+        <td>MemberAuthorize</td>
+    </tr>
+    <tr>
+        <td>Return Type</td>
+        <td>View(HomeActivityCourseVM)</td>
+    </tr>
+    <tr>
+        <td>Purpose</td>
+        <td>Displays personalized dashboard for the logged-in member</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Index Action — Processing Steps</h2>
+
+<table>
+    <tr>
+        <th>Step</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>1</td>
+        <td>Detect current language from session</td>
+    </tr>
+    <tr>
+        <td>2</td>
+        <td>Check recent login to display success toast</td>
+    </tr>
+    <tr>
+        <td>3</td>
+        <td>Retrieve member email from session</td>
+    </tr>
+    <tr>
+        <td>4</td>
+        <td>Load courses and activities for the member</td>
+    </tr>
+    <tr>
+        <td>5</td>
+        <td>Filter courses by start date (today or later)</td>
+    </tr>
+    <tr>
+        <td>6</td>
+        <td>Map entities to CourseVM and ActivityVM</td>
+    </tr>
+    <tr>
+        <td>7</td>
+        <td>Attach subscription data (attendance, rating, acceptance)</td>
+    </tr>
+    <tr>
+        <td>8</td>
+        <td>Build HomeActivityCourseVM</td>
+    </tr>
+    <tr>
+        <td>9</td>
+        <td>Return populated View</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>ViewData Used</h2>
+
+<table>
+    <tr>
+        <th>Key</th>
+        <th>Purpose</th>
+    </tr>
+    <tr>
+        <td>ShowToastrLoginSuccesfullyLoggedIn</td>
+        <td>Controls login success notification display</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>HomeActivityCourseVM</h2>
+
+<table>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>MemberName</td>
+        <td>string?</td>
+        <td>Displayed member full name</td>
+    </tr>
+    <tr>
+        <td>Courses</td>
+        <td>IEnumerable&lt;CourseVM&gt;?</td>
+        <td>Member-related courses</td>
+    </tr>
+    <tr>
+        <td>Activities</td>
+        <td>IEnumerable&lt;ActivityVM&gt;?</td>
+        <td>Member-related activities</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Index Page Structure</h2>
+
+<table>
+    <tr>
+        <th>Section</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Model</td>
+        <td>Uses HomeActivityCourseVM</td>
+    </tr>
+    <tr>
+        <td>Data Display</td>
+        <td>Iterates courses and activities</td>
+    </tr>
+    <tr>
+        <td>Conditional Styling</td>
+        <td>Highlights accepted courses</td>
+    </tr>
+    <tr>
+        <td>Dynamic Actions</td>
+        <td>View, Subscribe, Rate, Print Certificate</td>
+    </tr>
+    <tr>
+        <td>Client Features</td>
+        <td>Modals, tooltips, AJAX operations</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Error Pages (403–503)</h2>
+
+<table>
+    <tr>
+        <th>Error Code</th>
+        <th>Meaning</th>
+        <th>Behavior</th>
+    </tr>
+    <tr>
+        <td>403</td>
+        <td>Forbidden</td>
+        <td>Access denied page with redirect option</td>
+    </tr>
+    <tr>
+        <td>404</td>
+        <td>Not Found</td>
+        <td>Missing page or resource</td>
+    </tr>
+    <tr>
+        <td>500</td>
+        <td>Server Error</td>
+        <td>Unhandled system error</td>
+    </tr>
+    <tr>
+        <td>503</td>
+        <td>Service Unavailable</td>
+        <td>Maintenance or downtime</td>
+    </tr>
+</table>
+
+<!-- ===================================================== -->
+<h2>Security & Localization</h2>
+
+<table>
+    <tr>
+        <th>Aspect</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>Authorization</td>
+        <td>MemberAuthorize attribute</td>
+    </tr>
+    <tr>
+        <td>CSRF Protection</td>
+        <td>Anti-forgery tokens in forms & AJAX</td>
+    </tr>
+    <tr>
+        <td>Localization</td>
+        <td>Session-based Arabic / English resources</td>
+    </tr>
+    <tr>
+        <td>RTL/LTR</td>
+        <td>Automatic UI direction switching</td>
+    </tr>
+</table>
+
+<div class="note">
+    ✔ Clean MVC separation<br>
+    ✔ Unified dashboard ViewModel<br>
+    ✔ Multilingual & secure<br>
+    ✔ User-friendly error handling
+</div>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

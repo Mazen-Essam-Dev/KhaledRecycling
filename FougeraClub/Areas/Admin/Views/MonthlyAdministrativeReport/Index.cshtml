@@ -1,0 +1,260 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.MonthlyAdministrativeReport
+@model PaginatedList<MonthlyAdministrativeReportVM>
+
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+
+    ViewData["Title pakage"] = @Resource1.ExternalWorkMissionManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.MonthlyAdministrativeReportList ?? " ";
+
+    var addPermission = PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Delete");
+}
+
+<!-- Header with Title, Count, and Create Button -->
+<div class=" row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-6">
+        <nav aria-label="breadcrumb" class="ms-2">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Records Count Display Column -->
+    <div class="col d-flex justify-content-end align-items-center text-nowrap me-3">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span><label id="countRecords">@Model.Count </label></span>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+
+        <!-- Main card container for services data -->
+        <div class="card">
+            <!-- Card header with title and action buttons -->
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                <!-- Page title section -->
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center col-md-6 flex-wrap">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <i class="fa-solid fa-file text-ico me-2"></i>
+                            @Resource2.MonthlyAdministrativeReportList
+                        </h4>
+                    </div>
+                </div>
+                <!-- Action buttons section (Print, Export, Add, Toggle) -->
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <!-- Print report button -->
+                    @if (addPermission)
+                    {
+                        <a asp-action="AddEdit" class="btn btn-outline-success btn-sm">
+                            <i class="fa fa-plus me-1"></i> @Resource2.CreateNew
+                        </a>
+                    }
+                    <button type="button"
+                            class="btn btn-success btn-sm"
+                            onclick="openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.Print 
+                    </button>
+                    <!-- Print Export As Excel -->
+                    <a class="btn btn-success Excelbtn"
+                       onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-2" style="font-size:17px;"></i>@Resource1.createExcelReport_Download 
+                    </a>
+                </div>
+                <script>
+                    function openPrintPage() {
+                        const selectedYear = encodeURIComponent(document.getElementById('yearSelect').value);
+                        const selectedMonth = encodeURIComponent(document.getElementById('monthSelect').value);
+                        var countRecords = document.getElementById('NewCountRecords').value;
+                        if(countRecords && countRecords>3999){
+                            showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+                        }
+                        else{
+                            const url = `/Admin/MonthlyAdministrativeReport/Print?selectedYear=${selectedYear}&selectedMonth=${selectedMonth}`;
+                            //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                            // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                            const printWindow = window.open(
+                                url,
+                                'printWindow',
+                                'width=1000,height=800,noopener,noreferrer'
+                            );
+                        }
+                    }
+                </script>
+                <script>
+                    function openExcelPage() {
+                        const selectedYear = encodeURIComponent(document.getElementById('yearSelect').value);
+                        const selectedMonth = encodeURIComponent(document.getElementById('monthSelect').value);
+                        const url = `/Admin/MonthlyAdministrativeReport/createExcelReport_Download?selectedYear=${selectedYear}&selectedMonth=${selectedMonth}`;
+                        window.open(url, '_self');
+                    }
+                </script>
+            </div>
+            <div class="rounded shadow-sm p-3">
+                <!-- Search Panel -->
+                <form method="get" id="studentFilterForm" class="filterImg rounded p-2">
+                    <div class="row">
+                            <div class="filter-dropdown col-md-5">
+                                <label for="yearSelect" class="fw-bold mb-1">@Resource2.Year:</label>
+                                <div class="input-icon-left">
+                                    <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+                                    <select class="form-select form-select-sm filter-bordered" id="yearSelect" name="selectedYear">
+                                        <option value="">-- @Resource2.Select --</option>
+                                        @foreach (var year in ViewBag.Years as List<int>)
+                                        {
+                                            if (year == ViewBag.SelectedYear)
+                                            {
+                                                <option value="@year" selected>@year</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@year">@year</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="filter-dropdown col-md-5">
+                                <label for="monthSelect" class="fw-bold mb-1">@Resource2.Month:</label>
+                                <div class="input-icon-left">
+                                    <img src="~/assets/images/YearAndMonthIcon.png" alt="calendar icon" class="date-icon">
+                                    <select class="form-select form-select-sm filter-bordered" id="monthSelect" name="selectedMonth">
+                                        <option value="">-- @Resource2.Select --</option>
+                                        @foreach (var month in ViewBag.Months as List<SelectListItem>)
+                                        {
+                                            if (month.Value == ViewBag.SelectedMonth?.ToString())
+                                            {
+                                                <option value="@month.Value" selected>@month.Text</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@month.Value">@month.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        <div class=" col-md-2 gap-1 d-flex justify-content-end align-items-end">
+                            <button type="button" id="btnClearFilters" class="btn btn-cancel-search btn-sm coustom-min-w ">
+                                <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                            </button>
+                            <button type="submit" class="btn btn-sm btn-success coustom-min-w ">
+                                <i class="ri-filter-line me-1"></i> @Resource1.Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#monthSelect').val(filters.selectedMonth);
+                $('#yearSelect').val(filters.selectedYear);
+                $('#pageSizeSelect').val(filters.pageSize);
+
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#monthSelect').val('');
+                $('#yearSelect').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    selectedMonth: $('#monthSelect').val(),
+                    selectedYear: $('#yearSelect').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var selectedMonth = $('#monthSelect').val();
+                var selectedYear = $('#yearSelect').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/MonthlyAdministrativeReport/Index',
+                    type: 'GET',
+                    data: { selectedMonth, selectedYear, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+
+}
+
+
+
+

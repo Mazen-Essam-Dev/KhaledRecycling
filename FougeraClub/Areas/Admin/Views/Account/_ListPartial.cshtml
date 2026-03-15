@@ -1,0 +1,162 @@
+﻿@using System.Security.Claims
+@model PaginatedList<AdminVM>
+
+@{
+    ViewData["Title"] = @Resource1.UsersList;
+    ViewData["Title pakage"] = "Users Management Unite";
+    ViewData["Title Single"] = @Resource1.UsersList;
+    var loggedInUserId = @User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var EditPermission = PermissionScanner.ValidatePermission("Account", "Edit");
+    var DeletePermission = PermissionScanner.ValidatePermission("Account", "Delete");
+    var ResetPermission = PermissionScanner.ValidatePermission("Account", "ResetPassword");
+}
+
+@{
+    var filteredItems = Model?.Items?.Where(u => !string.Equals(u?.Email, "Master",
+    StringComparison.OrdinalIgnoreCase)).ToList() ?? new List<AdminVM>();
+    var filteredCount = filteredItems.Count;
+}
+
+<input type="hidden" id="NewCountRecords" value="@filteredCount" />
+<nav class="d-flex justify-content-end align-items-center gap-2 my-2">
+    <label class="form-label mb-0" for="pageSizeSelect">@Resource2.PageSize:</label>
+
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width:74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            if (s == Model.PageSize)
+            {
+                <option value="@s" selected="selected">@s</option>
+            }
+            else
+            {
+                <option value="@s">@s</option>
+            }
+        }
+    </select>
+</nav>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
+        <thead>
+            <tr>
+                <th style="width:25%;">@Resource2.FullName</th>
+                <th style="width:20%;">@Resource2.Username</th>
+                <th style="width:20%;">@Resource2.Email</th>
+                <th style="width:7%;">@Resource2.PhoneNumber</th>
+                <th style="width:20%;">@Resource2.Role</th>
+                <th style="width:8%;">@Resource2.Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (filteredItems != null && filteredItems.Any())
+            {
+                foreach (var user in filteredItems)
+                {
+                    <tr data-id="@user?.Id">
+                        <td data-label="@Resource2.FullName">
+                            <span>@(SessionHelper.GetCurrentLanguage() == "ar" ? user.FullNameAr : user.FullNameEn)</span>
+                        </td>
+                        <td data-label="@Resource2.Username">
+                            <span>@user.Username</span>
+                        </td>
+                        <td data-label="@Resource2.Email">
+                            <span>@user.Email</span>
+                        </td>
+                        <td data-label="@Resource2.PhoneNumber">
+                            <span>@user.PhoneNumber</span>
+                        </td>
+                        <td data-label="@Resource2.Role">
+                            <span>@user.Role</span>
+                        </td>
+                        <td data-label="@Resource2.Actions">
+                            <!-- Edit User -->
+                            @if (EditPermission)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Edit">
+                                    <a asp-action="AddEdit" asp-route-id="@user.Id"
+                                        class="btn-control btn-icon btn-sm rounded-circle">
+                                        <i class="fa-solid fa-pen-to-square fs-5"></i>
+                                    </a>
+                                </span>
+                            }
+
+                            <!-- Delete User -->
+                            @if (user.IsTrainer)
+                            {
+                                <span data-bs-toggle="tooltip" data-bs-title="@Resource2.UserLinkedToTrainer">
+                                    <button disabled type="button" class="disabled btn btn-control-dis btn-control btn-icon btn-sm rounded-circle"
+                                        data-message="@Resource2.UserLinkedToTrainer">
+                                        <i class="fa-solid fa-trash fs-5"></i>
+                                    </button>
+                                </span>
+                            }
+                            else
+                            {
+                                <!-- Delete User -->
+                                @if (loggedInUserId != user.Id && DeletePermission && !(user.Role == Role.SuperAdmin.ToString()) &&
+                                                    (user.RoleNumber == (int)RoleNumber.NormalUser || user.RoleNumber > (int)RoleNumber.Accountant)) 
+                                        {
+                                    <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Delete">
+                                        <form asp-action="Delete" data-swal="delete" data-message="@user.FullNameAr"
+                                            asp-route-id="@user.Id" method="post" class="d-inline"
+                                            onsubmit="return confirm('@Resource2.ConfirmDelete');">
+                                            <button type="submit" class="btn-control btn-icon btn-sm rounded-circle">
+                                                <i class="fa-solid fa-trash fs-5"></i>
+                                            </button>
+                                        </form>
+                                    </span>
+                                }
+                                        else
+                                {
+                                    <span data-bs-toggle="tooltip" data-bs-title="@Resource2.Delete">
+                                        <button asp-action="#" disabled
+                                            class="disabled btn btn-control-dis  btn-icon btn-sm rounded-circle">
+                                            <i class="fa-solid fa-trash fs-5"></i>
+                                        </button>
+                                    </span>
+                                }
+                            }
+
+
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center p-5">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-muted">
+                            <i class="ri-alert-line" style="font-size: 3rem;"></i>
+                            <h5 class="mt-3 background-skewed-rtl">@Resource1.NoUsers</h5>
+                            <p class="mb-0">@Resource1.NoUsersMessage</p>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Pagination -->
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.PageIndex - 1)">
+                @Resource2.Previous
+            </a>
+        </li>
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.PageIndex + 1)">
+                @Resource2.Next
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -1,0 +1,102 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Account
+@model List<AdminVM>
+@using Microsoft.AspNetCore.Identity
+@using Infrastructure.Identity
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+
+}
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    @if (SessionHelper.GetCurrentLanguage() == "ar")
+    {
+        <link href="~/ar/assets/css/report-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/ar/assets/css/report-ltr.css" rel="stylesheet" />
+    }   
+        
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+</head>
+<div id="report">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+    <!-- Official Header -->
+    <div class="print-header">
+        <table>
+            <tr>
+                <td width="33%" style="padding-left:50px!important">
+                    <strong>دولة الإمارات العربية المتحدة</strong><br />
+                    نادي الفجيرة العلمي
+                </td>
+                <td width="33%" style="text-align: center;">
+                    <img src="~/assets/images/logo.png" class="logo" onerror="this.style.display='none'" />
+                </td>
+                <td width="33%">
+                    <strong>United Arab Emirates</strong><br />
+                    Fujairah Science Club
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2 class="text-danger">@Resource2.Users</h2>
+            <p class="text-muted"> @AppDubaiTime.Now.ToString("HH:mm dd-MM-yyyy")</p>
+        </div>
+
+
+    <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>@Resource2.FullName</th>
+                <th>@Resource2.Email</th>
+                <th>@Resource2.PhoneNumber</th>
+                <th>@Resource2.Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model)
+            {
+                <tr>
+                    <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? user.FullNameAr : @user.FullNameEn)</td>
+                    <td>@user.Username</td>
+                    <td>@user.PhoneNumber</td>
+                    <td>@user.Role</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+        <div class="footer">
+            <p class="PrintedBy">Printed by : <span>@((currentUser != null && currentUser.Email != null) ? currentUser.Email : "Unknown User")  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+        </div>
+    <script>
+
+        // This Part Is Important
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+              // Close window after printing
+                window.onafterprint = function() {
+                    setTimeout(function() {
+                        window.close();
+                    }, 500);
+                };
+    </script>
+</div>

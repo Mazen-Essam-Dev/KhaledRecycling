@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:58:21 GMT -->
+<head>
+    <meta charset="utf-8" />
+    <title>@Resource2.FougeraClub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+
+    <!-- font-awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Vendor css -->
+    <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+
+
+  
+    <!-- App css -->
+    @{
+        var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
+    }
+    @if (lang == "ar")
+    {
+        @* <link href="~/assets/css/app-rtl.min.css" rel="stylesheet" type="text/css" id="app-style" /> *@
+        <link href="~/ar/assets/css/bootstrap.rtl.min.css" rel="stylesheet" />
+        <link href="~/ar/assets/css/index-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        @* <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" /> *@
+        <link href="~/en/assets/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="~/en/assets/css/index-ltr.css" rel="stylesheet" />
+    }
+
+    <!-- Icons css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/config.js"></script>
+</head>
+
+<body>
+    @* navbar *@
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <img src="~/ar/assets/images/logo-ar.png" class="navbar-logo" alt="@Resource1.slogan">
+            <h2 class="site-name"> @Resource3.FUJAIRAHSCIENCECLUB  </h2>
+        </div>
+        <div class="nav-right">
+            @if (SessionHelper.GetCurrentLanguage() == "ar")
+            {
+                <a class="lang-btn" asp-controller="Home"
+                   asp-action="ChangeLanguage"
+                   asp-route-lang="en-GB">
+                    EN
+                </a>
+            }
+            else
+            {
+                <a class="lang-btn" asp-controller="Home"
+                   asp-action="ChangeLanguage"
+                   asp-route-lang="ar">
+                    AR
+                </a>
+            }
+            <a href="/Member/Account/Logout" class="lang-btn">
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+        </div>
+    </nav>
+    <div class="dashboard">
+        <style>
+            .loading-screen {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.8);
+                z-index: 9998;
+                display: none; /* Hide initially */
+            }
+
+                /* Green thin centered spinner */
+                .loading-screen .hyper-loader {
+                    position: absolute;
+                    left: 50%;
+                    top: 50%;
+                    transform: translate(-50%, -50%) rotate(0deg);
+                    width: 80px;
+                    height: 80px;
+                    border: 5px solid rgba(0, 128, 0, 0.15); /* light green base */
+                    border-top-color: #28a745; /* vivid green top */
+                    border-radius: 50%;
+                    animation: fv-spin 0.9s linear infinite;
+                }
+
+            @@keyframes fv-spin {
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                }
+            } 
+
+        </style>
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="hyper-loader"></div>
+        </div> 
+       
+
+        <div class=" content page-content">
+            <div class="page-container">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    <footer style="direction: rtl;">
+        <div class="footer-content" style="direction: rtl;">
+            <div class="footer-left">
+                <img src="~/ar/assets/images/foter-logo-co.png" alt="logo" class="footer-logo">
+                <span>Powered by</span>
+            </div>
+            <div class="footer-right">
+                <p>Copyright ©2025 <a href="index.html">FUJAIRAH SCIENCE CLUB</a> All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Vendor js -->
+    <script src="~/assets/js/vendor.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script>
+        // Show loading overlay when a register form is submitted
+        document.addEventListener('DOMContentLoaded', function () {
+            function showLoading() {
+                var screen = document.getElementById('loadingScreen');
+                if (screen) screen.style.display = 'block';
+            }
+
+            function disableSubmitButtons(form) {
+                try {
+                    var buttons = form.querySelectorAll('button[type="submit"], input[type="submit"]');
+                    buttons.forEach(function (b) { b.disabled = true; });
+                } catch (e) { }
+            }
+
+            // Capture any form submit. If the form appears to be the member register form, show loader.
+            document.addEventListener('submit', function (e) {
+                var frm = e.target;
+                if (!(frm instanceof HTMLFormElement)) return;
+
+                var action = (frm.getAttribute('action') || frm.action || '').toLowerCase();
+
+                // Heuristics to detect the register form: action contains Register or form has id/register data attribute
+                if (action.indexOf('/member/account/register') !== -1 || frm.id === 'registerForm' || frm.dataset.register === 'true' || frm.classList.contains('register-form')) {
+                    showLoading();
+                    disableSubmitButtons(frm);
+                }
+            }, true);
+
+            // Also support direct clicks on buttons that have data-register attribute
+            document.querySelectorAll('button[data-register], input[data-register]').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    var screen = document.getElementById('loadingScreen');
+                    if (screen) screen.style.display = 'block';
+                });
+            });
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+    @* footer *@
+</body>
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:58:21 GMT -->
+</html>

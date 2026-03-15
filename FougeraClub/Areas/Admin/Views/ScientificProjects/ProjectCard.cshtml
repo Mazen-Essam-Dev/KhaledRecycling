@@ -1,0 +1,1573 @@
+﻿@model ScientificProjectsVM
+
+@{
+    ViewData["Title"] = @Resource1.ProjectCard2;
+    ViewData["Title pakage"] = @Resource1.ScientificProjectsManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.ScientificProjectsList ?? " ";
+    ViewData["Title Single"] = @Resource1.ProjectCard2 ?? " ";
+
+    var printProjectCardPermission = PermissionScanner.ValidatePermission("ScientificProjects", "PrintProjectCard");
+
+    var boolManagerSignature = Model.ManagerSignature != null && !string.IsNullOrEmpty(Model.ManagerSignature.ImagePath);
+    var boolActivityMonitorSigniture = Model.ActivityMonitorSigniture != null && !string.IsNullOrEmpty(Model.ActivityMonitorSigniture.ImagePath);
+    var boolTrainerSigniture = Model.Trainer1Signiture != null && !string.IsNullOrEmpty(Model.Trainer1Signiture.ImagePath);
+
+    decimal MoneyCost = (decimal)(Model.ExpectedCost ?? 0);
+    var arTafqeet = TafqeetHelper.Tafqeet(MoneyCost, CurrencyHelper.AED_Main_Ar, CurrencyHelper.AED_Sub_Ar);
+    var enTafqeet = TafqeetHelper.Tafqeet(MoneyCost, CurrencyHelper.AED_Main_En, CurrencyHelper.AED_Sub_En);
+}
+<script>
+    function printDiv(divId) {
+      window.print();
+      document.body.innerHTML = originalPage;
+      location.reload();
+    }
+</script>
+<style>
+    .overflow-table {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .overflow-table::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .overflow-table::-webkit-scrollbar-thumb {
+            background-color: green;
+            border-radius: 2px;
+        }
+
+        .overflow-table::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+    .container {
+        width: 100% !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+
+    th, td {
+        box-shadow: inset 0 0.25px 0 0 #000, inset 0 -0.25px 0 0 #000, inset 0.25px 0 0 0 #000, inset -0.25px 0 0 0 #000;
+    }
+
+    .InnovationEn{
+        font-size: 11.5px !important;
+    }
+    @@media print {
+        * {
+            max-width: 100% !important;
+        }
+
+        .overflow-table {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        .print-none,
+        .custom-navbar {
+            display: none !important;
+        }
+
+        body {
+            background: #fff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            font-size: 12px;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #printArea {
+            width: 800px !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+        }
+
+        .row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
+
+        .flex-fill {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+        }
+
+        table {
+            width: 100% !important;
+            table-layout: fixed !important;
+            box-shadow: none !important;
+            border-collapse: collapse !important;
+        }
+
+        .InnovationEn {
+            font-size: 8.5px !important;
+        }
+
+        th, td {
+            padding: 3px !important;
+            box-shadow: inset 0 0.25px 0 0 #000, inset 0 -0.25px 0 0 #000, inset 0.25px 0 0 0 #000, inset -0.25px 0 0 0 #000;
+        }
+
+        input {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+            -webkit-appearance: none;
+        }
+
+        .header-top {
+            display: flex !important;
+            justify-content: space-between !important;
+            font-size: 14px !important;
+            margin: 0 0 20px 0 !important;
+        }
+
+        .container-second-page {
+            page-break-before: always !important;
+        }
+
+        /* Hide explicitly marked hidden rows and their contents while keeping their column width contribution */
+        .hidden22, 
+        .hidden22 td, 
+        .hidden22 th {
+            visibility: collapse !important;
+            height: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            opacity: 0 !important;
+            line-height: 0 !important;
+            font-size: 0 !important;
+        }
+    }
+</style>
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap print-none">
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/ScientificProjects/Index">@ViewData["Title ListIndex"]</a></li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-6">
+        <div class="d-flex align-items-center justify-content-end gap-2">
+            @if (boolManagerSignature && boolActivityMonitorSigniture && boolTrainerSigniture)
+            {
+                <button onclick="printDiv('printArea')" ;="" return="" false;"="" class="print-btn btn btn-success btn-sm">
+                    <i class="fa fa-print me-1"></i>@Resource2.Print
+                </button>
+            }
+            <a asp-action="Index" class="btn btn-cancel-search btn-sm back-btn">
+                @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+@* <div class="card">
+  <div class="container  mb-3" id="printArea">
+          <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+            <div class="d-flex justify-content-between align-items-center flex-fill">
+                <div style="text-align:center">
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                    <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+                </div>
+            </div>
+            <div class="flex-fill text-center">
+                <center>
+                    <img src="~/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+                </center>
+            </div>
+            <div class="d-flex justify-content-end align-items-center flex-fill">
+                <div style="text-align:center">
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                    <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                    <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+                </div>
+            </div>
+        </div>
+        <div>
+
+            <div class="text-center fs-5 pb-1 mb-2">
+                    <h5 style="color:#af1717"> @Resource1.ProjectCard2</h5>
+                    </div>
+                    <!--
+                    <div class="form-group col-md-3 mx-auto mt-3">
+                        <input hidden asp-for="SerialCode" />
+                        <input disabled class="form-control text-center" asp-for="SerialCode" readonly />
+                    </div>
+                -->
+
+ <div class="overflow-table">
+<table style="width:100%;  text-align:center;" cellspacing="0" cellpadding="5">
+    <tr>
+        <td class="fs-5" style="width:20%; font-weight:bold;background-color:#47a744 !important;text-align:right; color:#ffffff !important; ">التاريخ</td>
+       <td colspan="3" style="background-color:#f5f5f5 !important">
+           <input asp-for="DateByCalander" hidden readonly type="date" class="form-control" />
+           <input readonly type="text" value="@Model.DateByCalander?.ToString("d")?.Replace("/","-")" class="form-control text-right w-100" style="border:0; text-align:right;background-color:#f5f5f5 !important " /></td>
+    </tr>
+    <tr>
+        <td class="fs-5" style="width:20%; font-weight:bold;background-color:#47a744 !important; text-align:right; color:#ffffff !important; ">@Resource1.ProjectName</td>  
+        <td style="width:30%;background-color:#f5f5f5 !important; color:#000;"> <input asp-for="ProjectNameAr" disabled readonly class="form-control input-cell" style="text-align:center;border:0;" /></td>
+      <td style="width:30%;background-color:#f5f5f5 !important; color:#000;"><input asp-for="ProjectNameEn" disabled readonly class="form-control input-cell" style="text-align:center;border:0; " /></td>
+         <td class="fs-5" style="width:20%; font-weight:bold;background-color:#47a744 !important;text-align:left; color:#ffffff !important; ">Project Name</td>
+    </tr>
+    <tr>
+        <td class="fs-5" style="width:20%; font-weight:bold;background-color:#47a744 !important; text-align:right; color:#ffffff !important; ">@Resource1.IdeaOwner</td>
+       <td style="width:30%;background-color:#f5f5f5 !important; color:#000;"><input asp-for="IdeaOwnerAr" disabled readonly class="form-control input-cell" style="text-align:center;border:0;"/></td>
+       <td style="width:30%;background-color:#f5f5f5 !important; color:#000;"><input asp-for="IdeaOwnerEn" disabled readonly class="form-control input-cell" style="text-align:center;border:0;" /> </td>
+          <td class="fs-5" style="width:20%; font-weight:bold;background-color:#47a744 !important;text-align:left; color:#ffffff !important; ">Idea Owner
+</td>
+    </tr>
+      <tr>
+        <td class="fs-5" colspan="4" style="text-align:center; background-color:#47a744 !important; color:#ffffff !important;">
+            <h3 class="p-2 fs-5">  Project idea and goal / فكرة المشروع والهدف منه</h3>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="4" style="background:#d9f4d8; padding:15px; text-align:center;">
+         <textarea asp-for="ProjectIdeaAr" disabled readonly class="form-control text-center" style="border:0; "></textarea>
+        </td>
+    </tr>
+      <tr>
+      
+           <td colspan="4" style="background:#d9f4d8; padding:15px; text-align:center;">
+        <textarea asp-for="ProjectIdeaEN" disabled readonly class="form-control text-center" style="border:0; "></textarea>
+        </td>
+    </tr>
+    <!-- صور المشروع -->
+    <tr>
+        <td colspan="4" class="fw-semibold" style="text-align:center; background-color:#47a744 !important; text-align:center; color:#ffffff !important;">
+             <h3 class="p-2 fs-5">
+            @Resource2.ProjectImages
+            </h3>
+        
+        </td>
+    </tr>
+
+    <tr>
+                        <td colspan="4" style="background-color:#f5f5f5!important;">
+
+                            <div class="d-flex">
+                                @if (!string.IsNullOrEmpty(Model?.FilePath1))
+                                {
+                                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                                        <div class="card shadow-sm h-100">
+                                            <div class="card-body text-center">
+                                                <img src="@Url.Content("~/" + Model.FilePath1)"
+                                                     class="img-fluid rounded"
+                                                     style="height:200px; max-width:100%;"
+                                                     alt="@Resource2.ProjectImage" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(Model?.FilePath2))
+                                {
+                                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                                        <div class="card shadow-sm h-100">
+                                            <div class="card-body text-center">
+                                                <img src="@Url.Content("~/" + Model.FilePath2)"
+                                                     class="img-fluid rounded"
+                                                     style="height:200px; max-width:100%;"
+                                                     alt="@Resource2.ProjectImage" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(Model?.FilePath3))
+                                {
+                                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                                        <div class="card shadow-sm h-100">
+                                            <div class="card-body text-center">
+                                                <img src="@Url.Content("~/" + Model.FilePath3)"
+                                                     class="img-fluid rounded"
+                                                     style="height:200px; max-width:100%;"
+                                                     alt="@Resource2.ProjectImage" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="d-flex">
+                                @if (!string.IsNullOrEmpty(Model?.FilePath4))
+                                {
+                                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                                        <div class="card shadow-sm h-100">
+                                            <div class="card-body text-center">
+                                                <img src="@Url.Content("~/" + Model.FilePath4)"
+                                                     class="img-fluid rounded"
+                                                     style="height:200px; max-width:100%;"
+                                                     alt="@Resource2.ProjectImage" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(Model?.FilePath5))
+                                {
+                                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                                        <div class="card shadow-sm h-100">
+                                            <div class="card-body text-center">
+                                                <img src="@Url.Content("~/" + Model.FilePath5)"
+                                                     class="img-fluid rounded"
+                                                     style="height:200px; max-width:100%;"
+                                                     alt="@Resource2.ProjectImage" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                @if (!string.IsNullOrEmpty(Model?.FilePath6))
+                                {
+                                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                                        <div class="card shadow-sm h-100">
+                                            <div class="card-body text-center">
+                                                <img src="@Url.Content("~/" + Model.FilePath6)"
+                                                     class="img-fluid rounded"
+                                                     style="height:200px; max-width:100%;"
+                                                     alt="@Resource2.ProjectImage" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                        </td>
+
+    </tr>
+</table>
+
+      </div>
+                </div>
+            </div>
+        </div>
+ *@
+
+<!-- Signature Section -->
+@*<hr class="custom-hr" />
+<div class="row g-3">
+    <!-- Trainer Signature (Activities/Membership Supervisor) -->
+    <div class="col-md-6 text-center">
+        <div role="button" tabindex="0" style="cursor:pointer;">
+            <label class="form-label fw-semibold">@Resource1.SignatureActivitiesMembershipSupervisor</label>
+            <div class="small text-muted">
+                @if (Model.ActivityMonitorSigniture != null && !string.IsNullOrEmpty(Model.ActivityMonitorSigniture.ImagePath))
+                {
+                    <img src="~/@Model.ActivityMonitorSigniture.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Activity Monitor Signature" />
+                }
+            </div>
+        </div>
+    </div>
+    <!-- Manager Signature -->
+    <div class="col-md-6 text-center">
+        <div role="button" tabindex="0" style="cursor:pointer;">
+            <label class="form-label fw-semibold">@Resource1.SignatureManager</label>
+            <div class="small text-muted">
+                @if (Model.ManagerSignature != null && !string.IsNullOrEmpty(Model.ManagerSignature.ImagePath))
+                {
+                    <img src="~/@Model.ManagerSignature.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Manager Signature" />
+                }
+            </div>
+        </div>
+    </div>
+</div>*@
+
+<style>
+    * {
+        margin: 0%;
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        color: #000;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #fff;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .container {
+        width: 100% !important;
+        margin: auto;
+    }
+    .preview-card {
+        width: 100% !important;
+        margin: 20px 0;
+        background: #fff;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+        border-radius: 0.5rem;
+        border: 1px solid rgba(0,0,0,.125);
+        padding: 40px;
+    }
+    @@media (max-width: 992px) {
+        .preview-card {
+            width: 100% !important;
+            padding: 20px;
+        }
+    }
+    @@media print {
+        .preview-card {
+            width: 100% !important;
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+    }
+
+    .wbwb, .hidden22, tr.hidden22, th.wbwb, td.wbwb {
+        visibility: collapse !important;
+        height: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        font-size: 0px !important;
+        line-height: 0 !important;
+        opacity: 0 !important;
+    }
+    /* page1 */
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        margin: 40px 0;
+    }
+
+    .logo {
+        width: 150px;
+    }
+
+        .logo img {
+            width: 100%;
+        }
+
+    .main-title {
+        text-align: center;
+        font-weight: 900;
+        font-size: 14px;
+        color: #a98a5b;
+    }
+
+        .main-title h2:first-child {
+            color: #a98a5b;
+            margin-bottom: 2px;
+        }
+
+        .main-title h2:last-of-type {
+            color: black;
+            margin-bottom: 30px !important;
+        }
+
+        .main-title div {
+            align-items: start !important;
+            color: #000;
+        }
+
+            .main-title div span {
+                border-bottom: 2px dotted black !important;
+            }
+
+            .main-title div .num {
+                color: rgba(255, 0, 0, 0.664);
+            }
+
+    .title {
+        font-weight: 900;
+        border-bottom: 2px solid black !important;
+        text-align: center;
+        font-size: 16px;
+        width: fit-content;
+        margin: 0 auto 15px;
+    }
+
+    .section-header {
+        background: #e6e6e6;
+        font-weight: 900;
+        text-align: center;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        margin: 10px auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    td {
+        border: 1px solid #000;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    td,
+    th {
+        border: 1px solid #000;
+        font-size: 13px;
+        vertical-align: top;
+        /* padding: 5px 10px; */
+        padding: 0px 10px;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        white-space: normal !important;
+    }
+
+    .gray {
+        background-color: #deeaf6 !important;
+    }
+
+    .col-en-title {
+        width: 20%;
+        background: #fff2cc;
+        font-weight: 900;
+    }
+
+    .col-en-value {
+        width: 40%;
+        text-align: center;
+        font-weight: 900;
+    }
+
+    .col-empty {
+        width: 20%;
+    }
+
+    .col-ar-title {
+        width: 20%;
+        background: #fff2cc;
+        font-weight: 900;
+        text-align: right;
+    }
+
+    .gray {
+        background: #d9dee4;
+        font-weight: 900;
+    }
+
+    .green{
+        color: green;
+    }
+    .red {
+        color: #d40000;
+    }
+
+    .blue {
+        color: #0070c0;
+        font-weight: 900;
+    }
+
+    .left {
+        text-align: left !important;
+    }
+
+    .right {
+        text-align: right !important;
+    }
+
+    .center {
+        text-align: center !important;
+    }
+    .bold{
+        font-weight: 900 !important;
+    }
+    .images-wrapper {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+        .images-wrapper img {
+            width: 33.33%;
+            height: 180px;
+            object-fit: cover;
+            border: 1px solid #000;
+        }
+
+    /* page2 */
+    .final-section {
+        width: 100%;
+        border: 1px solid #000;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 40px;
+    }
+
+    .final-header {
+        background: #d9dee4;
+        text-align: center;
+        font-weight: 900;
+        padding: 6px;
+        border-bottom: 1px solid #000;
+        color: red !important;
+    }
+
+    .image-box {
+        height: 309px !important;
+        border-bottom: 1px solid #000;
+    }
+
+    .close-row {
+        display: flex;
+        border-bottom: 1px solid #000;
+    }
+
+    .cell {
+        flex: 1;
+        padding: 6px;
+        border-left: 1px solid #000;
+        font-weight: 900;
+        text-align: center;
+    }
+
+        .cell:nth-child(2) {
+            border-right: 1px solid #000;
+        }
+
+        .cell:nth-child(3) {
+            border-left: none;
+        }
+
+        .cell:first-child {
+            border-left: none;
+        }
+
+    .signatures {
+        display: flex;
+    }
+
+    .sign-box {
+        flex: 1;
+        height: 110px;
+        border-left: 1px solid #000;
+        padding: 10px 6px;
+        font-weight: 900;
+        vertical-align: top;
+        text-align: center;
+    }
+
+        .sign-box:first-child {
+            border-left: none;
+        }
+
+        .sign-box:nth-child(2) {
+            border-right: 1px solid #000;
+        }
+
+        .sign-box:nth-child(3) {
+            border-left: none;
+        }
+
+    /* ========== Media Print ========== */
+    @@page {
+        size: A4;
+        margin: 9mm;
+    }
+
+    @@media print {
+        * {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            background: #fff;
+            color: #000;
+        }
+
+        .container {
+            width: 100% !important;
+            max-width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-top {
+            margin: 0 0 15px 0;
+        }
+
+        .main-title h2:last-of-type {
+            margin-bottom: 8px !important;
+        }
+
+        .wbwb {
+            background-color: white !important;
+            border: none !important;
+            font-size: 0px !important;
+            background-color: #313a46d1 !important;
+            border-color: #313a46d1 !important;
+            opacity: .2 !important;
+        }
+
+        .hidden22 {
+            /* visibility: hidden !important; */
+            font-size: 0px !important;
+            opacity: 1 !important;
+/*             background-color: #313a46d1 !important;
+            border-color: #313a46d1 !important; */
+            background-color: #80858db5 !important;
+            border-color: #80858db5 !important;
+
+        }
+
+        .table-wrapper {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        table {
+            width: 100% !important;
+            max-width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse !important;
+            border: 1px solid #000 !important;
+        }
+
+        td,
+        th {
+            border: 1px solid #000 !important;
+            border-width: 1px !important;
+            border-style: solid !important;
+            border-color: #000 !important;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+            white-space: normal !important;
+        }
+
+        tr.drawings-header-row {
+            page-break-after: avoid !important;
+        }
+
+        tr.images-row-no-break {
+            page-break-inside: avoid !important;
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            break-inside: avoid !important;
+        }
+
+        .images-row {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+        }
+
+        .images-wrapper {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            display: flex !important;
+            page-break-before: auto !important;
+            page-break-after: avoid !important;
+        }
+
+            .images-wrapper img {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                page-break-before: avoid !important;
+                page-break-after: avoid !important;
+                border: 1px solid #000 !important;
+                max-height: 150px !important;
+                height: auto !important;
+                object-fit: contain !important;
+            }
+
+        table tr {
+            page-break-inside: avoid;
+        }
+
+        .final-section {
+            width: 100%;
+            page-break-inside: avoid;
+            border: 1px solid #000 !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .final-header {
+            /* border: 1px solid #000 !important;
+        border-top: 1px solid #000 !important;
+        border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important;
+        border-bottom: 1px solid #000 !important; */
+            color: red !important;
+        }
+
+        .image-box {
+            height: 255px !important;
+            /* border-top: 1px solid #000 !important;
+        border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important;
+        border-bottom: 1px solid #000 !important; */
+            page-break-inside: avoid;
+        }
+
+        .close-row {
+            page-break-inside: avoid;
+            border-top: 1px solid #000 !important;
+            /* border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important;
+        border-bottom: 1px solid #000 !important;  */
+            display: flex !important;
+        }
+
+            .close-row .cell {
+                /* border: 1px solid #000 !important;
+        border-top: 1px solid #000 !important;
+        border-bottom: 1px solid #000 !important;
+        border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important; */
+            }
+        /* .close-row .cell:first-child {
+        border-left: 1px solid #000 !important;
+      } */
+
+        .signatures {
+            page-break-inside: avoid;
+            display: flex !important;
+            /* border-top: 1px solid #000 !important;
+        border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important;
+        border-bottom: 1px solid #000 !important; */
+        }
+        /* .sign-box {
+        border: 1px solid #000 !important;
+        border-top: 1px solid #000 !important;
+        border-bottom: 1px solid #000 !important;
+        border-left: 1px solid #000 !important;
+        border-right: 1px solid #000 !important;
+      } */
+        /* .sign-box:first-child {
+        border-left: 1px solid #000 !important;
+      } */
+
+        .title {
+            border-bottom: 2px solid #000 !important;
+        }
+
+        table,
+        .table-wrapper table {
+            border: 1px solid #000 !important;
+        }
+
+            table td,
+            table th {
+                border: 1px solid #000 !important;
+                border-width: 1px !important;
+            }
+        /* .header-top {
+        border-bottom: 1px solid transparent;
+      } */
+    }
+</style>
+
+
+<div class="preview-card" id="printArea">
+    <div class="container page">
+
+    <!-- Header -->
+    <div class="header-top">
+        <div class="main-title">
+            <h2>الامارات العربية المتحدة<br> حكومة الفجيرة</h2>
+            <h2>نادى الفجيرة العلمى </h2>
+            <div>التاريخ: <span> @Model?.DateByCalander?.ToString("dd/MM/yyyy") </span></div>
+        </div>
+        <div class="logo">
+            <img src="/assets/images/logo.png" class="mt-3 logo-img" alt="logo">
+        </div>
+        <div class="main-title">
+            <h2>UNITED ARAB EMIRATES<br> GOVT. OF FUJAIRAH</h2>
+            <h2>FUJAIRAH SCIENCE CLUB</h2>
+            <div> الرقم: <span class="num">مشروع رقم(@Model?.SerialCode) </span></div>
+
+        </div>
+    </div>
+
+    <div class="title">
+        بطاقة فنية لمشروع علمي -
+        Project Technical Card
+    </div>
+
+    <!-- Project Name table-->
+    <div class="table-wrapper" style="margin: -2px auto !important;">
+
+        <table>
+            <!--
+            <tr>
+                <th class=" right col-ar-title ">اسم المشروع</th>
+                
+                    <th class=" right red green bold"  colspan="3">
+                    @Model?.ProjectNameAr
+                </th>
+
+                </tr>
+             -->
+            <tr class="hidden22">
+                <th class="col-ar-title wbwb"></th>
+                <th class="wbwb" style="width: 30%;"></th>
+                <th class="wbwb" style="width: 30%;"></th>
+                <th class="col-en-title wbwb"></th>
+            </tr>
+
+            <tr>
+                <th class=" right col-ar-title ">اسم المشروع</th>
+
+                <th class="center bold red" colspan="2" style="white-space: normal !important;"> @Model?.ProjectNameEn?.ToUpper() </th>
+                <th class="col-ar-title left ">
+                    Project Name
+                </th>
+            </tr>
+            <!--
+            <tr>
+                <td class="col-ar-title right green">صاحب الفكرة</td>
+                <td class="col-en-value red right green bold" colspan="1">@Model?.IdeaOwnerAr</td>
+                <td class="col-en-value  red left green bold" colspan="1">@Model?.IdeaOwnerEn</td>
+                <td class="col-ar-title left green">Idea Owner</td>
+            </tr>
+            -->
+            <tr>
+                <td class="gray right" style="font-size: 11.5px !important;">الابتكار (فردي – فريق)</td>
+                <td class="gray">@Model?.Innovation_Individual_TeamAr</td>
+                <td class="gray">@Model?.Innovation_Individual_TeamEn</td>
+                <td class="gray InnovationEn left" >Innovation (Individual – Team)</td>
+            </tr>
+            <tr>
+                <td class="blue right" style="height: 30px !important;" colspan="2">
+                    @(Model?.IndividualsListAr != null && Model.IndividualsListAr.Count > 0 ? Model.IndividualsListAr[0].IndividualName : string.Empty)
+                </td>
+                <td class="blue left" style="height: 30px !important;" colspan="2"> @(Model?.IndividualsListEn != null && Model.IndividualsListEn.Count > 0 ? Model.IndividualsListEn[0].IndividualName : string.Empty)</td>
+            </tr>
+            @for (int x = 1; x < Model?.MaxRowsIndividuals; x++)
+            {
+                <tr>
+
+                    <td class="blue right" style="height: 30px !important;" colspan="2">
+                        @(Model?.IndividualsListAr != null && Model.IndividualsListAr.Count > x ? Model.IndividualsListAr[x].IndividualName : string.Empty)
+                    </td>
+                    <td class="blue left" style="height: 30px !important;" colspan="2"> @(Model?.IndividualsListEn != null && Model.IndividualsListEn.Count > x ? Model.IndividualsListEn[x].IndividualName : string.Empty) </td>
+
+                </tr>
+            }
+
+            <tr>
+                <td class="gray right">طالب / موظف</td>
+                <td class="blue right">@Model?.Student_EmployeeAr</td>
+                <td class="blue left">@Model?.Student_EmployeeEn</td>
+                <td class="gray left">Student/Employee</td>
+            </tr>
+
+            <tr>
+                <td class="gray right">جهة المبتكر</td>
+                <td class="blue right">@Model?.InstitutionAr</td>
+                <td class="blue left">@Model?.InstitutionEn</td>
+                <td class="gray left">Institution</td>
+            </tr>
+
+            <tr>
+                <td class="gray right">الجهة الراعية</td>
+                <td class="blue right">@Model?.OrganizationAr</td>
+                <td class="blue left">@Model?.OrganizationEn</td>
+                <td class="gray left">Organization</td>
+            </tr>
+
+            <tr>
+                <td class="gray right">نسبة الرعاية</td>
+                <td class="blue right"> %@(Model?.Sponsorship?.ToString("0.##"))</td>
+                <td class="blue left"> @(Model?.Sponsorship?.ToString("0.##"))% </td>
+                <td class="gray left"> %- Sponsorship </td>
+            </tr>
+        </table>
+
+    </div>
+
+
+
+    <!-- roject idea table -->
+    <div class="table-wrapper">
+
+        <table>
+            <tr class="hidden22">
+                <th class="col-ar-title wbwb"></th>
+                <th class="wbwb" style="width: 30%;"></th>
+                <th class="wbwb" style="width: 30%;"></th>
+                <th class="col-en-title wbwb"></th>
+            </tr>
+            <tr>
+                <td class=" right col-ar-title">فكرة المشروع</td>
+                <td class=" right red bold"  colspan="3" style="white-space: normal !important;">
+                    @Model?.ProjectIdeaAr
+                </td>
+            </tr>
+            <tr>
+                <td class="left red bold" colspan="3" style="white-space: normal !important;"> @Model?.ProjectIdeaEN </td>
+                <td class="col-ar-title green left">
+                    Project Idea
+                </td>
+            </tr>
+            <!-- Goals -->
+            <tr>
+                <td class="right col-ar-title gray" rowspan="@((Model?.MaxRowsGoals == null || Model?.MaxRowsGoals == 0) ? 1 : Model?.MaxRowsGoals)">الأهداف العلمية</td>
+                <td class="blue right">
+                    @(Model?.GoalsListAr != null && Model.GoalsListAr.Count > 0 ? Model.GoalsListAr[0].GoalDescription : string.Empty)
+                </td>
+                <td class="blue left"> @(Model?.GoalsListEn != null && Model.GoalsListEn.Count > 0 ? Model.GoalsListEn[0].GoalDescription : string.Empty)</td>
+                <td class="left col-en-title gray" rowspan="@((Model?.MaxRowsGoals == null || Model?.MaxRowsGoals == 0) ? 1 : Model?.MaxRowsGoals)">Scientific Goals</td>
+            </tr>
+            @for (int x = 1; x < Model?.MaxRowsGoals; x++)
+            {
+                <tr>
+                    <td class="blue right">
+                        @(Model?.GoalsListAr != null && Model.GoalsListAr.Count > x ? Model.GoalsListAr[x].GoalDescription : string.Empty)
+                    </td>
+                    <td class="blue left"> @(Model?.GoalsListEn != null && Model.GoalsListEn.Count > x ? Model.GoalsListEn[x].GoalDescription : string.Empty) </td>
+                </tr>
+            }
+            <tr class="hidden22">
+                <td colspan="4"></td>
+
+            </tr>
+
+            <!-- tools -->
+            <tr>
+                <td class="right col-ar-title gray" rowspan="@((Model?.MaxRowsTools == null || Model?.MaxRowsTools == 0) ? 1 : Model?.MaxRowsTools)">التقنيات والأدوات</td>
+                <td class="blue right">
+                    @(Model?.ToolsListAr != null && Model.ToolsListAr.Count > 0 ? Model.ToolsListAr[0].ToolDescription : string.Empty)
+                </td>
+                <td class="blue left">@(Model?.ToolsListEn != null && Model.ToolsListEn.Count > 0 ? Model.ToolsListEn[0].ToolDescription : string.Empty)</td>
+                <td class="left col-en-title gray" rowspan="@((Model?.MaxRowsTools == null || Model?.MaxRowsTools == 0) ? 1 : Model?.MaxRowsTools)">Techniques/Tools</td>
+            </tr>
+
+            @for (int x = 1; x < Model?.MaxRowsTools; x++)
+            {
+                <tr>
+                    <td class="blue right">
+                        @(Model?.ToolsListAr != null && Model.ToolsListAr.Count > x ? Model.ToolsListAr[x].ToolDescription : string.Empty)
+                    </td>
+                    <td class="blue left"> @(Model?.ToolsListEn != null && Model.ToolsListEn.Count > x ? Model.ToolsListEn[x].ToolDescription : string.Empty) </td>
+                </tr>
+            }
+
+            <tr class="hidden22">
+                <td colspan="4"></td>
+
+            </tr>
+            <tr>
+                <td class="right col-ar-title">الاستخدام العلمى</td>
+
+                <td class="red bold right" style="white-space: normal !important;">
+                    @Model?.ApplicationAr
+                </td>
+                <td class="red bold left" style="white-space: normal !important;">@Model?.ApplicationEn</td>
+                <td class="col-ar-title left">Application</td>
+
+            </tr>
+            <tr class="hidden22">
+                <td colspan="4"></td>
+            </tr>
+            <tr>
+                <td class="right col-ar-title">التكلفة المادية </td>
+
+                <td class="red bold right">
+                    @Model?.ExpectedCost?.ToString("0.##") @arTafqeet
+                </td>
+                <td class="red bold left">
+                    @enTafqeet @Model?.ExpectedCost?.ToString("0.##")
+                </td>
+                <td class="col-ar-title left"> Financial Cost</td>
+
+            </tr>
+            <tr class="hidden22">
+                <td colspan="4"></td>
+            </tr>
+            <tr class="drawings-header-row">
+                <td colspan="4" class="gray center">
+                    الرسومات الأولية للمشروع - Preliminary Project Drawings
+                </td>
+            </tr>
+            <tr class="images-row-no-break">
+                @* <td colspan="4" class="images-row">
+                    <div class="images-wrapper">
+                        <img src="./imgs/bg.jpg">
+                        <img src="./imgs/bg.jpg">
+                        <img src="./imgs/bg.jpg">
+                    </div>
+                </td> *@
+                <td colspan="4" style="background-color:#f5f5f5!important;">
+
+                    <div class="d-flex">
+                        @if (!string.IsNullOrEmpty(Model?.FilePreliminaryPath1))
+                        {
+                            <div class="flex-fill p-2" style="max-width:33.333%;">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <img src="@Url.Content("~/" + Model.FilePreliminaryPath1)"
+                                             class="img-fluid rounded"
+                                             style="height:200px; max-width:100%;"
+                                             alt="@Resource2.ProjectImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model?.FilePreliminaryPath2))
+                        {
+                            <div class="flex-fill p-2" style="max-width:33.333%;">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <img src="@Url.Content("~/" + Model.FilePreliminaryPath2)"
+                                             class="img-fluid rounded"
+                                             style="height:200px; max-width:100%;"
+                                             alt="@Resource2.ProjectImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model?.FilePreliminaryPath3))
+                        {
+                            <div class="flex-fill p-2" style="max-width:33.333%;">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <img src="@Url.Content("~/" + Model.FilePreliminaryPath3)"
+                                             class="img-fluid rounded"
+                                             style="height:200px; max-width:100%;"
+                                             alt="@Resource2.ProjectImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    @*                     <div class="d-flex">
+                        @if (!string.IsNullOrEmpty(Model?.FilePath4))
+                        {
+                            <div class="flex-fill p-2" style="max-width:33.333%;">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <img src="@Url.Content("~/" + Model.FilePath4)"
+                                             class="img-fluid rounded"
+                                             style="height:200px; max-width:100%;"
+                                             alt="@Resource2.ProjectImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model?.FilePath5))
+                        {
+                            <div class="flex-fill p-2" style="max-width:33.333%;">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <img src="@Url.Content("~/" + Model.FilePath5)"
+                                             class="img-fluid rounded"
+                                             style="height:200px; max-width:100%;"
+                                             alt="@Resource2.ProjectImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model?.FilePath6))
+                        {
+                            <div class="flex-fill p-2" style="max-width:33.333%;">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body text-center">
+                                        <img src="@Url.Content("~/" + Model.FilePath6)"
+                                             class="img-fluid rounded"
+                                             style="height:200px; max-width:100%;"
+                                             alt="@Resource2.ProjectImage" />
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+ *@
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-ar-title" colspan="4">
+                    <div class="images-wrapper bold">
+
+                        <div class="right">
+                            إقرار وتعهد صاحب المشروع
+                        </div>
+                        <div class="left bold">
+                            Project Owner’s Declaration and Commitment
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="right bold" style="white-space: normal;">
+                    أقر وأتعهد بأن فكرة المشروع حديثة وهي من بنات أفكاري وأنا
+                    صاحب الفكرة
+                </td>
+                <td colspan="2" class="left bold" style="white-space: normal;">
+                    "I acknowledge and pledge that the project idea is
+                    entirely my own, and that I am the original creator of
+                    the idea."
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+
+                    <div class="images-wrapper">
+
+                        <div class="right bold">
+                            التوقيع:
+                        </div>
+                        <div class="left bold" >
+                            :Signe
+                        </div>
+                    </div>
+
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+</div>
+<br />
+<br />
+<!-- Second Page  -->
+<div class="container container-second-page">
+    <div class="header-top d-none d-print-flex">
+        <div class="main-title">
+            <h2>الامارات العربية المتحدة<br> حكومة الفجيرة</h2>
+            <h2>نادى الفجيرة العلمى </h2>
+            <div>التاريخ: <span> @Model?.DateByCalander?.ToString("dd/MM/yyyy") </span></div>
+        </div>
+        <div class="logo">
+            <img src="/assets/images/logo.png" class="mt-3 logo-img" alt="logo">
+        </div>
+        <div class="main-title">
+            <h2>UNITED ARAB EMIRATES<br> GOVT. OF FUJAIRAH</h2>
+            <h2>FUJAIRAH SCIENCE CLUB</h2>
+            <div> الرقم: <span class="num">مشروع رقم(@Model?.SerialCode) </span></div>
+
+        </div>
+    </div>
+
+   
+
+
+    <section class="final-section">
+
+        <div class="final-header gray red">
+            <span class="red">الصور النهائية للمشروع</span>
+            <span class="separator"> - </span>
+            <span class="red">Final project images</span>
+        </div>
+
+        <div class="image-box">
+            <td colspan="4" style="background-color:#f5f5f5!important;">
+
+                <div class="d-flex mt-2">
+                    @if (!string.IsNullOrEmpty(Model?.FilePath1))
+                    {
+                        <div class="flex-fill p-2" style="max-width:33.333%;">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <img src="@Url.Content("~/" + Model.FilePath1)"
+                                         class="img-fluid rounded"
+                                         style="height:200px; max-width:100%;"
+                                         alt="@Resource2.ProjectImage" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model?.FilePath2))
+                    {
+                        <div class="flex-fill p-2" style="max-width:33.333%;">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <img src="@Url.Content("~/" + Model.FilePath2)"
+                                         class="img-fluid rounded"
+                                         style="height:200px; max-width:100%;"
+                                         alt="@Resource2.ProjectImage" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model?.FilePath3))
+                    {
+                        <div class="flex-fill p-2" style="max-width:33.333%;">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body text-center">
+                                    <img src="@Url.Content("~/" + Model.FilePath3)"
+                                         class="img-fluid rounded"
+                                         style="height:200px; max-width:100%;"
+                                         alt="@Resource2.ProjectImage" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                </td>
+        </div>
+
+        <div class="image-box">
+            <div class="d-flex mt-2">
+                @if (!string.IsNullOrEmpty(Model?.FilePath4))
+                {
+                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <img src="@Url.Content("~/" + Model.FilePath4)"
+                                     class="img-fluid rounded"
+                                     style="height:200px; max-width:100%;"
+                                     alt="@Resource2.ProjectImage" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model?.FilePath5))
+                {
+                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <img src="@Url.Content("~/" + Model.FilePath5)"
+                                     class="img-fluid rounded"
+                                     style="height:200px; max-width:100%;"
+                                     alt="@Resource2.ProjectImage" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(Model?.FilePath6))
+                {
+                    <div class="flex-fill p-2" style="max-width:33.333%;">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body text-center">
+                                <img src="@Url.Content("~/" + Model.FilePath6)"
+                                     class="img-fluid rounded"
+                                     style="height:200px; max-width:100%;"
+                                     alt="@Resource2.ProjectImage" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="close-row">
+            <div class="cell center blue">أغلق المشروع بتاريخ</div>
+            <div class="cell center blue"> @Model?.ClosedDate?.ToString("dd/MM/yyyy") </div>
+            <div class="cell center blue">Project closed on</div>
+        </div>
+
+        <div class="signatures">
+            <div class="sign-box blue">
+                توقيع المهندس
+                <div class="small text-muted">
+                    @if (Model?.Trainer1Signiture != null && !string.IsNullOrEmpty(Model.Trainer1Signiture.ImagePath))
+                    {
+                        <img src="~/@Model.Trainer1Signiture.ImagePath" class="img-fluid" style="max-height: 70px;" alt="Manager Signature" />
+                    }
+                    else if (await PermissionScanner.CheckLoggedUserIfTrainer() && await PermissionScanner.CheckLoggedUserIfHasSignature())
+                    {
+                        <div id="TrainerSignatureSection" class="signature-trigger" role="button" tabindex="0" style="cursor:pointer;">
+                            <span>إضغط هنا للتوقيع</span>
+                        </div>
+                    }
+                    </div>
+            </div>
+            <div class="sign-box blue">
+                توقيع مشرف الأنشطة
+                <div class="small text-muted">
+                    @if (boolTrainerSigniture)
+                    {
+                        @if (Model?.ActivityMonitorSigniture != null && !string.IsNullOrEmpty(Model.ActivityMonitorSigniture.ImagePath))
+                        {
+                            <img src="~/@Model.ActivityMonitorSigniture.ImagePath" class="img-fluid" style="max-height: 70px;" alt="Manager Signature" />
+
+                        }
+                        else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.ActivitiesSupervisor && await PermissionScanner.CheckLoggedUserIfHasSignature())
+                        {
+                            <div id="activityMonitorSignatureSection" class="signature-trigger" role="button" tabindex="0" style="cursor:pointer;">
+                                <span>إضغط هنا للتوقيع</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+            <div class="sign-box blue">
+                توقيع مدير النادي
+                <div class="small text-muted">
+                    @if (boolActivityMonitorSigniture && boolTrainerSigniture)
+                    {
+                        @if (Model?.ManagerSignature != null && !string.IsNullOrEmpty(Model.ManagerSignature.ImagePath))
+                        {
+                            <img src="~/@Model.ManagerSignature.ImagePath" class="img-fluid" style="max-height: 70px;" alt="Manager Signature" />
+
+                        }
+                        else if (PermissionScanner.ValidateRoleNumber() == RoleNumber.Manager && await PermissionScanner.CheckLoggedUserIfHasSignature())
+                        {
+                            <div id="managerSignatureSection" class="signature-trigger" role="button" tabindex="0" style="cursor:pointer;">
+                                <span>إضغط هنا للتوقيع</span>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+    </section>
+
+</div>
+</div>
+
+<!-- OTP Modal -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otpModalLabel">@Resource2.EnterOTP</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="otpForm">
+                <input type="hidden" id="otpEntityId" name="id" value="@Model?.Id" />
+                <input type="hidden" id="otpRole" name="role" value="" />
+                <div class="modal-body text-center">
+                    <p>@Resource2.PleaseEnterOTPToConfirmSignature</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        @for (int i = 0; i < 4; i++)
+                        {
+                            <input inputmode="numeric" maxlength="1" class="form-control otp-digit text-center fs-4"
+                                   style="width:60px;" />
+                        }
+                    </div>
+                    <div class="invalid-feedback text-center mt-2" style="display:none;">Enter a valid 4-digit code.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">@Resource2.Back</button>
+                    <button type="submit" class="btn btn-success">@Resource2.Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            // Function to handle OTP input focus
+            const otpInputs = Array.from(document.querySelectorAll("#otpModal .otp-digit")).reverse(); // reverse order for RTL
+            const otpModalEl = document.getElementById("otpModal");
+            const invalidFeedback = document.querySelector("#otpModal .invalid-feedback");
+
+            otpInputs.forEach((input, index) => {
+                input.addEventListener("input", (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, ""); // only digits
+                    if (e.target.value && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus(); // move to next
+                    }
+                });
+
+                input.addEventListener("keydown", (e) => {
+                    if (e.key === "Backspace" && !input.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+            });
+
+            otpModalEl.addEventListener("shown.bs.modal", () => {
+                otpInputs.forEach(i => i.value = "");
+                otpInputs[0].focus();
+                invalidFeedback.style.display = "none";
+            });
+
+            // Handle Signature Clicks
+            $('.signature-trigger').on('click', function () {
+                const triggerId = $(this).attr('id');
+                let role = "";
+                if (triggerId === 'TrainerSignatureSection') role = "Trainer";
+                else if (triggerId === 'activityMonitorSignatureSection') role = "activityMonitor";
+                else if (triggerId === 'managerSignatureSection') role = "manager";
+
+                if (!role) return;
+
+                const id = $('#otpEntityId').val();
+                $('#otpRole').val(role);
+
+                $.ajax({
+                    url: '/Admin/ScientificProjects/SendOtp',
+                    type: 'POST',
+                    data: { id: id, role: role },
+                    success: function (response) {
+                        if (response.success) {
+                            bootstrap.Modal.getOrCreateInstance(otpModalEl).show();
+                        } else {
+                            alert('Failed to send OTP. Please try again.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error connecting to server.');
+                    }
+                });
+            });
+
+            // Handle OTP Submission
+            $('#otpForm').on('submit', async function (e) {
+                e.preventDefault();
+                const code = otpInputs.map(i => i.value).reverse().join(""); // restore normal order
+                const id = $('#otpEntityId').val();
+                const role = $('#otpRole').val();
+
+                if (code.length < 4) {
+                    invalidFeedback.style.display = "block";
+                    return;
+                }
+
+                try {
+                    const response = await fetch('/Admin/ScientificProjects/ValidateOtp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: id, code: code, role: role })
+                    });
+                    const result = await response.json();
+
+                    if (result.success) {
+                        bootstrap.Modal.getOrCreateInstance(otpModalEl).hide();
+                        location.reload();
+                    } else {
+                        invalidFeedback.textContent = result.message || "Invalid OTP.";
+                        invalidFeedback.style.display = 'block';
+                    }
+                } catch (err) {
+                    console.error('OTP validation failed:', err);
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,141 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.MaintenanceClub
+@model MaintenanceClubVM
+
+@{
+    ViewData["Title"] = @Resource1.MaintenanceDetails;
+    ViewData["Title pakage"] = @Resource1.ClubMaintenanceManagement ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.ClubMaintenanceManagementList ?? " ";
+    ViewData["Title Single"] = @Resource1.MaintenanceDetails ?? " ";
+}
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item"> <a href="/Admin/MaintenanceClub/Index">@ViewData["Title ListIndex"]</a> </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <a class="btn-cancel-search btn-sm btn" href="/Admin/MaintenanceClub/Index">
+            @Resource1.Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+
+
+            <div class="card-header card-tabs d-flex flex-wrap align-items-start">
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <span class="fa-solid fa-info-circle me-1 text-ico"></span>
+                            @ViewData["Title Single"]
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex align-items-center flex-wrap justify-content-end gap-1">
+                    <button type="button" class="btn btn-success px-3 btn-sm ms-auto" onclick="openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.Print
+                    </button>
+                    <script>
+                        function openPrintPage() {
+                            const id = encodeURIComponent(document.getElementById('Id').value);
+
+                            const url = `/Admin/MaintenanceClub/PrintDetails?id=${id}`;
+
+                            //window.open(url, '_blank'); //old For open in newTab but this freeze main page
+                            // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                            const printWindow = window.open(
+                                url,
+                                'printWindow',
+                                'width=1000,height=800,noopener,noreferrer'
+                            );
+                        }
+
+                    </script>
+                </div>
+            </div>
+
+        <input asp-for="Id" hidden />
+            <style>
+                /* الهدف: إعادة إظهار أيقونة الساعة عند readonly */
+                input[type="time"][readonly]::-webkit-calendar-picker-indicator {
+                    display: block;
+                    opacity: 1;
+                    pointer-events: none; /* حتى لا يمكن الضغط عليها */
+                }
+            </style>
+        <div class="row p-3">
+            <div class="col-md-12 mb-2">
+                <label class="form-label" asp-for="Title">@Resource1.MaintenanceTitle</label>
+                <input asp-for="Title" readonly type="text" class="form-control" />
+            </div>
+                    <div class="col-md-6 mb-2">
+                <label class="form-label" asp-for="Date">@Resource1.MaintenanceDate</label>
+                <div class="input-icon-left">
+                    <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                        <input asp-for="Date" hidden readonly class="form-control green-border form-control-sm filter-bordered" />
+                        <input id="d" name="d" value="@Model?.Date?.ToString("d")?.Replace("/", "-")" readonly class="form-control green-border form-control-sm filter-bordered" />
+                    </div>
+            </div>
+           
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label" asp-for="Time">@Resource1.MaintenanceTime</label>
+                    <div class="input-icon-left-read">
+                        <i class="fa fa-clock"></i>
+                    <input type="time" class="form-control" asp-for="Time" readonly>
+                    </div>
+                </div>
+   
+            <div class="col-md-12">
+                <label class="form-label" asp-for="Details">@Resource1.MaintenanceDescription</label>
+                <textarea asp-for="Details" readonly class="form-control" rows="3"></textarea>
+            </div>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                <label class="form-label" asp-for="Time">@Resource1.PdfFile</label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.PdfFilePath))
+                    {
+                        <a href="~/@Model.PdfFilePath" target="_blank" class="btn btn-sm btn-outline-primary">
+                            <i class="fa fa-file-pdf"></i> @Resource1.ViewFile
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">@Resource1.NoFileAttached</span>
+                    }
+                </div>
+
+
+            
+
+
+
+
+
+
+            </div>
+        </div>
+
+    </div>
+        </div>
+    </div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

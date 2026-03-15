@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>Car Service Documentation</title>	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+
+<h1>Car Service Management Documentation</h1>
+
+<!-- NAMESPACE & DEPENDENCIES -->
+<h2>Namespace & Dependencies</h2>
+<table>
+    <caption>Using Directives</caption>
+    <tr><th>Namespace</th></tr>
+    <tr><td>Application.Helpers</td></tr>
+    <tr><td>Application.Interfaces.Admin</td></tr>
+    <tr><td>Application.Services.Admin</td></tr>
+    <tr><td>AutoMapper</td></tr>
+    <tr><td>Domain.DTOs</td></tr>
+    <tr><td>Domain.Entities</td></tr>
+    <tr><td>Domain.Resources</td></tr>
+    <tr><td>FougeraClub.Areas.Admin.ViewModels.CarServices</td></tr>
+    <tr><td>FougeraClub.Attributes</td></tr>
+    <tr><td>FougeraClub.Helpers</td></tr>
+    <tr><td>Infrastructure.Repositories.InterfacesDB</td></tr>
+    <tr><td>Microsoft.AspNetCore.Mvc</td></tr>
+    <tr><td>Microsoft.AspNetCore.Mvc.Rendering</td></tr>
+</table>
+
+<!-- CONTROLLER ACTIONS -->
+<h2>CarServiceController - Actions</h2>
+<table>
+    <caption>Controller Action Methods</caption>
+    <tr>
+        <th>Action</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Features / Notes</th>
+    </tr>
+    <tr>
+        <td>Index</td>
+        <td>List all car services</td>
+        <td>selectedType, dateFrom, dateTo, page, pageSize</td>
+        <td>Pagination, filter by type/date, AJAX partial rendering, ViewBag.CarTypes</td>
+    </tr>
+    <tr>
+        <td>AddEdit (GET)</td>
+        <td>Return Add/Edit view</td>
+        <td>id, carId</td>
+        <td>Dropdown car list, map entity to VM if editing, preserves TempData</td>
+    </tr>
+    <tr>
+        <td>AddEdit (POST)</td>
+        <td>Submit Add/Edit form</td>
+        <td>CarServiceVM model</td>
+        <td>Validate attachment (PDF <5MB), map VM to entity, add/update via service, redirects</td>
+    </tr>
+    <tr>
+        <td>Delete</td>
+        <td>Delete a car service record</td>
+        <td>id</td>
+        <td>Calls service DeleteAsync, redirects to Index or Car index</td>
+    </tr>
+    <tr>
+        <td>Print</td>
+        <td>Printable list of services</td>
+        <td>selectedType, dateFrom, dateTo, page, pageSize</td>
+        <td>Filtered view, normal View (no AJAX), [IgnoreAction]</td>
+    </tr>
+    <tr>
+        <td>createExcelReport_Download</td>
+        <td>Download Excel report</td>
+        <td>selectedType, dateFrom, dateTo, page, pageSize</td>
+        <td>Filter by type/date, map to ExcelDataDTO, bilingual export, handles exceptions</td>
+    </tr>
+    <tr>
+        <td>GetCarServiceAttachments</td>
+        <td>Display all salary Attachments in modal</td>
+        <td>-</td>
+        <td>- </td>
+    </tr>
+        <tr>
+        <td>UploadCarServiceFiles</td>
+        <td>delete and add updated attachments of salary</td>
+        <td>-</td>
+        <td>- </td>
+    </tr>
+</table>
+
+<!-- ENTITY -->
+<h2>CarServiceEntity - Properties</h2>
+<table>
+    <caption>Database Model</caption>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>Id</td><td>int</td><td>Primary key</td></tr>
+    <tr><td>CarId</td><td>int?</td><td>Foreign key to Car, optional</td></tr>
+    <tr><td>Car</td><td>Car?</td><td>Navigation property to Car entity</td></tr>
+    <tr><td>Date</td><td>DateOnly?</td><td>Service date, SQL date type</td></tr>
+    <tr><td>Details</td><td>string?</td><td>Service description/notes</td></tr>
+    <tr><td>AttachmentPath</td><td>string?</td><td>Optional file path for attachments (max 255)</td></tr>
+</table>
+
+<!-- VIEWMODEL -->
+<h2>CarServiceVM - Properties</h2>
+<table>
+    <caption>ViewModel for Forms</caption>
+    <tr>
+        <th>Property</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>Id</td><td>int</td><td>Primary key for editing</td></tr>
+    <tr><td>CarId</td><td>int</td><td>Foreign key, required with localized validation</td></tr>
+    <tr><td>Car</td><td>Car?</td><td>Optional navigation property</td></tr>
+    <tr><td>CarList</td><td>List&lt;SelectListItem&gt;?</td><td>Dropdown car selection</td></tr>
+    <tr><td>Date</td><td>DateOnly?</td><td>Service date, required</td></tr>
+    <tr><td>Details</td><td>string?</td><td>Description, required, max 500 chars</td></tr>
+    <tr><td>AttachmentPath</td><td>string?</td><td>Optional attachment path</td></tr>
+    <tr><td>Attachment</td><td>IFormFile?</td><td>Optional uploaded file</td></tr>
+</table>
+
+<!-- SERVICE MANAGER -->
+<h2>CarServiceManager - Methods</h2>
+<table>
+    <caption>Service Layer</caption>
+    <tr>
+        <th>Method</th>
+        <th>Purpose</th>
+        <th>Parameters</th>
+        <th>Notes / Behavior</th>
+    </tr>
+    <tr>
+        <td>GetAllAsync</td>
+        <td>Retrieve all car services</td>
+        <td>None</td>
+        <td>Includes related Car entity</td>
+    </tr>
+    <tr>
+        <td>GetByIdAsync</td>
+        <td>Retrieve single service by id</td>
+        <td>int id</td>
+        <td>Includes related Car</td>
+    </tr>
+    <tr>
+        <td>AddAsync</td>
+        <td>Add a new service</td>
+        <td>CarServiceEntity entity, IFormFile? file</td>
+        <td>Saves attachment if provided, updates entity, returns tuple (Id, CarId)</td>
+    </tr>
+    <tr>
+        <td>UpdateAsync</td>
+        <td>Update existing service</td>
+        <td>CarServiceEntity entity, IFormFile? file</td>
+        <td>Deletes old attachment if new file uploaded, updates entity values, commits changes</td>
+    </tr>
+    <tr>
+        <td>DeleteAsync</td>
+        <td>Delete service record</td>
+        <td>int id</td>
+        <td>Deletes attached file if exists, deletes entity, commits changes</td>
+    </tr>
+</table>
+
+<!-- DEPENDENCIES -->
+<h2>Service Dependencies</h2>
+<table>
+    <caption>CarServiceManager Dependencies</caption>
+    <tr>
+        <th>Dependency</th>
+        <th>Purpose</th>
+    </tr>
+    <tr><td>IUnitOfWork _unitOfWork</td><td>Repository access for Cars and CarServices</td></tr>
+    <tr><td>string FileName</td><td>Folder name for attachments ("CarServices")</td></tr>
+</table>
+
+<!-- Updates -->
+<h2>Updates And Additions</h2>
+<table>
+<caption>Attachments Modal ajax,Js</caption>
+    <tr>
+        <th>Location</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>controller</td><td>GetCarServiceAttachments</td><td>Display all salary Attachments in modal</td></tr>
+    <tr><td>controller</td><td>UploadCarServiceFiles</td><td>delete and add updated attachments of salary</td></tr>
+    <tr><td>Service</td><td>GetAttachmentsAsync</td><td>Retrieve salary attachments</td></tr>
+    <tr><td>Service</td><td>UploadAttachmentsAsync</td><td>Upload salary attachments</td></tr>
+    <tr><td>DTO</td><td>CarServiceAttachmentDTO</td><td>attachment Object of his attachments</td></tr>
+    <tr><td>DTO</td><td>CarServiceAttachmentsDTO</td><td>this Main Id and list of first</td></tr>
+    <tr><td>VMS</td><td>CarServiceAttachmentVM</td><td>attachment Object of his attachments</td></tr></tr>
+    <tr><td>VMS</td><td>CarServiceAttachmentsVM</td><td>this Main Id and list of first</td></tr>
+    <tr><td>Views</td><td>_CarServiceAttachmentsModal</td><td>[for add & remove attachments in modal with ajax and js]</td></tr>
+</table>
+
+
+<!-- EXAMPLE FILE STRUCTURE -->
+<h2>File Structure & Views</h2>
+<table>
+    <caption>Car Service Management Files</caption>
+    <tr><th>File</th><th>Purpose</th></tr>
+    <tr><td>Index.cshtml</td><td>Main listing view with filters and pagination</td></tr>
+    <tr><td>_ListPartial.cshtml</td><td>Partial table listing for AJAX updates</td></tr>
+    <tr><td>AddEdit.cshtml</td><td>Add/Edit form layout</td></tr>
+    <tr><td>CarServiceVM.cs</td><td>ViewModel for form binding</td></tr>
+</table>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>

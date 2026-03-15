@@ -1,0 +1,357 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Engineer
+@model EngineerVM
+
+@{
+    var isEdit = Model?.Id > 0;
+
+    ViewData["Title"] = isEdit ? Resource2.EditEngineer : Resource2.CreateEngineer1;
+    ViewData["Title pakage"] = Resource1.EngineersAssociationManagement ?? " ";
+    ViewData["Title ListIndex"] = Resource1.EngineerList ?? " ";
+    ViewData["Title Single"] =
+        (Model?.Id == 0 ? Resource2.CreateEngineer1 : Resource2.EditEngineer) ?? " ";
+}
+<link href="/css/select2-custom.css" rel="stylesheet" />
+
+<!-- ================= HEADER + BREADCRUMB ================= -->
+<div class="row my-3 align-items-center">
+    <div class="col-md-6">
+        <input asp-for="Mobile" type="hidden" value="@Model?.Mobile" />
+        <h4 class="mb-0">@ViewData["Title"]</h4>
+    </div>
+
+    <div class="col-md-6">
+        <nav class="d-flex justify-content-end" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a asp-action="Index">@ViewData["Title ListIndex"]</a>
+                </li>
+                <li class="breadcrumb-item active">
+                    @ViewData["Title Single"]
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<!-- ================= CARD ================= -->
+<div class="card border-0 shadow-sm rounded p-3">
+
+    <!-- ================= IMAGE + CODE ================= -->
+    <div class="c-edit-form mb-3 rounded">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+
+            <div class="d-flex align-items-end gap-3">
+                <div class="position-relative">
+
+                    @if (!string.IsNullOrEmpty(Model?.TempFilePath))
+                    {
+                        <img src="~/@Model.TempFilePath.Replace("wwwroot/", "")"
+                             class="rounded-circle border border-2 object-fit-cover preview"
+                             style="width:70px;height:70px"
+                             data-bs-toggle="modal"
+                             data-bs-target="#ProfileImageModal" />
+                    }
+                    else if (!string.IsNullOrEmpty(Model?.OldPath))
+                    {
+                        <img src="~/@Model.OldPath"
+                             class="rounded-circle border border-2 object-fit-cover preview"
+                             style="width:70px;height:70px"
+                             data-bs-toggle="modal"
+                             data-bs-target="#ProfileImageModal" />
+                    }
+                    else if (!string.IsNullOrEmpty(Model?.ProfileImagePath))
+                    {
+                        <img src="~/@Model.ProfileImagePath"
+                             class="rounded-circle border border-2 object-fit-cover preview"
+                             style="width:70px;height:70px"
+                             data-bs-toggle="modal"
+                             data-bs-target="#ProfileImageModal" />
+                    }
+                    else
+                    {
+                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center"
+                             style="width:70px;height:70px">
+                            <i class="fa-solid fa-user text-success fs-1" id="userIcon"></i>
+                            <img class="preview d-none rounded-circle"
+                                 style="width:70px;height:70px" />
+                        </div>
+                    }
+                </div>
+
+                <div>
+                    @if (!string.IsNullOrEmpty(Model?.ProfileImagePath)
+                                        || !string.IsNullOrEmpty(Model?.OldPath)
+                                        || !string.IsNullOrEmpty(Model?.TempFilePath))
+                    {
+                        <label asp-for="ProfileImage" class="text-success mt-2 d-block">
+                            <i class="fa-solid fa-pen"></i> @Resource3.ChangeImage
+                        </label>
+                    }
+                    else
+                    {
+                        <label asp-for="ProfileImage" class="btn btn-success btn-sm d-block">
+                            <i class="fa-solid fa-upload"></i> @Resource3.AddImage
+                        </label>
+                    }
+
+                    <span class="text-muted small d-block">
+                        jpg / png – 300×270px – max 3MB
+                    </span>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <span class="small text-success d-block fs-4">@Resource2.Code</span>
+                <span class="fw-semibold">@Model?.Code</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FORM ================= -->
+    <form asp-action="AddEdit" method="post" enctype="multipart/form-data" id="form">
+
+        <!-- ===== Hidden ===== -->
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="TempFilePath" />
+        <input type="hidden" asp-for="OldPath" />
+
+        <label asp-for="Code" hidden>@Resource2.Code</label>
+        <input asp-for="Code" hidden readonly />
+
+        <!-- ================= BASIC DATA ================= -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="sec-title text-start">
+                    <h5>@Resource1.BasicData</h5>
+                    <div class="title-sep-left"></div>
+                    <div class="title-sep-sm-left"></div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="FullName" class="form-label asteriskRequired">@Resource2.Name </label>
+                <input asp-for="FullName" class="form-control" placeholder="@Resource2.Name" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="NationalityId" class="form-label asteriskRequired">@Resource2.Nationality </label>
+                <select asp-for="NationalityId" asp-items="Model?.NationalityList" class="form-select">
+                    <option value="">-- @Resource2.SelectNationality --</option>
+                </select>
+                <span asp-validation-for="NationalityId" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Specialization" class="form-label asteriskRequired">@Resource2.Specialization </label>
+                <input asp-for="Specialization" class="form-control" />
+                <span asp-validation-for="Specialization" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label asteriskRequired">@Resource2.GraduationYear </label>
+                <select asp-for="GraduationYear" class="form-select">
+                    <option value="">@Resource2.Select</option>
+                    @foreach (var year in ViewBag.GraduationYears as List<int>)
+                    {
+                        <option value="@year">@year</option>
+                    }
+                </select>
+                <span asp-validation-for="GraduationYear" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="DateOfBirth" class="form-label">@Resource2.DateOfBirth</label>
+                <input asp-for="DateOfBirth"
+                       type="date"
+                       class="form-control"
+                       max="@AppDubaiTime.Now.AddDays(-1).ToString("yyyy-MM-dd")" />
+                <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Email" class="form-label">@Resource2.Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Position" class="form-label asteriskRequired">@Resource2.Profession </label>
+                <input asp-for="Position" class="form-control" />
+                <span asp-validation-for="Position" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="PhoneNumber" class="form-label">
+                    @Resource1.PhoneNumber
+                </label>
+                <input asp-for="PhoneNumber"
+                       class="form-control w-100"
+                       inputmode="numeric"
+                       pattern="\d*"
+                       placeholder="@Resource1.PhonePlaceholder_10" />
+                <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+            </div>
+
+            <!-- Hidden field (DO NOT place inside grid column) -->
+            <input asp-for="Mobile"
+                   type="hidden"
+                   value="" />
+            <span asp-validation-for="Mobile" class="text-danger small d-none"></span>
+
+
+            <div class="col-md-6">
+                <label asp-for="WorkAddress" class="form-label asteriskRequired">@Resource1.WorkLocation </label>
+                <input asp-for="WorkAddress" class="form-control" />
+                <span asp-validation-for="WorkAddress" class="text-danger small"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Address" class="form-label asteriskRequired">@Resource2.Address </label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger small"></span>
+            </div>
+        </div>
+
+        <!-- ================= NOTES ================= -->
+        <div class="row">
+            <div class="col-12">
+                <label asp-for="Notes" class="form-label">@Resource2.Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+
+        <!-- ================= IMAGE INPUT ================= -->
+        <input type="file"
+               asp-for="ProfileImage"
+               class="form-control d-none"
+               accept=".jpg,.jpeg,.png" />
+
+        <!-- ================= ACTIONS ================= -->
+        <div class="d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-success me-2">
+                <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+            </button>
+
+            <a asp-action="Index" class="btn btn-cancel-search">
+                @Resource2.Back <i class="fa-solid fa-arrow-left"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- ================= MODAL ================= -->
+@if (isEdit && (!string.IsNullOrEmpty(Model?.TempFilePath) || !string.IsNullOrEmpty(Model?.OldPath)))
+{
+    <div class="modal fade" id="ProfileImageModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <img src="~/@(Model.TempFilePath ?? Model.OldPath)"
+                         class="img-fluid rounded"
+                         style="max-height:300px" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+    <script src="/js/select2-cdn-loader.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            function initSelect2() {
+                if (window.jQuery && window.jQuery.fn && window.jQuery.fn.select2) {
+                    $('#NationalityId').select2({
+                        placeholder: 'إختر الجنسية',
+                        allowClear: false,
+                        width: 'resolve',
+                        minimumResultsForSearch: 0
+                    });
+                } else {
+                    setTimeout(initSelect2, 100);
+                }
+            }
+            initSelect2();
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const hidden = document.getElementById("IdNumber");
+            // Grab segmented inputs only if they exist (create mode)
+            const g1 = document.getElementById("g1");
+            const g2 = document.getElementById("g2");
+            const g3 = document.getElementById("g3");
+            const g4 = document.getElementById("g4");
+
+            if (g1 && g2 && g3 && g4 && hidden) {
+                // Auto-jump logic
+                function jumpNext(curr, nextId) {
+                    curr.addEventListener("input", function () {
+                        this.value = this.value.replace(/\D/g, ""); // only digits
+                        if (this.maxLength && this.value.length >= this.maxLength) {
+                            document.getElementById(nextId)?.focus();
+                        }
+                    });
+                }
+                // Helper: Move to previous field on Backspace when empty
+                function jumpPrev(curr, prevId) {
+                    curr.addEventListener("keydown", function (e) {
+                        if (e.key === "Backspace" && this.value.length === 0) {
+                            const prev = document.getElementById(prevId);
+                            prev?.focus();
+                        }
+                    });
+                }
+                // Attach digit-only validation for all
+                [g1, g2, g3, g4].forEach(el => {
+                    el.addEventListener("input", () => {
+                        el.value = el.value.replace(/\D/g, "");
+                    });
+                });
+
+                // Setup auto focus
+                jumpNext(g1, "g2");
+                jumpNext(g2, "g3");
+                jumpNext(g3, "g4");
+
+                // Backward auto-jump on delete
+                jumpPrev(g2, "g1");
+                jumpPrev(g3, "g2");
+                jumpPrev(g4, "g3");
+
+               
+            }
+        });
+        // ==============================================================
+        (function () {
+            const ProfileImage = document.getElementById('ProfileImage');
+            const preview = document.querySelector(".preview");
+            const userIcon = document.getElementById('userIcon');
+
+            if (ProfileImage && preview) {
+                ProfileImage.addEventListener('change', function () {
+                    const file = this.files && this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function (event) {
+                            preview.src = event.target.result;
+                            preview.classList.remove("d-none");
+                            preview.classList.add("d-block");
+                            if (userIcon) userIcon.classList.add("d-none");
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        preview.src = '';
+                        preview.classList.add("d-none")
+                    }
+                });
+            }
+        })();
+    </script>
+}
+

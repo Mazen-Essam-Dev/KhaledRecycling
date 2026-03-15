@@ -1,0 +1,316 @@
+﻿@model PaginatedList<LogsVM>
+@{
+    ViewData["Title"] = Resource1.LogsUnite ?? " ";
+    ViewData["Title ListIndex"] = Resource1.LogHistorys ?? " ";
+    ViewData["Title pakage"] = "سجل العمليات";
+    var allMembersName = ViewBag.allMembersName as IEnumerable<SelectListItem>;
+    var allUsersList = ViewBag.AllUsersList as IEnumerable<SelectListItem>;
+}
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title ListIndex"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="recordsCount">@ViewBag.CountRecords</span>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+
+                <div class="flex-grow-1">
+                    <h4 class="ico-header-title my-1">
+                        <i class="ri-pages-line me-2 text-ico"></i> @Resource1.LogsUnite
+                    </h4>
+                </div>
+                <script>
+                    function openPrintPage() {
+                        const selectedUser = encodeURIComponent(document.getElementById('selectedUser').value || '');
+                        const selectedMember = encodeURIComponent(document.getElementById('selectedMember').value || '');
+                        const dateFrom = encodeURIComponent(document.getElementById('dateFrom').value);
+                        const dateTo = encodeURIComponent(document.getElementById('dateTo').value);
+                        var countRecords = document.getElementById('NewCountRecords').value;
+                        if (countRecords && countRecords > 3999) {
+                            showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+                        }
+                        else {
+                            const url = `/Admin/LogHistory/PrintLogHistory?selectedUserId=${selectedUser}&selectedMemberEmail=${selectedMember}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+                            const printWindow = window.open(
+                                url,
+                                'printWindow',
+                                'width=1000,height=800,noopener,noreferrer'
+                            );
+                        }
+                    }
+                </script>
+
+                <script>
+                    function openExcelPage() {
+                        const selectedUser = encodeURIComponent(document.getElementById('selectedUser').value || '');
+                        const selectedMember = encodeURIComponent(document.getElementById('selectedMember').value || '');
+                        const dateFrom = encodeURIComponent(document.getElementById('dateFrom').value);
+                        const dateTo = encodeURIComponent(document.getElementById('dateTo').value);
+                        const url = `/Admin/LogHistory/createExcelReport_Download?selectedUserId=${selectedUser}&selectedMemberEmail=${selectedMember}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+                        window.open(url, '_self');
+
+                    }
+                </script>
+
+                <!-- Action buttons section (Print, Export, Add, Toggle) -->
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <!-- Print report button -->
+                    <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.Print
+                    </button>
+                    <!-- Print Export As Excel -->
+                    <a class="btn btn-success Excelbtn" onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-2"
+                            style="font-size:17px;"></i>@Resource1.createExcelReport_Download
+                    </a>
+
+                    <a class="btn btn-success Excelbtn" asp-action="Timeline">
+                        @Resource1.Timeline
+                    </a>
+                </div>
+            </div>
+
+            <!-- 🔍 Filter Form -->
+            <div class="rounded shadow-sm p-3">
+                <form method="get" class="filterImg rounded p-3">
+
+                    <!-- ===== ROW 1 : USERS ===== -->
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <label for="selectedUser" class="fw-semibold mb-1">
+                                @Resource2.Username:
+                            </label>
+                            <select id="selectedUser" name="selectedUserId"
+                                    class="form-select form-select-sm filter-bordered">
+                                <option value="">@Resource1.SelectAll</option>
+                                @{
+                                    var selUser = (ViewContext.HttpContext.Request.Query["selectedUserId"].FirstOrDefault() ?? "");
+                                }
+                                @foreach (var u in allUsersList ?? Enumerable.Empty<SelectListItem>())
+                                {
+                                    <option value="@u.Value" selected="@(u.Value == selUser ? "selected" : null)">
+                                        @u.Text
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="selectedMember" class="fw-semibold mb-1">
+                                @Resource1.member:
+                            </label>
+                            <select id="selectedMember" name="selectedMemberEmail"
+                                    class="form-select form-select-sm filter-bordered">
+                                <option value="">@Resource1.SelectAll</option>
+                                @{
+                                    var selMember = (ViewContext.HttpContext.Request.Query["selectedMemberEmail"].FirstOrDefault() ?? "");
+                                }
+                                @foreach (var m in allMembersName ?? Enumerable.Empty<SelectListItem>())
+                                {
+                                    <option value="@m.Value" selected="@(m.Value == selMember ? "selected" : null)">
+                                        @m.Text
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- ===== ROW 2 : DATES ===== -->
+                    <div class="row g-3 mt-1">
+                        <div class="col-12 col-md-6">
+                            <label for="dateFrom" class="fw-semibold mb-1">
+                                @Resource1.DateFrom:
+                            </label>
+                            <div class="input-icon-left">
+                                <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"
+                                     alt="calendar icon" class="date-icon">
+                                <input type="date" name="dateFrom" id="dateFrom"
+                                       class="form-control form-select-sm filter-bordered"
+                                       value="@ViewBag.DateFrom" />
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label for="dateTo" class="fw-semibold mb-1">
+                                @Resource1.DateTo:
+                            </label>
+                            <div class="input-icon-left">
+                                <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"
+                                     alt="calendar icon" class="date-icon">
+                                <input type="date" name="dateTo" id="dateTo"
+                                       class="form-control form-select-sm filter-bordered"
+                                       value="@ViewBag.DateTo" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== ACTION BUTTONS ===== -->
+                    <div class="d-flex justify-content-end align-items-center pt-3 gap-2 flex-wrap">
+                        <button type="button" id="btnClearFilters" class="btn-cancel-search btn btn-sm me-2">
+                            <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                        </button>
+                        <button type="submit" class="btn btn-success btn-sm">
+                            <i class="ri-filter-line me-1"></i> @Resource1.Search
+                        </button>
+                    </div>
+
+                </form>
+
+
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+
+
+    <script>
+        function confirmDeleteSelected(messageText) {
+            Swal.fire({
+                title: '@Resource1.The_selected_records_will_be_permanently_deleted',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '@Resource1.Yes_delete_them',
+                cancelButtonText: '@Resource1.Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteSelectedForm').submit();
+                }
+            });
+        }
+        function confirmDelete_All_Selected(messageText) {
+            Swal.fire({
+                title: '@Resource1.All_records_will_be_permanently_deleted',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '@Resource1.Yes_delete_them',
+                cancelButtonText: '@Resource1.Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('deleteAllForm').submit();
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+
+                // Retrieve stored filters when the page is opened
+                if (sessionStorage.getItem(pageKey)) {
+                    let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                    $('#selectedUser').val(filters.selectedUser);
+                    $('#selectedMember').val(filters.selectedMember);
+                    $('#dateFrom').val(filters.dateFrom);
+                    $('#dateTo').val(filters.dateTo);
+                    $('#pageSizeSelect').val(filters.pageSize);
+
+                    // Load the list again with the old parameters
+                    loadNewPartialList(filters.page, filters.pageSize);
+                }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#selectedUser').val('');
+                $('#selectedMember').val('');
+                $('#dateFrom').val('');
+                $('#dateTo').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var filters = {
+                    selectedUser: $('#selectedUser').val(),
+                    selectedMember: $('#selectedMember').val(),
+                    dateFrom: $('#dateFrom').val(),
+                    dateTo: $('#dateTo').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var selectedUser = $('#selectedUser').val();
+                var selectedMember = $('#selectedMember').val();
+                var dateFrom = $('#dateFrom').val();
+                var dateTo = $('#dateTo').val();
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/LogHistory/Index',
+                    type: 'GET',
+                    data: { selectedUserId: selectedUser, selectedMemberEmail: selectedMember, dateFrom: dateFrom, dateTo: dateTo, page: page, pageSize: pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#recordsCount').text(newCountRecords);
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,315 @@
+﻿
+@model FougeraClub.Areas.Member.ViewModels.MemberVM
+@using Domain.Resources
+
+@{
+    ViewData["Title"] = Resource2.MemberDetails ?? " ";
+    var gender = Model.GenderId == 1 ? Resource2.Male : Model.GenderId == 2 ? Resource2.Female : "";
+    var MemberType = Model.MemberTypeId == 1 ? Resource1.member : Model.MemberTypeId == 2 ? Resource1.Subscriber : "";
+    var city = Model.CitiesList?.FirstOrDefault(c => c.Value == Model.CityId.ToString())?.Text;
+    var nationality = Model.NationalitiesList?.FirstOrDefault(c => c.Value == Model.NationalityId.ToString())?.Text;
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap" rel="stylesheet" />
+
+    <title>@ViewData["Title"] </title>
+
+    <style>
+        html, body {
+            width: 100%;
+            overflow: visible !important;
+            font-family: "Tajawal", sans-serif;
+            font-size: 13px;
+            background: #fff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .PrintedBy span {
+            font-weight: bold;
+        }
+
+        .printArea {
+            width: 800px !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
+        }
+
+        .container {
+            max-width: 100% !important;
+            width: 100% !important;
+            box-shadow: none !important;
+            page-break-inside: avoid;
+        }
+
+        th, td {
+            border: 1px solid #000 !important;
+            padding: 3px !important;
+            box-shadow: none;
+        }
+
+        img {
+            max-width: 100% !important;
+        }
+
+        table {
+            outline: none !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed !important;
+            box-shadow: none !important;
+            border-collapse: collapse !important;
+        }
+
+        td img {
+            max-width: 100% !important;
+            object-fit: contain;
+        }
+
+        th {
+            background: #f5f5f5 !important;
+            font-weight: bold;
+        }
+
+        @@media print {
+            @@page {
+                size: A4;
+                margin: 10mm;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            * {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            .footer {
+                border-top: 1px double #000;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                text-align: center;
+                padding: 10px 0 0 0;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="printArea">
+
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap border-black border-bottom py-3 mb-3">
+                <div class="d-flex justify-content-between align-items-center flex-fill">
+                    <div style="text-align:center">
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">الإمارات العربية المتحدة</h5>
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">حكومة الفجيرة</h5>
+                        <h5 style="color:#000000; font-size: 16px;font-weight:700;">نادي الفجيرة العلمي</h5>
+                    </div>
+                </div>
+
+                <div class="flex-fill text-center">
+                    <img src="/assets/images/logo.png" alt="نادي الفجيرة العلمي" style="width:75px;">
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center flex-fill">
+                    <div style="text-align:center">
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">UNITED ARAB EMIRATES</h5>
+                        <h5 style="color:#6d6058; font-size: 16px;font-weight:700;">GOVT. OF FUJAIRAH</h5>
+                        <h5 style="color:#000000; font-size: 16px;font-weight:700;">FUJAIRAH SCIENCE CLUB</h5>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TITLE + DATE + PHOTO + MEMBER CODE -->
+            <div style="display: flex; justify-content: space-between; align-items: center; width:100%;margin-bottom: 15px;">
+
+                <div style="display: flex; flex-direction: column;">
+                    <div style="margin-bottom: 10px;font-weight: bold;">@Resource2.MemberDetails</div>
+                    <div style="text-align: center; background: #f5f5f5; padding:1px 5px;">
+                        @Resource2.RegistrationDate : <span>@Model.RegistrationDate.ToString("dd/MM/yyyy")</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display:flex; flex-direction:column;">
+                        <div style="margin-bottom:10px; font-weight:bold;"> @Resource1.MemberNo</div>
+                        <div style="text-align:center; background:#f5f5f5">@Model.Code</div>
+                    </div>
+                    <img src="~/@Model.ProfileImagePath" alt="photo" style="height:80px; border: 1px solid #000" />
+
+                </div>
+
+            </div>
+
+            <!-- BASIC INFO TABLE -->
+            <table class="mb-3" cellspacing="0" cellpadding="0" width="100%">
+                <colgroup>
+                    <col width="15%">
+                    <col>
+                    <col width="15%">
+                    <col>
+                </colgroup>
+
+                <tr>
+                    <th colspan="4">@Resource1.BasicData</th>
+                </tr>
+
+                <tr>
+                    <td>@Resource1.MemberNameAr</td>
+                    <td>@Model.FullNameAr</td>
+                    <td>@Resource1.MemberNameEn</td>
+                    <td>@Model.FullNameEn</td>
+                </tr>
+
+                <tr>
+                    <td>@Resource1.NationalityId</td>
+                    <td>@nationality</td>
+                    <td>@Resource2.Gender : @gender</td>
+                    <td>@Resource2.Type : @MemberType</td>
+                </tr>
+
+                <tr>
+                    <td>@Resource1.DateOfBirth</td>
+                    <td>@Model.DateOfBirth?.ToString("d")?.Replace("/","-")</td>
+                    <td>@Resource1.Age</td>
+                    <td>@Model.Age</td>
+                </tr>
+
+                <tr>
+                    <td>@Resource1.PhoneNumber</td>
+                    <td>@Model.PhoneNumber</td>
+                    <td> @Resource1.Email</td>
+                    <td>@Model.Email</td>
+                </tr>
+
+                <tr>
+                    <td>@Resource2.Profession</td>
+                    <td>@Model.Profession</td>
+                    <td>@Resource1.FatherProfession</td>
+                    <td>@Model.GuardianProfession</td>
+                </tr>
+
+                <tr>
+                    <td>@Resource1.Address</td>
+                    <td>@Model.Address</td>
+                    <td>@Resource1.City</td>
+                    <td>@city</td>
+                </tr>
+            </table>
+
+            <!-- ID INFO -->
+            <table class="mb-3" cellspacing="0" cellpadding="0" width="100%">
+                <colgroup>
+                    <col width="10%">
+                    <col>
+                    <col width="10%">
+                    <col>
+                </colgroup>
+
+                <tr>
+                    <th colspan="4">@Resource2.IdInfo</th>
+                </tr>
+
+                <tr>
+                    <td>@Resource1.NationalIdNumber1</td>
+                    <td>@Model.IdNumber</td>
+                    <td>@Resource1.NationalIdExpiryDate</td>
+                    <td>@Model.IdExpiryDate?.ToString("d")?.Replace("/","-")</td>
+                </tr>
+            </table>
+
+
+            <!-- EDUCATION -->
+            <table class="mb-3" cellspacing="0" cellpadding="0" width="100%">
+                <colgroup>
+                    <col width="10%">
+                    <col>
+                    <col width="10%">
+                    <col>
+                </colgroup>
+
+                <tr>
+                    <th colspan="4">@Resource1.AcademicQualifications</th>
+                </tr>
+
+                <tr>
+                    <td>@Resource2.AcademicQualification</td>
+                    <td>@Model.AcademicQualification</td>
+                    <td>@Resource1.School_University</td>
+                    <td>@Model.EducationInstitution</td>
+                </tr>
+
+                <tr>
+                    <td>@Resource1.hobbies</td>
+                    <td>@Model.Hobby</td>
+                    <td>@Resource2.Languages</td>
+                    <td>@Model.Languages</td>
+                </tr>
+            </table>
+
+
+            <table class="mb-3" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td style="text-align:center;">@Resource2.PassportImage</td>
+                    <td style="text-align:center;">@Resource1.photo_identification_ID</td>
+                </tr>
+
+                <tr>
+                    <td style="text-align:center;">
+                        <img src="~/@Model.PassportImagePath"
+                             style="height:200px; border:1px solid #eee;" />
+                    </td>
+                    <td style="text-align:center;">
+                        <img src="~/@Model.IdImagePath"
+                             style="height:200px; border:1px solid #eee;" />
+                    </td>
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
+    <!-- FOOTER -->
+    <div class="footer">
+        <p class="PrintedBy">Printed by : <span> @(Model.FullNameEn)  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+    </div>
+
+</body>
+</html>
+<script>
+
+    //This Part Is Important
+      window.addEventListener('load', () => {
+         setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+         setTimeout(() => window.print(), 800);
+     });
+     //Close window after printing
+         window.onafterprint = function() {
+             setTimeout(function() {
+                 window.close();
+             }, 500);
+         };
+</script>

@@ -1,0 +1,42 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Course
+@model CourseVM
+
+<div class="container">
+
+    <div class="mb-3 row">
+        <label class="col-sm-1 col-form-label fw-bold">@Resource1.CourseTitle</label>
+        <div class="col-sm-5">
+            <input type="text" class="form-control" readonly value="@Model.TitleAr" />
+        </div>
+        <label class="col-sm-1 col-form-label fw-bold">@Resource2.CourseTitleEn</label>
+        <div class="col-sm-5">
+            <input type="text" class="form-control" readonly value="@Model.TitleEn" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label fw-bold">@Resource2.DateFrom</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" readonly value="@Model.StartDate?.ToString("d")?.Replace("/","-")" />
+        </div>
+        <label class="col-sm-2 col-form-label fw-bold text-end">@Resource2.DateTo</label>
+        <div class="col-sm-4">
+            <input type="text" class="form-control" readonly value="@Model.EndDate?.ToString("d")?.Replace("/","-")" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label fw-bold">@Resource2.Location</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" readonly value="@Model.Location" />
+        </div>
+    </div>
+
+    <div class="mb-3 row">
+        <label class="col-sm-2 col-form-label fw-bold">@Resource1.CourseDate</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" rows="3" readonly>@Model.Description</textarea>
+        </div>
+
+    </div>
+</div>

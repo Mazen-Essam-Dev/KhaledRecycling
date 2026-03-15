@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  
+  <link rel="stylesheet" href="../Assets-CSS-JS/StyleWithPrintIndexing-2.css">
+  
+		<title>Salary Management Module Documentation</title>
+	
+</head>
+
+<body>
+
+<nav class="print-sidebar">
+    <h3>Index</h3>
+    <ul id="autoIndex"></ul>
+</nav>
+
+<main class="doc-content">
+<h1>Salary Management Module – Full Documentation</h1>
+
+<!-- ================= Controller Overview ================= -->
+<section>
+<table>
+<h2>SalaryManagementController – Overview</h2>
+<tr><th>Type</th><td>ASP.NET Core MVC Controller</td></tr>
+<tr><th>Area</th><td>Admin</td></tr>
+<tr><th>Authorization</th><td>AdminAuthorize Attribute</td></tr>
+<tr><th>Purpose</th><td>Comprehensive salary management, payroll processing, absence tracking, reporting, and approvals.</td></tr>
+</table>
+</section>
+
+<!-- ================= Controller Dependencies ================= -->
+<section>
+<table>
+<h2>Controller Dependencies</h2>
+<tr><th>Dependency</th><th>Responsibility</th></tr>
+<tr><td>ISalaryManagementService</td><td>Salary business logic</td></tr>
+<tr><td>IUnitOfWork</td><td>Database operations</td></tr>
+<tr><td>IMapper</td><td>AutoMapper object mapping</td></tr>
+<tr><td>IHubContext&lt;NotificationHub&gt;</td><td>Real-time notifications</td></tr>
+<tr><td>INotificationService</td><td>Notification management</td></tr>
+</table>
+</section>
+
+<!-- ================= OTP Workflow ================= -->
+<section>
+<table>
+<h2>OTP Workflow – General Rules</h2>
+<tr><th>Role Order</th><td>Accountant → Manager</td></tr>
+<tr><th>Trigger</th><td>New salary entry sends notification to Accountant</td></tr>
+<tr><th>Reports</th><td>Payroll Report & Discounts and Bonuses Report</td></tr>
+<tr><th>Notes</th>
+<td>
+Old print actions deprecated.<br>
+Reports are independent and parallel.<br>
+Editing is not disabled after first sign.<br>
+Updating data does not remove old signatures.
+</td>
+</tr>
+</table>
+</section>
+
+<!-- ================= OTP Payroll ================= -->
+<section>
+<table>
+<h2>OTP – Payroll Report</h2>
+<tr><th>Report</th><td>OpenDetails_payrollReport</td></tr>
+<tr><th>Signing Order</th><td>Accountant first → Manager second</td></tr>
+<tr><th>Behavior</th>
+<td>
+Accountant signs → Manager receives notification.<br>
+Manager signs → Editing disabled and print enabled.
+</td>
+</tr>
+</table>
+</section>
+
+<!-- ================= OTP Discounts ================= -->
+<section>
+<table>
+<h2>OTP – Discounts & Bonuses Report</h2>
+<tr><th>Report</th><td>OpenDetails_DiscountsAndBonusesReport</td></tr>
+<tr><th>Signing Order</th><td>Accountant first → Manager second</td></tr>
+<tr><th>Behavior</th>
+<td>
+Accountant signs → Manager notified.<br>
+Manager signs → Editing disabled and print enabled.
+</td>
+</tr>
+</table>
+</section>
+
+<!-- ================= Index ================= -->
+<section>
+<table>
+<h2>Index Action</h2>
+<tr><th>Purpose</th><td>Main salary listing with filtering and pagination</td></tr>
+<tr><th>Filters</th><td>Employee, Year, Month</td></tr>
+<tr><th>Sorting</th><td>EmployeeId → Year → Month (Descending)</td></tr>
+<tr><th>UI</th><td>AJAX partial view (_ListPartial)</td></tr>
+</table>
+</section>
+
+<!-- ================= AddEdit ================= -->
+<section>
+<table>
+<h2>AddEdit Action</h2>
+<tr><th>GET</th><td>Display add/edit salary form</td></tr>
+<tr><th>POST</th><td>Create or update salary record</td></tr>
+<tr><th>Validation</th><td>ModelState validation</td></tr>
+<tr><th>Notifications</th><td>New entries notify Accountant role</td></tr>
+</table>
+</section>
+
+<!-- ================= Attachment Modal ================= -->
+<section>
+<table>
+<h2>Attachment Modal Actions</h2>
+<tr><th>GetSalaryManagementAttachments</th><td>Display all salary Attachments in modal</td></tr>
+<tr><th>UploadSalaryManagementFiles</th><td>delete and add updated attachments of salary</td></tr>
+</table>
+</section>
+<!-- ================= Salary Calculations ================= -->
+<section>
+<table>
+<h2>Salary Calculation Logic</h2>
+<tr><th>Total Salary</th><td>Basic Salary + Allowances</td></tr>
+<tr><th>Absence Deduction</th><td>(Total Salary ÷ 30) × Absent Days</td></tr>
+<tr><th>Annual Leave Deduction</th><td>(Allowances ÷ 30) × 0.5 × Annual Leave Days</td></tr>
+<tr><th>Total Deductions</th><td>Absence + Annual Leave + Additional Deductions</td></tr>
+<tr><th>Net Salary</th><td>Total Salary - Total Deductions + Bonuses</td></tr>
+</table>
+</section>
+
+<!-- ================= Service Overview ================= -->
+<section>
+<table>
+<h2>SalaryManagementService – Overview</h2>
+<tr><th>Layer</th><td>Service Layer</td></tr>
+<tr><th>Responsibilities</th>
+<td>
+Salary CRUD operations<br>
+OTP validation<br>
+Absence reporting<br>
+Employee data retrieval
+</td>
+</tr>
+</table>
+</section>
+
+<!-- ================= Service Methods ================= -->
+<section>
+<table>
+<h2>Core Service Methods</h2>
+<tr><th>Method</th><th>Purpose</th></tr>
+<tr><td>GetAllAsync</td><td>Retrieve all salary records</td></tr>
+<tr><td>GetByIdAsync</td><td>Retrieve salary by ID</td></tr>
+<tr><td>AddAsync</td><td>Create salary record</td></tr>
+<tr><td>UpdateAsync</td><td>Update salary record</td></tr>
+<tr><td>DeleteAsync</td><td>Delete salary record</td></tr>
+<tr><td>GetAttachmentsAsync</td><td>Retrieve salary attachments</td></tr>
+<tr><td>UploadAttachmentsAsync</td><td>Upload salary attachments</td></tr>
+</table>
+</section>
+
+<!-- ================= Entities ================= -->
+<section>
+<table>
+<h2>Entities</h2>
+<tr><th>1</th><td>SalaryManagement</td><td>Using for Save Employees' Salary Data</td></tr>
+<tr><th>2</th><td>SalaryReportSign</td><td>Using for Save Signatures of Monthly Report for Salaries</td></tr>
+<tr><th>3</th><td>SalaryManagementAttachment</td><td>Using for Save Salary Attachments</td></tr>
+</table>
+</section>
+
+<section>
+<table>
+<h2>SalaryManagement Entity</h2>
+<tr><th>Purpose</th><td>Monthly salary calculation storage</td></tr>
+<tr><th>Includes</th>
+<td>
+Employee reference<br>
+Salary components<br>
+Attendance tracking<br>
+Bonuses and deductions<br>
+Net salary
+</td>
+</tr>
+</table>
+</section>
+
+<section>
+<table>
+<h2>SalaryReportSign Entity</h2>
+<tr><th>Purpose</th><td>Approval and signature tracking</td></tr>
+<tr><th>Signatures</th><td>Accountant and Manager</td></tr>
+<tr><th>Audit</th><td>Tracks approvals per month/year</td></tr>
+</table>
+</section>
+
+<!-- ================= ViewModels ================= -->
+<section>
+<table>
+<h2>Salary Management ViewModels</h2>
+<tr><th>AbsenceVM</th><td>Absence tracking and reporting</td></tr>
+<tr><th>SalaryManagementVM</th><td>Full salary calculation and approval workflow</td></tr>
+<tr><th>SalaryManagementAttachmentVM</th><td>For Attachments modal</td></tr>
+<tr><th>SalaryManagementAttachmentsVM</th><td>For Attachments modal</td></tr>
+</table>
+</section>
+
+<!-- ================= DTOs ================= -->
+<section>
+<table>
+<h2>Salary Management DTOs</h2>
+<tr><th>AbsenceDTO</th><td>Absence data transfer</td></tr>
+<tr><th>EmployeesNameDTO</th><td>Employee identity and basic salary</td></tr>
+<tr><th>SalaryManagementAttachmentDTO</th><td>For Attachments modal</td></tr>
+<tr><th>SalaryManagementAttachmentsDTO</th><td>For Attachments modal</td></tr>
+</table>
+</section>
+
+<!-- ================= Views ================= -->
+<section>
+<table>
+<h2>Salary Management Views</h2>
+<tr><th>AddEdit</th><td>Create/Edit salary records</td></tr>
+<tr><th>Index</th><td>Listing, filtering, reporting</td></tr>
+<tr><th>_ListPartial</th><td>Salary table rendering</td></tr>
+<tr><th>Absences</th><td>Absence tracking and reports</td></tr>
+<tr><th>_SalaryManagementAttachmentsModal</th><td>[for add & remove attachments in modal]</td></tr>
+
+</table>
+</section>
+
+<!-- ================= Printing ================= -->
+<section>
+<table>
+<h2>Print & Export Features</h2>
+<tr><th>Print Reports</th><td>Payroll, Discounts & Bonuses, Absences</td></tr>
+<tr><th>Excel Export</th><td>Salary and absence data</td></tr>
+<tr><th>Security</th><td>User, time, and role tracking</td></tr>
+</table>
+</section>
+
+<!-- Updates -->
+<h2>Updates And Additions</h2>
+<table>
+    <caption>Attachments Modal ajax,Js</caption>
+    <tr>
+        <th>Location</th>
+        <th>Name</th>
+        <th>Description</th>
+    </tr>
+    <tr><td>controller</td><td>GetSalaryManagementAttachments</td><td>Display all salary Attachments in modal</td></tr>
+    <tr><td>controller</td><td>UploadSalaryManagementFiles</td><td>delete and add updated attachments of salary</td></tr>
+    <tr><td>Service</td><td>GetAttachmentsAsync</td><td>Retrieve salary attachments</td></tr>
+    <tr><td>Service</td><td>UploadAttachmentsAsync</td><td>Upload salary attachments</td></tr>
+    <tr><td>DTO</td><td>SalaryManagementAttachmentDTO</td><td>attachment Object of his attachments</td></tr>
+    <tr><td>DTO</td><td>SalaryManagementAttachmentsDTO</td><td>this Main Id and list of first</td></tr>
+    <tr><td>VMS</td><td>SalaryManagementAttachmentVM</td><td>attachment Object of his attachments</td></tr></tr>
+    <tr><td>VMS</td><td>SalaryManagementAttachmentsVM</td><td>this Main Id and list of first</td></tr>
+    <tr><td>Views</td><td>_SalaryManagementAttachmentsModal</td><td>[for add & remove attachments in modal with ajax and js]</td></tr>
+</table>
+
+<!-- ================= Summary ================= -->
+<section>
+<table>
+<h2>Module Summary</h2>
+<tr><th>Payroll</th><td>Accurate monthly salary calculation</td></tr>
+<tr><th>Approvals</th><td>OTP-based Accountant → Manager workflow</td></tr>
+<tr><th>Reporting</th><td>Printable and Excel-ready</td></tr>
+<tr><th>Audit</th><td>Full approval and signature tracking</td></tr>
+</table>
+</section>
+
+</main>
+	<script defer src="../Assets-CSS-JS/JS-indexing-Automatic-from-html-when-printing.js"></script>
+
+</body>
+</html>
+

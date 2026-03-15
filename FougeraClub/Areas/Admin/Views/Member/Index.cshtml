@@ -1,0 +1,548 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.Member
+@model PaginatedList<MemberVM>
+
+@{
+    ViewData["Title"] = Resource2.Members ?? " ";
+    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
+    ViewData["Title Single"] = @Resource1.Members2 ?? " ";
+    var editPermission = PermissionScanner.ValidatePermission("Member", "Edit");
+    var suspendPermission = PermissionScanner.ValidatePermission("Member", "Suspend");
+    var deletePermission = PermissionScanner.ValidatePermission("Member", "Delete");
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Breadcrumb Navigation Column -->
+    <div class="col-md-6">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+    <!-- Records Count Display Column -->
+    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+        <!-- Count and status badges -->
+        <span class="badge bg-light-danger p-2">
+            @Resource2.IdExpired1
+        </span>
+        <span class="badge bg-light-warning p-2">
+            @Resource2.ExpireIn30Days1
+        </span>
+        <div class="records-count-box bg-opacity-10 rounded border-opacity-25 h-auto">
+            <span>@Resource1.RecordsCount:</span>
+            <span id="recordsCount">@Model.Count</span>
+        </div>
+
+        <!-- Create New button -->
+        @if (PermissionScanner.ValidatePermission("Member", "Create"))
+        {
+            <a asp-action="AddEdit" class="btn btn-outline-success btn-sm">
+                <i class="fa fa-plus me-1"></i> @Resource2.CreateNew
+            </a>
+        }
+
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <!-- Main card container for services data -->
+        <div class="card">
+            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
+                <!-- Page title section -->
+                <div class="flex-grow-1">
+                    <div class="d-flex align-items-center gap-2">
+                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                            <span class="fa fa-users me-2 text-ico"></span>
+                            @Resource2.Members
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
+
+                    <!-- Print button -->
+                    <button type="button" class="btn btn-success btn-sm"
+                        onclick="event.preventDefault(); openPrintPage()">
+                        <i class="fa fa-print me-1"></i> @Resource2.Print
+                    </button>
+
+                    <!-- Print Export As Excel -->
+                    <button class="btn btn-success Excelbtn" onclick="openExcelPage();">
+                        <i class="fa-solid fa-file-excel me-2"></i>@Resource1.createExcelReport_Download
+                    </button>
+
+                </div>
+
+                
+
+            </div>
+            <div class="rounded shadow-sm p-3">
+                <!-- Search Panel -->
+                <form method="get" id="studentFilterForm" class="filterImg rounded">
+                    <div class="d-flex flex-column flex-md-row justify-content-between gap-3 gap-md-4 w-100 p-2">
+                        <!-- Left Column -->
+                        <div class="d-flex flex-column w-100 w-md-50 gap-2">
+                            <!-- Search Box -->
+                            <div class="filter-dropdown">
+                                <label for="searchTermInput" class="fw-medium mb-2">@Resource2.Search:</label>
+                                <div class="search-box position-relative">
+                                    <i
+                                        class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-2 text-muted"></i>
+                                    <input type="text" name="searchTerm" id="searchTermInput" value="@Model.SearchTerm"
+                                        class="form-control green-border form-control-sm filter-bordered ps-4"
+                                        placeholder="@Resource2.Code @Resource2.Or @Resource2.FullName @Resource2.Or @Resource2.IdNumber @Resource2.Or @Resource2.PhoneNumber ..." />
+                                </div>
+                            </div>
+
+                            <!-- Date Filters -->
+                            <div class="d-flex flex-column flex-md-row gap-2">
+                                <!-- Date From -->
+                                <div class="filter-dropdown w-100">
+                                    <label for="dateFrom" class="fw-medium mb-2">@Resource2.From
+                                        @Resource2.RegistrationDate:</label>
+                                    <div class="input-icon-left">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"
+                                            alt="calendar icon" class="date-icon">
+
+                                        <input type="date" name="dateFrom" id="dateFrom"
+                                            class="form-control green-border form-control-sm filter-bordered"
+                                            value="@ViewBag.DateFrom" />
+                                    </div>
+                                </div>
+
+                                <!-- Date To -->
+                                <div class="filter-dropdown w-100">
+                                    <label for="dateTo" class="fw-medium mb-2">@Resource2.To
+                                        @Resource2.RegistrationDate:</label>
+                                    <div class="input-icon-left">
+                                        <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png"
+                                            alt="calendar icon" class="date-icon">
+                                        <input type="date" name="dateTo" id="dateTo"
+                                            class="form-control green-border form-control-sm filter-bordered"
+                                            value="@ViewBag.DateTo" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="d-flex flex-column w-100 w-md-50 gap-2">
+                            <!-- Nationality Dropdown -->
+                            <div class="filter-dropdown">
+                                <label for="nationalitySelect" class="fw-medium mb-2">@Resource2.Nationality:</label>
+                                <select class="form-select green-border form-select-sm filter-bordered"
+                                    id="nationalitySelect" name="selectedNationality" style="width: 100%">
+                                    <option value="">@Resource2.SelectNationality</option>
+                                    @foreach (var nationality in ViewBag.Nationalities as IEnumerable<SelectListItem>)
+                                    {
+                                        if (nationality.Value == (ViewBag.SelectedNationality?.ToString() ?? ""))
+                                        {
+                                            <option value="@nationality.Value" selected>@nationality.Text</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@nationality.Value">@nationality.Text</option>
+                                        }
+                                    }
+                                </select>
+                                <link href="/css/select2-custom.css" rel="stylesheet" />
+                                <script src="/js/select2-cdn-loader.js"></script>
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function () {
+                                        function initSelect2() {
+                                            if (window.jQuery && window.jQuery.fn && window.jQuery.fn.select2) {
+                                                $('#nationalitySelect').select2({
+                                                    placeholder: 'إختر الجنسية',
+                                                    allowClear: false,
+                                                    width: 'resolve',
+                                                    minimumResultsForSearch: 0 // always show search
+                                                });
+                                            } else {
+                                                setTimeout(initSelect2, 100);
+                                            }
+                                        }
+                                        initSelect2();
+                                    });
+                                </script>
+                            </div>
+
+                            <!-- Gender Radio Buttons (like SubscribedMembersInCourses) -->
+                            <div class="filter-dropdown">
+                                <div
+                                    class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between gap-3 rtl-actions">
+                                    <div class="d-flex gap-3">
+                                        <label class="mb-1 d-block">@Resource2.Gender:</label>
+
+                                        @{
+                                            var selectedGender = ViewBag.SelectedGender?.ToString();
+                                        }
+                                        @foreach (var item in ViewBag.Genders ?? Enumerable.Empty<SelectListItem>())
+                                        {
+                                            <div class="form-check m-t13-b15">
+                                                <input class="form-check-input typeradiobtn" type="radio"
+                                                    name="selectedGender" id="TypeEnum_@item.Value" value="@item.Value"
+                                                    @(selectedGender == item.Value ? "checked" : "") />
+                                                <label class="form-check-label text-gray"
+                                                    for="TypeEnum_@item.Value">@item.Text</label>
+                                            </div>
+                                        }
+                                        <div class="form-check m-t13-b15">
+                                            <input class="form-check-input typeradiobtn " type="radio"
+                                                name="selectedGender" id="TypeEnum_3" value="3"
+                                                @((string.IsNullOrEmpty(selectedGender) || selectedGender == "3") ?
+                                                                                                "checked" : "") />
+                                            <label class="form-check-label text-gray"
+                                                for="TypeEnum_3">@Resource1.all2</label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="d-flex gap-3">
+                                        <label class="mb-1 d-block">@Resource2.Type:</label>
+
+                                        @{
+                                            var selectedMemberType = ViewBag.SelectedMemberType?.ToString();
+                                        }
+                                        @foreach (var item in Html.GetEnumSelectList<MemberTypeEnum>() ?? Enumerable.Empty<SelectListItem>())
+                                        {
+                                            <div class="form-check m-t13-b15">
+                                                <input class="form-check-input typeradiobtn" type="radio"
+                                                       name="selectedMemberType" id="TypeMemberEnum_@item.Value" value="@item.Value"
+                                                       @(selectedMemberType == item.Value ? "checked" : "") />
+                                                <label class="form-check-label text-gray"
+                                                       for="TypeMemberEnum_@item.Value">@item.Text</label>
+                                            </div>
+                                        }
+                                        <div class="form-check m-t13-b15">
+                                            <input class="form-check-input typeradiobtn " type="radio"
+                                                   name="selectedMemberType" id="TypeMemberEnum_" value="33"
+                                                   @((string.IsNullOrEmpty(selectedMemberType) || selectedMemberType == "33") ?
+                                                                                                      "checked" : "") />
+                                            <label class="form-check-label text-gray"
+                                                   for="TypeMemberEnum_">@Resource1.all2</label>
+                                        </div>
+                                    </div>
+
+                                    <!-- Button container pushed to far right -->
+                                    <div class="d-flex gap-2 ms-auto mt-2 mt-md-0">
+                                        <button type="button" id="btnClearFilters" class="btn-cancel-search btn-sm btn">
+                                            <i class="fa-solid fa-xmark me-1"></i> @Resource2.Clear
+                                        </button>
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="ri-filter-line me-1"></i> @Resource1.Search
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Table -->
+                <div id="PartialNewListContainer">
+                    @await Html.PartialAsync("_ListPartial", Model)
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="suspendModal" tabindex="-1" aria-labelledby="suspendModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger2 text-white">
+                <h5 class="modal-title" id="suspendModalLabel">@Resource2.MemberStatus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center fw-bold" id="suspendModalBody">
+                @Resource2.MemberSuspended
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success bg-danger2xxx btn-sm"
+                    data-bs-dismiss="modal">@Resource2.Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="notSuspendModal" tabindex="-1" aria-labelledby="notSuspendModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="notSuspendModalLabel">@Resource2.MemberStatus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center" id="suspendModalBody">
+                @Resource2.MemberNotSuspended
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal">@Resource2.Done</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+    <script>
+        function openExcelPage() {
+            const get = id => document.getElementById(id)?.value || '';
+            const searchTerm = encodeURIComponent(get('searchTermInput'));
+            const selectedMemberType = $("input[name='selectedMemberType']:checked").val();
+            let selectedGender = $("input[name='selectedGender']:checked").val();
+            if (selectedGender == 3 || selectedGender == "3") selectedGender = "";
+            const selectedNationalityId = encodeURIComponent(get('nationalitySelect'));
+            const dateFrom = encodeURIComponent(get('dateFrom'));
+            const dateTo = encodeURIComponent(get('dateTo'));
+
+            const url = `/Admin/Member/createExcelReport_Download?searchTerm=${searchTerm}&selectedMemberType=${selectedMemberType}&selectedGender=${selectedGender}&selectedNationality=${selectedNationalityId}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+            window.open(url, '_self');
+        }
+
+        function openPrintPage() {
+            const get = id => document.getElementById(id)?.value || '';
+            const searchTerm = encodeURIComponent(get('searchTermInput'));
+            const selectedMemberType = $("input[name='selectedMemberType']:checked").val();
+            let selectedGender = $("input[name='selectedGender']:checked").val();
+            if (selectedGender == 3 || selectedGender == "3") selectedGender = "";
+            const selectedNationalityId = encodeURIComponent(get('nationalitySelect'));
+            const dateFrom = encodeURIComponent(get('dateFrom'));
+            const dateTo = encodeURIComponent(get('dateTo'));
+            var countRecords = document.getElementById('NewCountRecords').value;
+            if (countRecords && countRecords > 3999) {
+                showToastrCannotPrint(); // Toaster Can't Print more 3999 record
+            }
+            else {
+                const url = `/Admin/Member/Print?searchTerm=${searchTerm}&selectedMemberType=${selectedMemberType}&selectedGender=${selectedGender}&selectedNationality=${selectedNationalityId}&dateFrom=${dateFrom}&dateTo=${dateTo}`;
+                // const newTab = window.open('', '_blank');
+                // newTab.location.href = url;
+
+                // Open a standalone pop window (not a tab) so the original page doesn't freeze
+                const printWindow = window.open(
+                    url,
+                    'printWindow',
+                    'width=1000,height=800,noopener,noreferrer'
+                );
+
+                // // Confirm opening (some browsers block windows)
+                // if (!printWindow) {
+                //     alert("الرجاء السماح بالنوافذ المنبثقة (Popups) في هذا الموقع.");
+                // }
+            }
+        }
+
+
+    </script>
+    <script>
+        $(document).on('click', '.suspend-btn', function () {
+            const id = $(this).data('id');
+            const suspend = $(this).data('suspend');
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("Suspend", "Member", new { area = "Admin" })',
+                data: { id: id, suspend: suspend },
+                success: function (response) {
+                    if (suspend) {
+                        const modal = new bootstrap.Modal(document.getElementById('suspendModal'));
+                        modal.show();
+                        // Reload when modal is hidden
+                        $('#suspendModal').one('hidden.bs.modal', function () {
+                            location.reload();
+                        });
+                    } else {
+                        const modal = new bootstrap.Modal(document.getElementById('notSuspendModal'));
+                        modal.show();
+                        $('#notSuspendModal').one('hidden.bs.modal', function () {
+                            location.reload();
+                        });
+                    }
+
+                },
+                error: function () {
+                    const modal = new bootstrap.Modal(document.getElementById('suspendModal'));
+                    $('#suspendModalBody').text("Something went wrong.");
+                    modal.show();
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $('.expiryDate').each(function () {
+                const expiryDateText = $(this).text().trim();
+                const expiryDate = new Date(expiryDateText);
+                const today = new Date();
+                const in30Days = new Date();
+                in30Days.setDate(today.getDate() + 30);
+
+                // Clear time part for comparison
+                expiryDate.setHours(0, 0, 0, 0);
+                today.setHours(0, 0, 0, 0);
+                in30Days.setHours(0, 0, 0, 0);
+
+                if (expiryDate < today) {
+                    $(this).closest('tr').addClass('badge-expired');
+                } else if (expiryDate >= today && expiryDate <= in30Days) {
+                    $(this).closest('tr').addClass('badge-warning');
+                }
+            });
+        });
+
+    </script>
+    <script>
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            input.addEventListener('click', function () {
+                try {
+                    this.showPicker?.();
+                } catch (e) {
+                    this.focus();
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // We specify the storage key with the page name
+            const pageKey = window.location.pathname + "_filters";
+            // Retrieve stored filters when the page is opened
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#selectedMemberType').val(filters.selectedMemberType);
+                $('#dateFrom').val(filters.dateFrom);
+                $('#dateTo').val(filters.dateTo);
+                $('#pageSizeSelect').val(filters.pageSize);
+                $('#nationalitySelect').val(filters.selectedNationality);
+                if (filters.selectedGender) {
+                    $("input[name='selectedGender'][value='" + filters.selectedGender + "']").prop('checked', true);
+                } else {
+                    $("input[name='selectedGender'][value='3']").prop('checked', true); // All
+                }
+                if (filters.selectedMemberType) {
+                    $("input[name='selectedMemberType'][value='" + filters.selectedMemberType + "']").prop('checked', true);
+                } else {
+                    $("input[name='selectedMemberType'][value='33']").prop('checked', true); // All
+                }
+                // Load the list again with the old parameters
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            // When he click the search button
+            $('form.filterImg').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1); // We store from the first page
+                loadNewPartialList(1);
+            });
+
+            // Clear Button
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#dateFrom').val('');
+                $('#dateTo').val('');
+                $('#nationalitySelect').val('').trigger('change');
+                $("input[name='selectedGender']").prop('checked', false);
+                $("input[name='selectedGender'][value='3']").prop('checked', true); // All
+                $("input[name='selectedMemberType']").prop('checked', false);
+                $("input[name='selectedMemberType'][value='33']").prop('checked', true); // All
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            // Change the pagenation
+            $(document).on('click', '.ajax-page', function () {
+                var page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            // Change the number of rows
+            $(document).on('change', '#pageSizeSelect', function () {
+                var pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+
+            // function For Save The Last state
+            function saveFilters(page, pageSizeOverride) {
+                var genderVal = $("input[name='selectedGender']:checked").val();
+                if (genderVal === "3") genderVal = "";
+                var selectedMemberTypeVal = $("input[name='selectedMemberType']:checked").val();
+                if (selectedMemberTypeVal === "33") selectedMemberTypeVal = "";
+                var filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    dateFrom: $('#dateFrom').val(),
+                    dateTo: $('#dateTo').val(),
+                    selectedNationality: $('#nationalitySelect').val(),
+                    selectedGender: genderVal,
+                    selectedMemberType: selectedMemberTypeVal,
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                var searchTerm = $('#searchTermInput').val();
+                var dateFrom = $('#dateFrom').val();
+                var dateTo = $('#dateTo').val();
+                var selectedNationality = $('#nationalitySelect').val();
+                var selectedGender = $("input[name='selectedGender']:checked").val();
+                if (selectedGender === "3") selectedGender = "";
+                var selectedMemberType = $("input[name='selectedMemberType']:checked").val();
+                if (selectedMemberType === "33") selectedMemberType = "";
+                var pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/Member/Index',
+                    type: 'GET',
+                    data: { selectedNationality,selectedMemberType, selectedGender, searchTerm, dateFrom, dateTo, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#recordsCount').text(newCountRecords);
+
+                        $('.expiryDate').each(function () {
+                            const expiryDateText = $(this).text().trim();
+                            const expiryDate = new Date(expiryDateText);
+                            const today = new Date();
+                            const in30Days = new Date();
+                            in30Days.setDate(today.getDate() + 30);
+
+                            // Clear time part for comparison
+                            expiryDate.setHours(0, 0, 0, 0);
+                            today.setHours(0, 0, 0, 0);
+                            in30Days.setHours(0, 0, 0, 0);
+
+                            if (expiryDate < today) {
+                                $(this).closest('tr').addClass('badge-expired');
+                            } else if (expiryDate >= today && expiryDate <= in30Days) {
+                                $(this).closest('tr').addClass('badge-warning');
+                            }
+                        });
+                        initTooltips(); // this Function for Reload Tootips Text after Ajax Called in index Pages or another page
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,162 @@
+﻿@using FougeraClub.Areas.Admin.ViewModels.AnnualSchedule
+@model AnnualScheduleVM
+@{
+    ViewData["Title pakage"] = @Resource1.AnnualInventoryManagement ?? " ";
+    ViewData["Title Single"] = ((Model.Id == 0) ? @Resource1.AddNewInventory1 : @Resource1.EditInventory) ?? " ";
+    ViewData["Title ListIndex"] = @Resource1.InventoryList ?? " ";
+
+}
+
+<!-- Breadcrumb Navigation Column -->
+<div class="col-6">
+    <nav aria-label="breadcrumb" class="ms-2">
+        <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+
+          
+        </ol>
+    </nav>
+</div>
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <div class="d-flex align-items-center gap-2">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-calculator me-1 text-ico"></span>
+                @((Model.Id == 0) ? @Resource1.AddNewInventory1 : @Resource1.EditInventory)
+            </h4>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-end" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title pakage"]</a>
+                </li>
+                <li class="breadcrumb-item"><a href="/Admin/AnnualSchedule/Index">@ViewData["Title ListIndex"]</a></li>
+
+                <li class="breadcrumb-item">
+                    <a href="#">@ViewData["Title Single"]</a>
+                </li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<div class="card all-borders p-3">
+    <div class="c-edit-form  rounded">
+
+
+        <form asp-action="AddEdit" method="post">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="row ">
+
+                <div class="col-md-12 mb-3">
+                    <label asp-for="Item" class="form-label asteriskRequired">@Resource1.Item</label>
+                    <input asp-for="Item" class="form-control" />
+                    <span asp-validation-for="Item" class="text-danger small"></span>
+                </div>
+                <div class="col-md-12  mb-3">
+                    <label asp-for="Statement" class="form-label asteriskRequired">@Resource1.Statement</label>
+                    <textarea asp-for="Statement" rows="3" class="form-control"></textarea>
+                    <span asp-validation-for="Statement" class="text-danger small"></span>
+
+                </div>
+                <div class="row p-0 m-0 ">
+                    <div class="col-md-4  mb-3">
+                        <label asp-for="Previous" class="form-label asteriskRequired">@Resource1.Previous</label>
+                        <input asp-for="Previous" class="form-control" inputmode="numeric" pattern="\d*" maxlength="15" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="0" />
+                        <span asp-validation-for="Previous" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4  mb-3">
+                        <label asp-for="Current" class="form-label asteriskRequired">@Resource1.Current</label>
+                        <input asp-for="Current" class="form-control" inputmode="numeric" pattern="\d*" maxlength="15" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="0" />
+                        <span asp-validation-for="Current" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-4  mb-3">
+                        <label asp-for="Record" class="form-label asteriskRequired">@Resource1.Record</label>
+                        <input asp-for="Record" class="form-control" inputmode="numeric" pattern="\d*" maxlength="15" oninput="this.value=this.value.replace(/\D/g,'')" placeholder="0" />
+                        <span asp-validation-for="Record" class="text-danger small"></span>
+                    </div>
+                </div>
+                <div class="row p-0 m-0 ">
+                    <div class="col-md-12  mb-3">
+                        <label asp-for="Status" class="form-label asteriskRequired">@Resource1.Status1</label>
+                        <input asp-for="Status" type="text" class="form-control" />
+                        <span asp-validation-for="Status" class="text-danger small"></span>
+                    </div>
+                </div>                <div class="row p-0 m-0 ">
+                    <div class="col-md-12  mb-3">
+                        <label asp-for="AnnualScheduleCategoryId" class="form-label">التصنيف</label>
+                        <select asp-for="AnnualScheduleCategoryId" class="form-control" asp-items="ViewBag.Categories">
+                            <option value="">-- إختر تصنيف --</option>
+                        </select>
+                        <span asp-validation-for="AnnualScheduleCategoryId" class="text-danger small"></span>
+                    </div>
+                </div>                <div class="row p-0 m-0 ">
+                    <div class="col-md-6  mb-3">
+                        <label asp-for="Day" class="form-label asteriskRequired">@Resource1.Day</label>
+                        <div class="input-icon-left">
+                            <img src="https://cdn-icons-png.flaticon.com/512/747/747310.png" alt="calendar icon" class="date-icon">
+                            <input asp-for="Day" type="date" class="form-control green-border form-control-sm filter-bordered" id="dateInput" />
+                        </div>
+                        <span asp-validation-for="Day" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6  mb-3">
+                        <label for="dayInput" class="form-label" style="margin-top:.6rem;">@Resource1.Day</label>
+                        <input type="text" class="form-control" value="@ViewBag.Daytext" id="dayInput" name="dayInput" disabled readonly />
+                    </div> 
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success me-2">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                </button>
+                <a asp-action="Index" class="btn btn-cancel-search">
+                    @Resource2.Back   <i class="fa-solid fa-arrow-left me-1"></i>
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+ @if (SessionHelper.GetCurrentLanguage()=="ar")
+    {
+         <script>
+            document.getElementById("dateInput").addEventListener("change", function () {
+                let dateVal = this.value;
+                if (dateVal) {
+                    let dateObj = new Date(dateVal);
+
+                    // Here you can choose to display it in Arabic or English
+                    let options = { weekday: 'long' }; // long = Monday, TuseDay
+                    let dayName = dateObj.toLocaleDateString('ar-EG', options); // OR 'en-US' for English
+
+                    document.getElementById("dayInput").value = dayName;
+                } else {
+                    document.getElementById("dayInput").value = "";
+                }
+            });
+        </script>
+    }
+    else
+    {
+        <script>
+            document.getElementById("dateInput").addEventListener("change", function () {
+                let dateVal = this.value;
+                if (dateVal) {
+                    let dateObj = new Date(dateVal);
+
+                    // Here you can choose to display it in Arabic or English
+                    let options = { weekday: 'long' }; // long = Monday, TuseDay
+                    let dayName = dateObj.toLocaleDateString('en-US', options); // OR 'en-US' for English
+
+                    document.getElementById("dayInput").value = dayName;
+                } else {
+                    document.getElementById("dayInput").value = "";
+                }
+            });
+        </script> 
+    }
+    
+}

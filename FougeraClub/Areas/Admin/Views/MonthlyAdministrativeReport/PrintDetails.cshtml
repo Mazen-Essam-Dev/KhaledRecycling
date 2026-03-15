@@ -1,0 +1,297 @@
+﻿@model MonthlyAdministrativeReportVM
+@using FougeraClub.Areas.Admin.ViewModels.MonthlyAdministrativeReport
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    var lang = SessionHelper.GetCurrentLanguage();
+    Layout = null; // No layout for print view
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+    var month = Model?.Date?.ToString("MMMM", new System.Globalization.CultureInfo(lang)) ?? "";
+    var year = Model?.Date?.ToString("yyyy", new System.Globalization.CultureInfo(lang)) ?? "";
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/bootstrap/bootstrap-5.3.8-dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            direction: rtl; /* Right to Left */
+        }
+
+        .container {
+            width: 90%;
+            margin: 50px auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: transparent;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: right; /* Right-aligned for Arabic text */
+            border: 1px solid #ddd;
+        }
+
+            td:nth-child(1), th:nth-child(1) {
+                width: 200px; /* Column 1: الاسم */
+            }
+
+        .bg-yellow {
+            background-color: rgb(208, 11, 11) !important;
+            color: #fff !important;
+        }
+
+        @@media print {
+            /* Set page size and remove margins for printing */
+
+            header, footer {
+                page-break-after: avoid;
+                page-break-before: avoid;
+            }
+
+            body {
+                color: black;
+                direction: rtl;
+            }
+
+            .header-container {
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                width: 150% !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+            }
+
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                background-color: transparent !important;
+                box-shadow: none !important;
+            }
+
+            th, td {
+                border: 1px solid #000 !important;
+                padding: 8px !important;
+                text-align: right;
+                font-size: 14px;
+            }
+
+                td:nth-child(1), th:nth-child(1) {
+                    width: 200px !important;
+                }
+
+            .bg-yellow {
+                background-color: rgb(208, 11, 11) !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            /* Hide elements not needed in print */
+            img {
+                max-height: 150px !important;
+                object-fit: cover;
+                page-break-inside: avoid;
+            }
+            /* Optional: avoid breaking images across pages */
+            .d-flex {
+                page-break-inside: avoid;
+            }
+            /* Hide unnecessary parts for printing (if needed) */
+            header, footer {
+                page-break-inside: avoid;
+            }
+            /* Remove any interactivity or animations */
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="d-flex justify-content-between align-items-center flex-wrap border-black  border-bottom p-3  mb-3">
+        <div class="d-flex justify-content-between align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">الإمارات العربية المتحدة</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">حكومة الفجيرة</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">نادي الفجيرة العلمي</h5>
+            </div>
+        </div>
+        <div class="flex-fill text-center">
+            <center>
+                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+            </center>
+        </div>
+        <div class="d-flex justify-content-end align-items-center flex-fill">
+            <div style="text-align:center">
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">UNITED ARAB EMIRATES</h5>
+                <h5 style="color:#6d6058; font-size: 16px;font-weight: 700;">GOVT. OF FUJAIRAH</h5>
+                <h5 style="color:#000000; font-size: 16px;font-weight: 700;">FUJAIRAH SCIENCE CLUB</h5>
+            </div>
+        </div>
+    </div>
+
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+    <main>
+
+        <h4 class="text-danger text-center my-3 ">
+            @($" {Resource1.AdministrativeReportMonth} {month} {year} {Resource1.millad}")
+        </h4>
+        <div class="container print-background">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="bg-yellow">@Resource1.Date :</th>
+                        <th>@Model?.Date?.ToString("d")?.Replace("/", "-")</th>
+                    </tr>
+                    <tr>
+                        <th class="bg-yellow">@Resource1.Department_Administration :</th>
+                        <th>@Model.AdministrativeDepartment</th>
+                    </tr>
+                </thead>
+            </table>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="bg-yellow" colspan="8">@Resource1.MonthlyActivityReport</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4"> @($"{Resource1.ActivitywithinMonth} {month} {year} {Resource1.millad}") </th>
+                        <th class="text-center">@Resource1.numberOfAttendees</th>
+                        <th colspan="3" class="text-center">
+                            @Resource1.ActivityReason1
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model?.Details != null)
+                    {
+                        foreach (var detail in Model.Details)
+                        {
+                            <tr>
+                                <td colspan="4">
+                                    @detail.ActivityName
+                                </td>
+                                <td>@detail.NumberOfParticipants</td>
+                                <td colspan="3">
+                                    @detail.Reason
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+
+            <div class="mx-auto">
+
+                @{
+                    var images = new List<string>();
+                    if (!string.IsNullOrEmpty(Model?.Image1Path)) images.Add(Model.Image1Path);
+                    if (!string.IsNullOrEmpty(Model?.Image2Path)) images.Add(Model.Image2Path);
+                    if (!string.IsNullOrEmpty(Model?.Image3Path)) images.Add(Model.Image3Path);
+                    if (!string.IsNullOrEmpty(Model?.Image4Path)) images.Add(Model.Image4Path);
+                    if (!string.IsNullOrEmpty(Model?.Image5Path)) images.Add(Model.Image5Path);
+                    if (!string.IsNullOrEmpty(Model?.Image6Path)) images.Add(Model.Image6Path);
+                }
+
+                @if (images.Any())
+                {
+                    <div class="d-flex gap-2 mb-2">
+                        @for (int i = 0; i < Math.Min(3, images.Count); i++)
+                        {
+                            <div class="w-50">
+                                <img src="~/@images[i]" class="w-100" alt="@Resource1.Image" />
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        @for (int i = 3; i < Math.Min(6, images.Count); i++)
+                        {
+                            <div class="w-50">
+                                <img src="~/@images[i]" class="w-100" alt="@Resource1.Image" />
+                            </div>
+                        }
+                    </div>
+                }
+
+                <!-- Signature Section -->
+                <hr class="custom-hr" />
+                <div class="row g-3 d-flex justify-content-between">
+                    <!-- Trainer Signature (Activities/Membership Supervisor) -->
+                    <div class="col-md-6 text-center">
+                        <label class="form-label fw-semibold">@Resource1.SignatureActivitiesMembershipSupervisor</label>
+                        <div class="small text-muted">
+                            @if (Model?.TrainerSignature != null && !string.IsNullOrEmpty(Model.TrainerSignature.ImagePath))
+                            {
+                                <img src="~/@Model.TrainerSignature.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Trainer Signature" />
+                            }
+                        </div>
+                    </div>
+                    <!-- Manager Signature -->
+                    <div class="col-md-6 text-center">
+                        <label class="form-label fw-semibold">@Resource1.SignatureManager</label>
+                        <div class="small text-muted">
+                            @if (Model?.ManagerSignature != null && !string.IsNullOrEmpty(Model.ManagerSignature.ImagePath))
+                            {
+                                <img src="~/@Model.ManagerSignature.ImagePath" class="img-fluid rounded mt-2" style="max-height: 100px;" alt="Manager Signature" />
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <div class="footer">
+        <p class="PrintedBy">Printed by : <span> @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)  |  @AppDubaiTime.Now.ToString("dd/MM/yyyy, HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture)</span> </p>
+    </div>
+
+</body>
+</html>
+
+
+<script>
+
+    //This Part Is Important
+      window.addEventListener('load', () => {
+         setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+         setTimeout(() => window.print(), 800);
+     });
+     //Close window after printing
+         window.onafterprint = function() {
+             setTimeout(function() {
+                 window.close();
+             }, 500);
+         };
+</script>
