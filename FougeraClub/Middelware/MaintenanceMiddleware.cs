@@ -1,4 +1,4 @@
-﻿namespace FougeraClub.Middelware
+﻿namespace KhaledTeamRecycling.Middelware
 {
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.Configuration;

@@ -3,19 +3,16 @@ using Application.Interfaces.Admin;
 using Application.Services.Admin;
 using AutoMapper;
 using Domain.DTOs;
-using Domain.DTOs.Admin.SalaryManagement;
-using Domain.DTOs.Admin.SalaryManagement;
+
 using Domain.Entities.SalaryManage;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Admin.ViewModels.Employees;
-using FougeraClub.Areas.Admin.ViewModels.ExpenseAndReceipts;
-using FougeraClub.Areas.Admin.ViewModels.SalaryManagement;
-using FougeraClub.Areas.Admin.ViewModels.SalaryManagement;
-using FougeraClub.Areas.Admin.ViewModels.SMS;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Employees;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,8 +20,10 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Globalization;
+using Domain.DTOs.Admin.SalaryManagement;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.SMS;
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [AdminAuthorize]
     [Area("Admin")]
@@ -46,21 +45,7 @@ namespace FougeraClub.Areas.Admin.Controllers
 
         }
 
-        [IgnoreAction]
-        [NoLogging]
-        [HttpPost]
-        public async Task<IActionResult> SendOtp() // GetSignature
-        {
-            try
-            {
-                var statusResult = await _salaryManagementService.SendOtpAsync();
-                return Json(new { success = statusResult });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false });
-            }
-        }
+  
 
         [YesGet]
         public async Task<IActionResult> Index(int? selectedEmployee, int? selectedYear, int? selectedMonth, int page = 1, int pageSize = 50)
@@ -313,113 +298,7 @@ namespace FougeraClub.Areas.Admin.Controllers
             return View(SalaryReportVM);
         }
 
-        [IgnoreAction]
-        [HttpPost]
-        public async Task<IActionResult> ValidateOtp_OpenDetails_payrollReportReport([FromBody] OtpValidationRequest request)
-        {
-            // request: { year, month, code, role }
-            var result = await _salaryManagementService.ValidateOtp_OpenDetails_payrollReportAsync(request.Year.Value, request.Month.Value, request.Code, request.Role, User);
-            var report = await _unitOfWork.SalaryReportSigns.GetByColumnAsync(
-                e => e.Year == request.Year && e.Month == request.Month && e.ReportSalaryTypeId == (int)ReportSalaryTypeEnum.SalaryReport);
-            //var report = await _expenseService.get
-            if (result.success == true)
-            {
-                if (request.Role == "Acountant")
-                {
-                    await _hubContext.Clients.Groups("Manager")
-                        .SendAsync("ReceiveNotification", new
-                        {
-                            Title = "",
-                            Message = ""
-                        });
-                    await _notificationService.SendNotificationToRoleAsync(
-                          "تقرير للرواتب والاجور جديد",
-                          $"يوجد تقرير للرواتب والاجور تاريخ {report?.Month + " - " + report?.Year} جديد جاهز للإعتماد",
-                          (int)RoleNumber.Manager
-                      );
-                }
-            }
-            return Json(new { success = result.success, message = result.message });
-        }
-
-        //[IgnoreAction]
-        //[YesGet]
-        //public async Task<IActionResult> PrintpayrollReport(int? selectedEmployee, int? selectedYear, int? selectedMonth, int page = 1, int pageSize = 50)
-        //{
-        //    var allSalaryManagement = await _salaryManagementService.GetAllAsync();
-        //    var allYears = await _unitOfWork.SalaryManagements.Table.Select(x => x.Year).Distinct().Where(x => x != null).OrderByDescending(x => x).ToListAsync();
-        //    ViewBag.allYears = allYears;
-        //    ViewBag.selectedYear = selectedYear;
-        //    var allEmployeesNames = await _salaryManagementService.GetAllEmplyeeNames();
-        //    ViewBag.EmployeesNames = allEmployeesNames;
-
-        //    var salaryManagementSingleVMs = _mapper.Map<List<SalaryManagementVM>>(allSalaryManagement).OrderByDescending(x => x.EmployeeId).ThenByDescending(x => x.Year).ThenByDescending(x => x.Month).AsQueryable();
-
-        //    if (selectedEmployee != null)
-        //    {
-        //        salaryManagementSingleVMs = salaryManagementSingleVMs.Where(s =>
-        //            (s.EmployeeId == selectedEmployee)
-        //        );
-        //    }
-        //    if (selectedYear != null)
-        //    {
-        //        salaryManagementSingleVMs = salaryManagementSingleVMs.Where(s =>
-        //            (s.Year == selectedYear)
-        //        );
-        //    }
-        //    if (selectedMonth != null)
-        //    {
-        //        salaryManagementSingleVMs = salaryManagementSingleVMs.Where(s =>
-        //            (s.Month == selectedMonth)
-        //        );
-        //    }
-        //    var lang = SessionHelper.GetCurrentLanguage();
-
-        //    ViewBag.PrintInnerTitle = Resource1.AlFujairScientificClubSalariesRevealedfor  + " "  + (selectedMonth != null ? CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(selectedMonth.Value) : "") + " " + (selectedYear != null ? selectedYear.ToString() : "") +" " + (selectedEmployee != null ? (lang == "ar" ? allEmployeesNames?.Where(y => y.Id == selectedEmployee)?.FirstOrDefault()?.FullNameAr : allEmployeesNames?.Where(y => y.Id == selectedEmployee)?.FirstOrDefault()?.FullNameEn) : "");
-        //    ViewBag.TotalCount = salaryManagementSingleVMs.Count();
-
-        //    return View(salaryManagementSingleVMs);
-        //}
-
-        //[IgnoreAction]
-        //[YesGet]
-        //public async Task<IActionResult> PrintDiscountsAndBonusesReport(int? selectedEmployee, int? selectedYear, int? selectedMonth, int page = 1, int pageSize = 50)
-        //{
-        //    var allSalaryManagement = await _salaryManagementService.GetAllAsync();
-        //    var allYears = await _unitOfWork.SalaryManagements.Table.Select(x => x.Year).Distinct().Where(x => x != null).OrderByDescending(x => x).ToListAsync();
-        //    ViewBag.allYears = allYears;
-        //    ViewBag.selectedYear = selectedYear;
-        //    var allEmployeesNames = await _salaryManagementService.GetAllEmplyeeNames();
-        //    ViewBag.EmployeesNames = allEmployeesNames;
-
-        //    var salaryManagementSingleVMs = _mapper.Map<List<SalaryManagementVM>>(allSalaryManagement).OrderByDescending(x => x.EmployeeId).ThenByDescending(x => x.Year).ThenByDescending(x => x.Month).AsQueryable();
-
-        //    if (selectedEmployee != null)
-        //    {
-        //        salaryManagementSingleVMs = salaryManagementSingleVMs.Where(s =>
-        //            (s.EmployeeId == selectedEmployee)
-        //        );
-        //    }
-        //    if (selectedYear != null)
-        //    {
-        //        salaryManagementSingleVMs = salaryManagementSingleVMs.Where(s =>
-        //            (s.Year == selectedYear)
-        //        );
-        //    }
-        //    if (selectedMonth != null)
-        //    {
-        //        salaryManagementSingleVMs = salaryManagementSingleVMs.Where(s =>
-        //            (s.Month == selectedMonth)
-        //        );
-        //    }
-        //    var lang = SessionHelper.GetCurrentLanguage();
-        //    ViewBag.PrintInnerTitle = Resource1.ReportDiscountsAndBonusesFor + " " + (selectedMonth != null ? CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(selectedMonth.Value) : "") + " " + (selectedYear != null ? selectedYear.ToString() : "") + " " + (selectedEmployee != null ? (lang == "ar" ? allEmployeesNames?.Where(y => y.Id == selectedEmployee)?.FirstOrDefault()?.FullNameAr : allEmployeesNames?.Where(y => y.Id == selectedEmployee)?.FirstOrDefault()?.FullNameEn) : "");
-
-        //    ViewBag.TotalCount = salaryManagementSingleVMs.Count();
-
-        //    return View(salaryManagementSingleVMs);
-        //}
-
+   
         [YesGet]
         public async Task<IActionResult> OpenDetails_DiscountsAndBonusesReport(int? selectedEmployee, int? selectedYear, int? selectedMonth, int page = 1, int pageSize = 50)
         {
@@ -477,34 +356,34 @@ namespace FougeraClub.Areas.Admin.Controllers
             return View(SalaryReportVM);
         }
 
-        [IgnoreAction]
-        [HttpPost]
-        public async Task<IActionResult> ValidateOtp_OpenDetails_DiscountsAndBonusesReport([FromBody] OtpValidationRequest request)
-        {
-            // request: { year, month, code, role }
-            var result = await _salaryManagementService.ValidateOtp_OpenDetails_DiscountsAndBonusesReportAsync(request.Year.Value, request.Month.Value, request.Code, request.Role, User);
-            var report = await _unitOfWork.SalaryReportSigns.GetByColumnAsync(
-                e => e.Year == request.Year && e.Month == request.Month && e.ReportSalaryTypeId == (int)ReportSalaryTypeEnum.DiscountsAndBonusesReport);
-            //var report = await _expenseService.get
-            if (result.success == true)
-            {
-                if (request.Role == "Acountant")
-                {
-                    await _hubContext.Clients.Groups("Manager")
-                        .SendAsync("ReceiveNotification", new
-                        {
-                            Title = "",
-                            Message = ""
-                        });
-                    await _notificationService.SendNotificationToRoleAsync(
-                          "تقرير للخصومات والعلاوات جديد",
-                          $"يوجد تقرير للخصومات والعلاوات تاريخ {report?.Month + " - " + report?.Year} جديد جاهز للإعتماد",
-                          (int)RoleNumber.Manager
-                      );
-                }
-            }
-            return Json(new { success = result.success, message = result.message });
-        }
+        //[IgnoreAction]
+        //[HttpPost]
+        //public async Task<IActionResult> ValidateOtp_OpenDetails_DiscountsAndBonusesReport([FromBody] OtpValidationRequest request)
+        //{
+        //    // request: { year, month, code, role }
+        //    var result = await _salaryManagementService.ValidateOtp_OpenDetails_DiscountsAndBonusesReportAsync(request.Year.Value, request.Month.Value, request.Code, request.Role, User);
+        //    var report = await _unitOfWork.SalaryReportSigns.GetByColumnAsync(
+        //        e => e.Year == request.Year && e.Month == request.Month && e.ReportSalaryTypeId == (int)ReportSalaryTypeEnum.DiscountsAndBonusesReport);
+        //    //var report = await _expenseService.get
+        //    if (result.success == true)
+        //    {
+        //        if (request.Role == "Acountant")
+        //        {
+        //            await _hubContext.Clients.Groups("Manager")
+        //                .SendAsync("ReceiveNotification", new
+        //                {
+        //                    Title = "",
+        //                    Message = ""
+        //                });
+        //            await _notificationService.SendNotificationToRoleAsync(
+        //                  "تقرير للخصومات والعلاوات جديد",
+        //                  $"يوجد تقرير للخصومات والعلاوات تاريخ {report?.Month + " - " + report?.Year} جديد جاهز للإعتماد",
+        //                  (int)RoleNumber.Manager
+        //              );
+        //        }
+        //    }
+        //    return Json(new { success = result.success, message = result.message });
+        //}
 
         [IgnoreAction]
         [YesGet]

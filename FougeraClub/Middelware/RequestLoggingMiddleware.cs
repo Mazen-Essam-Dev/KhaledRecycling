@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 
-namespace FougeraClub.Middelware
+namespace KhaledTeamRecycling.Middelware
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class NoLoggingAttribute : Attribute

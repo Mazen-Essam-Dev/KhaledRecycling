@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FougeraClub.Areas.Admin.ViewModels.MaterialOrder;
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.MaterialOrder;
 
 public class MaterialOrderVM
 {

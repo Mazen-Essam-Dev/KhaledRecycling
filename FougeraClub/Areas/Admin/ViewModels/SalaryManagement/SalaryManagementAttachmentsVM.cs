@@ -1,4 +1,4 @@
-namespace FougeraClub.Areas.Admin.ViewModels.SalaryManagement
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement
 {
     public class SalaryManagementAttachmentsVM
     {

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using FougeraClub.Areas.Admin.ViewModels.Account;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Account;
 using Infrastructure.Identity;
 
-namespace FougeraClub.Areas.Admin.Mappings
+namespace KhaledTeamRecycling.Areas.Admin.Mappings
 {
     public class AdminProfile : Profile
     {

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Domain.Entities;
-using FougeraClub.Areas.Admin.ViewModels.Member;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Member;
 
-namespace FougeraClub.Areas.Admin.Mappings
+namespace KhaledTeamRecycling.Areas.Admin.Mappings
 {
     public class MemberProfile : Profile
     {

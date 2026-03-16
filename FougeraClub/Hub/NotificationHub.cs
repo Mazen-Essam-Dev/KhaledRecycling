@@ -1,8 +1,8 @@
 ﻿using Domain.Enums;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Helpers;
 using Microsoft.AspNetCore.SignalR;
 
-namespace FougeraClub.Hub
+namespace KhaledTeamRecycling.Hub
 {
     public class NotificationHub : Microsoft.AspNetCore.SignalR.Hub
     {

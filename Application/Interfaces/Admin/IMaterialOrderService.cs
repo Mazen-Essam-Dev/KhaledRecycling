@@ -1,5 +1,4 @@
 ﻿using Azure.Core;
-using Domain.DTOs.Admin.Car;
 using Domain.Entities;
 using Domain.Entities.MaterialOrder;
 
@@ -8,7 +7,6 @@ namespace Application.Interfaces.Admin
     public interface IMaterialOrderService
     {
         Task<IEnumerable<MaterialOrder>> GetAllAsync();
-        Task<IEnumerable<Supplier>> GetAllSuppliersAsync();
         Task<string> GetNewCodeAsync();
         Task<MaterialOrder?> GetByIdAsync(int id);
         Task<IEnumerable<int>> GetAllYearsInDb();
@@ -16,8 +14,8 @@ namespace Application.Interfaces.Admin
         Task UpdateAsync(MaterialOrder entity);
         Task DeleteAsync(int id);
         Task<bool> CheckIsMonthRegistedBefore(int id,DateOnly? dateOnly);
-        Task<bool> SendOtpAsync();
-        Task<(bool success, string? message)> ValidateOtpAsync(int id, string code, string role);
+        //Task<bool> SendOtpAsync();
+        //Task<(bool success, string? message)> ValidateOtpAsync(int id, string code, string role);
 
     }
 

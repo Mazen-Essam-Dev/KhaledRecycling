@@ -1,7 +1,7 @@
 ﻿using Domain.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FougeraClub.Areas.Admin.ViewModels.SalaryManagement
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement
 {
     public class SalaryReportVM
     {

@@ -1,7 +1,7 @@
-﻿using FougeraClub.Filters;
+﻿using KhaledTeamRecycling.Filters;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FougeraClub.Attributes
+namespace KhaledTeamRecycling.Attributes
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public class AdminAuthorizeAttribute : TypeFilterAttribute

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Domain.DTOs.Admin.Employees;
 using Domain.Entities.Employees;
-using FougeraClub.Areas.Admin.ViewModels.Employees;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Employees;
 
-namespace FougeraClub.Areas.Admin.Mappings
+namespace KhaledTeamRecycling.Areas.Admin.Mappings
 {
     public class EmployeeProfile : Profile
     {

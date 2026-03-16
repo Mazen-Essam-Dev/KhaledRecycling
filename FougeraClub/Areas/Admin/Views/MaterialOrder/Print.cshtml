@@ -1,6 +1,5 @@
 ﻿@model IEnumerable<MaterialOrderVM>
-@using FougeraClub.Areas.Admin.ViewModels.MonthlyAdministrativeReport
-@using FougeraClub.Areas.Admin.ViewModels.MaterialOrder
+@using KhaledTeamRecycling.Areas.Admin.ViewModels.MaterialOrder
 @using Infrastructure.Identity
 @using Microsoft.AspNetCore.Identity
 @inject UserManager<ApplicationUser> UserManager
@@ -9,7 +8,6 @@
     Layout = null; // No layout for print view
     var currentUser = await UserManager.GetUserAsync(User);
     var currentUserName = currentUser?.UserName ?? "Unknown User";
-    var suppliers = ViewBag.suppliers as IEnumerable<Domain.Entities.Supplier>;
     ViewData["Title"] = @Resource1.MaterialOrderList ?? " ";
 
     var AllUserNamesList = ViewBag.UsersList as IEnumerable<SelectListItem>;
@@ -62,7 +60,7 @@
         </div>
         <div class="flex-fill text-center">
             <center>
-                <img src="/ar/assets/images/logo-ar.png" alt="نادى الفجيره العلمى" style="width:75px;">
+                <img src="/assets/images/logo.png" alt="نادى الفجيره العلمى" style="width:75px;">
             </center>
         </div>
         <div class="d-flex justify-content-end align-items-center flex-fill">

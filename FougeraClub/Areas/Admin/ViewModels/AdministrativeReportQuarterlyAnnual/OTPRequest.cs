@@ -1,7 +1,7 @@
 ﻿using Domain.Enums;
-using FougeraClub.Areas.Admin.ViewModels.SMS;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.SMS;
 
-namespace FougeraClub.Areas.Admin.ViewModels.AdministrativeReportQuarterlyAnnual
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.AdministrativeReportQuarterlyAnnual
 {
     public class OTPRequest : OtpValidationRequest
     {

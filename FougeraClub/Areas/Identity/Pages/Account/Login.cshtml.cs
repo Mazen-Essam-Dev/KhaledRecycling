@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Identity.Pages.Account
+namespace KhaledTeamRecycling.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
     {

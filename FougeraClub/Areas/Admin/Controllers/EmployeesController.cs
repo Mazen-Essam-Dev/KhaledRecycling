@@ -6,15 +6,15 @@ using Domain.DTOs;
 using Domain.DTOs.Admin.Employees;
 using Domain.Entities.Employees;
 using Domain.Resources;
-using FougeraClub.Areas.Admin.ViewModels.Employees;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Employees;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [AdminAuthorize]
     [Area("Admin")]

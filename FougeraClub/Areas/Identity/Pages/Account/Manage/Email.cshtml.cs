@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace FougeraClub.Areas.Identity.Pages.Account.Manage
+namespace KhaledTeamRecycling.Areas.Identity.Pages.Account.Manage
 {
     public class EmailModel : PageModel
     {

@@ -1,15 +1,13 @@
 ﻿using Domain.Entities;
 using Domain.Resources;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Helpers;
 using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Activity;
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Activity;
 
 
 public class ActivityVM : IValidatableObject
 {
-    public IEnumerable<Question> Questions { get; set; } = new List<Question>();
 
     public int Id { get; set; }
 

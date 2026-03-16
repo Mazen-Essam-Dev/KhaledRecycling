@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace FougeraClub.Areas.Identity.Pages.Account
+namespace KhaledTeamRecycling.Areas.Identity.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {

@@ -1,4 +1,4 @@
-﻿namespace FougeraClub.Areas.Admin.ViewModels.Course;
+﻿namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Course;
 
 public class CertificateVM
 {

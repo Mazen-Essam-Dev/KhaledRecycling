@@ -1,11 +1,11 @@
 ﻿using Domain.Resources;
-using FougeraClub.Attributes;
+using KhaledTeamRecycling.Attributes;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Account
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Account
 {
     public class AdminVM
     {

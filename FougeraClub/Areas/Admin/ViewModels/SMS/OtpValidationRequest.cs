@@ -1,4 +1,4 @@
-﻿namespace FougeraClub.Areas.Admin.ViewModels.SMS
+﻿namespace KhaledTeamRecycling.Areas.Admin.ViewModels.SMS
 {
     public class OtpValidationRequest
     {

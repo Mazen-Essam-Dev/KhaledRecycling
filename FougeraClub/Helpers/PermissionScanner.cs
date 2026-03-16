@@ -1,12 +1,12 @@
 ﻿using Domain.Enums;
-using FougeraClub.Attributes;
+using KhaledTeamRecycling.Attributes;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
 
-namespace FougeraClub.Helpers
+namespace KhaledTeamRecycling.Helpers
 {
     public class PermissionScanner
     {
@@ -97,11 +97,7 @@ namespace FougeraClub.Helpers
             int ThisTrainerId = 0;
             if (UserEMail == null) return false;
             var ThisUser = await _unitOfWork.Users.GetByIdAsync(x => x.UserName == UserEMail);
-            if (ThisUser != null)
-            {
-                var ThisTrainer = await _unitOfWork.Trainers.GetByIdAsync(x => x.UserId == ThisUser.Id);
-                if (ThisTrainer != null) ThisTrainerId = ThisTrainer.Id;
-            }
+
             if (ThisTrainerId > 0) return true;
 
             return false;

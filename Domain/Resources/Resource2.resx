@@ -369,8 +369,8 @@
   <data name="Employee" xml:space="preserve">
     <value>Employee</value>
   </data>
-  <data name="FougeraClub" xml:space="preserve">
-    <value>FUJAIRAH SCIENCE CLUB</value>
+  <data name="KhaledTeamRecycling" xml:space="preserve">
+    <value>Khaled Team Recycling</value>
   </data>
   <data name="Position" xml:space="preserve">
     <value>Position</value>
@@ -1174,8 +1174,8 @@
   <data name="ApprovalDisbursementRequest" xml:space="preserve">
     <value>Approval of disbursement request</value>
   </data>
-  <data name="FougeraClubManagementSystem" xml:space="preserve">
-    <value>Fougera Club Management System</value>
+  <data name="KhaledTeamRecyclingManagementSystem" xml:space="preserve">
+    <value>Khaled Team Recycling System</value>
   </data>
   <data name="CantDeleteTrainer" xml:space="preserve">
     <value>Can't delete trainer because he is related to courses</value>

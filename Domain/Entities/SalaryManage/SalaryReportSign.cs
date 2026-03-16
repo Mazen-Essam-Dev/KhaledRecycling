@@ -1,5 +1,4 @@
-﻿using Domain.Entities.ExpenseAndReceipt;
-using Domain.Enums;
+﻿using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,7 +11,7 @@ namespace Domain.Entities.SalaryManage
         public int Id { get; set; }
         public int? ReportSalaryTypeId { get; set; }
         [ForeignKey(nameof(ReportSalaryTypeId))]
-        public virtual ReportSalaryType? ReportSalaryType { get; set; }
+        //public virtual ReportSalaryType? ReportSalaryType { get; set; }
         public int? Month { get; set; }
         public int? Year { get; set; }
         public int? AcountantSignatureId { get; set; }

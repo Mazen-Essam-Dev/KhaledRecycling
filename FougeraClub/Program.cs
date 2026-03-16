@@ -1,8 +1,8 @@
-﻿using FougeraClub.Areas.Admin.Mappings;
-using FougeraClub.Extensions;
-using FougeraClub.Hub;
-using FougeraClub.Middelware;
-using FougeraClub.Seeders;
+﻿using KhaledTeamRecycling.Areas.Admin.Mappings;
+using KhaledTeamRecycling.Extensions;
+using KhaledTeamRecycling.Hub;
+using KhaledTeamRecycling.Middelware;
+using KhaledTeamRecycling.Seeders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +16,7 @@ builder.Services.AddAuthentication("MyCookieAuth")
 
 
 // 🧠 AutoMapper Setup (fix: use typeof(Profile) not .Assembly)
-builder.Services.AddAutoMapper(typeof(EngineerProfile)); // ✅ Works if profile is in WebUI
+builder.Services.AddAutoMapper(typeof(MemberProfile)); // ✅ Works if profile is in WebUI
 
 // 📦 Register Infrastructure Services (e.g., DbContext, Repositories, Identity)
 builder.Services.AddInfrastructure(builder.Configuration);

@@ -2,7 +2,7 @@
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 
-namespace FougeraClub.Extensions
+namespace KhaledTeamRecycling.Extensions
 {
     public static class IdentityExtensions
     {

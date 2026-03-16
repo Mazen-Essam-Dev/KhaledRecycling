@@ -58,15 +58,15 @@ namespace Application.Services.Admin
                         workbook_Ar.Worksheets.Delete("Sheet1");
 
                     IXLWorksheet? worksheet;
-                    if (sheets == null || sheets.Count == 0 || !sheets.Any(x => x.Name == "FougeraClubReport"))
+                    if (sheets == null || sheets.Count == 0 || !sheets.Any(x => x.Name == "KhaledTeamRecyclingReport"))
                     {
                         //or create a new sheet
-                        worksheet = workbook_Ar.AddWorksheet("FougeraClubReport");
+                        worksheet = workbook_Ar.AddWorksheet("KhaledTeamRecyclingReport");
                     }
                     else
                     {
                         // Get the required sheet (or add a new sheet if it doesn't exist)
-                        worksheet = workbook_Ar.Worksheets.Worksheet("FougeraClubReport");
+                        worksheet = workbook_Ar.Worksheets.Worksheet("KhaledTeamRecyclingReport");
                     }
 
                     //// Write to specific cells

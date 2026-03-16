@@ -3,9 +3,9 @@ using AutoMapper;
 using Domain.DTOs;
 using Domain.DTOs.Member.Account;
 using Domain.Entities;
-using FougeraClub.Areas.Member.ViewModels;
+using KhaledTeamRecycling.Areas.Member.ViewModels;
 
-namespace FougeraClub.Areas.Member.Mappings
+namespace KhaledTeamRecycling.Areas.Member.Mappings
 {
     public class MemberProfile : Profile
     {
@@ -14,14 +14,12 @@ namespace FougeraClub.Areas.Member.Mappings
             CreateMap<MemberEditVM, MemberEntity>()
                 .ForMember(dest => dest.Nationality, opt => opt.Ignore()) // Ignore navigation properties
                 .ForMember(dest => dest.MemberType, opt => opt.Ignore()) // Ignore navigation properties
-                .ForMember(dest => dest.Subscriptions, opt => opt.Ignore()) // Ignore collections
                                                                             //.ForMember(dest => dest.RegistrationDate, opt => opt.MapFrom(src => AppDubaiTime.ConvertToDubai(src.Da)))
                 .ReverseMap();
 
             CreateMap<MemberRegisterVM, MemberEntity>()
                 .ForMember(dest => dest.Nationality, opt => opt.Ignore()) // Ignore navigation properties
                 .ForMember(dest => dest.MemberType, opt => opt.Ignore()) // Ignore navigation properties
-                .ForMember(dest => dest.Subscriptions, opt => opt.Ignore()) // Ignore collections
                 .ForMember(dest => dest.Password, opt => opt.MapFrom(src => HashHelper.ComputeSha256Hash(src.Password)))
                 .ReverseMap();
 

@@ -1,4 +1,4 @@
-﻿@model HomeActivityCourseVM
+﻿@* @model HomeActivityCourseVM
 
 @{
     ViewData["Title"] = Resource1.MasterPage;
@@ -129,13 +129,7 @@
 
                                                     </a>
                                                 </li>
-                                                @* <li data-bs-toggle="tooltip" data-bs-placement="top"
-                                                    data-bs-custom-class="custom-tooltip"
-                                                    data-bs-title="@Resource1.Finished_course">
-                                                    <div class="icon-bg"  style="cursor: pointer;">
-                                                        <i class="fa-solid fa-circle-check"></i>
-                                                    </div>
-                                                </li> *@
+                                            
                                             }
 
                                         </ul> 
@@ -216,7 +210,6 @@
                                         }
                                     }
                                     <td>@(lang == "ar" ? item.TitleAr : item.TitleEn)</td>
-                                    @* <td>@($"{Resource2.Above} {item.MinimumAge} {Resource1.Year1}")</td> *@
                                     <td>@($"{item.MinimumAge}")</td>
                                     <td>@item.Location</td>
                                     <td>
@@ -239,14 +232,7 @@
                                                 <li data-bs-toggle="tooltip" data-bs-placement="top"
                                                     data-bs-custom-class="custom-tooltip"
                                                     data-bs-title="@Resource3.Subscription">
-                                                    @* @if (!item.Subscribed)
-                                                    {
-                                                        <a asp-controller="Activity" asp-action="Subscribe" asp-route-id="@item.Id">
-                                                            <div class="icon-bg" style="cursor: pointer; ">
-                                                                <i class="fa-solid fa-file-signature"></i>
-                                                            </div>
-                                                        </a>
-                                                    } *@
+                        
                                                     @if (!item.Subscribed && item.EndDate != null && item.EndDate > DateOnly.FromDateTime(AppDubaiTime.Now.Date))
                                                     {
 
@@ -673,4 +659,4 @@
         </script>
     }
 
-}
+} *@

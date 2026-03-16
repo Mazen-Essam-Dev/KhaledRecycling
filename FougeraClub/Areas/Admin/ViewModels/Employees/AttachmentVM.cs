@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Employees
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Employees
 {
     public class AttachmentVM
     {

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 
 
-namespace FougeraClub.Extensions
+namespace KhaledTeamRecycling.Extensions
 {
     public static class LocalizationExtensions
     {

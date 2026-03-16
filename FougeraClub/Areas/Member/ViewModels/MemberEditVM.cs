@@ -2,14 +2,14 @@
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FougeraClub.Areas.Member.ViewModels
+namespace KhaledTeamRecycling.Areas.Member.ViewModels
 {
     public class MemberEditVM : IValidatableObject
     {

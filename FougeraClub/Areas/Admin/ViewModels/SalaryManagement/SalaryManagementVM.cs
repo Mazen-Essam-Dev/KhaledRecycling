@@ -1,12 +1,12 @@
 ﻿using Domain.Entities.Employees;
 using Domain.HelperForDomain;
 using Domain.Resources;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Helpers;
 using Humanizer;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FougeraClub.Areas.Admin.ViewModels.SalaryManagement;
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement;
 
 public class SalaryManagementVM
 {

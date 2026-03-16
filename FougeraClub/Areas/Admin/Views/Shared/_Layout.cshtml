@@ -71,7 +71,7 @@
 
 }
 @{
-    ViewData["Title"] = (ViewData["Title"] != null) ? ViewData["Title"] : Resource2.FougeraClubManagementSystem;
+    ViewData["Title"] = (ViewData["Title"] != null) ? ViewData["Title"] : Resource2.KhaledTeamRecyclingManagementSystem;
 }
 @using Application.Interfaces.Admin
 @using Domain.Resources
@@ -90,7 +90,7 @@
     <!-- Font-Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- App icon besid Title in Tab -->
-    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+    <link rel="shortcut icon" href="~/assets/images/logo_only.png">
     <link href="~/css/index.css" rel="stylesheet" />
     <link href="~/css/admin-overrides.css" rel="stylesheet" />
     <!-- Vendor css -->
@@ -180,10 +180,13 @@
                 <i class="ri-menu-5-line"></i>
             </button>
             <a class="navbar-brand" href="/Admin/Home/Index">
-                <img src="~/ar/assets/images/logo-ar.png" alt="Logo" />
+                <img src="~/assets/images/logo_only.png" width="55" alt="Logo" />
             </a>
-            <h4 class="navbar-title">
-                رفاد  للنظام الإداري والمالي لنادي الفجيرة العلمي
+            <div class="navbar-brand" >
+                <img src="~/assets/images/logo_TextOnly.png" style="margin-inline-start: -17px !important;" alt="Logo" />
+            </div>
+            <h4 class="navbar-title" style="color:#050562">
+                الموقع الرسمي لإعادة التدوير
             </h4>
         </div>
 
@@ -306,8 +309,7 @@
                         {
                             @inject IUnitOfWork _unitOfWork
 
-                            var data = await _unitOfWork.Subscriptions.GetAllAsync();
-                            var count = data.Where(d => d.SubscribedInType == SubscriptionType.Course && d.Acceptance == null).Count();
+                            var count = 0;
                             <li class="side-nav-item @IsActiveBG("Course", "SubscribedMembersInCourses")">
                                 <a href="/Admin/Course/SubscribedMembersInCourses" class="side-nav-link">
                                     <span class="menu-icon"><i class="ri-book-marked-fill"></i></span>
@@ -1176,13 +1178,13 @@
 
                     <!-- Left-aligned copyright -->
                     <div class="col-md-auto mb-2 mb-md-0">
-                        <small class="text-muted">نادي الفجيرة العلمي © 2026 - 2023 جميع الحقوق محفوظة</small>
+                        <small class="text-muted"> © 2026 جميع الحقوق محفوظة</small>
                     </div>
 
                     <!-- Right-aligned logo -->
                     <div class="col-md-auto d-flex justify-content-center justify-content-md-end align-items-center gap-2">
                         <small class="text-muted">Powered by</small>
-                        <a href="https://esmart-vision.com/" target="_blank" class="text-decoration-none"> <img src="~/ar/assets/images/foter-logo-co.png" alt="logo" class="footer-logo" style="height:28px;"></a>
+                        <a href="#" target="_self" class="text-decoration-none"> <img src="~/assets/images/logo_TextOnly.png" alt="logo" class="footer-logo" style="height:28px;"></a>
                     </div>
 
                 </div>

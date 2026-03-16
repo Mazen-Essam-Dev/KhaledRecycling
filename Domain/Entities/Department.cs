@@ -12,7 +12,6 @@ public class Department
 
     [MaxLength(200)]
     public string? NameEn { get; set; }
-    public virtual ICollection<Course> Courses { get; set; } = new List<Course>();
     public virtual ICollection<MemberEntity> Members { get; set; } = new List<MemberEntity>();
 
 }

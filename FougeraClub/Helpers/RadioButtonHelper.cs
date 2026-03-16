@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
-namespace FougeraClub.Helpers
+namespace KhaledTeamRecycling.Helpers
 {
     public static class RadioButtonHelper
     {

@@ -6,18 +6,17 @@ using Domain.DTOs;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Admin.ViewModels.Course;
-using FougeraClub.Areas.Admin.ViewModels.Member;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Member;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [AdminAuthorize]
     [Area("Admin")]
@@ -26,15 +25,13 @@ namespace FougeraClub.Areas.Admin.Controllers
         private readonly IMemberService _memberService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly ICourseService _courseService;
 
 
-        public MemberController(IMemberService MemberService, IUnitOfWork unitOfWork, IMapper mapper, ICourseService courseService)
+        public MemberController(IMemberService MemberService, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _memberService = MemberService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _courseService = courseService;
         }
         [YesGet]
         public async Task<IActionResult> Index(string? searchTerm, int? selectedMemberType, int? selectedNationality, int? selectedGender, DateOnly? dateFrom, DateOnly? dateTo, int page = 1, int pageSize = 50)
@@ -44,10 +41,6 @@ namespace FougeraClub.Areas.Admin.Controllers
             var allMembers = await _memberService.GetAllAsync();
             var memberVMs = _mapper.Map<List<MemberVM>>(allMembers).AsQueryable();
 
-            foreach (var m in memberVMs)
-            {
-                m.HasCourses = await _memberService.MemberHasCourses(m.Id);
-            }
 
             #region search by word
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -116,30 +109,7 @@ namespace FougeraClub.Areas.Admin.Controllers
             return View(paginated);
         }
 
-        [IgnoreAction]
-        public async Task<IActionResult> GetCourse(int id)
-        {
-            var course = await _unitOfWork.Courses.GetByIdAsync(id);
-            if (course == null)
-            {
-                return NotFound();
-            }
-            var Department = await _unitOfWork.Departments.GetByIdAsync(x => x.Id == course.DepartmentId);
-
-            if (!FileHelper.IsFileExist(course.AttachmentPath)) course.AttachmentPath = null;
-
-            return Json(new
-            {
-                id = course.Id,
-                department = SessionHelper.GetCurrentLanguage() == "ar" ? Department?.NameAr : Department?.NameEn,
-                title = SessionHelper.GetCurrentLanguage() == "ar" ? course.TitleAr : course.TitleEn,
-                startDate = course.StartDate?.ToString("d")?.Replace("/","-"),
-                endDate = course.EndDate?.ToString("d")?.Replace("/","-"),
-                location = course.Location,
-                description = course.Description,
-                attachmentPath = course.AttachmentPath?.Replace("~", "")
-            });
-        }
+ 
 
         public async Task<IActionResult> AddEdit(int? id)
         {
@@ -457,44 +427,7 @@ namespace FougeraClub.Areas.Admin.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-        [YesGet]
-        public async Task<IActionResult> MemberCourses(int memberId, int page = 1, int pageSize = 50)
-        {
-            var courses = await _courseService.GetAllCoursesOfMemberAsync(memberId);
-            var member = await _memberService.GetByIdAsync(memberId);
-
-            ViewBag.MemberName = SessionHelper.GetCurrentLanguage() == "ar" ? member?.FullNameAr : member?.FullNameEn;
-            ViewBag.memberId = memberId;
-
-            var coursesVM = _mapper.Map<List<CourseVM>>(courses?.ToList());
-            var paginated = PaginatedList<CourseVM>.Create(coursesVM, page, pageSize, null);
-            // Compose view model
-            var MemberCoursesVM = new MemberCoursesVM
-            {
-                Paginated = paginated,
-                memberId = memberId
-            };
-
-            // Calling from Ajax Return PartialView
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return PartialView("_ListPartialMemberCourses", MemberCoursesVM);
-            }
-            return View(MemberCoursesVM);
-        }
-
-        [IgnoreAction]
-        [YesGet]
-        public async Task<IActionResult> MemberCourseDetails(int id)
-        {
-            var course = await _courseService.GetByIdAsync(id);
-            if (course == null)
-                return NotFound();
-
-            var model = _mapper.Map<CourseVM>(course);
-            return PartialView("_MemberCourseDetailsPartial", model);
-        }
-
+   
 
         [IgnoreAction]
         [YesGet]
@@ -658,81 +591,69 @@ namespace FougeraClub.Areas.Admin.Controllers
             }
         }
 
-        [IgnoreAction]
-        [YesGet]
-        public async Task<IActionResult> PrintMemberCourses(int memberId)
-        {
-            //var memberId = Convert.ToInt32(TempData["memberId"]);
-            var courses = await _courseService.GetAllCoursesOfMemberAsync(memberId);
-            var member = await _memberService.GetByIdAsync(memberId);
-
-            ViewBag.MemberName = SessionHelper.GetCurrentLanguage() == "ar" ? member?.FullNameAr : member?.FullNameEn;
-            var coursesVM = _mapper.Map<List<CourseVM>>(courses);
-            return View(coursesVM);
-        }
-
-        [IgnoreAction]
-        [YesGet]
-        public async Task<IActionResult> createExcelReport_Download_MemberCourse(int memberId)
-        {
-            // ---- Start Get Data As Print
-            //var memberId = Convert.ToInt32(TempData["memberId"]);
-            var courses = await _courseService.GetAllCoursesOfMemberAsync(memberId);
-            var member = await _memberService.GetByIdAsync(memberId);
-
-            ViewBag.MemberName = SessionHelper.GetCurrentLanguage() == "ar" ? member?.FullNameAr : member?.FullNameEn;
-            // ---- End Get Data As Print
-
-            var boolStatus = false;
-            byte[]? fileBytes = null;
-            var pathNewFile = "";
-            try
-            {
-
-                var lang = SessionHelper.GetCurrentLanguage();
-                //var allActivitys = await _ActivityService.GetAllAsync();
-                var allData_list = courses;
-                var ListTitles = new List<string>
-        {
-            Resource2.StartDate,Resource1.Department,Resource2.Location,Resource1.CourseTitle
-        };
-                if (allData_list != null || allData_list?.Count() > 0)
-                {
-                    var excelDataDTO = allData_list.Select(single => new ExcelDataDTO
-                    {
-                        t1 = single.StartDate.HasValue?(single.StartDate.Value.ToString("d")?.Replace("/","-")) :"",
-                        t2 = (single.Department !=null)? (lang == "ar" ? single.Department.NameAr : single.Department.NameEn):"",
-                        t3 = single.Location,
-                        t4 = (lang == "ar" ? single.TitleAr : single.TitleEn),
-                    }).ToList();
-
-                    if (lang == "ar")
-                    {
-                        (boolStatus, fileBytes) = ExcelStaticReport.ExcelReportArEn_(excelDataDTO, ListTitles, 0, "ar");
-                    }
-                    else
-                    {
-                        (boolStatus, fileBytes) = ExcelStaticReport.ExcelReportArEn_(excelDataDTO, ListTitles, 0, "en");
-                    }
-                }
-
-                FileContentResult? Excelfile = null;
-                if (fileBytes != null && fileBytes.Length > 0 && boolStatus == true)
-                {
-                    var fileExcelName = Resource2.CoursesOfMember +" : "+ ViewBag.MemberName;
-                    Excelfile = File(fileBytes,
-                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        $"{fileExcelName}_{AppDubaiTime.Now:yyyyMMdd_HHmmss}.xlsx");
-                }
-                return Excelfile;
 
 
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("Index");
-            }
-        }
+        //[IgnoreAction]
+        //[YesGet]
+        //public async Task<IActionResult> createExcelReport_Download_MemberCourse(int memberId)
+        //{
+        //    // ---- Start Get Data As Print
+        //    //var memberId = Convert.ToInt32(TempData["memberId"]);
+        //    var member = await _memberService.GetByIdAsync(memberId);
+
+        //    ViewBag.MemberName = SessionHelper.GetCurrentLanguage() == "ar" ? member?.FullNameAr : member?.FullNameEn;
+        //    // ---- End Get Data As Print
+
+        //    var boolStatus = false;
+        //    byte[]? fileBytes = null;
+        //    var pathNewFile = "";
+        //    try
+        //    {
+
+        //        var lang = SessionHelper.GetCurrentLanguage();
+        //        //var allActivitys = await _ActivityService.GetAllAsync();
+        //        var allData_list = new List<string>();
+        //        var ListTitles = new List<string>
+        //{
+        //    Resource2.StartDate,Resource1.Department,Resource2.Location,Resource1.CourseTitle
+        //};
+        //        if (allData_list != null || allData_list?.Count() > 0)
+        //        {
+        //            var excelDataDTO = allData_list.Select(single => new ExcelDataDTO
+        //            {
+        //                t1 = single.StartDate.HasValue?(single.StartDate.Value.ToString("d")?.Replace("/","-")) :"",
+        //                t2 = (single.Department !=null)? (lang == "ar" ? single.Department.NameAr : single.Department.NameEn):"",
+        //                t3 = single.Location,
+        //                t4 = (lang == "ar" ? single.TitleAr : single.TitleEn),
+        //            }).ToList();
+
+        //            if (lang == "ar")
+        //            {
+        //                (boolStatus, fileBytes) = ExcelStaticReport.ExcelReportArEn_(excelDataDTO, ListTitles, 0, "ar");
+        //            }
+        //            else
+        //            {
+        //                (boolStatus, fileBytes) = ExcelStaticReport.ExcelReportArEn_(excelDataDTO, ListTitles, 0, "en");
+        //            }
+        //        }
+
+        //        FileContentResult? Excelfile = null;
+        //        if (fileBytes != null && fileBytes.Length > 0 && boolStatus == true)
+        //        {
+        //            var fileExcelName = Resource2.CoursesOfMember +" : "+ ViewBag.MemberName;
+        //            Excelfile = File(fileBytes,
+        //                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        //                $"{fileExcelName}_{AppDubaiTime.Now:yyyyMMdd_HHmmss}.xlsx");
+        //        }
+        //        return Excelfile;
+
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return RedirectToAction("Index");
+        //    }
+        //}
         [IgnoreAction]
         [YesGet]
         public async Task<IActionResult> PrintDetails(int? id)

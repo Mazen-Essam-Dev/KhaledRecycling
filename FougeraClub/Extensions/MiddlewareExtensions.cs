@@ -1,10 +1,10 @@
 ﻿using Application.Helpers;
 using Application.Services.Admin;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using System.Globalization;
 
-namespace FougeraClub.Extensions
+namespace KhaledTeamRecycling.Extensions
 {
     public static class MiddlewareExtensions
     {

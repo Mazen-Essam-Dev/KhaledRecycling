@@ -19,7 +19,7 @@ namespace Domain.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resource2 {
@@ -1950,24 +1950,6 @@ namespace Domain.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FUJAIRAH SCIENCE CLUB.
-        /// </summary>
-        public static string FougeraClub {
-            get {
-                return ResourceManager.GetString("FougeraClub", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fougera Club Management System.
-        /// </summary>
-        public static string FougeraClubManagementSystem {
-            get {
-                return ResourceManager.GetString("FougeraClubManagementSystem", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to From.
         /// </summary>
         public static string From {
@@ -2306,6 +2288,24 @@ namespace Domain.Resources {
         public static string ItemTitle {
             get {
                 return ResourceManager.GetString("ItemTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Khaled Team Recycling.
+        /// </summary>
+        public static string KhaledTeamRecycling {
+            get {
+                return ResourceManager.GetString("KhaledTeamRecycling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Khaled Team Recycling System.
+        /// </summary>
+        public static string KhaledTeamRecyclingManagementSystem {
+            get {
+                return ResourceManager.GetString("KhaledTeamRecyclingManagementSystem", resourceCulture);
             }
         }
         

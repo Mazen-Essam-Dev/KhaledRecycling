@@ -1,7 +1,7 @@
 ﻿using Domain.Resources;
 using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Attributes;
+namespace KhaledTeamRecycling.Attributes;
 
 public class NotInThePastAttribute : ValidationAttribute
 {

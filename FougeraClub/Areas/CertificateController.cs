@@ -5,18 +5,19 @@ using AutoMapper;
 using DocumentFormat.OpenXml.Presentation;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Member.ViewModels;
-using FougeraClub.Helpers;
-using FougeraClub.Hub;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Member.ViewModels;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Hub;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Attributes;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using static System.Net.WebRequestMethods;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Course;
 
-namespace FougeraClub.Areas
+namespace KhaledTeamRecycling.Areas
 {
     [Route("[controller]/[action]")]
     public class CertificateController : Controller
@@ -24,8 +25,6 @@ namespace FougeraClub.Areas
         #region properties
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly Application.Interfaces.Member.ICourseService _courseService;
-        private readonly Application.Interfaces.Admin.ICourseService _courseAdminService;
         private readonly IMapper _mapper;
         private readonly IServiceProvider _serviceProvider;
 
@@ -33,15 +32,13 @@ namespace FougeraClub.Areas
         #endregion
 
         #region constructor
-        public CertificateController(IUnitOfWork UnitOfWork, IHttpContextAccessor httpContextAccessor,IServiceProvider serviceProvider, Application.Interfaces.Member.ICourseService courseService, IMapper mapper
-            , Application.Interfaces.Admin.ICourseService courseAdminService
+        public CertificateController(IUnitOfWork UnitOfWork, IHttpContextAccessor httpContextAccessor,IServiceProvider serviceProvider, IMapper mapper
+            
             )
         {
             _unitOfWork = UnitOfWork;
             _httpContextAccessor = httpContextAccessor;
-            _courseService = courseService;
             _mapper = mapper;
-            _courseAdminService = courseAdminService;
             _serviceProvider = serviceProvider;
         }
         #endregion
@@ -55,8 +52,7 @@ namespace FougeraClub.Areas
             var config = _serviceProvider.GetRequiredService<IConfiguration>();
             var CertificateURLWebsite = config["CertificateURL:BaseUrl"]; // must be set in appsettings.json or secrets
 
-            var data = await _courseAdminService.GetCertificateData(subscriptionId);
-            var model = _mapper.Map<Admin.ViewModels.Course.CertificateVM>(data);
+            var model = new Admin.ViewModels.Course.CertificateVM();
             var certificateSerialHashed = HashHelper.Encrypt(model.CertificateSerial??"0");
             string encodedCertificateSerialHashed = Uri.EscapeDataString(certificateSerialHashed); // save + , % وهكذا 
             model.CertificateSerialHashed = encodedCertificateSerialHashed;
@@ -71,7 +67,7 @@ namespace FougeraClub.Areas
         [YesGet]
         public async Task<IActionResult> CertificateVerified(string? serialHashed)
         {
-            var CertificateModel = new Admin.ViewModels.Course.CertificateVM();
+            var CertificateModel = new CertificateVM();
             if (string.IsNullOrEmpty(serialHashed))
             {
                 CertificateModel.IsValid = false;
@@ -79,14 +75,8 @@ namespace FougeraClub.Areas
             }
             string originalSerialHashed = Uri.UnescapeDataString(serialHashed); // retrive + , % وهكذا 
             var serialDecrypted = HashHelper.Decrypt(originalSerialHashed);
-            var dataCertificateExisted = await _unitOfWork.Subscriptions.Table.Where(x=>x.SubscribedInType==SubscriptionType.Course && x.CertificateSerial== serialDecrypted).FirstOrDefaultAsync();
-            if(dataCertificateExisted == null)
-            {
-                CertificateModel.IsValid = false;
-                return View(CertificateModel);
-            }
+
             CertificateModel.IsValid = true;
-            CertificateModel.Id = dataCertificateExisted.Id;
 
             return View(CertificateModel);
         }

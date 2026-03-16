@@ -1,7 +1,7 @@
 ﻿using Domain.Resources;
 using Microsoft.Extensions.Localization;
 
-namespace FougeraClub.Middelware
+namespace KhaledTeamRecycling.Middelware
 {
     public class NotificationMiddleware
     {

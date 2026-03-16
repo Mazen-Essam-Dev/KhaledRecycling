@@ -2,10 +2,10 @@
 using Domain.DTOs.Admin.SalaryManagement;
 using Domain.DTOs.Admin.SalaryManagement;
 using Domain.Entities.SalaryManage;
-using FougeraClub.Areas.Admin.ViewModels.SalaryManagement;
-using FougeraClub.Areas.Admin.ViewModels.SalaryManagement;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement;
 
-namespace FougeraClub.Areas.Admin.Mappings
+namespace KhaledTeamRecycling.Areas.Admin.Mappings
 {
     public class SalaryManagementProfile : Profile
     {

@@ -13,7 +13,7 @@ using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 
-namespace FougeraClub.Areas.Identity.Pages.Account
+namespace KhaledTeamRecycling.Areas.Identity.Pages.Account
 {
     public class LoginWith2faModel : PageModel
     {

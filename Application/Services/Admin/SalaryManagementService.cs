@@ -2,8 +2,6 @@
 using Application.Interfaces.Admin;
 using Domain.DTOs.Admin;
 using Domain.DTOs.Admin.SalaryManagement;
-using Domain.DTOs.Admin.SalaryManagement;
-using Domain.Entities.ExpenseAndReceipt;
 using Domain.Entities.SalaryManage;
 using Domain.Enums;
 using Infrastructure.Repositories.InterfacesDB;
@@ -18,136 +16,134 @@ namespace Application.Services.Admin
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IWebHostEnvironment _env;
-        private readonly ISMSForSendingOTPService _SMSForSendingOTPService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public SalaryManagementService(IUnitOfWork unitOfWork, IWebHostEnvironment env, ISMSForSendingOTPService sMSForSendingOTPService, IHttpContextAccessor httpContextAccessor)
+        public SalaryManagementService(IUnitOfWork unitOfWork, IWebHostEnvironment env ,IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _env = env;
-            _SMSForSendingOTPService = sMSForSendingOTPService;
             _httpContextAccessor = httpContextAccessor;
         }
 
-        // Signature/OTP for Trainer and Manager
-        public async Task<bool> SendOtpAsync()
-        {
-            var (status, code) = await OTPHelper.SaveOtpAsync(_httpContextAccessor, _unitOfWork);
+        //// Signature/OTP for Trainer and Manager
+        //public async Task<bool> SendOtpAsync()
+        //{
+        //    var (status, code) = await OTPHelper.SaveOtpAsync(_httpContextAccessor, _unitOfWork);
 
-            if (status == false) return false;
+        //    if (status == false) return false;
 
-            var resultStatus = await _SMSForSendingOTPService.SendOtpSMSAsync(code);
+        //    var resultStatus = await _SMSForSendingOTPService.SendOtpSMSAsync(code);
 
-            return resultStatus.Item1;
-        }
+        //    return resultStatus.Item1;
+        //}
 
-        public async Task<(bool success, string? message)> ValidateOtp_OpenDetails_payrollReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user)
-        {
-            var success = await OTPHelper.ValidateOtpAsync(_httpContextAccessor, _unitOfWork, code);
-            if (!success)
-                return (false, "Invalid OTP");
+        //public async Task<(bool success, string? message)> ValidateOtp_OpenDetails_payrollReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user)
+        //{
+        //    var success = await OTPHelper.ValidateOtpAsync(_httpContextAccessor, _unitOfWork, code);
+        //    if (!success)
+        //        return (false, "Invalid OTP");
 
-            var userId = user.GetUserId();
-            var allSignatures = await _unitOfWork.Signatures.GetAllAsync();
-            var latestSignature = allSignatures
-                .Where(s => s.UserId == userId)
-                .OrderByDescending(s => s.CreatedAt)
-                .FirstOrDefault();
-            if (latestSignature == null)
-                return (false, "Signature not found");
+        //    var userId = user.GetUserId();
+        //    var allSignatures = await _unitOfWork.Signatures.GetAllAsync();
+        //    var latestSignature = allSignatures
+        //        .Where(s => s.UserId == userId)
+        //        .OrderByDescending(s => s.CreatedAt)
+        //        .FirstOrDefault();
+        //    if (latestSignature == null)
+        //        return (false, "Signature not found");
 
-            // Look for existing sign record by year, month, and ReportTypeId
-            var report = await _unitOfWork.SalaryReportSigns.GetByColumnAsync(
-                e => e.Year == year && e.Month == month && e.ReportSalaryTypeId == (int)ReportSalaryTypeEnum.SalaryReport);
+        //    // Look for existing sign record by year, month, and ReportTypeId
+        //    var report = await _unitOfWork.SalaryReportSigns.GetByColumnAsync(
+        //        e => e.Year == year && e.Month == month && e.ReportSalaryTypeId == (int)ReportSalaryTypeEnum.SalaryReport);
 
-            if (role == "Acountant")
-            {
-                // Accountant creates new record if none exists
-                if (report == null)
-                {
-                    report = new SalaryReportSign
-                    {
-                        ReportSalaryTypeId = (int)ReportSalaryTypeEnum.SalaryReport,
-                        Year = year,
-                        Month = month,
-                        AcountantSignatureId = latestSignature.Id
-                    };
-                    await _unitOfWork.SalaryReportSigns.AddAsync(report);
-                }
-                else
-                {
-                    report.AcountantSignatureId = latestSignature.Id;
-                    _unitOfWork.SalaryReportSigns.Update(report);
-                }
-            }
-            else if (role == "manager")
-            {
-                // Manager can only sign if record exists
-                if (report == null)
-                    return (false, "Report must be signed by accountant first");
-                report.ManagerSignitureId = latestSignature.Id;
-                _unitOfWork.SalaryReportSigns.Update(report);
-            }
-            else
-                return (false, "Invalid role");
+        //    if (role == "Acountant")
+        //    {
+        //        // Accountant creates new record if none exists
+        //        if (report == null)
+        //        {
+        //            report = new SalaryReportSign
+        //            {
+        //                ReportSalaryTypeId = (int)ReportSalaryTypeEnum.SalaryReport,
+        //                Year = year,
+        //                Month = month,
+        //                AcountantSignatureId = latestSignature.Id
+        //            };
+        //            await _unitOfWork.SalaryReportSigns.AddAsync(report);
+        //        }
+        //        else
+        //        {
+        //            report.AcountantSignatureId = latestSignature.Id;
+        //            _unitOfWork.SalaryReportSigns.Update(report);
+        //        }
+        //    }
+        //    else if (role == "manager")
+        //    {
+        //        // Manager can only sign if record exists
+        //        if (report == null)
+        //            return (false, "Report must be signed by accountant first");
+        //        report.ManagerSignitureId = latestSignature.Id;
+        //        _unitOfWork.SalaryReportSigns.Update(report);
+        //    }
+        //    else
+        //        return (false, "Invalid role");
 
-            await _unitOfWork.CompleteAsync();
-            return (true, null);
-        }
+        //    await _unitOfWork.CompleteAsync();
+        //    return (true, null);
+        //}
 
-        public async Task<(bool success, string? message)> ValidateOtp_OpenDetails_DiscountsAndBonusesReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user)
-        {
-            var success = await OTPHelper.ValidateOtpAsync(_httpContextAccessor, _unitOfWork, code);
-            if (!success)
-                return (false, "Invalid OTP");
+        //public async Task<(bool success, string? message)> ValidateOtp_OpenDetails_DiscountsAndBonusesReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user)
+        //{
+        //    var success = await OTPHelper.ValidateOtpAsync(_httpContextAccessor, _unitOfWork, code);
+        //    if (!success)
+        //        return (false, "Invalid OTP");
 
-            var userId = user.GetUserId();
-            var allSignatures = await _unitOfWork.Signatures.GetAllAsync();
-            var latestSignature = allSignatures
-                .Where(s => s.UserId == userId)
-                .OrderByDescending(s => s.CreatedAt)
-                .FirstOrDefault();
-            if (latestSignature == null)
-                return (false, "Signature not found");
+        //    var userId = user.GetUserId();
+        //    var allSignatures = await _unitOfWork.Signatures.GetAllAsync();
+        //    var latestSignature = allSignatures
+        //        .Where(s => s.UserId == userId)
+        //        .OrderByDescending(s => s.CreatedAt)
+        //        .FirstOrDefault();
+        //    if (latestSignature == null)
+        //        return (false, "Signature not found");
 
-            // Look for existing sign record by year, month, and ReportTypeId
-            var report = await _unitOfWork.SalaryReportSigns.GetByColumnAsync(
-                e => e.Year == year && e.Month == month && e.ReportSalaryTypeId == (int)ReportSalaryTypeEnum.DiscountsAndBonusesReport);
+        //    // Look for existing sign record by year, month, and ReportTypeId
+        //    var report = await _unitOfWork.SalaryReportSigns.GetByColumnAsync(
+        //        e => e.Year == year && e.Month == month && e.ReportSalaryTypeId == (int)ReportSalaryTypeEnum.DiscountsAndBonusesReport);
 
-            if (role == "Acountant")
-            {
-                // Accountant creates new record if none exists
-                if (report == null)
-                {
-                    report = new SalaryReportSign
-                    {
-                        ReportSalaryTypeId = (int)ReportSalaryTypeEnum.DiscountsAndBonusesReport,
-                        Year = year,
-                        Month = month,
-                        AcountantSignatureId = latestSignature.Id
-                    };
-                    await _unitOfWork.SalaryReportSigns.AddAsync(report);
-                }
-                else
-                {
-                    report.AcountantSignatureId = latestSignature.Id;
-                    _unitOfWork.SalaryReportSigns.Update(report);
-                }
-            }
-            else if (role == "manager")
-            {
-                // Manager can only sign if record exists
-                if (report == null)
-                    return (false, "Report must be signed by accountant first");
-                report.ManagerSignitureId = latestSignature.Id;
-                _unitOfWork.SalaryReportSigns.Update(report);
-            }
-            else
-                return (false, "Invalid role");
+        //    if (role == "Acountant")
+        //    {
+        //        // Accountant creates new record if none exists
+        //        if (report == null)
+        //        {
+        //            report = new SalaryReportSign
+        //            {
+        //                ReportSalaryTypeId = (int)ReportSalaryTypeEnum.DiscountsAndBonusesReport,
+        //                Year = year,
+        //                Month = month,
+        //                AcountantSignatureId = latestSignature.Id
+        //            };
+        //            await _unitOfWork.SalaryReportSigns.AddAsync(report);
+        //        }
+        //        else
+        //        {
+        //            report.AcountantSignatureId = latestSignature.Id;
+        //            _unitOfWork.SalaryReportSigns.Update(report);
+        //        }
+        //    }
+        //    else if (role == "manager")
+        //    {
+        //        // Manager can only sign if record exists
+        //        if (report == null)
+        //            return (false, "Report must be signed by accountant first");
+        //        report.ManagerSignitureId = latestSignature.Id;
+        //        _unitOfWork.SalaryReportSigns.Update(report);
+        //    }
+        //    else
+        //        return (false, "Invalid role");
 
-            await _unitOfWork.CompleteAsync();
-            return (true, null);
-        }
+        //    await _unitOfWork.CompleteAsync();
+        //    return (true, null);
+        //}
 
         public async Task<IEnumerable<SalaryManagement>> GetAllAsync()
         {

@@ -1,4 +1,4 @@
-﻿namespace FougeraClub.Areas.Admin.ViewModels.Employees
+﻿namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Employees
 {
     public class EmployeeAttachmentsVM
     {

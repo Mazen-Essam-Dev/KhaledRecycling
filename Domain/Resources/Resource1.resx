@@ -2957,7 +2957,7 @@
     <value>The phone number is incorrect</value>
     <comment>رقم الهاتف غير صحيح</comment>
   </data>
-  <data name="HellothisFougeraClubOTPMessage" xml:space="preserve">
+  <data name="HellothisKhaledTeamRecyclingOTPMessage" xml:space="preserve">
     <value>Signature verification code</value>
     <comment>كود التحقق من التوقيع</comment>
   </data>

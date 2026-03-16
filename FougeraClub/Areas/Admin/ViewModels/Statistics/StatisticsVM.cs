@@ -1,4 +1,4 @@
-﻿namespace FougeraClub.Areas.Admin.ViewModels.Statistics
+﻿namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Statistics
 {
     public class StatisticsVM
     {

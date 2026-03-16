@@ -7,11 +7,10 @@ using Domain.Entities;
 using Domain.Entities.MaterialOrder;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Admin.ViewModels.MaterialOrder;
-using FougeraClub.Areas.Admin.ViewModels.SMS;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.MaterialOrder;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Identity;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Identity;
@@ -19,14 +18,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [AdminAuthorize]
     [Area("Admin")]
     public class MaterialOrderController : Controller
     {
         private readonly IMaterialOrderService _service;
-        private readonly ITrainerService _TrainerService;
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHubContext<Hub.NotificationHub> _hubContext;
@@ -37,14 +35,12 @@ namespace FougeraClub.Areas.Admin.Controllers
         public MaterialOrderController(
             IMaterialOrderService monthlyAdministrativeReportService,
             IMapper mapper,
-            ITrainerService trainerService,
             IHubContext<Hub.NotificationHub> hubContext,
             IHttpContextAccessor httpContextAccessor,
             INotificationService notificationService,IUnitOfWork unitOfWork,
             UserManager<Infrastructure.Identity.ApplicationUser> userManager)
         {
             _service = monthlyAdministrativeReportService;
-            _TrainerService = trainerService;
             _mapper = mapper;
             _hubContext = hubContext;
             _notificationService = notificationService;
@@ -65,14 +61,7 @@ namespace FougeraClub.Areas.Admin.Controllers
             int ThisTrainerDepartmentId = 0;
             if (UserEMail == null) return (" ", 0,0);
             var ThisUser = await _unitOfWork.Users.GetByIdAsync(x => x.UserName == UserEMail);
-            if (ThisUser != null)
-            {
-                var ThisTrainer = await _unitOfWork.Trainers.GetByIdAsync(x => x.UserId == ThisUser.Id);
-                if (ThisTrainer != null) {
-                    ThisTrainerId = ThisTrainer.Id;
-                    ThisTrainerDepartmentId = ThisTrainer.DepartmentId;
-                }
-            }
+
             if (ThisTrainerId > 0) return (ThisUser?.Id != null ? ThisUser.Id : " ", ThisTrainerId, ThisTrainerDepartmentId);
 
             return (ThisUser?.Id != null ? ThisUser.Id : " ", 0,0);
@@ -115,8 +104,6 @@ namespace FougeraClub.Areas.Admin.Controllers
 
             var departments = await _unitOfWork.Departments.GetAllAsync();
             ViewBag.DepartmentsList = SelectListHelper.BindSelectList(departments.ToList(), selectedDepartment).ToList();
-            var usersDTO = await _TrainerService.GetAllUsersNamesAr_En_only();
-            ViewBag.UsersList = SelectListHelper.BindSelectListIdString(usersDTO.ToList(), selectedUser, "UserId").ToList();
             ViewBag.SelectedType = selectedDepartment;
             ViewBag.dateFrom = dateFrom?.ToString("yyyy-MM-dd");
             ViewBag.dateTo = dateTo?.ToString("yyyy-MM-dd");
@@ -159,8 +146,6 @@ namespace FougeraClub.Areas.Admin.Controllers
             vm.DepartmentsList = SelectListHelper.BindSelectList(departments.ToList(), vm.DepartmentId).ToList();
             vm.DepartmentName = vm.DepartmentsList.FirstOrDefault(x => x.Selected == true)?.Text;
             //var usersDTO = await _TrainerService.GetAllUsersNotTrainers_NamesAr_En_only();
-            var usersDTO = await _TrainerService.GetAllUsersNamesAr_En_only();
-            vm.UsersList = SelectListHelper.BindSelectListIdString(usersDTO.ToList(), vm.UserId, "UserId").ToList();
 
             return View(vm);
         }
@@ -182,7 +167,6 @@ namespace FougeraClub.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                var suppliers = await _service.GetAllSuppliersAsync();
                 //model.suppliers = suppliers;
                 if (model.MaterialOrderCode == null)
                     model.MaterialOrderCode = await _service.GetNewCodeAsync();
@@ -192,8 +176,6 @@ namespace FougeraClub.Areas.Admin.Controllers
                 model.DepartmentsList = SelectListHelper.BindSelectList(departments.ToList(), model.DepartmentId).ToList();
                 model.DepartmentName = model.DepartmentsList.FirstOrDefault(x => x.Selected == true)?.Text;
                 //var usersDTO = await _TrainerService.GetAllUsersNotTrainers_NamesAr_En_only();
-                var usersDTO = await _TrainerService.GetAllUsersNamesAr_En_only();
-                model.UsersList = SelectListHelper.BindSelectListIdString(usersDTO.ToList(), model.UserId, "UserId").ToList();
                 return View(model);
             }
 
@@ -300,8 +282,6 @@ namespace FougeraClub.Areas.Admin.Controllers
             var allMaterialOrderVM = _mapper.Map<IEnumerable<MaterialOrderVM>>(allMaterialOrders);
             var departments = await _unitOfWork.Departments.GetAllAsync();
             ViewBag.DepartmentsList = SelectListHelper.BindSelectList(departments.ToList(), selectedDepartment).ToList();
-            var usersDTO = await _TrainerService.GetAllUsersNamesAr_En_only();
-            ViewBag.UsersList = SelectListHelper.BindSelectListIdString(usersDTO.ToList(), selectedUser, "UserId").ToList();
             ViewBag.SelectedType = selectedDepartment;
             ViewBag.dateFrom = dateFrom?.ToString("yyyy-MM-dd");
             ViewBag.dateTo = dateTo?.ToString("yyyy-MM-dd");
@@ -318,7 +298,6 @@ namespace FougeraClub.Areas.Admin.Controllers
                 var item = await _service.GetByIdAsync(id.Value);
                 if (item == null) return NotFound();
                 var vm = _mapper.Map<MaterialOrderVM>(item);
-                var suppliers = await _service.GetAllSuppliersAsync();
                 //vm.suppliers = suppliers;
                 return View(vm);
             }
@@ -360,7 +339,6 @@ namespace FougeraClub.Areas.Admin.Controllers
             }
 
             var departments = await _unitOfWork.Departments.GetAllAsync();
-            var usersDTO = await _TrainerService.GetAllUsersNamesAr_En_only();
 
             // ---- End Get Data As Print
 
@@ -373,7 +351,7 @@ namespace FougeraClub.Areas.Admin.Controllers
                 var allData_list = allMaterialOrders;
                 var ListTitles = new List<string>
                 {
-                    ".No",Resource1.Date,"القسم","مقدم الطلب"
+                    ".No",Resource1.Date,"القسم"
                 };
                 if (allData_list != null || allData_list?.Count() > 0)
                 {
@@ -382,7 +360,6 @@ namespace FougeraClub.Areas.Admin.Controllers
                         t1 = single.MaterialOrderCode,
                         t2 = (single.Date.HasValue ? (lang == "ar" ? single.Date.Value.ToString("d")?.Replace("/","-") : single.Date.Value.ToString("d")?.Replace("/","-")) : ""),
                         t3 = (single.Department != null) ? (lang == "ar" ? single.Department.NameAr : single.Department.NameEn) : "",
-                        t4 = (usersDTO?.Where(x => single.UserId == x.UserId)?.FirstOrDefault() != null) ? (lang == "ar" ? usersDTO?.Where(x => single.UserId == x.UserId)?.FirstOrDefault()?.FullNameAr : usersDTO?.Where(x => single.UserId == x.UserId)?.FirstOrDefault()?.FullNameEn) : "",
                     }).ToList();
 
                     if (lang == "ar")
@@ -412,58 +389,58 @@ namespace FougeraClub.Areas.Admin.Controllers
             }
         }
 
-        #region sms approval
-        [IgnoreAction]
-        [NoLogging]
-        [HttpPost]
-        public async Task<IActionResult> SendOtp() // GetSignature
-        {
-            try
-            {
-                var status= await _service.SendOtpAsync();
-                return Json(new { success = status });
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false });
-            }
-        }
+        //#region sms approval
+        //[IgnoreAction]
+        //[NoLogging]
+        //[HttpPost]
+        //public async Task<IActionResult> SendOtp() // GetSignature
+        //{
+        //    try
+        //    {
+        //        var status= await _service.SendOtpAsync();
+        //        return Json(new { success = status });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false });
+        //    }
+        //}
 
 
-        [HttpPost]
-        [IgnoreAction]
-        public async Task<IActionResult> ValidateOtp([FromBody] OtpValidationRequest request)    // ValidateOTPSignature
-        {
-            if (request == null || string.IsNullOrEmpty(request.Code))
-                return Json(new { success = false, message = "Invalid data." });
+        //[HttpPost]
+        //[IgnoreAction]
+        //public async Task<IActionResult> ValidateOtp([FromBody] OtpValidationRequest request)    // ValidateOTPSignature
+        //{
+        //    if (request == null || string.IsNullOrEmpty(request.Code))
+        //        return Json(new { success = false, message = "Invalid data." });
 
-            var report = await _unitOfWork.MaterialOrders.GetByColumnAsync(
-                    e => e.MaterialOrderCode != null && e.Id == (int)request.Id);
+        //    var report = await _unitOfWork.MaterialOrders.GetByColumnAsync(
+        //            e => e.MaterialOrderCode != null && e.Id == (int)request.Id);
 
-            var result = await _service.ValidateOtpAsync((int)request.Id, request.Code, request.Role ?? "Trainer");
-            if (result.success==true)
-            {
-                if (request.Role == "Trainer")
-                {
-                    await _hubContext.Clients.Groups("Manager")
-                   .SendAsync("ReceiveNotification", new
-                   {
-                       Title = "",
-                       Message = ""
-                   });
-                    await _notificationService.SendNotificationToRoleAsync(
-                      "طلب مواد جديد",
-                      $"يوجد طلب مواد رقم {report?.MaterialOrderCode} جديد جاهز للإعتماد",
-                      (int)RoleNumber.Manager
-                  );
-                }
-            }
+        //    var result = await _service.ValidateOtpAsync((int)request.Id, request.Code, request.Role ?? "Trainer");
+        //    if (result.success==true)
+        //    {
+        //        if (request.Role == "Trainer")
+        //        {
+        //            await _hubContext.Clients.Groups("Manager")
+        //           .SendAsync("ReceiveNotification", new
+        //           {
+        //               Title = "",
+        //               Message = ""
+        //           });
+        //            await _notificationService.SendNotificationToRoleAsync(
+        //              "طلب مواد جديد",
+        //              $"يوجد طلب مواد رقم {report?.MaterialOrderCode} جديد جاهز للإعتماد",
+        //              (int)RoleNumber.Manager
+        //          );
+        //        }
+        //    }
             
 
-            return Json(new { success = result.success, message = result.message });
-        }
+        //    return Json(new { success = result.success, message = result.message });
+        //}
 
-        #endregion
+        //#endregion
 
     }
 }

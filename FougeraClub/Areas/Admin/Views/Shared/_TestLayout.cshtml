@@ -126,9 +126,9 @@
                     <i class="ri-menu-5-line"></i>
                 </button>
                 <a class="navbar-brand" href="/Admin/Home/Index">
-                    <img src="~/ar/assets/images/logo-ar.png" alt="Logo" />
+                    <img src="~/assets/images/logo.png" alt="Logo" />
                 </a>
-                <h4 class="navbar-title">@Resource2.FougeraClub</h4>
+                <h4 class="navbar-title">@Resource2.KhaledTeamRecycling</h4>
             </div>
 
             <!-- Right Section (Login / User) -->
@@ -184,10 +184,7 @@
                                 {
                                     @inject IUnitOfWork _unitOfWork
 
-                                    var data = await _unitOfWork.Subscriptions.GetAllAsync();
-                                    var count = data.Where(d => d.SubscribedInType == SubscriptionType.Course
-                                    && d.Acceptance == null)
-                                    .Count();
+                                    var count = 0;
                                     <li class="side-nav-item @IsActiveBG("Course", "SubscribedMembersInCourses")">
                                         <a href="/Admin/Course/SubscribedMembersInCourses" class="side-nav-link">
                                             <span class="menu-icon"><i class="ri-book-marked-fill"></i></span>

@@ -18,10 +18,9 @@ namespace Application.Services.Admin
         }
         public async Task<bool> HasRelatedObjectsInDb(int empId)
         {
-            var condition1 = await _unitOfWork.ExternalWorkMissions.GetByColumnAsync(e => e.EmployeeId == empId) != null;
             var condition2 = await _unitOfWork.SalaryManagements.GetByColumnAsync(e => e.EmployeeId == empId) != null;
             var condition3 = await _unitOfWork.EmployeeAttachments.GetByColumnAsync(e => e.EmployeeId == empId) != null;
-            return condition1 || condition2 || condition3;
+            return condition2 || condition3;
         }
 
         public async Task<IEnumerable<Employee>> GetAllAsync()

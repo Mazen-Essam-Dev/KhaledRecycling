@@ -369,8 +369,8 @@
   <data name="Employee" xml:space="preserve">
     <value>موظف</value>
   </data>
-  <data name="FougeraClub" xml:space="preserve">
-    <value>نادي الفجيرة العلمي</value>
+  <data name="KhaledTeamRecycling" xml:space="preserve">
+    <value>فريق خالد لإعادة التدوير</value>
   </data>
   <data name="Position" xml:space="preserve">
     <value>الوظيفة</value>
@@ -1173,8 +1173,8 @@
   <data name="ApprovalDisbursementRequest" xml:space="preserve">
     <value>اعتماد طلب صرف</value>
   </data>
-  <data name="FougeraClubManagementSystem" xml:space="preserve">
-    <value>نظام ادارة نادي الفجيرة العلمي</value>
+  <data name="KhaledTeamRecyclingManagementSystem" xml:space="preserve">
+    <value>نظام ادارة فريق خالد لإعادة التدوير</value>
   </data>
   <data name="CantDeleteTrainer" xml:space="preserve">
     <value>لا يمكن حذف المدرب لأنه مرتبط بدورات</value>

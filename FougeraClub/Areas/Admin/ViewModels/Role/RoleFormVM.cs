@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Role
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Role
 {
     public class RoleFormVM
     {

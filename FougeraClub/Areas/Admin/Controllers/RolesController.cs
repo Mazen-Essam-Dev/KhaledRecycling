@@ -2,17 +2,17 @@ using Application.Interfaces.Admin;
 using DocumentFormat.OpenXml.Spreadsheet;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Admin.ViewModels.Role;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Role;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Attributes;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [AdminAuthorize]
     [Area("Admin")]

@@ -3,17 +3,17 @@ using Application.Interfaces.Member;
 using AutoMapper;
 using Domain.HelperForDomain;
 using Domain.Resources;
-using FougeraClub.Areas.Member.ViewModels;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Member.ViewModels;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Attributes;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FougeraClub.Areas.Member.Controllers
+namespace KhaledTeamRecycling.Areas.Member.Controllers
 {
     [Area("Member")]
     [Route("Member/[controller]/[action]")]
@@ -22,19 +22,16 @@ namespace FougeraClub.Areas.Member.Controllers
         #region properties
         private readonly IUnitOfWork _unitOfWork;
         private readonly IAccountService _accountService;
-        private readonly IActivityService _activityService;
-        private readonly ICourseService _courseService;
+
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         #endregion
 
         #region constractor
-        public HomeController(IUnitOfWork unitOfWork, IAccountService accountService, IActivityService activityService, ICourseService courseService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public HomeController(IUnitOfWork unitOfWork, IAccountService accountService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _accountService = accountService;
-            _activityService = activityService;
-            _courseService = courseService;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
@@ -68,39 +65,11 @@ namespace FougeraClub.Areas.Member.Controllers
             var user = await _unitOfWork.Members.GetByColumnAsync(u => u.Email == username);
 
 
-            #region courses
-            var (Courses, coursesSubscriptions) = await _courseService.GetAllAsync(username);
-            DateOnly datenow = DateOnly.FromDateTime(AppDubaiTime1.Now.Date);
-            Courses = Courses.Where(x=>x.StartDate >= datenow);
-            var coursesVM = _mapper.Map<List<CourseVM>>(Courses);
-            foreach (var vm in coursesVM)
-            {
-                vm.SubscriptionId = coursesSubscriptions.FirstOrDefault(e => e.SubscribedInId == vm.Id && e.MemberId == user.Id)?.Id;
-                vm.Subscribed = coursesSubscriptions.Any(e => e.SubscribedInId == vm.Id);
-                vm.selectedRate = coursesSubscriptions.FirstOrDefault(e => e.SubscribedInId == vm.Id)?.Rate;
-                vm.Attendance = coursesSubscriptions.FirstOrDefault(e => e.SubscribedInId == vm.Id)?.Attendance;
-                vm.Accepted = coursesSubscriptions.FirstOrDefault(e => e.SubscribedInId == vm.Id)?.Acceptance;
-                vm.RejectionNotes = coursesSubscriptions.FirstOrDefault(e => e.SubscribedInId == vm.Id)?.Notes;
-            }
-            // show upcoming courses earliest first
-            coursesVM = coursesVM.OrderBy(x => x.StartDate ?? DateOnly.FromDateTime(DateTime.MaxValue)).Take(5).ToList();
-            #endregion
 
-            #region activities
-            var (Activities, activitiesSubscriptions) = await _activityService.GetAllAsync(username);
-            // show upcoming activities earliest first
-            Activities = Activities.OrderBy(x => x.StartDate ?? DateOnly.FromDateTime(DateTime.MaxValue)).Take(5);
-            var activitiesVM = _mapper.Map<List<ActivityVM>>(Activities);
-            foreach (var vm in activitiesVM)
-            {
-                vm.Subscribed = activitiesSubscriptions.Any(e => e.SubscribedInId == vm.Id);
-            }
-            #endregion
+
 
             var model = new HomeActivityCourseVM
             {
-                Activities = activitiesVM,
-                Courses = coursesVM,
             };
 
             //activities = activities.Where(x => x.StartDate > DateOnly.FromDateTime(AppDubaiTime.Now)).OrderBy(x => x.StartDate);

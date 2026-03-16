@@ -1,11 +1,11 @@
 ﻿using Domain.Resources;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Helpers;
 using Google.Protobuf.Collections;
 using Infrastructure.Repositories.InterfacesDB;
 using System.ComponentModel.DataAnnotations;
 using System.Resources;
 
-namespace FougeraClub.Attributes
+namespace KhaledTeamRecycling.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class UniqueAttribute : ValidationAttribute

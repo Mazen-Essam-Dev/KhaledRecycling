@@ -1,9 +1,8 @@
 ﻿using Application.Helpers;
 using CsvHelper.Configuration;
 using Domain.Entities;
-using Domain.Entities.ExpenseAndReceipt;
 using Domain.Enums;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Helpers;
 using Humanizer.Localisation;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
@@ -13,7 +12,7 @@ using System.Globalization;
 using System.Security.Claims;
 using CsvReader = CsvHelper.CsvReader;
 
-namespace FougeraClub.Seeders
+namespace KhaledTeamRecycling.Seeders
 {
     public static class DbInitilaizer
     {
@@ -85,39 +84,8 @@ namespace FougeraClub.Seeders
             ////    await context.SaveChangesAsync();
             ////}
 
-            // Seed ExpensesSource Enum Data
-            if (!context.ExpensesSource.Any())
-            {
-                var list = Enum.GetValues(typeof(ExpensesSourceEnum))
-                    .Cast<ExpensesSourceEnum>()
-                    .Select(e => new ExpensesSource
-                    {
-                        Id = (int)e,
-                        NameEn = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("en")),
-                        NameAr = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("ar"))
-                    })
-                    .ToList();
 
-                await context.ExpensesSource.AddRangeAsync(list);
-                await context.SaveChangesAsync();
-            }
 
-            // Seed ExpensesGate Enum Data
-            if (!context.ExpensesGate.Any())
-            {
-                var list = Enum.GetValues(typeof(ExpensesGatesEnum))
-                    .Cast<ExpensesGatesEnum>()
-                    .Select(e => new ExpensesGate
-                    {
-                        Id = (int)e,
-                        NameEn = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("en")),
-                        NameAr = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("ar"))
-                    })
-                    .ToList();
-
-                await context.ExpensesGate.AddRangeAsync(list);
-                await context.SaveChangesAsync();
-            }
 
             // Seed ExpensesSource Enum Data
             if (!context.MemberTypes.Any())

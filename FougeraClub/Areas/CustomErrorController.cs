@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FougeraClub.Areas
+namespace KhaledTeamRecycling.Areas
 {
     public class CustomErrorController : Controller
     {

@@ -9,9 +9,9 @@ namespace Application.Interfaces.Admin
 {
     public interface ISalaryManagementService
     {
-        Task<bool> SendOtpAsync();
-        Task<(bool success, string? message)> ValidateOtp_OpenDetails_payrollReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user);
-        Task<(bool success, string? message)> ValidateOtp_OpenDetails_DiscountsAndBonusesReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user);
+        //Task<bool> SendOtpAsync();
+        //Task<(bool success, string? message)> ValidateOtp_OpenDetails_payrollReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user);
+        //Task<(bool success, string? message)> ValidateOtp_OpenDetails_DiscountsAndBonusesReportAsync(int year, int month, string code, string role, System.Security.Claims.ClaimsPrincipal user);
 
         Task<IEnumerable<SalaryManagement>> GetAllAsync();
         Task<SalaryManagement?> GetByIdAsync(int id);

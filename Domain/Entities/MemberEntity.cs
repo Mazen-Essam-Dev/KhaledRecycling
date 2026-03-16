@@ -109,7 +109,7 @@ namespace Domain.Entities
         public string? PassportImagePath { get; set; }
         [NotMapped]
         public IFormFile? PassportImage { get; set; }
-        public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
+        //public virtual ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
 
 
 

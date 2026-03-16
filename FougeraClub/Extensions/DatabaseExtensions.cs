@@ -1,7 +1,7 @@
 ﻿using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
-namespace FougeraClub.Extensions
+namespace KhaledTeamRecycling.Extensions
 {
     public static class DatabaseExtensions
     {

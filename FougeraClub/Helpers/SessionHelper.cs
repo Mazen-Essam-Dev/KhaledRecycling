@@ -1,4 +1,4 @@
-﻿namespace FougeraClub.Helpers
+﻿namespace KhaledTeamRecycling.Helpers
 {
     public static class SessionHelper
     {

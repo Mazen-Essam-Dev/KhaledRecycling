@@ -8,10 +8,10 @@ using Domain.DTOs;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Admin.ViewModels.Account;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.Account;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Attributes;
 using Infrastructure.Identity;
 using Infrastructure.Repositories.InterfacesDB;
@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [AdminAuthorize]
     [Area("Admin")]
@@ -31,19 +31,17 @@ namespace FougeraClub.Areas.Admin.Controllers
         private readonly IMapper _mapper;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly IAccountService _accountService;
-        private readonly ITrainerService _trainerService;
         private readonly IUnitOfWork _unitOfWork;
 
         #endregion
 
         #region constructor
-        public AccountController(UserManager<ApplicationUser> userManager, IMapper mapper, RoleManager<ApplicationRole> roleManager, IAccountService accountService, ITrainerService trainerService,IUnitOfWork unitOfWork)
+        public AccountController(UserManager<ApplicationUser> userManager, IMapper mapper, RoleManager<ApplicationRole> roleManager, IAccountService accountService, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _mapper = mapper;
             _roleManager = roleManager;
             _accountService = accountService;
-            _trainerService = trainerService;
             _unitOfWork = unitOfWork;
         }
         #endregion
@@ -59,8 +57,6 @@ namespace FougeraClub.Areas.Admin.Controllers
             var Roles = _roleManager.Roles.ToList();
             foreach (var user in model)
             {
-                var isTrainer = await _trainerService.GetThisTrainerId_IfTrainer_else_0(user.Username);
-                user.IsTrainer = isTrainer.HasValue && isTrainer.Value != 0;
                 var userRoles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(user.Id));
                 user.Role = userRoles.FirstOrDefault();
                 user.RoleNumber = Roles.FirstOrDefault(r => r.Name == user.Role)?.RoleNumber;
@@ -261,12 +257,9 @@ namespace FougeraClub.Areas.Admin.Controllers
             var thisRoleName = userRoles.FirstOrDefault();
             var roleNumber = Roles.FirstOrDefault(r => r.Name == thisRoleName)?.RoleNumber;
 
-            var isTrainer2 = await _trainerService.GetThisTrainerId_IfTrainer_else_0(user.UserName);
-            bool isTrainer = isTrainer2.HasValue && isTrainer2.Value != 0;
-
             var loggedInUserId = @User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (loggedInUserId != user.Id && !isTrainer && !(thisRoleName == Role.SuperAdmin.ToString()) && (roleNumber == (int)RoleNumber.NormalUser || roleNumber > (int)RoleNumber.Accountant)) // RoleNumber==1 or more than 4
+            if (loggedInUserId != user.Id  && !(thisRoleName == Role.SuperAdmin.ToString()) && (roleNumber == (int)RoleNumber.NormalUser || roleNumber > (int)RoleNumber.Accountant)) // RoleNumber==1 or more than 4
             {
                 var signatures = await  _unitOfWork.Signatures.Table.Where(s => s.UserId == user.Id).ToListAsync();
                 foreach (var sign in signatures)

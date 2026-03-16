@@ -1,4 +1,4 @@
-﻿using FougeraClub.Attributes;
+﻿using KhaledTeamRecycling.Attributes;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Reflection;
 
-namespace FougeraClub.Filters
+namespace KhaledTeamRecycling.Filters
 {
     public class AdminAuthorizeFilter : IAsyncAuthorizationFilter
     {

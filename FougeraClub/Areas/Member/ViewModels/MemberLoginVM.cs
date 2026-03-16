@@ -1,4 +1,4 @@
-﻿namespace FougeraClub.Areas.Member.ViewModels
+﻿namespace KhaledTeamRecycling.Areas.Member.ViewModels
 {
     public class MemberLoginVM
     {

@@ -296,6 +296,7 @@ table td:last-child {
     padding: 0 0.75rem;
     background: url(../assets/images/adminpattern/bg-header.webp);
     background-blend-mode: overlay;
+    background-color: white !important;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 /* Navbar wrapper */

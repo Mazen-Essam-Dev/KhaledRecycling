@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.LogHistory
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.LogHistory
 {
     public class LogsVM
     {

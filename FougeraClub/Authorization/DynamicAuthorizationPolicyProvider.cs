@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace FougeraClub.Authorization
+namespace KhaledTeamRecycling.Authorization
 {
     public class DynamicAuthorizationPolicyProvider : IAuthorizationPolicyProvider
     {

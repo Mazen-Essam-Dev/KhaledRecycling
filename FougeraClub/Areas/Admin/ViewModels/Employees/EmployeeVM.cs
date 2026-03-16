@@ -1,12 +1,12 @@
 ﻿using Domain.Entities;
 using Domain.Entities.Employees;
 using Domain.Resources;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Employees
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Employees
 {
     public class EmployeeVM : IValidatableObject
     {

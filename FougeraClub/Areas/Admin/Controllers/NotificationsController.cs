@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Application.Interfaces.Admin;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Middelware;
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize]

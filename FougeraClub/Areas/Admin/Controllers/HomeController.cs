@@ -1,13 +1,13 @@
 ﻿using Domain.Entities;
 using Domain.Resources;
-using FougeraClub.Attributes;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FougeraClub.Areas.Admin.Controllers
+namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
     [AdminAuthorize]
     [Area("Admin")]
@@ -18,7 +18,8 @@ namespace FougeraClub.Areas.Admin.Controllers
         [IgnoreAction]
         public IActionResult Index()
         {
-            return RedirectToAction("Index", "Statistics");
+            //return RedirectToAction("Index", "Statistics");
+            return View();
         }
 
         // Used For Change Language [ Ar - En ]

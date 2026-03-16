@@ -1,7 +1,7 @@
 ﻿using Infrastructure.Repositories.InterfacesDB;
 using System.Linq.Expressions;
 
-namespace FougeraClub.Helpers
+namespace KhaledTeamRecycling.Helpers
 {
     public class RemoteAttributes
     {

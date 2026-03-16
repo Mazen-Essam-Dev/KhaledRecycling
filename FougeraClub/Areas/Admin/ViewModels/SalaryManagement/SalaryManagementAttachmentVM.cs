@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace FougeraClub.Areas.Admin.ViewModels.SalaryManagement
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.SalaryManagement
 {
     public class SalaryManagementAttachmentVM
     {

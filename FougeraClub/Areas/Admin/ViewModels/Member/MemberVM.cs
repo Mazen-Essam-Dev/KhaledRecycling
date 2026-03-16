@@ -3,18 +3,16 @@ using Domain.Entities;
 using Domain.Entities.Employees;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Admin.ViewModels.Course;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Member;
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Member;
 
 public class MemberCoursesVM
 {
-    public PaginatedList<CourseVM>? Paginated { get; set; }
     public int? memberId { get; set; }
 }
 

@@ -7,16 +7,16 @@ using Domain.DTOs.Member.Account;
 using Domain.Entities;
 using Domain.Enums;
 using Domain.Resources;
-using FougeraClub.Areas.Member.ViewModels;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
-using FougeraClub.Middelware;
+using KhaledTeamRecycling.Areas.Member.ViewModels;
+using KhaledTeamRecycling.Attributes;
+using KhaledTeamRecycling.Helpers;
+using KhaledTeamRecycling.Middelware;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Microsoft.Net.Http.Headers;
 
-namespace FougeraClub.Areas.Member.Controllers
+namespace KhaledTeamRecycling.Areas.Member.Controllers
 {
     [Area("Member")]
     [Route("Member/[controller]/[action]")]
@@ -29,107 +29,22 @@ namespace FougeraClub.Areas.Member.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly IMemberService _memberService;
-        private readonly IOCRService _iOCRService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         #endregion
 
         #region Constructor
-        public AccountController(Application.Interfaces.Member.IAccountService accountService, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService, IOCRService iOCRService, IWebHostEnvironment webHostEnvironment)
+        public AccountController(Application.Interfaces.Member.IAccountService accountService, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IMapper mapper, IMemberService memberService, IWebHostEnvironment webHostEnvironment)
         {
             _accountService = accountService;
             _unitOfWork = unitOfWork;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
             _memberService = memberService;
-            _iOCRService = iOCRService;
             _webHostEnvironment = webHostEnvironment;
         }
         #endregion
 
-        #region IDClassification_Json
-        [HttpPost]
-        public async Task<IActionResult> IDClassification_Json(IFormFile file)
-        {
-            try
-            {
-                if (file == null || file.Length == 0)
-                {
-                    return Json(new IDCardExtractedDataVM
-                    {
-                        lable = "Invalid File",
-                        ProbabilityString = "0"
-                    });
-                }
-
-                byte[] fileBytes;
-                using (var memoryStream = new MemoryStream())
-                {
-                    await file.CopyToAsync(memoryStream);
-                    fileBytes = memoryStream.ToArray();
-                }
-
-                var IDClassificationModel = new IDClassificationMLModel.ModelInput()
-                {
-                    ImageSource = fileBytes,
-                };
-
-                var sortedScoresWithLabel = IDClassificationMLModel.PredictAllLabels(IDClassificationModel);
-                var hightestPrediction = sortedScoresWithLabel.FirstOrDefault();
-
-                string probabilityString = $"{hightestPrediction.Value * 100:0.##}%";
-                double probability = hightestPrediction.Value * 100;
-                int maxPercent = 90;
-
-                if (!(hightestPrediction.Key.ToUpper() == "ID"))
-                {
-                    return Json(new IDCardExtractedDataVM
-                    {
-                        doneAI_bool = false,
-                        DoneTextExtracted_Error_Str = Resource1.UploadIDCardThisIsNot,
-                        lable = hightestPrediction.Key.ToUpper()
-                    });
-                }
-
-                if (probability < maxPercent)
-                {
-                    return Json(new IDCardExtractedDataVM
-                    {
-                        doneAI_bool = false,
-                        DoneTextExtracted_Error_Str = Resource1.CaptureThisImageAgainFromFrontFace,
-                        lable = hightestPrediction.Key.ToUpper(),
-                        ProbabilityString = probabilityString,
-                        Probability_double = probability
-                    });
-                }
-
-                var grayPath = await _iOCRService.ReadGrayTextAsync(file);
-                var dto = await _iOCRService.ExtractAllTextDataFrom_IDCardGray_Async(grayPath);
-                var removedgrayPath = "temp" + grayPath.Split("temp")[1];
-                FileHelper.DeleteImageFile(removedgrayPath);
-                var vm = _mapper.Map<IDCardExtractedDataVM>(dto);
-                vm.doneAI_bool = true;
-                vm.lable = hightestPrediction.Key.ToUpper();
-                vm.ProbabilityString = probabilityString;
-                vm.Probability_double = probability;
-
-                vm.DoneTextExtracted_Error_Str =
-                    (vm.doneOCR_bool == true)
-                        ? Resource1.DataExtractedCorrectly
-                        : Resource1.CaptureThisImageAgainWithHighQuality;
-
-                return Json(vm);
-            }
-            catch (Exception ex)
-            {
-                return Json(new IDCardExtractedDataVM
-                {
-                    lable = "Error",
-                    DoneTextExtracted_Error_Str = ex.Message,
-                    ProbabilityString = "0"
-                });
-            }
-        }
-        #endregion
+    
 
         #region Register
         public async Task<IActionResult> Register()

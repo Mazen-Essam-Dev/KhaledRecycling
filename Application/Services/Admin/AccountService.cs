@@ -8,7 +8,6 @@ using Infrastructure.Repositories.InterfacesDB;
 namespace Application.Services.Admin
 {
     public class AccountService : IAccountService
-
     {
         private readonly IUnitOfWork _unitOfWork;
         private const string FileName = "Signatures";

@@ -1,11 +1,10 @@
 ﻿using Domain.Entities;
-using FougeraClub.Attributes;
-using FougeraClub.Helpers;
+using KhaledTeamRecycling.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Course;
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Course;
 
 public class CourseVM : IValidatableObject
 {
@@ -17,7 +16,6 @@ public class CourseVM : IValidatableObject
     public List<SelectListItem>? DepartmentsList { get; set; } = new();
     [LocalizedRequired("Required")]
     public int TrainerId { get; set; }
-    public Trainer? Trainer { get; set; }
     public List<SelectListItem>? TrainersList { get; set; } = new();
 
 

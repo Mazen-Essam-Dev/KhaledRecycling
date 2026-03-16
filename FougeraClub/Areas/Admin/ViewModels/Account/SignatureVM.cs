@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FougeraClub.Areas.Admin.ViewModels.Account
+namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Account
 {
     public class SignatureVM
     {
