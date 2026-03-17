@@ -115,7 +115,7 @@ namespace Domain.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  FUJAIRAH SCIENCE CLUB.
+        ///   Looks up a localized string similar to  --.
         /// </summary>
         public static string FUJAIRAHSCIENCECLUB {
             get {

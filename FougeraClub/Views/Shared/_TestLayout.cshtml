@@ -1,0 +1,893 @@
+﻿@functions {
+    // Returns active class for single or multiple actions within a controller
+    public string IsActive(string controller, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        var baseClass = "menu-text";
+
+        if (string.IsNullOrEmpty(currentController) || string.IsNullOrEmpty(currentAction))
+            return baseClass;
+
+        return currentController.Equals(controller, StringComparison.OrdinalIgnoreCase) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? $"{baseClass} active-text"
+        : baseClass;
+    }
+
+    public string IsActiveBG(string controller, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        var baseClass = "side-nav-item";
+
+        if (string.IsNullOrEmpty(currentController) || string.IsNullOrEmpty(currentAction))
+            return baseClass;
+
+        return currentController.Equals(controller, StringComparison.OrdinalIgnoreCase) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? $"{baseClass} active-background"
+        : baseClass;
+    }
+
+    // Expands collapsible section if current route matches
+    public string IsExpanded(IEnumerable<string> controllers, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        return controllers.Any(c => c.Equals(currentController, StringComparison.OrdinalIgnoreCase)) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? "show"
+        : "";
+    }
+
+
+    // Sets aria-expanded true/false based on current route
+    public string IsAriaExpanded(IEnumerable<string> controllers, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        return controllers.Any(c => c.Equals(currentController, StringComparison.OrdinalIgnoreCase)) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? "show"
+        : "";
+    }
+}
+@using Application.Helpers
+@using Application.Interfaces.Admin
+@using Domain.Resources
+@using System.Security.Claims
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:56:45 GMT -->
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard | Highdmin - Responsive Bootstrap 5 Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <!-- Font-Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+    <link href="~/css/index.css" rel="stylesheet" />
+    <!-- Vendor css -->
+    <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+    <!-- SweetAlert2  https://cdn.jsdelivr.net/npm/sweetalert2@11-->
+    <script src="~/assets/js/sweetalert2@11.js"></script>
+
+    <!-- Your global delete handler -->
+    <script src="~/js/swal-delete.js"></script>
+
+    <!-- App css -->
+    @{
+        var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
+    }
+    @if (lang == "ar")
+    {
+        <link href="~/assets/css/app-rtl.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+    else
+    {
+        <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+
+
+
+    <!-- Icons css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/config.js"></script>
+
+</head>
+<body>
+    <style>
+        /* Whole page layout */
+        .layout {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+    </style>
+    <div class="layout">
+        <nav class="custom-navbar">
+            <!-- Left Section (Toggle + Brand) -->
+            <div class="navbar-left">
+                <button class="nav-toggle" id="sideBtn2">
+                    <i class="ri-menu-5-line"></i>
+                </button>
+                <a class="navbar-brand" href="/Admin/Home/Index">
+                    <img src="~/assets/images/logo.png" alt="Logo" />
+                </a>
+                <h4 class="navbar-title">@Resource2.KhaledTeamRecycling</h4>
+            </div>
+
+            <!-- Right Section (Login / User) -->
+            <div>
+                <partial name="_LoginPartialView" />
+            </div>
+        </nav>
+
+        <!-- Sidenav Menu Start -->
+        <div class="sidenav-menu" style="background-image: url('@Url.Content("~/assets/images/side-bg.png")');background-repeat:no-repeat;  background-size:cover;">
+
+            @* add here  *@
+
+            <!--- Sidenav Menu -->
+            <ul class="side-nav">
+
+                @* --- Trainers --- *@
+                @if (PermissionScanner.ValidatePermission("Trainer", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarTrainer"
+                           aria-expanded="@IsAriaExpanded(new[] { "Trainer", "Statistics", "Member", "Course" }, "Index", "SubscribedMembersInCourses", "AddEdit")"
+                           aria-controls="sidebarTrainer"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-person-chalkboard"></i></span>
+                            <span class="fw menu-text"> @Resource1.ActivitiesManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsAriaExpanded(new[] { "Trainer", "Statistics", "Member", "Course" }, "Index", "SubscribedMembersInCourses", "AddEdit")" id="sidebarTrainer">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                @* --- Statistics --- *@
+                                @if (PermissionScanner.ValidatePermission("Statistics", "Index"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Statistics", "Index") ">
+                                        <a href="/Admin/Statistics/Index" class="side-nav-link">
+                                            <span class="menu-icon"><i class="fa-solid fa-chart-simple"></i></span>
+                                            <span class="fw menu-text @IsActive("Statistics", "Index")">@Resource1.Statistics</span>
+                                        </a>
+                                    </li>
+                                }
+
+                                @* --- Members --- *@
+                                @if (PermissionScanner.ValidatePermission("Member", "Index"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Member", "Index")">
+                                        <a href="/Admin/Member" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-contacts-book-3-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("Member", "Index")">@Resource2.MembersOption</span>
+                                        </a>
+                                    </li>
+                                }
+                                @if (PermissionScanner.ValidatePermission("Course", "SubscribedMembersInCourses"))
+                                {
+                                    @inject IUnitOfWork _unitOfWork
+
+                                    var count = 0;
+                                    <li class="side-nav-item @IsActiveBG("Course", "SubscribedMembersInCourses")">
+                                        <a href="/Admin/Course/SubscribedMembersInCourses" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-book-marked-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("Course", "SubscribedMembersInCourses")">
+                                                @Resource1.RegisteredInCourses
+                                            </span>
+
+                                            @if (count > 0)
+                                            {
+                                                <span class="badge bg-danger rounded-pill ms-2">@count</span>
+                                            }
+                                        </a>
+                                    </li>
+                                }
+
+                                @if (PermissionScanner.ValidatePermission("Course", "Index"))
+                                {
+
+                                    <li class="side-nav-item @IsActiveBG("Course", "Index")">
+                                        <a href="/Admin/Course" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-book-2-fill"></i></span>
+
+                                            <span class="fw menu-text @IsActive("Course", "Index")">@Resource1.CoursesList</span>
+                                        </a>
+                                    </li>
+                                }
+
+
+                                @if (PermissionScanner.ValidatePermission("Course", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Course", "AddEdit")">
+                                        <a href="/Admin/Course/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("Course", "AddEdit")">@Resource1.AddNewCourse</span>
+                                        </a>
+                                    </li>
+                                }
+                                <li class="side-nav-item @IsActiveBG("Trainer", "Index")">
+                                    <a href="/Admin/Trainer/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-group-fill"></i></span>
+                                        <span class="fw menu-text @IsActive("Trainer", "Index")">@Resource1.TrainersList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("Trainer", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Trainer", "AddEdit")">
+                                        <a href="/Admin/Trainer/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-user-add-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("Trainer", "AddEdit")">@Resource1.AddNewTrainer</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- Activities --- *@
+
+                @if (PermissionScanner.ValidatePermission("Activity", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarActivity"
+                           aria-expanded="@IsAriaExpanded(new[] { "Activity" }, "Index", "AddEdit")"
+                           aria-controls="sidebarActivity"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="ri-calendar-schedule-fill"></i></span>
+                            <span class="fw menu-text"> @Resource1.EventsManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "Activity" }, "Index", "AddEdit")" id="sidebarActivity">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("Activity", "Index")">
+                                    <a href="/Admin/Activity" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Activity", "Index")">@Resource1.EventsList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("Activity", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Activity", "AddEdit")">
+                                        <a href="/Admin/Activity/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                            <span class="fw menu-text @IsActive("Activity", "AddEdit")">@Resource1.AddNewEvent</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- Employees --- *@
+
+                @if (PermissionScanner.ValidatePermission("Employees", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarEmployees"
+                           aria-expanded="@IsAriaExpanded(new[] { "Employees" }, "Index", "AddEdit")"
+                           aria-controls="sidebarEmployees"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-user-tie"></i></span>
+                            <span class="fw menu-text"> @Resource1.EmployeesManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "Employees" }, "Index", "AddEdit")" id="sidebarEmployees">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("Employees", "Index")">
+                                    <a href="/Admin/Employees/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Employees", "Index")">@Resource1.EmployeesList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("Employees", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Employees", "AddEdit")">
+                                        <a href="/Admin/Employees/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                            <span class="fw menu-text @IsActive("Employees", "AddEdit")">@Resource1.AddNewEmployee</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- Cars --- *@
+
+                @if (PermissionScanner.ValidatePermission("Car", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarCar"
+                           aria-expanded="@IsAriaExpanded(new[] { "Car" }, "Index", "AddEdit")"
+                           aria-controls="sidebarCar"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-car"></i></span>
+                            <span class="fw menu-text"> @Resource1.CarsManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "Car" }, "Index", "AddEdit")" id="sidebarCar">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("Car", "Index")">
+                                    <a href="/Admin/Car/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Car", "Index")">@Resource1.CarsList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("CarService", "Index"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("CarService", "Index")">
+
+                                        <a href="/Admin/CarService/Index" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-tools-fill"></i></span>
+
+                                            <span class="fw menu-text @IsActive("CarService", "Index")">@Resource1.CarsMaintenanceList</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- MaintenanceClub --- *@
+
+                @if (PermissionScanner.ValidatePermission("MaintenanceClub", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarMaintenanceClub"
+                           aria-expanded="@IsAriaExpanded(new[] { "MaintenanceClub" }, "Index", "AddEdit")"
+                           aria-controls="sidebarMaintenanceClub"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-hotel"></i></span>
+                            <span class="fw menu-text">  @Resource1.ClubMaintenanceManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "MaintenanceClub" }, "Index", "AddEdit")" id="sidebarMaintenanceClub">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("MaintenanceClub", "Index")">
+                                    <a href="/Admin/MaintenanceClub/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("MaintenanceClub", "Index")">
+                                            @Resource1.MaintenanceList
+                                        </span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("MaintenanceClub", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("MaintenanceClub", "AddEdit")">
+                                        <a href="/Admin/MaintenanceClub/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                            <span class="fw menu-text @IsActive("MaintenanceClub", "AddEdit")">@Resource1.AddNewMaintenance</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- Supplier --- *@
+
+                @if (PermissionScanner.ValidatePermission("Supplier", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarSupplier"
+                           aria-expanded="@IsAriaExpanded(new[] { "Supplier" }, "Index", "AddEdit")"
+                           aria-controls="sidebarSupplier"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-user-tie"></i></span>
+                            <span class="fw menu-text"> @Resource1.SuppliersManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "Supplier" }, "Index", "AddEdit")" id="sidebarSupplier">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("Supplier", "Index")">
+                                    <a href="/Admin/Supplier/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Supplier", "Index")">@Resource1.SuppliersList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("Supplier", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Supplier", "AddEdit")">
+                                        <a href="/Admin/Supplier/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                            <span class="fw menu-text @IsActive("Supplier", "AddEdit")">@Resource1.AddNewSupplier</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- AnnualSchedule --- *@
+
+                @if (PermissionScanner.ValidatePermission("AnnualSchedule", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarAnnualSchedule"
+                           aria-expanded="@IsAriaExpanded(new[] { "AnnualSchedule" }, "Index", "AddEdit")"
+                           aria-controls="sidebarAnnualSchedule"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-calculator"></i></span>
+                            <span class="fw menu-text"> @Resource1.AnnualInventoryManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "AnnualSchedule" }, "Index", "AddEdit")" id="sidebarAnnualSchedule">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("AnnualSchedule", "Index")">
+                                    <a href="/Admin/AnnualSchedule/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+                                        <span class="fw menu-text @IsActive("AnnualSchedule", "Index")">@Resource1.InventoryList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("AnnualSchedule", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("AnnualSchedule", "AddEdit")">
+                                        <a href="/Admin/AnnualSchedule/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("AnnualSchedule", "AddEdit")">@Resource1.AddNewInventory</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- Engineers --- *@
+
+                @if (PermissionScanner.ValidatePermission("Engineer", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarEngineer"
+                           aria-expanded="@IsAriaExpanded(new[] { "Engineer" }, "Index", "AddEdit")"
+                           aria-controls="sidebarEngineer"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-user"></i></span>
+                            <span class="fw menu-text">@Resource1.EngineersAssociationManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "Engineer" }, "Index", "AddEdit")" id="sidebarEngineer">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("Engineer", "Index")">
+                                    <a href="/Admin/Engineer/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+                                        <span class="fw menu-text @IsActive("Engineer", "Index")">@Resource1.EngineersList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("Engineer", "Add"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Engineer", "AddEdit")">
+                                        <a href="/Admin/Engineer/AddEdit" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("Engineer", "AddEdit")">@Resource2.AddNewEngineer</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- Scientific Projects --- *@
+
+                @if (PermissionScanner.ValidatePermission("ScientificProjects", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarScientificProjects"
+                           aria-expanded="@IsAriaExpanded(new[] { "ScientificProjects" }, "Index", "Create")"
+                           aria-controls="sidebarScientificProjects"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-list-check"></i></span>
+                            <span class="fw menu-text"> @Resource1.ScientificProjectsManagement</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "ScientificProjects" }, "Index", "AddEdit")" id="sidebarScientificProjects">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("ScientificProjects", "Index")">
+                                    <a href="/Admin/ScientificProjects/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+                                        <span class="fw menu-text @IsActive("ScientificProjects", "Index")">@Resource1.ScientificProjectsList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("ScientificProjects", "Create"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("ScientificProjects", "Create")">
+                                        <a href="/Admin/ScientificProjects/Create" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("ScientificProjects", "Create")">@Resource1.Add_New_ScientificProject</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+
+                    </li>
+                }
+
+                @* --- Document Flow Unit --- *@
+
+                @{
+                    if (PermissionScanner.ValidatePermission("ExternalWorkMission", "Index")
+                    || PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Index")
+                    || PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Index")
+                    || PermissionScanner.ValidatePermission("ParticipationsInEventReport", "Index")
+                    )
+                    {
+                        <li class="side-nav-item border-bottom">
+                            <a data-bs-toggle="collapse" href="#sidebarExternalWorkMission"
+                               aria-expanded="@IsAriaExpanded(new[] { "ExternalWorkMission","EstimatedBudgetForExternalParticipation","MonthlyAdministrativeReport","ParticipationsInEventReport" }, "Index", "AddEdit")"
+                               aria-controls="sidebarExternalWorkMission"
+                               class="side-nav-link">
+                                <span class="menu-icon"><i class="fa-solid fa-list-check"></i></span>
+                                <span class="fw menu-text"> @Resource1.ExternalWorkMissionManagement</span>
+                                <span class="menu-arrow"></span>
+                            </a>
+
+                            <div class="collapse @IsExpanded(new[] { "ExternalWorkMission","EstimatedBudgetForExternalParticipation","MonthlyAdministrativeReport","ParticipationsInEventReport" }, "Index", "AddEdit")" id="sidebarExternalWorkMission">
+                                <ul class="sub-menu bg-white border border-start-0 ">
+                                    @if (PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Index"))
+                                    {
+                                        <li class="side-nav-item @IsActiveBG("ExternalWorkMission", "Index")">
+                                            <a href="/Admin/ExternalWorkMission/Index" class="side-nav-link">
+                                                <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                                <span class="fw menu-text @IsActive("ExternalWorkMission", "Index")">@Resource1.ExternalWorkMissionList</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Index"))
+                                    {
+                                        <li class="side-nav-item @IsActiveBG("EstimatedBudgetForExternalParticipation", "Index")">
+                                            <a href="/Admin/EstimatedBudgetForExternalParticipation/Index" class="side-nav-link">
+                                                <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                                <span class="fw menu-text @IsActive("EstimatedBudgetForExternalParticipation", "Index")" style="font-size:10px;">@Resource1.EstimatedBudgetForExternalParticipationList</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Index"))
+                                    {
+                                        <li class="side-nav-item @IsActiveBG("MonthlyAdministrativeReport", "Index")">
+                                            <a href="/Admin/MonthlyAdministrativeReport/Index" class="side-nav-link">
+                                                <span class="menu-icon"><i class="ri-list-check"></i></span>
+                                                <span class="fw menu-text @IsActive("MonthlyAdministrativeReport", "Index")">@Resource2.MonthlyAdministrativeReportList</span>
+                                            </a>
+                                        </li>
+                                    }
+                                    @if (PermissionScanner.ValidatePermission("ParticipationsInEventReport", "Index"))
+                                    {
+                                        <li class="side-nav-item @IsActiveBG("ParticipationsInEventReport", "Index")">
+                                            <a href="/Admin/ParticipationsInEventReport/Index" class="side-nav-link">
+                                                <span class="menu-icon"><i class="ri-list-check"></i></span>
+                                                <span class="fw menu-text @IsActive("ParticipationsInEventReport", "Index")">@Resource1.ParticipationsInEventReport</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+                    }
+
+                }
+
+                @* --- Users Management --- *@
+
+                @if (PermissionScanner.ValidatePermission("Account", "Index"))
+                {
+                    <li class="side-nav-item border-bottom">
+                        <a data-bs-toggle="collapse" href="#sidebarUsers"
+                           aria-expanded="@IsAriaExpanded(new[] { "Account", "Roles" }, "Index")"
+                           aria-controls="sidebarUsers"
+                           class="side-nav-link">
+                            <span class="menu-icon"><i class="fa-solid fa-users"></i></span>
+                            <span class="fw menu-text">Users Management Unite</span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <div class="collapse @IsExpanded(new[] { "Account", "Roles" }, "Index")" id="sidebarUsers">
+                            <ul class="sub-menu bg-white border border-start-0 ">
+                                <li class="side-nav-item @IsActiveBG("Account", "Index")">
+                                    <a href="/Admin/Account/Index" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-group-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Account", "Index")">@Resource1.UsersList</span>
+                                    </a>
+                                </li>
+                                @if (PermissionScanner.ValidatePermission("Roles", "Index"))
+                                {
+                                    <li class="side-nav-item @IsActiveBG("Roles", "Index")">
+                                        <a href="/Admin/Roles/Index" class="side-nav-link">
+                                            <span class="menu-icon"><i class="ri-shield-user-fill"></i></span>
+                                            <span class="fw menu-text @IsActive("Roles", "Index")">@Resource1.UserGroups</span>
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </li>
+                }
+
+                @* --- Logs --- *@
+
+                @if (PermissionScanner.ValidatePermission("LogHistory", "Index"))
+                {
+                    <li class="side-nav-item @IsActiveBG("LogHistory", "Index") border-bottom">
+                        <a href="/Admin/LogHistory" class="side-nav-link">
+                            <span class="menu-icon"><i class="ri-pages-line"></i></span>
+                            <span class="fw menu-text @IsActive("LogHistory", "Index")">Logs Unite</span>
+                        </a>
+                    </li>
+                }
+
+            </ul>
+
+        </div>
+
+
+
+        <!-- ============================================================== -->
+        <!-- Start Page Content here -->
+        <!-- ============================================================== -->
+        <div class="page-content">
+
+            <!-- Loading Screen -->
+            <div class="loading-screen" id="loadingScreen">
+                <div class="hyper-loader"></div>
+            </div>
+
+            <!-- Page Container -->
+            <div class="page-container">
+                @RenderBody()
+            </div>
+
+            <!-- Footer -->
+            <footer class="py-1 border-top bg-white shadow-sm mt-3">
+                <div class="container-fluid">
+                    <div class="row align-items-center" dir="ltr">
+                        <!-- Left-aligned copyright -->
+                        <div class="col text-end text-muted d-none d-md-block d-lg-block">
+                            <small style="font-size: 0.75rem;">
+                                © @AppDubaiTime.Now.Year Smart Vision IT Solutions - All rights reserved.
+                            </small>
+                        </div>
+
+                        <!-- Right-aligned logo -->
+                        <div class="col-auto ms-auto d-flex align-items-center gap-2">
+                            <small class="text-muted" style="font-size: 0.75rem;">Powered by</small>
+                            <img src="~/ar/assets/images/foter-logo-co.png" alt="logo" class="footer-logo">
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+
+        <!-- ============================================================== -->
+        <!-- End Page content -->
+        <!-- ============================================================== -->
+        <!-- END wrapper -->
+
+        <div id="loadingScreen2" style="display: none;">
+            <div class="ha-loading-backdrop">
+                <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">@Resource1.Loading ...</span>
+                </div>
+                @* <div class="mt-2 text-muted fw-semibold">جارٍ التحميل...</div> *@
+                <div class="mt-2 text-muted fw-semibold">@Resource1.Loading ...</div>
+            </div>
+        </div>
+
+        <!-- Vendor js -->
+        <script src="~/assets/js/vendor.min.js"></script>
+
+        <!-- App js -->
+        <script src="~/assets/js/app.js"></script>
+
+        <!-- Apex Chart js -->
+        @* <script src="~/assets/vendor/apexcharts/apexcharts.min.js"></script> *@
+        <script src="~/assets/js/sweetalert2@11.js"></script>
+
+        <script>
+                        const loadingScreen = document.querySelector('.loading-screen');
+                                    loadingScreen.style.display = 'block';
+                      window.addEventListener('load', function () {
+                    setTimeout(function () {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(function () {
+                            loadingScreen.style.display = 'none';
+                        }, 100);
+                    }, 900);
+                });
+
+
+             const sideBtn = document.getElementById("sideBtn2");
+                let sideState = false;
+
+            sideBtn.addEventListener("click", () => {
+                sideState = !sideState;
+                if (sideState) {
+                    document.documentElement.setAttribute("data-sidenav-size", "full");
+                    document.documentElement.classList.remove("sidebar-enable");
+                }
+                else {
+                    if (window.innerWidth <= 768) {
+                        document.documentElement.setAttribute("data-sidenav-size", "full");
+                    }
+                    else {
+                        document.documentElement.setAttribute("data-sidenav-size", "default");
+
+                    }
+                    document.documentElement.classList.add("sidebar-enable");
+
+                }
+            });
+
+        </script>
+        <!-- Projects Analytics Dashboard App js -->
+        <script src="~/assets/js/pages/dashboard.js"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+    </div>
+</body>
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:56:48 GMT -->
+</html>
+<!-- toastr.js   -->
+<link rel="stylesheet" href="~/assets/css/toastr.min.css" />
+<script src="~/assets/js/jquery.min.js"></script>
+<script src="~/assets/js/toastr.min.js"></script>
+@using System.Text.Json
+@using System.Text.Encodings.Web
+@using Infrastructure.Repositories.InterfacesDB
+@using Microsoft.AspNetCore.Html
+
+@{
+    var toastMessageResource = Context.Session.GetString("ToastMessage");
+    string toastMessage = null;
+
+    if (!string.IsNullOrEmpty(toastMessageResource))
+    {
+        var property = typeof(Resource2).GetProperty(toastMessageResource);
+        toastMessage = property?.GetValue(null, null)?.ToString();
+    }
+
+    var toastType = Context.Session.GetString("ToastType");
+    var toastKey = Context.Session.GetString("ToastKey");
+
+    // Clean up session
+    Context.Session.Remove("ToastMessage");
+    Context.Session.Remove("ToastType");
+    Context.Session.Remove("ToastKey");
+}
+<script>
+    $(function () {
+        @{
+                                                                                    // Serialize safely
+                                                                                    var jsonOptions = new JsonSerializerOptions
+                                                                                    {
+                                                                                                                                                                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                                                                                                                                                                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                                                                                    };
+
+                                                                                    var messageJson = Html.Raw(JsonSerializer.Serialize(toastMessage, jsonOptions));
+                                                                                    var typeJson = Html.Raw(JsonSerializer.Serialize(toastType, jsonOptions));
+                                                                                    var keyJson = Html.Raw(JsonSerializer.Serialize(toastKey, jsonOptions));
+        }
+
+        var msg = @messageJson;
+        var type = @typeJson;
+        var key = @keyJson;
+
+        if (msg && msg !== "") {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                newestOnTop: true,
+                preventDuplicates: true,
+                positionClass: "toast-top-center", // More natural placement
+                showDuration: 300,
+                hideDuration: 500,
+                timeOut: 4000,
+                extendedTimeOut: 2000,
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+
+            switch (type) {
+                case "success":
+                    toastr.success(msg, "✅ Success");
+                    break;
+                case "error":
+                    toastr.error(msg, "ℹ️ Notice");
+                    break;
+                case "info":
+                    toastr.info(msg, "ℹ️ Info");
+                    break;
+                case "warning":
+                    toastr.warning(msg, "⚠️ Warning");
+                    break;
+                default:
+                    toastr.info(msg, "ℹ️ Notice");
+                    break;
+            }
+        }
+    });
+</script>
+
+<style>
+    /* Improve look of toastr */
+    /* Make toast wider */
+    #toast-container > .toast {
+        min-width: 380px !important; /* default ~300px */
+        max-width: 420px !important; /* allow flexible width */
+        border-radius: 12px !important;
+        padding: 16px 20px !important;
+        font-size: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        word-wrap: break-word; /* keep long text inside */
+    }
+
+
+    #toast-container > .toast-success {
+        background: #09bc8a !important;
+        color: #fff !important;
+    }
+
+    #toast-container > .toast-error {
+        background: linear-gradient(135deg, #dc3545, #bd2130) !important;
+        color: #fff !important;
+    }
+
+    #toast-container > .toast-info {
+        background: #0BA6DF !important;
+        color: #fff !important;
+    }
+
+    #toast-container > .toast-warning {
+        background: linear-gradient(135deg, #ffc107, #d39e00) !important;
+        color: #212529 !important;
+    }
+
+    #toast-container .toast-close-button {
+        color: #fff !important;
+        opacity: 0.8;
+    }
+
+        #toast-container .toast-close-button:hover {
+            opacity: 1;
+        }
+</style>

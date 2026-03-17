@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:58:21 GMT -->
+<head>
+    <meta charset="utf-8" />
+    <title>@Resource2.KhaledTeamRecyclingManagementSystem</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/favicon.ico">
+
+    <!-- Vendor css -->
+    <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- App css -->
+    @{
+        var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
+    }
+    @if (lang == "ar")
+    {
+        <link href="~/assets/css/app-rtl.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+    else
+    {
+        <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+
+    <!-- Icons css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/config.js"></script>
+</head>
+
+<body>
+    <header class="app-topbar">
+        <div class="page-container topbar-menu">
+            <div class="d-flex align-items-center gap-2">
+
+                <!-- Brand Logo -->
+
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <!-- Language -->
+                <a asp-controller="Home" asp-action="ChangeLanguage"
+                   asp-route-lang="ar"
+                   href="?lang=ar">AR</a> | <a asp-controller="Home" asp-action="ChangeLanguage"
+                                               asp-route-lang="en-GB"
+                                               href="?lang=en-GB">EN</a>
+
+                <!-- Light/Dark Mode Button -->
+                <div class="topbar-item d-none d-sm-flex">
+                    <button class="topbar-link" id="light-dark-mode" type="button">
+                        <i class="ri-moon-line fs-22"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+    @RenderBody()
+
+    <!-- Vendor js -->
+    <script src="~/assets/js/vendor.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+</body>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:58:21 GMT -->
+</html>

@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
-    [AdminAuthorize]
+    //[AdminAuthorize]
     [Area("Admin")]
     public class MemberController : Controller
     {

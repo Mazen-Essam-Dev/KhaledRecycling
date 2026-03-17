@@ -1,0 +1,424 @@
+﻿@functions {
+    // Returns active class for single or multiple actions within a controller
+    public string IsActive(string controller, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        var baseClass = "menu-text";
+
+        if (string.IsNullOrEmpty(currentController) || string.IsNullOrEmpty(currentAction))
+            return baseClass;
+
+        return currentController.Equals(controller, StringComparison.OrdinalIgnoreCase) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? $"{baseClass} active-text"
+        : baseClass;
+    }
+
+    public string IsActiveBG(string controller, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        var baseClass = "side-nav-item";
+
+        if (string.IsNullOrEmpty(currentController) || string.IsNullOrEmpty(currentAction))
+            return baseClass;
+
+        return currentController.Equals(controller, StringComparison.OrdinalIgnoreCase) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? $"{baseClass} active-background"
+        : baseClass;
+    }
+
+    // Expands collapsible section if current route matches
+    public string IsExpanded(IEnumerable<string> controllers, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        return controllers.Any(c => c.Equals(currentController, StringComparison.OrdinalIgnoreCase)) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? "show"
+        : "";
+    }
+
+
+    // Sets aria-expanded true/false based on current route
+    public string IsAriaExpanded(IEnumerable<string> controllers, params string[] actions)
+    {
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+
+        return controllers.Any(c => c.Equals(currentController, StringComparison.OrdinalIgnoreCase)) &&
+        actions.Any(a => a.Equals(currentAction, StringComparison.OrdinalIgnoreCase))
+        ? "show"
+        : "";
+    }
+}
+@using Application.Helpers
+@using Application.Interfaces.Admin
+@using Domain.Resources
+@using System.Security.Claims
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:56:45 GMT -->
+<head>
+    <meta charset="utf-8" />
+    <title>Dashboard | Highdmin - Responsive Bootstrap 5 Admin Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="A fully featured admin theme which can be used to build CRM, CMS, etc." name="description" />
+    <meta content="Coderthemes" name="author" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Font-Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/logo_only.png">
+    <link href="~/css/index.css" rel="stylesheet" />
+    <!-- Vendor css -->
+    <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
+    <!-- SweetAlert2  https://cdn.jsdelivr.net/npm/sweetalert2@11-->
+    <script src="~/assets/js/sweetalert2@11.js"></script>
+
+    <!-- cdn chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Your global delete handler -->
+    <script src="~/js/swal-delete.js"></script>
+
+    <!-- App css -->
+    @{
+        var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
+    }
+    @if (lang == "ar")
+    {
+        <link href="~/assets/css/app-rtl.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+    else
+    {
+        <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
+    }
+
+
+    <link href="~/spinner/style.css" rel="stylesheet" />
+    <script src="~/spinner/spinner.js"></script>
+
+    <!-- Icons css -->
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Theme Config Js -->
+    <script src="~/assets/js/config.js"></script>
+</head>
+<body>
+
+
+  
+
+    <!-- ============================================================== -->
+    <!-- Start Page Content here -->
+    <!-- ============================================================== -->
+    <div class="">
+
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="hyper-loader"></div>
+        </div>
+
+
+
+        <!-- Spinner -->
+        <div id="spinner" aria-hidden="true">
+            <div class="spinner-layout">
+                <div class="sk-folding-cube">
+                    <div class="sk-cube1 sk-cube"></div>
+                    <div class="sk-cube2 sk-cube"></div>
+                    <div class="sk-cube4 sk-cube"></div>
+                    <div class="sk-cube3 sk-cube"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer mt-3 border-top bg-white shadow-sm">
+            <div class="navbar-left">
+                <a class="navbar-brand" href="/Admin/Home/Index">
+                    <img src="~/assets/images/logo_only.png" width="55" alt="Logo" />
+                </a>
+                <div class="navbar-brand">
+                    <img src="~/assets/images/logo_TextOnly.png" style="margin-inline-start: -17px !important;" alt="Logo" />
+                </div>
+                <h4 class="navbar-title" style="color:#050562">
+                    الموقع الرسمي لإعادة التدوير
+                </h4>
+            </div>
+        </footer>
+
+        <!-- Page Container -->
+        <div id="page-container" class="page-container flex-grow-1">
+            @RenderBody()
+        </div>
+
+
+        <!-- Footer -->
+        <footer class="footer mt-3 border-top bg-white " style="direction:ltr;">
+            <div class="container-fluid">
+                <div class="row align-items-center justify-content-between text-center text-md-start">
+
+                    <!-- Left-aligned copyright -->
+                    <div class="col-md-auto mb-2 mb-md-0">
+                        <small class="text-muted"> © 2026 جميع الحقوق محفوظة</small>
+                    </div>
+
+                    <!-- Right-aligned logo -->
+                    <div class="col-md-auto d-flex justify-content-center justify-content-md-end align-items-center gap-2">
+                        <small class="text-muted">Powered by</small>
+                        <a href="#" target="_self" class="text-decoration-none"> <img src="~/assets/images/logo_TextOnly.png" alt="logo" class="footer-logo" style="height:28px;"></a>
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+    </div>
+
+
+    <!-- ============================================================== -->
+    <!-- End Page content -->
+    <!-- ============================================================== -->
+    <!-- END wrapper -->
+
+    <div id="loadingScreen2" style="display: none;">
+        <div class="ha-loading-backdrop">
+            <div class="spinner-border " role="status">
+                <span class="visually-hidden">@Resource1.Loading ...</span>
+            </div>
+            @* <div class="mt-2 text-muted fw-semibold">جارٍ التحميل...</div> *@
+            <div class="mt-2 text-muted fw-semibold">@Resource1.Loading ...</div>
+        </div>
+    </div>
+
+    <!-- Vendor js -->
+    <script src="~/assets/js/vendor.min.js"></script>
+
+    <!-- App js -->
+    <script src="~/assets/js/app.js"></script>
+
+    <script src="~/assets/js/sweetalert2@11.js"></script>
+
+    @if (Context.Request.Method == "GET")
+    {
+        <script>
+            const loadingScreen = document.querySelector('.loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'block';
+
+                window.addEventListener('load', function () {
+                    setTimeout(function () {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(function () {
+                            loadingScreen.style.display = 'none';
+                        }, 100);
+                    }, 900);
+                });
+            }
+        </script>
+    }
+
+    <script>
+        const sideBtn = document.getElementById("sideBtn2");
+        let sideState = false;
+
+        sideBtn.addEventListener("click", () => {
+        sideState = !sideState;
+        if (sideState) {
+        document.documentElement.setAttribute("data-sidenav-size", "full");
+        document.documentElement.classList.remove("sidebar-enable");
+        }
+        else {
+        if (window.innerWidth <= 768) {
+        document.documentElement.setAttribute("data-sidenav-size", "full");
+        }
+        else {
+        document.documentElement.setAttribute("data-sidenav-size", "default");
+
+        }
+        document.documentElement.classList.add("sidebar-enable");
+
+        }
+        });
+
+    </script>
+    <!-- Projects Analytics Dashboard App js -->
+    <script src="~/assets/js/pages/dashboard.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+
+
+<!-- Mirrored from coderthemes.com/highdmin/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:56:48 GMT -->
+</html>
+<!-- toastr.js   -->
+<link rel="stylesheet" href="~/assets/css/toastr.min.css" />
+<script src="~/assets/js/jquery.min.js"></script>
+<script src="~/assets/js/toastr.min.js"></script>
+
+@using System.Text.Json
+@using System.Text.Encodings.Web
+@using Infrastructure.Repositories.InterfacesDB
+@using Microsoft.AspNetCore.Html
+
+@{
+    var toastMessageResource = Context.Session.GetString("ToastMessage");
+    string toastMessage = null;
+
+    if (!string.IsNullOrEmpty(toastMessageResource))
+    {
+        var property = typeof(Resource2).GetProperty(toastMessageResource);
+        toastMessage = property?.GetValue(null, null)?.ToString();
+    }
+
+    var toastType = Context.Session.GetString("ToastType");
+    var toastKey = Context.Session.GetString("ToastKey");
+
+    // Clean up session
+    Context.Session.Remove("ToastMessage");
+    Context.Session.Remove("ToastType");
+    Context.Session.Remove("ToastKey");
+}
+
+<script>
+    // this Script for Reload Tootips Text after Ajax Called in index Pages or another page
+    function initTooltips() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+</script>
+<script>
+    $(function () {
+        @{
+                                                                                                                                                                                // Serialize safely
+                                                                                                                                                                                var jsonOptions = new JsonSerializerOptions
+                                                                                                                                                                                {
+                                                                                                                                                                                                                                                                                                                                                        Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                                                                                                                                                                                                                                                                                                                                                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                                                                                                                                                                                };
+
+                                                                                                                                                                                var messageJson = Html.Raw(JsonSerializer.Serialize(toastMessage, jsonOptions));
+                                                                                                                                                                                var typeJson = Html.Raw(JsonSerializer.Serialize(toastType, jsonOptions));
+                                                                                                                                                                                var keyJson = Html.Raw(JsonSerializer.Serialize(toastKey, jsonOptions));
+        }
+
+        var msg = @messageJson;
+        var type = @typeJson;
+        var key = @keyJson;
+
+        if (msg && msg !== "") {
+            toastr.options = {
+                closeButton: true,
+                progressBar: true,
+                newestOnTop: true,
+                preventDuplicates: true,
+                positionClass: "toast-top-center", // More natural placement
+                showDuration: 300,
+                hideDuration: 500,
+                timeOut: 4000,
+                extendedTimeOut: 2000,
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+
+            switch (type) {
+                case "success":
+                    toastr.success(msg, "✅ Success");
+                    break;
+                case "error":
+                    toastr.error(msg, "ℹ️ Notice");
+                    break;
+                case "info":
+                    toastr.info(msg, "ℹ️ Info");
+                    break;
+                case "warning":
+                    toastr.warning(msg, "⚠️ Warning");
+                    break;
+                default:
+                    toastr.info(msg, "ℹ️ Notice");
+                    break;
+            }
+        }
+    });
+</script>
+
+<script>
+    // Toaster For you can't Print if records > 3999
+    function showToastrCannotPrint() {
+      toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "timeOut": "3000"
+      };
+      var cantPrint ='@Html.Raw(Resource1.cantPrint)';
+      var useExcel ='@Html.Raw(Resource1.useExcel)';
+
+      toastr.error(cantPrint+'\n'+useExcel);
+    }
+</script>
+
+<style>
+    /* Improve look of toastr */
+    /* Make toast wider */
+    #toast-container > .toast {
+        min-width: 380px !important; /* default ~300px */
+        max-width: 420px !important; /* allow flexible width */
+        border-radius: 12px !important;
+        padding: 16px 20px !important;
+        font-size: 15px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        word-wrap: break-word; /* keep long text inside */
+        white-space: pre-line; /*  \n new Line */
+        text-align: center; /* Center the text horizontally */
+    }
+
+        /* Toaster text only */
+        #toast-container > .toast .toast-message {
+            flex: 1; /* Let the text take all the space */
+            text-align: center; /*Center Text */
+        }
+
+    #toast-container > .toast-success {
+        /* background: linear-gradient(135deg, #28a745, #218838) !important; */
+        color: #fff !important;
+    }
+
+    #toast-container > .toast-error {
+        background: linear-gradient(135deg, #dc3545, #bd2130) !important;
+        color: #fff !important;
+    }
+
+    #toast-container > .toast-info {
+        background: #0BA6DF !important;
+        color: #fff !important;
+    }
+
+
+    #toast-container > .toast-warning {
+        background: linear-gradient(135deg, #ffc107, #d39e00) !important;
+        color: #212529 !important;
+    }
+
+    #toast-container .toast-close-button {
+        color: #fff !important;
+        opacity: 0.8;
+    }
+
+        #toast-container .toast-close-button:hover {
+            opacity: 1;
+        }
+</style>

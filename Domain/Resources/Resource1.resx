@@ -897,7 +897,7 @@
   </data>
   <data name="FujairahScientificClub" xml:space="preserve">
     <value>Fujairah Scientific Club</value>
-    <comment>نادي الفجيرة العلمي</comment>
+    <comment>--</comment>
   </data>
   <data name="logo" xml:space="preserve">
     <value>logo</value>
@@ -1065,7 +1065,7 @@
   </data>
   <data name="CourseLicense2" xml:space="preserve">
     <value>At Fujairah Scientific Club, if it is not possible to attend, the club management must be informed before the date</value>
-    <comment>بنادي الفجيرة العلمي في حال التعذر عن الحضور، يجب إبلاغ إدارة النادي قبل موعد</comment>
+    <comment>ب-- في حال التعذر عن الحضور، يجب إبلاغ إدارة النادي قبل موعد</comment>
   </data>
   <data name="CourseLicense3" xml:space="preserve">
     <value>Course for at least 24 hours A member may be denied registration for subsequent Courses if:</value>
@@ -2029,7 +2029,7 @@
   </data>
   <data name="FujairahScientificClubAttestsThat" xml:space="preserve">
     <value>Fujairah Scientific Club attests that</value>
-    <comment>يشهد نادي الفجيرة العلمي بأن</comment>
+    <comment>يشهد -- بأن</comment>
   </data>
   <data name="MemberMale" xml:space="preserve">
     <value>Student</value>
@@ -3118,8 +3118,8 @@
     <comment>تقرير سجل العمليات</comment>
   </data>
   <data name="FujairahPrintFooter" xml:space="preserve">
-    <value>FUJAIRAH SCIENCE CLUB</value>
-    <comment>FUJAIRAH SCIENCE CLUB</comment>
+    <value>Khaled Team Recycling</value>
+    <comment>Khaled Team Recycling</comment>
   </data>
   <data name="MemberNo" xml:space="preserve">
     <value>Member No.</value>
@@ -3297,7 +3297,7 @@
   <data name="part1Cert" xml:space="preserve">
     <value>Demonstrating scientific engagement, academic commitment, and effective participation
 in accordance with the standards of Fujairah Science Club.</value>
-    <comment>وذلك لالتزامه العلمي والتفاعل المعرفي والمشاركة الفعالة وفق المعايير المعتمدة لنادي الفجيرة العلمي</comment>
+    <comment>وذلك لالتزامه العلمي والتفاعل المعرفي والمشاركة الفعالة وفق المعايير المعتمدة ل--</comment>
   </data>
   <data name="part2Cert" xml:space="preserve">
     <value>This Certificate is awarded in recognition of the above participation, With our sincere wishes for continued success and excellence.</value>
@@ -3332,8 +3332,8 @@ in accordance with the standards of Fujairah Science Club.</value>
     <comment>صادرة عن</comment>
   </data>
   <data name="CertificateVerified_ClubName" xml:space="preserve">
-    <value>FUJAIRAH SCIENCE CLUB</value>
-    <comment>نادي الفجيرة العلمي</comment>
+    <value>--</value>
+    <comment>--</comment>
   </data>
   <data name="CertificateVerified_NotValid" xml:space="preserve">
     <value>Certificate not valid</value>

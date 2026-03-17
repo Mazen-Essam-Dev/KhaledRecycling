@@ -1501,7 +1501,7 @@ namespace Domain.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FUJAIRAH SCIENCE CLUB.
+        ///   Looks up a localized string similar to --.
         /// </summary>
         public static string CertificateVerified_ClubName {
             get {
@@ -3418,7 +3418,7 @@ namespace Domain.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FUJAIRAH SCIENCE CLUB.
+        ///   Looks up a localized string similar to Khaled Team Recycling.
         /// </summary>
         public static string FujairahPrintFooter {
             get {

@@ -794,7 +794,7 @@
     <value>نسبة المقيمين الى المواطنين</value>
   </data>
   <data name="FujairahScientificClub" xml:space="preserve">
-    <value>نادي الفجيرة العلمي</value>
+    <value>--</value>
   </data>
   <data name="logo" xml:space="preserve">
     <value>شعار</value>
@@ -920,7 +920,7 @@
     <value>يلتزم العضو بالحضور الكامل لأي دورة يقوم بالتسجيل فيها</value>
   </data>
   <data name="CourseLicense2" xml:space="preserve">
-    <value>بنادي الفجيرة العلمي في حال التعذر عن الحضور، يجب إبلاغ إدارة النادي قبل موعد</value>
+    <value>ب-- في حال التعذر عن الحضور، يجب إبلاغ إدارة النادي قبل موعد</value>
   </data>
   <data name="CourseLicense3" xml:space="preserve">
     <value>الدورات بـ 24 ساعة على الأقل قد يُحرم العضو من التسجيل في دورات لاحقة في حال</value>
@@ -1737,7 +1737,7 @@
     <value>شهادة حضور ومشاركة</value>
   </data>
   <data name="FujairahScientificClubAttestsThat" xml:space="preserve">
-    <value>يشهد نادي الفجيرة العلمي بأن</value>
+    <value>يشهد -- بأن</value>
   </data>
   <data name="MemberMale" xml:space="preserve">
     <value>الطالب</value>
@@ -2572,7 +2572,7 @@
     <value>تقرير سجل العمليات</value>
   </data>
   <data name="FujairahPrintFooter" xml:space="preserve">
-    <value>FUJAIRAH SCIENCE CLUB</value>
+    <value>Khaled Team Recycling</value>
   </data>
   <data name="MemberNo" xml:space="preserve">
     <value>رقم العضو</value>
@@ -2707,7 +2707,7 @@
     <value>وبموجب هذه الشهـادة بأن</value>
   </data>
   <data name="part1Cert" xml:space="preserve">
-    <value>وذلك لالتزامه العلمي والتفاعل المعرفي والمشاركة الفعالة وفق المعايير المعتمدة لنادي الفجيرة العلمي</value>
+    <value>وذلك لالتزامه العلمي والتفاعل المعرفي والمشاركة الفعالة وفق المعايير المعتمدة ل--</value>
   </data>
   <data name="part2Cert" xml:space="preserve">
     <value>لذا تمنح هذه الشهادة تقديرًا للمشاركة العلمية مع أطيب التمنيات له بمزيد من التوفيق والنجاح</value>
@@ -2734,7 +2734,7 @@
     <value>تم إصدارها من قبل</value>
   </data>
   <data name="CertificateVerified_ClubName" xml:space="preserve">
-    <value>نادي الفجيرة العلمي</value>
+    <value>--</value>
   </data>
   <data name="CertificateVerified_NotValid" xml:space="preserve">
     <value>الشهادة غير صالحة</value>

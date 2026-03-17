@@ -137,7 +137,7 @@
     <value>الخصومات والعلاوات Excel</value>
   </data>
   <data name="FUJAIRAHSCIENCECLUB" xml:space="preserve">
-    <value>نادي الفجيرة العلمي</value>
+    <value>--</value>
   </data>
   <data name="MaximumFileSize5MB" xml:space="preserve">
     <value>Max Size 5MB</value>
@@ -167,7 +167,7 @@
     <value>تجربة</value>
   </data>
   <data name="TitleLogin" xml:space="preserve">
-    <value> نظام اداره بيانات نادي الفجيرة العلمي</value>
+    <value> نظام اداره بيانات --</value>
   </data>
   <data name="UploadFilePDF" xml:space="preserve">
     <value>تحميل ملف PDF</value>

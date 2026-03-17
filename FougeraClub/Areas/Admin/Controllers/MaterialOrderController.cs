@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
-    [AdminAuthorize]
+    //[AdminAuthorize]
     [Area("Admin")]
     public class MaterialOrderController : Controller
     {

@@ -25,7 +25,7 @@ using KhaledTeamRecycling.Areas.Admin.ViewModels.SMS;
 
 namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
-    [AdminAuthorize]
+    //[AdminAuthorize]
     [Area("Admin")]
     public class SalaryManagementController : Controller
     {

@@ -8,8 +8,11 @@ namespace Domain.HelperForDomain
 {
     public static class AppDubaiTime1
     {
+        //private static readonly TimeZoneInfo DubaiZone =
+        //    TimeZoneInfo.FindSystemTimeZoneById("Asia/Dubai");
+
         private static readonly TimeZoneInfo DubaiZone =
-            TimeZoneInfo.FindSystemTimeZoneById("Asia/Dubai");
+        TimeZoneInfo.FindSystemTimeZoneById("Africa/Cairo");
 
         public static DateTime Now =>
             TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, DubaiZone);

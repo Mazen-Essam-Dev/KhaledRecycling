@@ -80,7 +80,8 @@ namespace KhaledTeamRecycling.Extensions
 
             app.MapGet("/", context =>
             {
-                context.Response.Redirect("/member/home/index");
+                //context.Response.Redirect("/member/home/index");
+                context.Response.Redirect("admin/Home/Index");
                 return Task.CompletedTask;
             });
 
