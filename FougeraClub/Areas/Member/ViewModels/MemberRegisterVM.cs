@@ -34,9 +34,9 @@ namespace KhaledTeamRecycling.Areas.Member.ViewModels
         public IEnumerable<SelectListItem>? GenderEnumList { get; set; }
 
 
-        [RegularExpression(@"\b\d{3}-\d{4}-\d{7}-\d\b", ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "Mast_Length_18")]
-        [LocalizedRequired("Required"), LocalizedMaxLength(18, "Mast_Length_18"), LocalizedMinLengthAttribute(18, "Mast_Length_18")]
-        [Unique(typeof(MemberEntity), nameof(IdNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherIdNumber")]
+        //[RegularExpression(@"\b\d{3}-\d{4}-\d{7}-\d\b", ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "Mast_Length_18")]
+        //[LocalizedRequired("Required"), LocalizedMaxLength(18, "Mast_Length_18"), LocalizedMinLengthAttribute(18, "Mast_Length_18")]
+        //[Unique(typeof(MemberEntity), nameof(IdNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherIdNumber")]
         public string? IdNumber { get; set; }
         public string? g1 { get; set; }
         public string? g2 { get; set; }
@@ -54,9 +54,9 @@ namespace KhaledTeamRecycling.Areas.Member.ViewModels
         [LocalizedRequired("Required")]
         public int? Age { get; set; }
 
-        [Phone(ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "PhoneNumberisNotValid")]
-        [LocalizedRequired("Required"), LocalizedMaxLength(10, "PhoneInCorrect") /*, LocalizedMinLength(10, "PhoneInCorrect")*/]
-        [Unique(typeof(MemberEntity), nameof(PhoneNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherPhoneNumber")]
+        //[Phone(ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "PhoneNumberisNotValid")]
+        //[LocalizedRequired("Required"), LocalizedMaxLength(10, "PhoneInCorrect") /*, LocalizedMinLength(10, "PhoneInCorrect")*/]
+        //[Unique(typeof(MemberEntity), nameof(PhoneNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherPhoneNumber")]
         public string? PhoneNumber { get; set; }
 
         [Phone(ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "PhoneNumberisNotValid")]
@@ -116,8 +116,8 @@ namespace KhaledTeamRecycling.Areas.Member.ViewModels
         [LocalizedMaxLength(100, "MaxLength_100")]
         public string? Instagram { get; set; }
 
-        [LocalizedRequired("Required"), LocalizedMaxLength(100, "MaxLength_100")]
-        [Unique(typeof(MemberEntity), nameof(Email), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherEmail")]
+        //[LocalizedRequired("Required"), LocalizedMaxLength(100, "MaxLength_100")]
+        //[Unique(typeof(MemberEntity), nameof(Email), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherEmail")]
         public string? Email { get; set; }
 
         [LocalizedRequired("Required")]
@@ -144,7 +144,7 @@ namespace KhaledTeamRecycling.Areas.Member.ViewModels
 
         [LocalizedRequired("Required")]
         public int? MemberTypeId { get; set; }
-        public virtual MemberType? MemberType { get; set; }
+        //public virtual MemberType? MemberType { get; set; }
 
         #region Check Date Expired and DateOfBirth > 9
         // must : IValidatableObject

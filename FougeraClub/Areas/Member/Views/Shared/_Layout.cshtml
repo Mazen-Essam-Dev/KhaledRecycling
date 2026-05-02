@@ -1,6 +1,4 @@
-﻿@using Application.Interfaces.Member
-@inject IAccountService _accountService
-
+﻿
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,11 +7,11 @@
 
                     var currentPath = Context?.Request.Path.Value?.ToLower();
                     var email = Context?.Session?.GetString("Email");
-                    var member = new MemberEntity();
-                    if (email != null)
-                    {
-                                        member = await _accountService.GetMemberByEmailAsync(email);
-                    }
+                    // var member = new MemberEntity();
+                    // if (email != null)
+                    // {
+                    //                     member = await _accountService.GetMemberByEmailAsync(email);
+                    // }
 }
 @{
                         ViewData["Title"] = (ViewData["Title"] != null) ? ViewData["Title"] : Resource2.KhaledTeamRecycling;
@@ -116,11 +114,11 @@
             <div class="person-data">
                 <i class="fa-solid fa-user"></i>
                 <div class="text me-3">
-                    <h7><strong>
+     @*                <h7><strong>
                         @Resource2.Welcome : @(lang == "ar" ? member?.FullNameAr : member?.FullNameEn)
                         </strong>
                     </h7>
-                    <p>@Resource2.RegistrationDate : @member?.RegistrationDate.ToString("d")?.Replace("/","-")</p>
+                    <p>@Resource2.RegistrationDate : @member?.RegistrationDate.ToString("d")?.Replace("/","-")</p> *@
                 </div>
             </div>
             <div class="list">

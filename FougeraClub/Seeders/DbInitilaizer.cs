@@ -87,22 +87,7 @@ namespace KhaledTeamRecycling.Seeders
 
 
 
-            // Seed ExpensesSource Enum Data
-            if (!context.MemberTypes.Any())
-            {
-                var list = Enum.GetValues(typeof(MemberTypeEnum))
-                    .Cast<MemberTypeEnum>()
-                    .Select(e => new MemberType
-                    {
-                        Id = (int)e,
-                        NameEn = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("en")),
-                        NameAr = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("ar"))
-                    })
-                    .ToList();
-
-                await context.MemberTypes.AddRangeAsync(list);
-                await context.SaveChangesAsync();
-            }
+          
 
             // Get all Permissions Of This Application System
             var allPermissions = PermissionScanner.GetAllActionPermissions();
@@ -155,16 +140,6 @@ namespace KhaledTeamRecycling.Seeders
             }
             #endregion adding Role "Master" // with All Permission
 
-            if (!context.Departments.Any())
-            {
-                context.Departments.Add(new Department { NameAr = $"قسم تقنية المعلومات والبرمجة", NameEn = $"Department of Information Technology and Programming" });
-                context.Departments.Add(new Department { NameAr = $"قسم الذكاء االأصطناعى والروبوت", NameEn = $"Department of Artificial Intelligence and Robotics" });
-                context.Departments.Add(new Department { NameAr = $"القسم الصناعى والمهنى", NameEn = $"Industrial and Professional Department" });
-                context.Departments.Add(new Department { NameAr = $"قسم التصميم والتنفيذ", NameEn = $"Design and Implementation Department" });
-                context.Departments.Add(new Department { NameAr = $"قسم الطيران وعلوم الفضاء", NameEn = $"Department of Aviation and Space Sciences" });
-
-                await context.SaveChangesAsync();
-            }
 
             //if (!context.Users.Any())
             //{
@@ -236,45 +211,6 @@ namespace KhaledTeamRecycling.Seeders
             //}
 
 
-            if (!context.Members.Any())
-            {
-                var memberPass = config["Member:Password"]; // must be set in appsettings.json or secrets
-                                                            // Seed the Member user
-                var defaultMemberUser = new MemberEntity
-                {
-                    Code = 1000,
-                    Email = "member@test.com",
-                    AcademicQualification = "Bachelor's Degree",
-                    Address = "123 Main St",
-                    DateOfBirth = new DateOnly(1990, 1, 1),
-                    Age = 33,
-                    CityId = 1, // Assuming a valid city ID exists
-                    FullNameAr = "جون دو",
-                    FullNameEn = "John Doe",
-                    EducationInstitution = "University of Example",
-                    Facebook = "https://facebook.com/johndoe",
-                    PhoneNumber = "1234567890",
-                    Profession = "Software Engineer",
-                    Languages = "English, Arabic",
-                    NationalityId = context.Nationalities.OrderByDescending(n => n.Id).Last().Id, //
-                    GenderId = 1, // Assuming
-                    Hobby = "Reading, Coding",
-                    IdNumber = "ID123456",
-                    IdExpiryDate = new DateOnly(2025, 12, 31),
-                    HeardBy = 1,
-                    IdImagePath = "path/to/id/image.jpg",
-                    PassportImagePath = "path/to/passport/image.jpg",
-                    Instagram = "https://instagram.com/johndoe",
-                    Xplatform = "https://twitter.com/johndoe",
-                    License = true,
-                    Password = HashHelper.ComputeSha256Hash(memberPass)
-                };
-
-                await context.AddAsync(defaultMemberUser);
-
-                await context.SaveChangesAsync();
-
-            }
 
         }
     }

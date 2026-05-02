@@ -1,9 +1,11 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Contract;
 using Domain.Entities.Employees;
-
-using Domain.Entities.MaterialOrder;
-
+using Domain.Entities.Gallary;
+using Domain.Entities.Inventory;
+using Domain.Entities.Product;
 using Domain.Entities.SalaryManage;
+using Domain.Entities.Waste;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories.InterfacesDB;
@@ -16,10 +18,7 @@ namespace Infrastructure.Repositories
         private readonly Dictionary<Type, object> _repositories = new();
         private IGenericRepository<ApplicationUser> _Users;
       
-        private IGenericRepository<Department> _Departments;
         private IGenericRepository<Employee> _Employees;
-        private IGenericRepository<MemberEntity> _Members;
-        private IGenericRepository<MemberType> _MemberTypes;
         private IGenericRepository<Nationality> _Nationalities;
         private IGenericRepository<RequestLog> _RequestLogs;
         private IGenericRepository<City> _Cities;
@@ -35,9 +34,34 @@ namespace Infrastructure.Repositories
         private IGenericRepository<UserNotification> _UserNotifications;
    
         private IGenericRepository<SalaryReportSign> _SalaryReportSigns;
-        private IGenericRepository<MaterialOrder> _MaterialOrders;
-        private IGenericRepository<MaterialOrderItem> _MaterialOrderItems;
-       
+
+        private IGenericRepository<UserType> _UserTypes;
+
+        private IGenericRepository<Contract> _Contracts;
+        private IGenericRepository<ContractSubWaste> _ContractSubWastes;
+        private IGenericRepository<ContractSubProduct> _ContractSubProducts;
+
+        private IGenericRepository<MainWaste> _MainWastes;
+        private IGenericRepository<SubWaste> _SubWastes;
+
+        private IGenericRepository<MainProduct> _MainProducts;
+        private IGenericRepository<SubProduct> _SubProducts;
+
+        private IGenericRepository<OrderBuyFromClient> _OrderBuyFromClients;
+        private IGenericRepository<OrderSellToFactory> _OrderSellToFactories;
+        private IGenericRepository<OrderBuyFromFactory> _OrderBuyFromFactories;
+        private IGenericRepository<OrderSellToClient> _OrderSellToClients;
+
+        private IGenericRepository<Financial> _Financials;
+
+        private IGenericRepository<Status> _Statuses;
+
+        private IGenericRepository<Gallery> _Galleries;
+        private IGenericRepository<RoomGallery> _RoomGalleries;
+
+        private IGenericRepository<Inventory> _Inventories;
+        private IGenericRepository<RoomInventory> _RoomInventories;
+
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -58,10 +82,7 @@ namespace Infrastructure.Repositories
             return repositoryInstance;
         }
         public IGenericRepository<ApplicationUser> Users => _Users ??= new GenericRepository<ApplicationUser>(_context);
-        public IGenericRepository<Department> Departments => _Departments ??= new GenericRepository<Department>(_context);
         public IGenericRepository<Employee> Employees => _Employees ??= new GenericRepository<Employee>(_context);
-        public IGenericRepository<MemberEntity> Members => _Members ??= new GenericRepository<MemberEntity>(_context);
-        public IGenericRepository<MemberType> MemberTypes => _MemberTypes ??= new GenericRepository<MemberType>(_context);
         public IGenericRepository<Nationality> Nationalities => _Nationalities ??= new GenericRepository<Nationality>(_context);
         public IGenericRepository<RequestLog> RequestLogs => _RequestLogs ??= new GenericRepository<RequestLog>(_context);
         public IGenericRepository<City> Cities => _Cities ??= new GenericRepository<City>(_context);
@@ -73,8 +94,35 @@ namespace Infrastructure.Repositories
         public IGenericRepository<Notification> Notifications => _Notifications ??= new GenericRepository<Notification>(_context);
         public IGenericRepository<UserNotification> UserNotifications => _UserNotifications ??= new GenericRepository<UserNotification>(_context);
             public IGenericRepository<SalaryReportSign> SalaryReportSigns => _SalaryReportSigns ??= new GenericRepository<SalaryReportSign>(_context);
-        public IGenericRepository<MaterialOrder> MaterialOrders => _MaterialOrders ??= new GenericRepository<MaterialOrder>(_context);
-        public IGenericRepository<MaterialOrderItem> MaterialOrderItems => _MaterialOrderItems ??= new GenericRepository<MaterialOrderItem>(_context);
+        public IGenericRepository<UserType> UserTypes => _UserTypes ??= new GenericRepository<UserType>(_context);
+
+        public IGenericRepository<Contract> Contracts => _Contracts ??= new GenericRepository<Contract>(_context);
+        public IGenericRepository<ContractSubWaste> ContractSubWastes => _ContractSubWastes ??= new GenericRepository<ContractSubWaste>(_context);
+        public IGenericRepository<ContractSubProduct> ContractSubProducts => _ContractSubProducts ??= new GenericRepository<ContractSubProduct>(_context);
+
+        public IGenericRepository<MainWaste> MainWastes => _MainWastes ??= new GenericRepository<MainWaste>(_context);
+        public IGenericRepository<SubWaste> SubWastes => _SubWastes ??= new GenericRepository<SubWaste>(_context);
+
+        public IGenericRepository<MainProduct> MainProducts => _MainProducts ??= new GenericRepository<MainProduct>(_context);
+        public IGenericRepository<SubProduct> SubProducts => _SubProducts ??= new GenericRepository<SubProduct>(_context);
+
+        public IGenericRepository<OrderBuyFromClient> OrderBuyFromClients => _OrderBuyFromClients ??= new GenericRepository<OrderBuyFromClient>(_context);
+        public IGenericRepository<OrderSellToFactory> OrderSellToFactories => _OrderSellToFactories ??= new GenericRepository<OrderSellToFactory>(_context);
+        public IGenericRepository<OrderBuyFromFactory> OrderBuyFromFactories => _OrderBuyFromFactories ??= new GenericRepository<OrderBuyFromFactory>(_context);
+        public IGenericRepository<OrderSellToClient> OrderSellToClients => _OrderSellToClients ??= new GenericRepository<OrderSellToClient>(_context);
+
+        public IGenericRepository<Financial> Financials => _Financials ??= new GenericRepository<Financial>(_context);
+
+        public IGenericRepository<Status> Statuses => _Statuses ??= new GenericRepository<Status>(_context);
+
+        public IGenericRepository<Gallery> Galleries => _Galleries ??= new GenericRepository<Gallery>(_context);
+        public IGenericRepository<RoomGallery> RoomGalleries => _RoomGalleries ??= new GenericRepository<RoomGallery>(_context);
+
+        public IGenericRepository<Inventory> Inventories => _Inventories ??= new GenericRepository<Inventory>(_context);
+        public IGenericRepository<RoomInventory> RoomInventories => _RoomInventories ??= new GenericRepository<RoomInventory>(_context);
+
+
+
         public async Task<int> CompleteAsync()
         {
             return await _context.SaveChangesAsync();

@@ -1,5 +1,4 @@
 ﻿using Application.Helpers;
-using Application.Interfaces.Member;
 using AutoMapper;
 using Domain.HelperForDomain;
 using Domain.Resources;
@@ -21,17 +20,15 @@ namespace KhaledTeamRecycling.Areas.Member.Controllers
     {
         #region properties
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAccountService _accountService;
 
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         #endregion
 
         #region constractor
-        public HomeController(IUnitOfWork unitOfWork, IAccountService accountService, IHttpContextAccessor httpContextAccessor, IMapper mapper)
+        public HomeController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _accountService = accountService;
             _httpContextAccessor = httpContextAccessor;
             _mapper = mapper;
         }
@@ -62,7 +59,7 @@ namespace KhaledTeamRecycling.Areas.Member.Controllers
 
             var username = _httpContextAccessor?.HttpContext?.Session.GetString("Email");
             if (username == null) return NotFound();
-            var user = await _unitOfWork.Members.GetByColumnAsync(u => u.Email == username);
+            //var user = await _unitOfWork.Members.GetByColumnAsync(u => u.Email == username);
 
 
 
@@ -74,7 +71,7 @@ namespace KhaledTeamRecycling.Areas.Member.Controllers
 
             //activities = activities.Where(x => x.StartDate > DateOnly.FromDateTime(AppDubaiTime.Now)).OrderBy(x => x.StartDate);
 
-            model.MemberName = lang == "ar" ? user?.FullNameAr : user?.FullNameEn;
+            //model.MemberName = lang == "ar" ? user?.FullNameAr : user?.FullNameEn;
 
 
             return View(model);

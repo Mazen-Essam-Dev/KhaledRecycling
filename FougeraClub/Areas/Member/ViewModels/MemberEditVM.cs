@@ -123,7 +123,7 @@ namespace KhaledTeamRecycling.Areas.Member.ViewModels
         public string? PassportImagePath { get; set; }
 
         public int? MemberTypeId { get; set; }
-        public virtual MemberType? MemberType { get; set; }
+        //public virtual MemberType? MemberType { get; set; }
 
         #region Check Date Expired and DateOfBirth > 9
         // must : IValidatableObject

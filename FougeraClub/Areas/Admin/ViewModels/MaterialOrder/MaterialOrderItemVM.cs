@@ -1,5 +1,4 @@
-﻿using Domain.Entities.MaterialOrder;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace KhaledTeamRecycling.Areas.Admin.ViewModels.MaterialOrder;

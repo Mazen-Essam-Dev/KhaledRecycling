@@ -16,7 +16,7 @@ builder.Services.AddAuthentication("MyCookieAuth")
 
 
 // 🧠 AutoMapper Setup (fix: use typeof(Profile) not .Assembly)
-builder.Services.AddAutoMapper(typeof(MemberProfile)); // ✅ Works if profile is in WebUI
+builder.Services.AddAutoMapper(typeof(AdminProfile)); // ✅ Works if profile is in WebUI
 
 // 📦 Register Infrastructure Services (e.g., DbContext, Repositories, Identity)
 builder.Services.AddInfrastructure(builder.Configuration);

@@ -1,7 +1,13 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Contract;
 using Domain.Entities.Employees;
+using Domain.Entities.Gallary;
+using Domain.Entities.Inventory;
+using Domain.Entities.Product;
 using Domain.Entities.SalaryManage;
+using Domain.Entities.Waste;
 using Infrastructure.Identity;
+using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -23,11 +29,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
    
     public DbSet<City> Cities { get; set; }
-    public DbSet<Department> Departments { get; set; }
   
     public DbSet<Employee> Employees { get; set; }
-    public DbSet<MemberEntity> Members { get; set; }
-    public DbSet<MemberType> MemberTypes { get; set; }
     public DbSet<Nationality> Nationalities { get; set; }
     public DbSet<RequestLog> RequestLogs { get; set; }
    
@@ -37,7 +40,32 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<SalaryManagementAttachment> SalaryManagementAttachments { get; set; }
     
     public DbSet<UserNotification> UserNotifications { get; set; }
-   
+
+
+    public DbSet<UserType> UserTypes { get; set; }
+    public DbSet<Contract> Contracts { get; set; }
+    public DbSet<ContractSubWaste> ContractSubWastes { get; set; }
+    public DbSet<ContractSubProduct> ContractSubProducts { get; set; }
+
+    public DbSet<MainWaste> MainWastes { get; set; }
+    public DbSet<SubWaste> SubWastes { get; set; }
+
+    public DbSet<MainProduct> MainProducts { get; set; }
+    public DbSet<SubProduct> SubProducts { get; set; }
+
+    public DbSet<OrderBuyFromClient> OrderBuyFromClients { get; set; }
+    public DbSet<OrderSellToFactory> OrderSellToFactories { get; set; }
+    public DbSet<OrderBuyFromFactory> OrderBuyFromFactories { get; set; }
+    public DbSet<OrderSellToClient> OrderSellToClients { get; set; }
+
+    public DbSet<Financial> Financials { get; set; }
+    public DbSet<Status> Statuses { get; set; }
+
+    public DbSet<Gallery> Galleries { get; set; }
+    public DbSet<RoomGallery> RoomGalleries { get; set; }
+
+    public DbSet<Inventory> Inventories { get; set; }
+    public DbSet<RoomInventory> RoomInventories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -51,10 +79,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
         modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens", "Security");
         modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims", "Security");
 
-        // ✅ Uniqe Constrains (IdNumber)
-        modelBuilder.Entity<MemberEntity>()
-            .HasIndex(s => new { s.IdNumber })
-            .IsUnique();
 
       
         modelBuilder.Entity<Signature>()
@@ -76,7 +100,31 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
                 .Property(r => r.RoleNumber)
                 .HasDefaultValue(1);
 
-   
+
+        modelBuilder.Entity<OrderBuyFromClient>()
+            .HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(o => o.FKUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<OrderSellToClient>()
+            .HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(o => o.FKUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<OrderSellToFactory>()
+            .HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(o => o.FKUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<OrderBuyFromFactory>()
+            .HasOne<ApplicationUser>()
+            .WithMany()
+            .HasForeignKey(o => o.FKUserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
 
         modelBuilder.Entity<UserNotification>()
         .HasKey(un => new { un.UserId, un.NotificationId });

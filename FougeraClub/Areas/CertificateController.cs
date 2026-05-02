@@ -1,6 +1,5 @@
 ﻿using Application.Helpers;
 using Application.Interfaces.Admin;
-using Application.Interfaces.Member;
 using AutoMapper;
 using DocumentFormat.OpenXml.Presentation;
 using Domain.Enums;

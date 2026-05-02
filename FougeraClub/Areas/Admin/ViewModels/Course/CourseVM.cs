@@ -10,9 +10,6 @@ public class CourseVM : IValidatableObject
 {
     public int Id { get; set; }
 
-    [LocalizedRequired("Required")]
-    public int DepartmentId { get; set; }
-    public Department? Department { get; set; }
     public List<SelectListItem>? DepartmentsList { get; set; } = new();
     [LocalizedRequired("Required")]
     public int TrainerId { get; set; }

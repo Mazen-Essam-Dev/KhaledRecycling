@@ -32,7 +32,6 @@ namespace KhaledTeamRecycling.Extensions
             services.AddScoped<IRolesService, RolesService>();
             services.AddLocalization(options => options.ResourcesPath = "Resources");
            
-            services.AddScoped<IMemberService, MemberService>();
             services.AddScoped<PermissionScanner>();
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<INotificationService , NotificationService>();
@@ -41,14 +40,12 @@ namespace KhaledTeamRecycling.Extensions
      
 
             services.AddScoped<IAccountService, AccountService>();
-            services.AddScoped<Application.Interfaces.Member.IAccountService, Application.Services.Member.AccountService>();
           
           
         
          
 			services.AddScoped<ISalaryManagementService, SalaryManagementService>();
       
-            services.AddScoped<IMaterialOrderService, MaterialOrderService>();
 
         }
 

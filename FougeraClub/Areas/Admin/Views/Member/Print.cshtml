@@ -101,7 +101,7 @@
                     <td>@member.Age</td>
                     <td>@member.RegistrationDate.ToString("d")?.Replace("/","-")</td>
                 <td data-label="@Resource2.Type">
-                    @(lang == "ar" ? member?.MemberType?.NameAr : member?.MemberType?.NameEn)
+                    @* @(lang == "ar" ? member?.MemberType?.NameAr : member?.MemberType?.NameEn) *@
                 </td>
                 </tr>
             }

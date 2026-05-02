@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Domain.Entities.MaterialOrder;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,11 +13,6 @@ public class MaterialOrderVM
     [LocalizedRequired("Required"), LocalizedMaxLength(50, "MaxLength_50")]
     public string? MaterialOrderCode { get; set; } = null!;
 
-    [LocalizedRequired("Required")]
-    public int? DepartmentId { get; set; }
-
-    [ForeignKey(nameof(DepartmentId))]
-    public virtual Department? Department { get; set; } = null!;
     [LocalizedRequired("Required")]
     public string? UserId { get; set; }
 
@@ -36,8 +30,8 @@ public class MaterialOrderVM
     [Range(0.00, double.MaxValue, ErrorMessage = "القيمة يجب أن تكون رقم")]
     public decimal? OrderTotal { get; set; } = 0.00m;
 
-    // Navigation
-    public virtual ICollection<MaterialOrderItem> Items { get; set; } = new List<MaterialOrderItem>();
+    //// Navigation
+    //public virtual ICollection<MaterialOrderItem> Items { get; set; } = new List<MaterialOrderItem>();
 
     [MaxLength(500)]
     public string? Notes { get; set; }

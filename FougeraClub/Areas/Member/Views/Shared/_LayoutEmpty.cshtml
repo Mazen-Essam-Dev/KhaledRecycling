@@ -1,5 +1,5 @@
-﻿@using Application.Interfaces.Member
-@inject IAccountService _accountService
+﻿@* @using Application.Interfaces.Member
+@inject IAccountService _accountService *@
 
 
 <!DOCTYPE html>
@@ -9,11 +9,11 @@
 
     var currentPath = Context?.Request.Path.Value?.ToLower();
     var email = Context?.Session?.GetString("Email");
-    var member = new MemberEntity();
-    if (email != null)
-    {
-        member = await _accountService.GetMemberByEmailAsync(email);
-    }
+    // var member = new MemberEntity();
+    // if (email != null)
+    // {
+    //     member = await _accountService.GetMemberByEmailAsync(email);
+    // }
 }
 <!-- Mirrored from coderthemes.com/highdmin/layouts/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 10 Jun 2025 13:56:45 GMT -->
 <head>

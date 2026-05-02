@@ -41,8 +41,8 @@ public class MemberVM : IValidatableObject
     public Gender? SelectedGenderEnum { get; set; }
     public IEnumerable<SelectListItem>? GenderEnumList { get; set; }
 
-    [LocalizedRequired("Required"), LocalizedMaxLength(18, "Mast_Length_18"), LocalizedMinLength(18, "Mast_Length_18")]
-    [Unique(typeof(MemberEntity), nameof(IdNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherIdNumber")]
+    //[LocalizedRequired("Required"), LocalizedMaxLength(18, "Mast_Length_18"), LocalizedMinLength(18, "Mast_Length_18")]
+    //[Unique(typeof(MemberEntity), nameof(IdNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherIdNumber")]
     public string? IdNumber { get; set; }
     [LocalizedRequired("Required")]
     [DataType(DataType.Date)]
@@ -54,9 +54,9 @@ public class MemberVM : IValidatableObject
     [LocalizedRequired("Required")]
     public int? Age { get; set; }
 
-    [Phone(ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "PhoneNumberisNotValid")]
-    [LocalizedRequired("Required"), LocalizedMaxLength(10, "PhoneInCorrect") /*, LocalizedMinLength(10, "PhoneInCorrect")*/]
-    [Unique(typeof(MemberEntity), nameof(PhoneNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherPhoneNumber")]
+    //[Phone(ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "PhoneNumberisNotValid")]
+    //[LocalizedRequired("Required"), LocalizedMaxLength(10, "PhoneInCorrect") /*, LocalizedMinLength(10, "PhoneInCorrect")*/]
+    //[Unique(typeof(MemberEntity), nameof(PhoneNumber), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherPhoneNumber")]
     public string? PhoneNumber { get; set; }
 
     [Phone(ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "PhoneNumberisNotValid")]
@@ -166,7 +166,6 @@ public class MemberVM : IValidatableObject
     public bool Suspended { get; set; }
 
     public int? MemberTypeId { get; set; }
-    public virtual MemberType? MemberType { get; set; }
 
     public List<SelectListItem>? Nationalities { get; set; }
     public List<SelectListItem>? NationalitiesOne { get; set; }
