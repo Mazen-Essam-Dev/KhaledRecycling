@@ -149,8 +149,8 @@ namespace KhaledTeamRecycling.Seeders
                 {
                     FullNameAr = "سوبر ادمن",
                     FullNameEn = "superAdmin",
-                    UserName = "superAdmin",
-                    Email = "superAdmin@test.com",
+                    UserName = "superAdmin@test.com",
+                    Email = "superAdmin",
                     EmailConfirmed = true,
                 };
 
@@ -172,8 +172,8 @@ namespace KhaledTeamRecycling.Seeders
                 {
                     FullNameAr = "ماستر",
                     FullNameEn = "Master",
-                    UserName = "Master",
-                    Email = "Master@test.com",
+                    UserName = "Master@test.com",
+                    Email = "Master",
                     EmailConfirmed = true,
                 };
 
