@@ -41,7 +41,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:62851/",
+      "applicationUrl": "http://greenlifekhaledteam2.runasp.net/",
       "sslPort": 44352
     }
   }
