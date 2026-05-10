@@ -1,0 +1,67 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.MainWaste.MainWasteVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? "تعديل نوع نفاية اساسي" : "إضافة نوع نفاية اساسي";
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="/Admin/MainWastes/Index">Main Waste</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-6 d-flex justify-content-end align-items-center gap-2">
+        <a asp-action="Index" class="btn btn-success btn-sm">
+            Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3 mb-3">
+    <div class="d-flex justify-content-center c-pro border p-3 mb-3">
+        <div class="flex-grow-1 d-flex justify-content-start align-items-center">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-edit me-2 text-ico"></span>@ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+
+    <div class="container">
+        <form asp-action="AddEdit" method="post">
+            @Html.AntiForgeryToken()
+            <input hidden asp-for="Id" />
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" asp-for="NameAr">Name (Arabic)</label>
+                        <input asp-for="NameAr" class="form-control" />
+                        <span asp-validation-for="NameAr" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" asp-for="NameEn">Name (English)</label>
+                        <input asp-for="NameEn" class="form-control" />
+                        <span asp-validation-for="NameEn" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end gap-2 mb-4">
+                <button type="submit" class="btn-cancel-search btn-sm btn">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

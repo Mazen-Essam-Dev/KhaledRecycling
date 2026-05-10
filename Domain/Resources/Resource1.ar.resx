@@ -422,7 +422,7 @@
     <value>حذف موظف</value>
   </data>
   <data name="are_you_sure_Delete" xml:space="preserve">
-    <value>هل انت متأكد من حذف ؟</value>
+    <value>هل انت متأكد من حذف </value>
   </data>
   <data name="Edit_Employee" xml:space="preserve">
     <value>تعديل بيانات موظف</value>
@@ -2789,5 +2789,17 @@
   </data>
   <data name="Details_ComparePrices" xml:space="preserve">
     <value>مقارنة عروض الأسعار وترسية</value>
+  </data>
+  <data name="MainProducts" xml:space="preserve">
+    <value>قائمة المنتجات الاساسية</value>
+  </data>
+  <data name="MainWastes" xml:space="preserve">
+    <value>قائمة النفايات الاساسية</value>
+  </data>
+  <data name="SubWastes" xml:space="preserve">
+    <value>قائمة النفايات الفرعية</value>
+  </data>
+  <data name="SubProduct" xml:space="preserve">
+    <value>قائمة المنتجات الفرعية</value>
   </data>
 </root>

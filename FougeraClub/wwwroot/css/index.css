@@ -27,7 +27,7 @@ table {
 label.asteriskRequired::after {
     content: " *";
     color: #af1717; /* Red color */
-    font-size: 1.5em;
+    font-size: 1.15em;
     font-weight: bold;
 }
 

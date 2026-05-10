@@ -1,0 +1,171 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.MainProduct.MainProductVM
+@{
+    ViewData["Title"] = "Main Product";
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6 mb-2">
+        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+            <span class="fa fa-list me-2 text-ico"></span>قائمة المنتجات الاساسية
+        </h4>
+    </div>
+    <div class="col-md-6 mb-2 d-flex justify-content-end gap-2">
+        <a asp-action="AddEdit" class="btn btn-success btn-sm">
+            <i class="fa-solid fa-plus me-1"></i>Add New
+        </a>
+        <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
+            <i class="fa fa-print me-1"></i>Print
+        </button>
+        <button type="button" class="btn btn-success btn-sm" onclick="openExcelPage()">
+            <i class="fa-solid fa-file-excel me-1"></i>Excel
+        </button>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="records-count-box bg-opacity-10 rounded border-opacity-25 px-2 py-1 mb-3 justify-content-end d-flex">
+    <span id="countRecords"> @Model.TotalCount </span>
+    <span> : Records Count </span>
+</div>
+
+<div class="card all-borders p-3">
+    <form method="get" asp-action="Index" class="row g-2 mb-3 filterMainProduct">
+        <div class="col-md-8">
+            <input asp-for="SearchString" id="searchTermInput" name="searchTerm" class="form-control" placeholder="Search by Arabic/English name" />
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-outline-success btn-sm">Search</button>
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="button" id="btnClearFilters" class="btn-cancel-search btn-sm btn">Clear</button>
+        </div>
+    </form>
+
+    <div id="PartialNewListContainer">
+        @await Html.PartialAsync("_ListPartial", Model)
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">@Resource1.Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <p>@Resource1.are_you_sure_Delete <strong id="mainProductName"></strong>؟</p>
+            </div>
+
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="mainProductId" />
+                    <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal">@Resource1.Cancel</button>
+                    <button type="submit" class="btn-cancel-search btn-sm btn">@Resource1.Yes_delete</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openPrintPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput')?.value || '');
+            const url = `/Admin/MainProducts/Print?searchTerm=${searchTerm}`;
+            window.open(url, 'printWindow', 'width=1000,height=800,noopener,noreferrer');
+        }
+
+        function openExcelPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput')?.value || '');
+            const url = `/Admin/MainProducts/createExcelReport_Download?searchTerm=${searchTerm}`;
+            window.open(url, '_self');
+        }
+
+        $(document).ready(function () {
+            const pageKey = window.location.pathname + "_filters";
+
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#pageSizeSelect').val(filters.pageSize);
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            $('form.filterMainProduct').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            $(document).on('click', '.ajax-page', function () {
+                const page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            $(document).on('change', '#pageSizeSelect', function () {
+                const pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            $(document).on('click', '.open-delete-modal', function () {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                $('#mainProductId').val(id);
+                $('#mainProductName').text(name);
+
+                const modalEl = document.getElementById('deleteModal');
+                if (modalEl && window.bootstrap) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modal.show();
+                }
+            });
+
+            function saveFilters(page, pageSizeOverride) {
+                const filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                const searchTerm = $('#searchTermInput').val();
+                const pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/MainProducts/Index',
+                    type: 'GET',
+                    data: { searchTerm, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

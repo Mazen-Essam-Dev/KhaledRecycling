@@ -25,9 +25,9 @@ html {
   border: 1px solid #ccc !important;
 }
 
-.records-count-box>span {
-  color: var(--primary-dark);
-  font-weight: 600;
+.records-count-box > span {
+    color: #7c807d !important;
+    font-weight: 600;
 }
 
 .records-count-box {

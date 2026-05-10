@@ -3402,4 +3402,20 @@ in accordance with the standards of Fujairah Science Club.</value>
     <value>Compare quotes and award</value>
     <comment>مقارنة عروض الأسعار وترسية</comment>
   </data>
+  <data name="MainProducts" xml:space="preserve">
+    <value>Main Products</value>
+    <comment>Main Products</comment>
+  </data>
+  <data name="MainWastes" xml:space="preserve">
+    <value>Main Wastes</value>
+    <comment>قائمة النفايات الاساسية</comment>
+  </data>
+  <data name="SubWastes" xml:space="preserve">
+    <value>Sub Wastes</value>
+    <comment>قائمة النفايات الفرعية</comment>
+  </data>
+  <data name="SubProduct" xml:space="preserve">
+    <value>Sub Product</value>
+    <comment>قائمة المنتجات الفرعية</comment>
+  </data>
 </root>

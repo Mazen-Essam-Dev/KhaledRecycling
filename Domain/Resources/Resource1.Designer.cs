@@ -4003,6 +4003,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Main Products.
+        /// </summary>
+        public static string MainProducts {
+            get {
+                return ResourceManager.GetString("MainProducts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maintenance Club.
         /// </summary>
         public static string MaintenanceClub {
@@ -4098,6 +4107,15 @@ namespace Domain.Resources {
         public static string MaintenanceTitle {
             get {
                 return ResourceManager.GetString("MaintenanceTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main Wastes.
+        /// </summary>
+        public static string MainWastes {
+            get {
+                return ResourceManager.GetString("MainWastes", resourceCulture);
             }
         }
         
@@ -6803,6 +6821,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sub Product.
+        /// </summary>
+        public static string SubProduct {
+            get {
+                return ResourceManager.GetString("SubProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Subscribe To Course.
         /// </summary>
         public static string Subscribe_To_Course {
@@ -6862,6 +6889,15 @@ namespace Domain.Resources {
         public static string Subsidies {
             get {
                 return ResourceManager.GetString("Subsidies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sub Wastes.
+        /// </summary>
+        public static string SubWastes {
+            get {
+                return ResourceManager.GetString("SubWastes", resourceCulture);
             }
         }
         
