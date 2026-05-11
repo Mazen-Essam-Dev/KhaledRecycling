@@ -3418,4 +3418,8 @@ in accordance with the standards of Fujairah Science Club.</value>
     <value>Sub Product</value>
     <comment>قائمة المنتجات الفرعية</comment>
   </data>
+  <data name="OrderBuyFromClients" xml:space="preserve">
+    <value>Order Buy From Clients</value>
+    <comment>قائمة طلبات الشراء من العملاء</comment>
+  </data>
 </root>

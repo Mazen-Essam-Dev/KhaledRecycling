@@ -180,7 +180,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(roleName))
                         ModelState.AddModelError(nameof(model.RoleId), Resource1.RoleRequired);
                     else
+                    {
                         await _userManager.AddToRoleAsync(newUser, roleName);
+
+                        // Set FKUserType = 1 if role is Individual
+                        if (roleName.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                            roleName.Contains("فرد", StringComparison.OrdinalIgnoreCase))
+                        {
+                            newUser.FKUserType = 1;
+                            await _userManager.UpdateAsync(newUser);
+                        }
+                    }
                 }
                 return RedirectToAction(nameof(Index)); // After Add New
             }
@@ -239,6 +249,14 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
 
                 await _userManager.AddToRolesAsync(user, selectedRole);
+
+                // Set FKUserType = 1 if role is Individual
+                if (selectedRole.Any(r => r.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                                        r.Contains("فرد", StringComparison.OrdinalIgnoreCase)))
+                {
+                    user.FKUserType = 1;
+                    await _userManager.UpdateAsync(user);
+                }
 
                 return RedirectToAction(nameof(AddEdit), new { id = model.Id });  // After Edit 
             }
@@ -335,7 +353,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(roleName))
                         ModelState.AddModelError(nameof(model.RoleId), Resource1.RoleRequired);
                     else
+                    {
                         await _userManager.AddToRoleAsync(newUser, roleName);
+
+                        // Set FKUserType = 1 if role is Individual
+                        if (roleName.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                            roleName.Contains("فرد", StringComparison.OrdinalIgnoreCase))
+                        {
+                            newUser.FKUserType = 1;
+                            await _userManager.UpdateAsync(newUser);
+                        }
+                    }
                 }
                 return RedirectToAction(nameof(Index)); // After Add New
             }
@@ -394,6 +422,14 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
 
                 await _userManager.AddToRolesAsync(user, selectedRole);
+
+                // Set FKUserType = 1 if role is Individual
+                if (selectedRole.Any(r => r.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                                        r.Contains("فرد", StringComparison.OrdinalIgnoreCase)))
+                {
+                    user.FKUserType = 1;
+                    await _userManager.UpdateAsync(user);
+                }
 
                 return RedirectToAction(nameof(AddEdit), new { id = model.Id });  // After Edit 
             }

@@ -38,6 +38,7 @@ namespace KhaledTeamRecycling.Extensions
             services.AddScoped<ISubWasteService, SubWasteService>();
             services.AddScoped<IMainProductService, MainProductService>();
             services.AddScoped<ISubProductService, SubProductService>();
+            services.AddScoped<IOrderBuyFromClientService, OrderBuyFromClientService>();
             services.AddScoped<INotificationService , NotificationService>();
 
 

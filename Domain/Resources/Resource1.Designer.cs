@@ -5182,6 +5182,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order Buy From Clients.
+        /// </summary>
+        public static string OrderBuyFromClients {
+            get {
+                return ResourceManager.GetString("OrderBuyFromClients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Other.
         /// </summary>
         public static string Other {

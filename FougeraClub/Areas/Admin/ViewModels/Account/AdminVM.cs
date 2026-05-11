@@ -50,6 +50,9 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Account
         public int? RoleNumber { get; set; }
         public IEnumerable<SelectListItem>? RolesList { get; set; }
 
+        public int? FKUserType { get; set; }
+        public string? UserTypeName { get; set; }
+
         public SignatureVM? Signature { get; set; }
         public bool IsTrainer { get; set; } = false;
     }

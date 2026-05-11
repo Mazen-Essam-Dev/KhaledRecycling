@@ -363,68 +363,36 @@
             </li>
             }
 
-            @* --- MaterialOrder --- *@
+            
+            @* --- Activities --- *@
 
-            @if (await PermissionScanner.CheckLoggedUserIfTrainer()==true || PermissionScanner.ValidatePermission("MaterialOrder", "Index") || PermissionScanner.ValidatePermission("MaterialOrder", "Add") || PermissionScanner.ValidatePermission("MaterialOrder", "Edit"))
+            @if (PermissionScanner.ValidatePermission("OrderBuyFromClients", "Index") || PermissionScanner.ValidatePermission("OrderBuyFromClients", "Add") || PermissionScanner.ValidatePermission("OrderBuyFromClients", "Edit"))
             {
                 <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarMaterialOrder"
-                       aria-expanded="@IsAriaExpanded(new[] { "MaterialOrder" }, "Index", "AddEdit")"
-                       aria-controls="sidebarMaterialOrder"
+                    <a data-bs-toggle="collapse" href="#sidebarOrderBuyFromClients"
+                       aria-expanded="@IsAriaExpanded(new[] { "OrderBuyFromClients" }, "Index", "AddEdit")"
+                       aria-controls="sidebarOrderBuyFromClients"
                        class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-calculator"></i></span>
-                        <span class="fw menu-text"> @Resource1.MaterialOrderManagement</span>
+                        <span class="menu-icon"><i class="ri-calendar-schedule-fill"></i></span>
+                        <span class="fw menu-text"> @Resource1.EventsManagement</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse @IsExpanded(new[] { "MaterialOrder" }, "Index", "AddEdit")" id="sidebarMaterialOrder">
+                    <div class="collapse @IsExpanded(new[] { "OrderBuyFromClients" }, "Index", "AddEdit")" id="sidebarOrderBuyFromClients">
                         <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("MaterialOrder", "Index")">
-                                <a href="/Admin/MaterialOrder/Index" class="side-nav-link">
+                            <li class="side-nav-item @IsActiveBG("OrderBuyFromClients", "Index")">
+                                <a href="/Admin/OrderBuyFromClients" class="side-nav-link">
                                     <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                    <span class="fw menu-text @IsActive("MaterialOrder", "Index")">@Resource1.MaterialOrderList</span>
+
+                                    <span class="fw menu-text @IsActive("OrderBuyFromClients", "Index")">@Resource1.EventsList</span>
                                 </a>
                             </li>
-                            @if (PermissionScanner.ValidatePermission("MaterialOrder", "Add"))
+                            @if (PermissionScanner.ValidatePermission("OrderBuyFromClients", "Add"))
                             {
-                                <li class="side-nav-item @IsActiveBG("MaterialOrder", "AddEdit")">
-                                    <a href="/Admin/MaterialOrder/AddEdit" class="side-nav-link">
+                                <li class="side-nav-item @IsActiveBG("OrderBuyFromClients", "AddEdit")">
+                                    <a href="/Admin/OrderBuyFromClients/AddEdit" class="side-nav-link">
                                         <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-                                        <span class="fw menu-text @IsActive("MaterialOrder", "AddEdit")">@Resource1.AddMaterialOrder</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
 
-            @* --- quote --- *@
-
-            @if (PermissionScanner.ValidatePermission("quote", "Index") || PermissionScanner.ValidatePermission("quote", "Add") || PermissionScanner.ValidatePermission("quote", "Edit"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarquote"
-                       aria-expanded="@IsAriaExpanded(new[] { "quote" }, "Index", "AddEdit")"
-                       aria-controls="sidebarquote"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-calculator"></i></span>
-                        <span class="fw menu-text"> @Resource1.quotesManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "quote" }, "Index", "AddEdit")" id="sidebarquote">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("quote", "Index")">
-                                <a href="/Admin/quote/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                    <span class="fw menu-text @IsActive("quote", "Index")">@Resource1.quotesList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("quote", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("quote", "AddEdit")">
-                                    <a href="/Admin/quote/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-                                        <span class="fw menu-text @IsActive("quote", "AddEdit")">@Resource1.Addquotes</span>
+                                        <span class="fw menu-text @IsActive("OrderBuyFromClients", "AddEdit")">@Resource1.AddNewEvent</span>
                                     </a>
                                 </li>
                             }
@@ -470,120 +438,7 @@
                 </li>
             }
 
-            @* Financial management *@
-            @if (
-                        PermissionScanner.ValidatePermission("BudgetItem", "Index")
-                        || PermissionScanner.ValidatePermission("BudgetItem", "Add")
-                        || PermissionScanner.ValidatePermission("BudgetItem", "Edit")
-
-                        || PermissionScanner.ValidatePermission("ExpenseAndReceipt", "Expenses")
-                        || PermissionScanner.ValidatePermission("ExpenseAndReceipt", "Receipts")
-                        || PermissionScanner.ValidatePermission("ExpenseAndReceipt", "Edit")
-                        || PermissionScanner.ValidatePermission("ExpenseAndReceipt", "Add")
-                        || PermissionScanner.ValidatePermission("CashExchangeBond", "Details")
-                        || PermissionScanner.ValidatePermission("CashExchangeBond", "Add")
-                        || PermissionScanner.ValidatePermission("CashExchangeBond", "Edit")
-                        || PermissionScanner.ValidatePermission("CashExchangeBond", "Index")
-                        || PermissionScanner.ValidatePermission("ExpenseAndReceipt", "ExpensesReport")
-                        || PermissionScanner.ValidatePermission("ExpenseAndReceipt", "ExpensesAndReceiptsReport")
-                        || PermissionScanner.ValidatePermission("CashDisbursementVoucher", "Index")
-                        || PermissionScanner.ValidatePermission("CashDisbursementVoucher", "Add")
-                        || PermissionScanner.ValidatePermission("CashDisbursementVoucher", "Edit")
-                        )
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarExpenseAndReceipt"
-                       aria-expanded="@IsAriaExpanded(new[] { "BudgetItem","CashDisbursementVoucher","ExpenseAndReceipt","CashExchangeBond" },"Index", "Expenses", "Receipts", "AddEdit", "ExpensesReport" ,"ExpensesAndReceiptsReport","Details")"
-                       aria-controls="sidebarExpenseAndReceipt"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-money-bills"></i></span>
-                        <span class="fw menu-text"> @Resource2.FinancialManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "BudgetItem","CashDisbursementVoucher","ExpenseAndReceipt","CashExchangeBond" },"Index", "Expenses", "Receipts", "AddEdit", "ExpensesReport" ,"ExpensesAndReceiptsReport","Details")" id="sidebarExpenseAndReceipt">
-                        <ul class="sub-menu  border-start-0 ">
-                            @if (PermissionScanner.ValidatePermission("BudgetItem", "Index"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("BudgetItem", "Index")">
-                                    <a href="/Admin/BudgetItem/Index" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                        <span class="fw menu-text @IsActive("BudgetItem", "Index")">@Resource1.Accounts2</span>
-                                    </a>
-                                </li>
-                            }
-                            @if (PermissionScanner.ValidatePermission("ExpenseAndReceipt", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("ExpenseAndReceipt", "AddEdit")">
-                                    <a href="/Admin/ExpenseAndReceipt/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-                                        <span class="fw menu-text @IsActive("ExpenseAndReceipt", "AddEdit")">@Resource2.AddExpenseAndReceipt</span>
-                                    </a>
-                                </li>
-                            }
-                            @if (PermissionScanner.ValidatePermission("ExpenseAndReceipt", "Expenses"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("ExpenseAndReceipt", "Expenses")">
-                                    <a href="/Admin/ExpenseAndReceipt/Expenses" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                        <span class="fw menu-text @IsActive("ExpenseAndReceipt", "Expenses")">@Resource2.ExpensesList</span>
-                                    </a>
-                                </li>
-                            }
-                            @if (PermissionScanner.ValidatePermission("ExpenseAndReceipt", "Receipts"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("ExpenseAndReceipt", "Receipts")">
-                                    <a href="/Admin/ExpenseAndReceipt/Receipts" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                        <span class="fw menu-text @IsActive("ExpenseAndReceipt", "Receipts")">@Resource2.ReceiptsList</span>
-                                    </a>
-                                </li>
-                            }
-                            @if (PermissionScanner.ValidatePermission("ExpenseAndReceipt", "ExpensesAndReceiptsReport"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("ExpenseAndReceipt", "ExpensesAndReceiptsReport")">
-                                    <a href="/Admin/ExpenseAndReceipt/ExpensesAndReceiptsReport" class="side-nav-link">
-                                        <span class="menu-icon"><i class="fa-solid fa-file"></i></span>
-                                        <span class="fw menu-text @IsActive("ExpenseAndReceipt", "ExpensesAndReceiptsReport")">@Resource2.ReceiptsAndPaymentsReport</span>
-                                    </a>
-                                </li>
-                            }
-
-                            @if (PermissionScanner.ValidatePermission("ExpenseAndReceipt", "ExpensesReport"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("ExpenseAndReceipt", "ExpensesReport")">
-                                    <a href="/Admin/ExpenseAndReceipt/ExpensesReport" class="side-nav-link">
-                                        <span class="menu-icon"><i class="fa-solid fa-file"></i></span>
-                                        <span class="fw menu-text @IsActive("ExpenseAndReceipt", "ExpensesReport")">@Resource2.PettyCashReport</span>
-                                    </a>
-                                </li>
-                            }
-
-                            @if (PermissionScanner.ValidatePermission("CashExchangeBond", "Index"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("CashExchangeBond", "Index")">
-                                    <a href="/Admin/CashExchangeBond/Index" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                        <span class="fw menu-text @IsActive("CashExchangeBond", "Index")">@Resource1.CashExchangeBondList</span>
-                                    </a>
-                                </li>
-                            }
-                            
-                            
-                            @if (PermissionScanner.ValidatePermission("CashDisbursementVoucher", "Index"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("CashDisbursementVoucher", "Index")">
-                                    <a href="/Admin/CashDisbursementVoucher/Index" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                        <span class="fw menu-text @IsActive("CashDisbursementVoucher", "Index")">@Resource2.CashDisbursementVoucherList</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-
-                </li>
-            }
-
+            
             @* --- SalaryManagement --- *@
 
             @if (PermissionScanner.ValidatePermission("SalaryManagement", "Index") || PermissionScanner.ValidatePermission("SalaryManagement", "Add") || PermissionScanner.ValidatePermission("SalaryManagement", "Edit") || PermissionScanner.ValidatePermission("SalaryManagement", "Absences"))
@@ -629,132 +484,7 @@
                     </div>
                 </li>
             }
-            @* --- PurchaseOrder --- *@
-
-            @if (PermissionScanner.ValidatePermission("PurchaseOrder", "Index") || PermissionScanner.ValidatePermission("PurchaseOrder", "Add") || PermissionScanner.ValidatePermission("PurchaseOrder", "Edit"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarPurchaseOrder"
-                       aria-expanded="@IsAriaExpanded(new[] { "PurchaseOrder" }, "Index", "AddEdit")"
-                       aria-controls="sidebarPurchaseOrder"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-cart-shopping"></i></span>
-                        <span class="fw menu-text"> @Resource1.PurchaseOrderManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "PurchaseOrder" }, "Index", "AddEdit")" id="sidebarPurchaseOrder">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("PurchaseOrder", "Index")">
-                                <a href="/Admin/PurchaseOrder/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                    <span class="fw menu-text @IsActive("PurchaseOrder", "Index")">@Resource1.PurchaseOrderList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("PurchaseOrder", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("PurchaseOrder", "AddEdit")">
-                                    <a href="/Admin/PurchaseOrder/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-                                        <span class="fw menu-text @IsActive("PurchaseOrder", "AddEdit")">@Resource1.CreatePurchaseOrder</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
-
-            @* --- Document Flow Unit --- *@
-
-            @{
-                if (PermissionScanner.ValidatePermission("ExternalWorkMission", "Index")
-                || PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Index")
-                || PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Index")
-                || PermissionScanner.ValidatePermission("ParticipationsInEventReport", "Index")
-                || PermissionScanner.ValidatePermission("AdministrativeReportQuarterlyAnnual", "Index")
-
-                || PermissionScanner.ValidatePermission("ExternalWorkMission", "Add")
-                || PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Add")
-                || PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Add")
-                || PermissionScanner.ValidatePermission("ParticipationsInEventReport", "Add")
-                || PermissionScanner.ValidatePermission("AdministrativeReportQuarterlyAnnual", "Add")
-
-                || PermissionScanner.ValidatePermission("ExternalWorkMission", "Edit")
-                || PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Edit")
-                || PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Edit")
-                || PermissionScanner.ValidatePermission("ParticipationsInEventReport", "Edit")
-                || PermissionScanner.ValidatePermission("AdministrativeReportQuarterlyAnnual", "Edit")
-
-                || PermissionScanner.ValidatePermission("ExternalWorkMission", "Details")
-                || PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Details")
-                || PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Details")
-                || PermissionScanner.ValidatePermission("ParticipationsInEventReport", "Details")
-                || PermissionScanner.ValidatePermission("AdministrativeReportQuarterlyAnnual", "Details")
-                )
-                {
-                    <li class="side-nav-item">
-                        <a data-bs-toggle="collapse" href="#sidebarExternalWorkMission"
-                           aria-expanded="@IsAriaExpanded(new[] { "ExternalWorkMission","EstimatedBudgetForExternalParticipation","MonthlyAdministrativeReport","ParticipationsInEventReport","AdministrativeReportQuarterlyAnnual" }, "Index", "AddEdit","Details")"
-                           aria-controls="sidebarExternalWorkMission"
-                           class="side-nav-link">
-                            <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-                            <span class="fw menu-text"> @Resource1.ExternalWorkMissionManagement</span>
-                            <span class="menu-arrow"></span>
-                        </a>
-
-                        <div class="collapse @IsExpanded(new[] { "ExternalWorkMission","EstimatedBudgetForExternalParticipation","MonthlyAdministrativeReport","ParticipationsInEventReport","AdministrativeReportQuarterlyAnnual" }, "Index", "AddEdit","Details")" id="sidebarExternalWorkMission">
-                            <ul class="sub-menu  border-start-0 ">
-                                @if (PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Index"))
-                                {
-                                    <li class="side-nav-item @IsActiveBG("ExternalWorkMission", "Index", "AddEdit","Details")">
-                                        <a href="/Admin/ExternalWorkMission/Index" class="side-nav-link">
-                                            <span class="menu-icon"><i class="fa-solid fa-briefcase"></i></span>
-                                            <span class="fw menu-text @IsActive("ExternalWorkMission", "Index", "AddEdit","Details")">@Resource1.ExternalWorkMissionList</span>
-                                        </a>
-                                    </li>
-                                }
-                                @if (PermissionScanner.ValidatePermission("EstimatedBudgetForExternalParticipation", "Index"))
-                                {
-                                    <li class="side-nav-item @IsActiveBG("EstimatedBudgetForExternalParticipation", "Index", "AddEdit","Details")">
-                                        <a href="/Admin/EstimatedBudgetForExternalParticipation/Index" class="side-nav-link">
-                                            <span class="menu-icon"><i class="fa-solid fa-scale-balanced"></i></span>
-                                            <span class="fw menu-text @IsActive("EstimatedBudgetForExternalParticipation", "Index", "AddEdit","Details")" style="font-size:11px;">@Resource2.EstimatedBudgetForExternalParticipation</span>
-                                        </a>
-                                    </li>
-                                }
-                                @if (PermissionScanner.ValidatePermission("ParticipationsInEventReport", "Index"))
-                                {
-                                    <li class="side-nav-item @IsActiveBG("ParticipationsInEventReport", "Index", "AddEdit","Details")">
-                                        <a href="/Admin/ParticipationsInEventReport/Index" class="side-nav-link">
-                                            <span class="menu-icon"><i class="fa-solid fa-calendar"></i></span>
-                                            <span class="fw menu-text @IsActive("ParticipationsInEventReport", "Index", "AddEdit","Details")">@Resource1.ParticipationsInEventList1</span>
-                                        </a>
-                                    </li>
-                                }
-                                @if (PermissionScanner.ValidatePermission("MonthlyAdministrativeReport", "Index"))
-                                {
-                                    <li class="side-nav-item @IsActiveBG("MonthlyAdministrativeReport", "Index", "AddEdit","Details")">
-                                        <a href="/Admin/MonthlyAdministrativeReport/Index" class="side-nav-link">
-                                            <span class="menu-icon"><i class="fa-solid fa-file"></i></span>
-                                            <span class="fw menu-text @IsActive("MonthlyAdministrativeReport", "Index", "AddEdit","Details")">@Resource2.MonthlyAdministrativeReportList</span>
-                                        </a>
-                                    </li>
-                                }
-                                @if (PermissionScanner.ValidatePermission("AdministrativeReportQuarterlyAnnual", "Index"))
-                                {
-                                    <li class="side-nav-item @IsActiveBG("AdministrativeReportQuarterlyAnnual", "Index", "Details")">
-                                        <a href="/Admin/AdministrativeReportQuarterlyAnnual/Index" class="side-nav-link">
-                                            <span class="menu-icon"><i class="fa-solid fa-file"></i></span>
-                                            <span class="fw menu-text @IsActive("AdministrativeReportQuarterlyAnnual", "Index", "Details")">@Resource1.AdministrativeReportQuarterlyAnnual</span>
-                                        </a>
-                                    </li>
-                                }
-                            </ul>
-                        </div>
-                    </li>
-                }
-
-            }
+            
             @* --- Employees --- *@
             @if (PermissionScanner.ValidatePermission("Employees", "Index") || PermissionScanner.ValidatePermission("Employees", "Add") || PermissionScanner.ValidatePermission("Employees", "Edit"))
             {
@@ -790,265 +520,7 @@
                 </li>
             }
 
-            @* --- Cars && CarService --- *@
-
-            @if (PermissionScanner.ValidatePermission("Car", "Index") || PermissionScanner.ValidatePermission("CarService", "Index") ||
-                PermissionScanner.ValidatePermission("Car", "Add") || PermissionScanner.ValidatePermission("CarService", "Add") ||
-                PermissionScanner.ValidatePermission("Car", "Edit") || PermissionScanner.ValidatePermission("CarService", "Edit")
-            )
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarCar"
-                       aria-expanded="@IsAriaExpanded(new[] { "Car","CarService" }, "Index", "AddEdit")"
-                       aria-controls="sidebarCar"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-car"></i></span>
-                        <span class="fw menu-text"> @Resource1.CarsManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "Car","CarService" }, "Index", "AddEdit")" id="sidebarCar">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("Car", "Index")">
-                                <a href="/Admin/Car/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-
-                                    <span class="fw menu-text @IsActive("Car", "Index")">@Resource1.CarsList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("CarService", "Index"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("CarService", "Index")">
-
-                                    <a href="/Admin/CarService/Index" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-tools-fill"></i></span>
-
-                                        <span class="fw menu-text @IsActive("CarService", "Index")">@Resource1.CarsMaintenanceList</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
-
-            @* --- MaintenanceClub --- *@
-
-            @if (PermissionScanner.ValidatePermission("MaintenanceClub", "Index") || PermissionScanner.ValidatePermission("MaintenanceClub", "Add") || PermissionScanner.ValidatePermission("MaintenanceClub", "Edit"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarMaintenanceClub"
-                       aria-expanded="@IsAriaExpanded(new[] { "MaintenanceClub" }, "Index", "AddEdit")"
-                       aria-controls="sidebarMaintenanceClub"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-hotel"></i></span>
-                        <span class="fw menu-text">  @Resource1.ClubMaintenanceManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "MaintenanceClub" }, "Index", "AddEdit")" id="sidebarMaintenanceClub">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("MaintenanceClub", "Index")">
-                                <a href="/Admin/MaintenanceClub/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-
-                                    <span class="fw menu-text @IsActive("MaintenanceClub", "Index")">
-                                        @Resource1.MaintenanceList
-                                    </span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("MaintenanceClub", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("MaintenanceClub", "AddEdit")">
-                                    <a href="/Admin/MaintenanceClub/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-
-                                        <span class="fw menu-text @IsActive("MaintenanceClub", "AddEdit")">@Resource1.AddNewMaintenance</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
-
-            @* --- Supplier --- *@
-
-            @if (PermissionScanner.ValidatePermission("Supplier", "Index") || PermissionScanner.ValidatePermission("Supplier", "Add") || PermissionScanner.ValidatePermission("Supplier", "Edit"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarSupplier"
-                       aria-expanded="@IsAriaExpanded(new[] { "Supplier" }, "Index", "AddEdit")"
-                       aria-controls="sidebarSupplier"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-user-tie"></i></span>
-                        <span class="fw menu-text"> @Resource1.SuppliersManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "Supplier" }, "Index", "AddEdit")" id="sidebarSupplier">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("Supplier", "Index")">
-                                <a href="/Admin/Supplier/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-
-                                    <span class="fw menu-text @IsActive("Supplier", "Index")">@Resource1.SuppliersList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("Supplier", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("Supplier", "AddEdit")">
-                                    <a href="/Admin/Supplier/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-
-                                        <span class="fw menu-text @IsActive("Supplier", "AddEdit")">@Resource1.AddNewSupplier</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
-
-            @* --- AnnualSchedule --- *@
-
-            @if (PermissionScanner.ValidatePermission("AnnualSchedule", "Index") || PermissionScanner.ValidatePermission("AnnualSchedule", "Add") || PermissionScanner.ValidatePermission("AnnualSchedule", "Edit"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarAnnualSchedule"
-                       aria-expanded="@IsAriaExpanded(new[] { "AnnualSchedule" }, "Index", "AddEdit")"
-                       aria-controls="sidebarAnnualSchedule"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-calculator"></i></span>
-                        <span class="fw menu-text"> @Resource1.AnnualInventoryManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "AnnualSchedule" }, "Index", "AddEdit")" id="sidebarAnnualSchedule">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("AnnualSchedule", "Index")">
-                                <a href="/Admin/AnnualSchedule/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                    <span class="fw menu-text @IsActive("AnnualSchedule", "Index")">@Resource1.InventoryList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("AnnualSchedule", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("AnnualSchedule", "AddEdit")">
-                                    <a href="/Admin/AnnualSchedule/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-                                        <span class="fw menu-text @IsActive("AnnualSchedule", "AddEdit")">@Resource1.AddNewInventory</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
-
-            @* --- ArchivingDocument --- *@
-
-            @if (PermissionScanner.ValidatePermission("ArchivingDocument", "Index") || PermissionScanner.ValidatePermission("ArchivingDocument", "Edit") || PermissionScanner.ValidatePermission("ArchivingDocument", "Add"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarArchivingDocument"
-                       aria-expanded="@IsAriaExpanded(new[] { "ArchivingDocument" }, "Index", "AddEdit")"
-                       aria-controls="sidebarArchivingDocument"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-folder-open"></i></span>
-                        <span class="fw menu-text"> @Resource1.ArchivingDocumentManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "ArchivingDocument" }, "Index", "AddEdit")" id="sidebarArchivingDocument">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("ArchivingDocument", "Index")">
-                                <a href="/Admin/ArchivingDocument/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                    <span class="fw menu-text @IsActive("ArchivingDocument", "Index")">@Resource1.ArchivingDocumentList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("ArchivingDocument", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("ArchivingDocument", "AddEdit")">
-                                    <a href="/Admin/ArchivingDocument/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-
-                                        <span class="fw menu-text @IsActive("ArchivingDocument", "AddEdit")">@Resource1.AddNewArchivingDocument</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
-
-            @* --- Engineers --- *@
-
-            @if (PermissionScanner.ValidatePermission("Engineer", "Index") || PermissionScanner.ValidatePermission("Engineer", "Edit") || PermissionScanner.ValidatePermission("Engineer", "Add"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarEngineer"
-                       aria-expanded="@IsAriaExpanded(new[] { "Engineer" }, "Index", "AddEdit")"
-                       aria-controls="sidebarEngineer"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-user"></i></span>
-                        <span class="fw menu-text">@Resource1.EngineersAssociationManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "Engineer" }, "Index", "AddEdit")" id="sidebarEngineer">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("Engineer", "Index")">
-                                <a href="/Admin/Engineer/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                    <span class="fw menu-text @IsActive("Engineer", "Index")">@Resource1.EngineersList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("Engineer", "Add"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("Engineer", "AddEdit")">
-                                    <a href="/Admin/Engineer/AddEdit" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-                                        <span class="fw menu-text @IsActive("Engineer", "AddEdit")">@Resource2.AddNewEngineer</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </li>
-            }
-
-            @* --- Scientific Projects --- *@
-
-            @if (PermissionScanner.ValidatePermission("ScientificProjects", "Index") || PermissionScanner.ValidatePermission("ScientificProjects", "Edit") || PermissionScanner.ValidatePermission("ScientificProjects", "Create"))
-            {
-                <li class="side-nav-item">
-                    <a data-bs-toggle="collapse" href="#sidebarScientificProjects"
-                       aria-expanded="@IsAriaExpanded(new[] { "ScientificProjects" }, "Index", "Edit" , "Create")"
-                       aria-controls="sidebarScientificProjects"
-                       class="side-nav-link">
-                        <span class="menu-icon"><i class="fa-solid fa-microscope"></i></span>
-                        <span class="fw menu-text"> @Resource1.ScientificProjectsManagement</span>
-                        <span class="menu-arrow"></span>
-                    </a>
-                    <div class="collapse @IsExpanded(new[] { "ScientificProjects" }, "Index", "Edit" , "Create")" id="sidebarScientificProjects">
-                        <ul class="sub-menu  border-start-0 ">
-                            <li class="side-nav-item @IsActiveBG("ScientificProjects", "Index")">
-                                <a href="/Admin/ScientificProjects/Index" class="side-nav-link">
-                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
-                                    <span class="fw menu-text @IsActive("ScientificProjects", "Index")">@Resource1.ScientificProjectsList</span>
-                                </a>
-                            </li>
-                            @if (PermissionScanner.ValidatePermission("ScientificProjects", "Create"))
-                            {
-                                <li class="side-nav-item @IsActiveBG("ScientificProjects", "Create")">
-                                    <a href="/Admin/ScientificProjects/Create" class="side-nav-link">
-                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
-                                        <span class="fw menu-text @IsActive("ScientificProjects", "Create")">@Resource1.Add_New_ScientificProject</span>
-                                    </a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-
-                </li>
-            }
-
+            
             @* --- SMS --- *@
 
             @if (PermissionScanner.ValidatePermission("SMS", "Members") || PermissionScanner.ValidatePermission("SMS", "MessagesLogs"))

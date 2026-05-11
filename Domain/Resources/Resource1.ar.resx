@@ -2802,4 +2802,7 @@
   <data name="SubProduct" xml:space="preserve">
     <value>قائمة المنتجات الفرعية</value>
   </data>
+  <data name="OrderBuyFromClients" xml:space="preserve">
+    <value>قائمة طلبات الشراء من العملاء</value>
+  </data>
 </root>
