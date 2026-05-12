@@ -9,11 +9,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
-    [AdminAuthorize]
     [Area("Admin")]
     [Route("Admin/[controller]/[action]")]
     public class HomeController : Controller
     {
+        [AllowAnonymous]
+        [NoLogging]
+        [IgnoreAction]
+        public IActionResult Landing()
+        {
+            return View();
+        }
+
+        [AdminAuthorize]
         [NoLogging]
         [IgnoreAction]
         public IActionResult Index()

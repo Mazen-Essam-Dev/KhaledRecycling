@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication("MyCookieAuth")
     .AddCookie("MyCookieAuth", options =>
     {
-        options.LoginPath = "/Account/Login";
+        options.LoginPath = "/Admin/Home/Landing";
     });
 
 
@@ -45,9 +45,9 @@ builder.Services.AddSession(options =>
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.ExpireTimeSpan = TimeSpan.FromHours(1); 
+    options.ExpireTimeSpan = TimeSpan.FromHours(1);
     options.SlidingExpiration = true;
-    options.LoginPath = "/Identity/Account/Login";
+    options.LoginPath = "/Admin/Home/Landing";
     options.AccessDeniedPath = "/Admin/Home/AccessDeniedError403";
 });
 

@@ -1,0 +1,393 @@
+@using Domain.Resources
+@{
+    ViewData["Title"] = "Khaled Team Recycling - Landing Page";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ededed 0%, #a6bb96 100%);
+            min-height: 100vh;
+            direction: rtl;
+        }
+
+        .landing-container {
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-card h1 {
+            color: #47a644;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-card p {
+            color: #666;
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .hero-btn {
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-btn-primary {
+            background: linear-gradient(135deg, #47a644 0%, #2d8a2a 100%);
+            color: white;
+            border: none;
+        }
+
+        .hero-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(71, 166, 68, 0.4);
+        }
+
+        .hero-btn-secondary {
+            background: white;
+            color: #47a644;
+            border: 2px solid #47a644;
+        }
+
+        .hero-btn-secondary:hover {
+            background: #47a644;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .section-title {
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 35px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #47a644 0%, #2d8a2a 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            font-size: 32px;
+            color: white;
+        }
+
+        .card-icon.green {
+            background: linear-gradient(135deg, #47a644 0%, #38ef7d 100%);
+        }
+
+        .card-icon.orange {
+            background: linear-gradient(135deg, #47a644 0%, #5cb85c 100%);
+        }
+
+        .card-icon.blue {
+            background: linear-gradient(135deg, #47a644 0%, #4cae4c 100%);
+        }
+
+        .card-icon.purple {
+            background: linear-gradient(135deg, #47a644 0%, #3d8b3d 100%);
+        }
+
+        .card-icon.red {
+            background: linear-gradient(135deg, #47a644 0%, #2d8a2a 100%);
+        }
+
+        .card-icon.yellow {
+            background: linear-gradient(135deg, #47a644 0%, #6ab067 100%);
+        }
+
+        .dashboard-card h3 {
+            color: #333;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .dashboard-card p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: #47a644;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @@media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-card {
+                padding: 40px 25px;
+            }
+
+            .hero-card h1 {
+                font-size: 2rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="landing-container">
+        <!-- Hero Section -->
+        <div class="hero-card">
+            <h1>لوحة تحكم إعادة التدوير</h1>
+            <p>مساحة عمل حديثة لمتابعة النفايات والمنتجات والموظفين والتقارير من مكان واحد بتجربة سريعة وواضحة.</p>
+            <div class="hero-buttons">
+                <a href="/Identity/Account/Login" class="hero-btn hero-btn-primary">
+                    <i class="fa-solid fa-sign-in-alt"></i>
+                    تسجيل الدخول
+                </a>
+                <a href="/Auth/Register" class="hero-btn hero-btn-secondary">
+                    <i class="fa-solid fa-user-plus"></i>
+                    إنشاء حساب جديد
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <h2 class="section-title">مؤشرات العمل</h2>
+        <p class="section-subtitle">نظرة سريعة على أهم وحدات النظام</p>
+
+        <div class="cards-grid">
+            <div class="stat-card">
+                <div class="card-icon green">
+                    <i class="fa-solid fa-trash-can-arrow-up"></i>
+                </div>
+                <h3>Waste Flow</h3>
+                <p>تنظيم أنواع النفايات الرئيسية والفرعية وربطها بعمليات إعادة التدوير.</p>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon blue">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
+                <h3>Products</h3>
+                <p>إدارة المنتجات الناتجة ومتابعة تصنيفات المنتجات الرئيسية والفرعية.</p>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon purple">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <h3>Teams</h3>
+                <p>إدارة الموظفين والمستخدمين والصلاحيات من تجربة Dashboard موحدة.</p>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon orange">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h3>Reports</h3>
+                <p>جداول وتقارير أكثر وضوحا مع دعم الطباعة والتصدير عند توفره.</p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <h2 class="section-title">مميزات النظام</h2>
+        <p class="section-subtitle">تعرف على المميزات الرئيسية لنظام إعادة التدوير</p>
+
+        <div class="cards-grid">
+            <div class="dashboard-card">
+                <div class="card-icon blue">
+                    <i class="fa-solid fa-chart-simple"></i>
+                </div>
+                <h3>إحصائيات متقدمة</h3>
+                <p>عرض الإحصائيات والتقارير العامة بطريقة سهلة وواضحة.</p>
+            </div>
+          
+            <div class="dashboard-card">
+                <div class="card-icon red">
+                    <i class="ri-list-check"></i>
+                </div>
+                <h3>طلبات الشراء</h3>
+                <p>قائمة طلبات الشراء من العملاء وإدارتها بسهولة.</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-icon green">
+                    <i class="fa-solid fa-recycle"></i>
+                </div>
+                <h3>إدارة النفايات</h3>
+                <p>عرض وإضافة وتعديل تصنيفات النفايات داخل النظام.</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-icon blue">
+                    <i class="fa-solid fa-cubes"></i>
+                </div>
+                <h3>إدارة المنتجات</h3>
+                <p>متابعة المنتجات الرئيسية والفرعية الخاصة بعمليات التدوير.</p>
+            </div>
+            <div class="dashboard-card">
+                <div class="card-icon purple">
+                    <i class="fa-solid fa-user-tie"></i>
+                </div>
+                <h3>إدارة الموظفين</h3>
+                <p>إدارة بيانات الموظفين والملفات المرتبطة بهم.</p>
+            </div>
+           @*  <div class="dashboard-card">
+                <div class="card-icon yellow">
+                    <i class="fa-solid fa-sms"></i>
+                </div>
+                <h3>إرسال SMS</h3>
+                <p>إرسال رسائل SMS للأعضاء بسهولة.</p>
+            </div> *@
+        </div>
+
+        <!-- Process Section -->
+        <h2 class="section-title">مسار العمل</h2>
+        <p class="section-subtitle">تجربة مرتبة من الإدخال إلى التقرير</p>
+
+        <div class="cards-grid">
+            <div class="stat-card">
+                <div class="card-icon blue">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
+                <h3>1. تسجيل البيانات</h3>
+                <p>إدخال وتصنيف البيانات من خلال النماذج الحالية بدون تغيير آلية الحفظ.</p>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon green">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                </div>
+                <h3>2. المتابعة</h3>
+                <p>جداول محسنة للقراءة والبحث والمراجعة مع تأثيرات تفاعلية خفيفة.</p>
+            </div>
+            <div class="stat-card">
+                <div class="card-icon purple">
+                    <i class="fa-solid fa-file-export"></i>
+                </div>
+                <h3>3. التقارير</h3>
+                <p>واجهات أكثر نظافة لصفحات الإحصائيات والطباعة والتصدير.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>© 2026 جميع الحقوق محفوظة - Khaled Team Recycling</p>
+        </div>
+    </div>
+</body>
+</html>
