@@ -3,7 +3,7 @@
     ViewData["Title"] = "Green Life";
 
     var loginUrl = Url.Page("/Account/Login", new { area = "Identity" }) ?? "/Identity/Account/Login";
-    var registerUrl = Url.Page("/Account/Register", new { area = "Identity" }) ?? Url.Action("Register", "Auth");
+    var registerUrl = Url.Action("Register", "Auth");
 }
 
 <!DOCTYPE html>
