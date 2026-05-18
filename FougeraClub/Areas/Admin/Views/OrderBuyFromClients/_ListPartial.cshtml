@@ -1,5 +1,10 @@
 @model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient.OrderBuyFromClientVM
-
+@{
+    var addPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Edit");
+    var DetailsPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Details");
+    var deletePermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Delete");
+}
 <input type="hidden" id="NewCountRecords" value="@Model.TotalCount" />
 
 <nav class="d-flex justify-content-end w-25 align-items-center gap-2 my-2" style="margin-right: auto !important;">
@@ -44,13 +49,23 @@
                         <td>@(item.Total?.ToString("F2") ?? "-")</td>
                         <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.Status?.NameAr : item.Status?.NameEn)</td>
                         <td>
-                            <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
-                            <button type="button"
-                                    class="btn btn-sm btn-danger open-delete-modal"
-                                    data-id="@item.Id"
-                                    data-name="Order #@item.Id">
-                                Delete
-                            </button>
+                            @if (DetailsPermission)
+                            {
+                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Details</a>
+                            }
+                            @if (editPermission)
+                            {
+                                 <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                            }
+                            @if (deletePermission)
+                            {
+                                <button type="button"
+                                        class="btn btn-sm btn-danger open-delete-modal"
+                                        data-id="@item.Id"
+                                        data-name="Order #@item.Id">
+                                    Delete
+                                </button>
+                            }
                         </td>
                     </tr>
                 }

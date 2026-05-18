@@ -19,6 +19,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient
         [LocalizedRequired("Required")]
         public string? FKUserId { get; set; }
         public string? UserName { get; set; }
+        public bool IsClientUser { get; set; }
         public List<SelectListItem>? UsersList { get; set; } = new();
 
         [LocalizedRequired("Required")]

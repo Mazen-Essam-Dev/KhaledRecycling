@@ -2,6 +2,11 @@
 @{
     ViewData["Title"] = "Order Buy From Clients";
     var lang = SessionHelper.GetCurrentLanguage();
+
+    var addPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Edit");
+    var DetailsPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Details");
+    var deletePermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Delete");
 }
 
 <div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
@@ -11,9 +16,12 @@
         </h4>
     </div>
     <div class="col-md-6 mb-2 d-flex justify-content-end gap-2">
+        @if (addPermission)
+        {         
         <a asp-action="AddEdit" class="btn btn-success btn-sm">
             <i class="fa-solid fa-plus me-1"></i>Add New
         </a>
+        }
         <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
             <i class="fa fa-print me-1"></i>Print
         </button>

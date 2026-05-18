@@ -44,7 +44,7 @@ namespace Application.Services.Admin
 
         public async Task<OrderBuyFromClient?> GetByIdAsync(int id)
         {
-            return await _unitOfWork.OrderBuyFromClients.GetByIdAsync(x => x.Id == id);
+            return await _unitOfWork.OrderBuyFromClients.GetByIdAsync(x => x.Id == id,c=>c.SubWaste!);
         }
 
         public async Task<int> AddAsync(OrderBuyFromClient entity)

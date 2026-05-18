@@ -1,8 +1,7 @@
 @model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient.OrderBuyFromClientVM
 
 @{
-    var isEdit = Model?.Id > 0;
-    ViewData["Title"] = isEdit ? "تعديل طلب شراء من عميل" : "إضافة طلب شراء من عميل";
+    ViewData["Title"] = "تفاصيل طلب شراء من عميل";
     var lang = SessionHelper.GetCurrentLanguage();
 }
 
@@ -26,14 +25,13 @@
     <div class="d-flex justify-content-center c-pro border p-3 mb-3">
         <div class="flex-grow-1 d-flex justify-content-start align-items-center">
             <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
-                <span class="fa fa-edit me-2 text-ico"></span>@ViewData["Title"]
+                <span class="fa fa-info-circle me-2 text-ico"></span>@ViewData["Title"]
             </h4>
         </div>
     </div>
 
     <div class="container">
-        <form asp-action="AddEdit" method="post" id="orderForm">
-            @Html.AntiForgeryToken()
+        <form id="orderForm">
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
             <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
@@ -55,18 +53,14 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="FKMainWasteId">نفايات اساسي</label>
-                        <select asp-for="FKMainWasteId" class="form-select" id="FKMainWasteId" asp-items="Model.MainWastesList">
-                            <option value="">-- Select Main Waste --</option>
-                        </select>
-                        <span asp-validation-for="FKMainWasteId" class="text-danger"></span>
+                        <input type="hidden" asp-for="FKMainWasteId" id="FKMainWasteId" />
+                        <input type="text" class="form-control" value="@(Model.MainWastesList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="FKSubWasteId">نفاية فرعي</label>
-                        <select asp-for="FKSubWasteId" class="form-select" id="FKSubWasteId" asp-items="Model.SubWastesList">
-                            <option value="">-- Select Sub Waste --</option>
-                        </select>
-                        <span asp-validation-for="FKSubWasteId" class="text-danger"></span>
+                        <input type="hidden" asp-for="FKSubWasteId" id="FKSubWasteId" />
+                        <input type="text" class="form-control" value="@(Model.SubWastesList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
                     </div>
 
                     @if (Model.IsClientUser)
@@ -77,35 +71,19 @@
                     {
                         <div class="col-md-6">
                             <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (افراد)</label>
-                            <select asp-for="FKUserId" class="form-select" asp-items="Model.UsersList">
-                                <option value="">-- Select User --</option>
-                            </select>
-                            <span asp-validation-for="FKUserId" class="text-danger"></span>
+                            <input type="hidden" asp-for="FKUserId" id="FKUserId" />
+                            <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
                         </div>
                     }
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
-                        <select asp-for="StatusId" class="form-select" asp-items="Model.StatusesList">
-                            <option value="">--</option>
-                        </select>
-                        <span asp-validation-for="StatusId" class="text-danger"></span>
+                        <input type="hidden" asp-for="StatusId" id="StatusId" />
+                        <input type="text" class="form-control" value="@(Model.StatusesList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
                     </div>
 
-                    <input asp-for="ApprovalDate" hidden type="date" class="form-control" />
-                    <input asp-for="OrderDate" hidden type="date" class="form-control" />
-
-                    @* <div class="col-md-6">
-                        <label class="form-label asteriskRequired" asp-for="OrderDate">Order Date</label>
-                        <input asp-for="OrderDate" type="date" class="form-control" />
-                        <span asp-validation-for="OrderDate" class="text-danger"></span>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label" asp-for="ApprovalDate">Approval Date</label>
-                        <input asp-for="ApprovalDate" type="date" class="form-control" />
-                        <span asp-validation-for="ApprovalDate" class="text-danger"></span>
-                    </div> *@
+                    <input asp-for="ApprovalDate" hidden type="date" class="form-control" disabled />
+                    <input asp-for="OrderDate" hidden type="date" class="form-control" disabled />
                 </div>
             </div>
 
@@ -126,7 +104,7 @@
                     <!-- Units Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" onchange="toggleDiv('units', this.checked)">
+                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" disabled>
                             <label class="form-check-label" for="IsUnitsSelected">Units</label>
                         </div>
                         <div class="mb-2">
@@ -140,7 +118,7 @@
                     <!-- Kilos Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" onchange="toggleDiv('kilos', this.checked)">
+                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" disabled>
                             <label class="form-check-label" for="IsKilosSelected">Kilos</label>
                         </div>
                         <div class="mb-2">
@@ -154,7 +132,7 @@
                     <!-- Ton Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" onchange="toggleDiv('ton', this.checked)">
+                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" disabled>
                             <label class="form-check-label" for="IsTonSelected">Ton</label>
                         </div>
                         <div class="mb-2">
@@ -169,26 +147,20 @@
                 <div class="row g-3 mt-3">
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
-                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" />
+                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" disabled />
                         <span asp-validation-for="DiscountRatio" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountValue">Discount Value</label>
-                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" readonly />
+                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
                         <span asp-validation-for="DiscountValue" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Total</label>
-                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" readonly />
+                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" disabled />
                         <input type="hidden" asp-for="Total" id="TotalHidden" />
                     </div>
                 </div>
-            </div>
-
-            <div class="d-flex align-items-center justify-content-end gap-2 mb-4">
-                <button type="submit" class="btn-cancel-search btn-sm btn">
-                    <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
-                </button>
             </div>
         </form>
     </div>
@@ -202,17 +174,12 @@
         var currentLang = '@lang';
         function toggleDiv(type, isChecked) {
             const div = document.getElementById(type + 'Div');
-            const input = div.querySelector('.quantity-input');
             
             if (isChecked) {
-                input.disabled = false;
                 div.style.backgroundColor = '#f8f9fa';
             } else {
-                input.disabled = true;
-                input.value = '';
                 div.style.backgroundColor = '';
             }
-            calculateTotal();
         }
 
         function calculateTotal() {
@@ -246,7 +213,11 @@
                 document.getElementById('DiscountValue').value = discountValue.toFixed(2);
                 total -= discountValue;
             } else {
-                document.getElementById('DiscountValue').value = '';
+                // If it already has a discount value, subtract it
+                const discountVal = parseFloat(document.getElementById('DiscountValue').value) || 0;
+                if (discountVal > 0) {
+                    total -= discountVal;
+                }
             }
             
             document.getElementById('TotalDisplay').value = total.toFixed(2);
@@ -273,7 +244,6 @@
             // Initialize div states based on checkboxes
             if (document.getElementById('IsUnitsSelected').checked) {
                 toggleDiv('units', true);
-                // Set the value from the model
                 const unitsValue = document.getElementById('UnitsValue').value;
                 if (unitsValue) {
                     document.getElementById('UnitsValue').value = unitsValue;
@@ -281,7 +251,6 @@
             }
             if (document.getElementById('IsKilosSelected').checked) {
                 toggleDiv('kilos', true);
-                // Set the value from the model
                 const kilosValue = document.getElementById('KilosValue').value;
                 if (kilosValue) {
                     document.getElementById('KilosValue').value = kilosValue;
@@ -289,7 +258,6 @@
             }
             if (document.getElementById('IsTonSelected').checked) {
                 toggleDiv('ton', true);
-                // Set the value from the model
                 const tonValue = document.getElementById('TonValue').value;
                 if (tonValue) {
                     document.getElementById('TonValue').value = tonValue;
@@ -306,50 +274,8 @@
                 });
             }
 
-            // Calculate total on page load if in edit mode
-            const isEditMode = document.getElementById('Id').value > 0;
-            if (isEditMode) {
-                calculateTotal();
-            }
-
-            // Main Waste change - load sub wastes
-            $('#FKMainWasteId').on('change', function () {
-                const mainWasteId = $(this).val();
-                if (mainWasteId) {
-                    $.get('/Admin/OrderBuyFromClients/GetSubWastesByMainWaste?mainWasteId=' + mainWasteId, function(data) {
-                        const subWasteSelect = $('#FKSubWasteId');
-                        subWasteSelect.empty();
-                        subWasteSelect.append('<option value="">-- Select Sub Waste --</option>');
-                        
-                        $.each(data, function (i, item) {
-                            subWasteSelect.append('<option value="' + item.id + '">' + 
-                                (currentLang === 'ar' ? item.nameAr : item.nameEn) + '</option>');
-                        });
-                    });
-                } else {
-                    $('#FKSubWasteId').empty().append('<option value="">-- Select Sub Waste --</option>');
-                }
-            });
-
-            // Sub Waste change - load prices
-            $('#FKSubWasteId').on('change', function () {
-                const subWasteId = $(this).val();
-                if (subWasteId) {
-                    $.get('/Admin/OrderBuyFromClients/GetSubWastePrices?subWasteId=' + subWasteId, function(data) {
-                        if (data.success) {
-                            updatePrices(data);
-                        }
-                    });
-                } else {
-                    updatePrices({ buyPriceUnit: 0, buyPriceKilo: 0, buyPriceTon: 0 });
-                }
-            });
-
-            // Quantity inputs change - recalculate total
-            $('.quantity-input').on('input', calculateTotal);
-            
-            // Discount ratio change - recalculate total
-            $('#DiscountRatio').on('input', calculateTotal);
+            // Calculate total on page load
+            calculateTotal();
         });
     </script>
 }

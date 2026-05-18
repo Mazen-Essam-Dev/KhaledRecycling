@@ -39,6 +39,15 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 .Include(x => x.Status)
                 .AsQueryable();
 
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+
+            if (isClientUser)
+            {
+                query = query.Where(x => x.FKUserId == loggedInUserId);
+            }
+
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
                 query = query.Where(x =>
@@ -111,6 +120,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
             var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x=>x.FKUserType==1);
 
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+
+            vm.IsClientUser = isClientUser;
+            if (isClientUser)
+            {
+                vm.FKUserId = loggedInUserId;
+            }
+
             vm.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), vm.FKMainWasteId).ToList();
             vm.SubWastesList = new List<SelectListItem>();
             vm.StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), vm.StatusId).ToList();
@@ -129,6 +148,11 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             }
 
             vm = _mapper.Map<OrderBuyFromClientVM>(entity);
+            vm.IsClientUser = isClientUser;
+            if (isClientUser)
+            {
+                vm.FKUserId = loggedInUserId;
+            }
             if (entity.SubWaste != null)
             {
                 vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;
@@ -172,6 +196,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddEdit(OrderBuyFromClientVM model)
         {
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+
+            if (isClientUser)
+            {
+                model.FKUserId = loggedInUserId;
+                model.IsClientUser = true;
+            }
+
             if (!ModelState.IsValid)
             {
                 var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
@@ -242,6 +276,74 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             return RedirectToAction(nameof(AddEdit), new { id = model.Id });
         }
 
+        [YesGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            var entity = await _orderBuyFromClientService.GetByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var vm = _mapper.Map<OrderBuyFromClientVM>(entity);
+
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+
+            vm.IsClientUser = isClientUser;
+            if (isClientUser)
+            {
+                vm.FKUserId = loggedInUserId;
+            }
+
+            if (entity.SubWaste != null)
+            {
+                vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;
+                vm.BuyPriceUnit = entity.SubWaste.BuyPriceUnit;
+                vm.BuyPriceKilo = entity.SubWaste.BuyPriceKilo;
+                vm.BuyPriceTon = entity.SubWaste.BuyPriceTon;
+            }
+
+            // Determine which checkboxes should be checked based on stored values
+            if (entity.CountUnits.HasValue && entity.CountUnits.Value > 0)
+            {
+                vm.IsUnitsSelected = true;
+                vm.UnitsValue = entity.CountUnits.Value;
+            }
+
+            if (entity.Kilo.HasValue && entity.Kilo.Value > 0)
+            {
+                if (entity.Kilo.Value < 1000)
+                {
+                    vm.IsKilosSelected = true;
+                    vm.KilosValue = entity.Kilo.Value;
+                }
+                else
+                {
+                    vm.IsTonSelected = true;
+                    vm.TonValue = entity.Kilo.Value / 1000;
+                }
+            }
+
+            var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
+            var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
+            var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
+
+            vm.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), vm.FKMainWasteId).ToList();
+            vm.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == vm.FKMainWasteId).ToList(), vm.FKSubWasteId).ToList();
+            vm.StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), vm.StatusId).ToList();
+            vm.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+
+            return View(vm);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -298,6 +400,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         public async Task<IActionResult> Print(string? searchTerm, int? mainWasteId, int? subWasteId)
         {
             var items = await _orderBuyFromClientService.GetAllAsync(searchTerm, mainWasteId, subWasteId);
+
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+
+            if (isClientUser)
+            {
+                items = items.Where(x => x.FKUserId == loggedInUserId).ToList();
+            }
+
             var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
             var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
@@ -322,6 +434,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         public async Task<IActionResult> createExcelReport_Download(string? searchTerm, int? mainWasteId, int? subWasteId)
         {
             var items = await _orderBuyFromClientService.GetAllAsync(searchTerm, mainWasteId, subWasteId);
+
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+
+            if (isClientUser)
+            {
+                items = items.Where(x => x.FKUserId == loggedInUserId).ToList();
+            }
+
             var list = items.ToList();
 
             if (!list.Any())
