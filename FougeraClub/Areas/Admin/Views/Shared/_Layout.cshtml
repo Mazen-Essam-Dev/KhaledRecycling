@@ -402,6 +402,49 @@
             }
 
 
+            @* --- OrderBuyFromClients --- *@
+
+            @if (PermissionScanner.ValidatePermission("OrderBuyFromClients", "Index") || PermissionScanner.ValidatePermission("OrderBuyFromClients", "Add") || PermissionScanner.ValidatePermission("OrderBuyFromClients", "Edit"))
+            {
+                <li class="side-nav-item">
+                    <a data-bs-toggle="collapse" href="#sidebarOrderBuyFromClients"
+                       aria-expanded="@IsAriaExpanded(new[] { "OrderBuyFromClients" }, "Index", "AddEdit")"
+                       aria-controls="sidebarOrderBuyFromClients"
+                       class="side-nav-link">
+                        <span class="menu-icon"><i class="ri-calendar-schedule-fill"></i></span>
+                        <span class="fw menu-text">
+                            أدارة طلبات الشراء من العملاء
+                        </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse @IsExpanded(new[] { "OrderBuyFromClients" }, "Index", "AddEdit")" id="sidebarOrderBuyFromClients">
+                        <ul class="sub-menu  border-start-0 ">
+                            <li class="side-nav-item @IsActiveBG("OrderBuyFromClients", "Index")">
+                                <a href="/Admin/OrderBuyFromClients" class="side-nav-link">
+                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                    <span class="fw menu-text @IsActive("OrderBuyFromClients", "Index")">
+                                        قائمة طلبات الشراء من العملاء
+                                    </span>
+                                </a>
+                            </li>
+                            @if (PermissionScanner.ValidatePermission("OrderBuyFromClients", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("OrderBuyFromClients", "AddEdit")">
+                                    <a href="/Admin/OrderBuyFromClients/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("OrderBuyFromClients", "AddEdit")">
+                                            إضافة طلب شراء من عميل
+                                        </span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
 
 
             @* --- MainWastes --- *@

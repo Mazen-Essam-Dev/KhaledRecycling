@@ -44,12 +44,13 @@ namespace KhaledTeamRecycling.Extensions
      
 
             services.AddScoped<IAccountService, AccountService>();
-          
-          
-        
-         
-			services.AddScoped<ISalaryManagementService, SalaryManagementService>();
-      
+
+
+
+
+            services.AddScoped<ISalaryManagementService, SalaryManagementService>();
+            services.AddScoped<IOrderBuyFromClientService, OrderBuyFromClientService>();
+
 
         }
 

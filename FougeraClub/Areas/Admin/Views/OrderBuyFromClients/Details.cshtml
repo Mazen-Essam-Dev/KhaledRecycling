@@ -72,7 +72,7 @@
                         <div class="col-md-6">
                             <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (افراد)</label>
                             <input type="hidden" asp-for="FKUserId" id="FKUserId" />
-                            <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
+                            <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Value == Model.FKUserId)?.Text)" disabled />
                         </div>
                     }
 

@@ -43,7 +43,7 @@
 
 <div class="card all-borders p-3">
     <form method="get" asp-action="Index" class="row g-2 mb-3 filterOrderBuyFromClient">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <input asp-for="SearchString" id="searchTermInput" name="searchTerm" class="form-control" placeholder="Search by Sub Waste name" />
         </div>
         <div class="col-md-3">
@@ -56,8 +56,9 @@
                 <option value="">All Sub Waste</option>
             </select>
         </div>
-        <div class="col-md-2 d-grid">
-            <button type="submit" class="btn btn-outline-success btn-sm">Search</button>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-outline-success btn-sm flex-fill">Search</button>
+            <button type="button" id="btnClearFilters" class="btn-cancel-search btn-sm btn flex-fill">Clear</button>
         </div>
     </form>
 
@@ -164,6 +165,14 @@
 
             $('form.filterOrderBuyFromClient').on('submit', function (e) {
                 e.preventDefault();
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#mainWasteFilterId').val('');
+                $('#subWasteFilterId').empty().append('<option value="">All Sub Waste</option>');
                 saveFilters(1);
                 loadNewPartialList(1);
             });
