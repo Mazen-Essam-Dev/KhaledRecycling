@@ -1,4 +1,8 @@
 @model KhaledTeamRecycling.Areas.Admin.ViewModels.MainWaste.MainWasteVM
+@{
+    var editPermission = PermissionScanner.ValidatePermission("MainWastes", "Edit");
+    var deletePermission = PermissionScanner.ValidatePermission("MainWastes", "Delete");
+}
 
 <input type="hidden" id="NewCountRecords" value="@Model.TotalCount" />
 
@@ -34,13 +38,19 @@
                         <td>@item.NameAr</td>
                         <td>@item.NameEn</td>
                         <td>
+                            @if (editPermission)
+                            {
                             <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                            }
+                            @if (deletePermission)
+                            {
                             <button type="button"
                                     class="btn btn-sm btn-danger open-delete-modal"
                                     data-id="@item.Id"
                                     data-name="@(item.NameAr ?? item.NameEn ?? "Item")">
                                 Delete
                             </button>
+                            }
                         </td>
                     </tr>
                 }
