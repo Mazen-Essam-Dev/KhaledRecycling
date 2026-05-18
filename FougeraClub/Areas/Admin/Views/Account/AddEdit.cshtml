@@ -74,7 +74,7 @@
                 <input asp-for="FullNameEn" class="form-control" placeholder="@Resource2.FullNameEn" />
                 <span asp-validation-for="FullNameEn" class="text-danger"></span>
             </div>
-            <div class="col-md-6 mb-2">
+             <div class="col-md-6 mb-2">
                 <label asp-for="Username" class="form-label asteriskRequired mb-1">@Resource2.Username</label>
 
                 @if (canEditRole)
@@ -161,8 +161,8 @@
                 </div>
             } *@
 
-
-            <div class="col-md-6">
+          
+              <div class="col-md-6">
                 <label asp-for="RoleId" class="form-label asteriskRequired mb-1">@Resource2.Role</label>
 
                 @if (canEditRole)
@@ -204,10 +204,10 @@
 
                     <div class="d-flex align-items-center justify-content-between mb-2">
 
-                        <button type="button" class="btn btn-outline-secondary mb-2 " id="openSignatureModal">
-                            إضافة أو رسم التوقيع
-                        </button>
-
+                    <button type="button" class="btn btn-outline-secondary mb-2 " id="openSignatureModal">
+                        إضافة أو رسم التوقيع
+                    </button>
+                   
                         <span class=" mb-1 text-red"> @Resource3.MaximumImageSize3MB </span>
 
                     </div>
@@ -298,14 +298,14 @@
                 <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
             </button>
             @if (canEditRole)
-            {
-                <a asp-action="Index" class="btn btn-cancel-search">
-                    @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
-                </a>
-            }
+                {
+            <a asp-action="Index" class="btn btn-cancel-search">
+                @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
+            </a>
+                }
             else
             {
-                <a asp-action="Index" asp-controller="Statistics" class="btn btn-cancel-search">
+                <a asp-action="Index" asp-controller="Home" class="btn btn-cancel-search">
                     @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
                 </a>
             }

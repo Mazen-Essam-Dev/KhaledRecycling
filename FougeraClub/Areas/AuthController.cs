@@ -97,7 +97,8 @@ namespace KhaledTeamRecycling.Areas
             if (role != null)
                 await _userManager.AddToRoleAsync(user, role.Name);
 
-            return RedirectToAction("Index", "Home", new { area = "Admin" }); // For Login page
+            //return RedirectToAction("Index", "Home", new { area = "Admin" }); // For Login page
+            return RedirectToAction("Login", "Account", new { area = "Identity" }); // For Login page
         }
     }
 }

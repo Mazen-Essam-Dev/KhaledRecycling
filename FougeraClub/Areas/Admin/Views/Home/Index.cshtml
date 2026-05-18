@@ -1,419 +1,145 @@
-﻿@using Domain.Resources
-@using KhaledTeamRecycling.Attributes
+@using Domain.Resources
 @{
     ViewData["Title"] = Resource2.KhaledTeamRecyclingManagementSystem;
 }
-
-<style>
-    .dashboard-container {
-        padding: 30px;
-        background: linear-gradient(135deg, #ededed 0%, #a6bb96 100%);
-        min-height: 100vh;
-        direction: rtl;
-    }
-
-    .hero-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 20px;
-        padding: 40px;
-        margin-bottom: 30px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        text-align: center;
-    }
-
-    .hero-card h1 {
-        color: #47a644;
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-    }
-
-    .hero-card p {
-        color: #666;
-        font-size: 1.1rem;
-        margin-bottom: 25px;
-    }
-
-    .hero-buttons {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .hero-btn {
-        padding: 12px 30px;
-        border-radius: 30px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .hero-btn-primary {
-        background: linear-gradient(135deg, #47a644 0%, #2d8a2a 100%);
-        color: white;
-        border: none;
-    }
-
-    .hero-btn-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(71, 166, 68, 0.4);
-    }
-
-    .hero-btn-secondary {
-        background: white;
-        color: #47a644;
-        border: 2px solid #47a644;
-    }
-
-    .hero-btn-secondary:hover {
-        background: #47a644;
-        color: white;
-        transform: translateY(-3px);
-    }
-
-    .section-title {
-        color: white;
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-
-    .section-subtitle {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 1rem;
-        margin-bottom: 30px;
-        text-align: center;
-    }
-
-    .cards-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 25px;
-        margin-bottom: 40px;
-    }
-
-    .dashboard-card {
-        background: white;
-        border-radius: 15px;
-        padding: 30px;
-        text-decoration: none;
-        color: #333;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-        display: block;
-    }
-
-    .dashboard-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    }
-
-    .card-icon {
-        width: 70px;
-        height: 70px;
-        background: linear-gradient(135deg, #47a644 0%, #2d8a2a 100%);
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 20px;
-        font-size: 28px;
-        color: white;
-    }
-
-    .card-icon.green {
-        background: linear-gradient(135deg, #47a644 0%, #38ef7d 100%);
-    }
-
-    .card-icon.orange {
-        background: linear-gradient(135deg, #47a644 0%, #5cb85c 100%);
-    }
-
-    .card-icon.blue {
-        background: linear-gradient(135deg, #47a644 0%, #4cae4c 100%);
-    }
-
-    .card-icon.purple {
-        background: linear-gradient(135deg, #47a644 0%, #3d8b3d 100%);
-    }
-
-    .card-icon.red {
-        background: linear-gradient(135deg, #47a644 0%, #2d8a2a 100%);
-    }
-
-    .card-icon.yellow {
-        background: linear-gradient(135deg, #47a644 0%, #6ab067 100%);
-    }
-
-    .dashboard-card h3 {
-        color: #333;
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    .dashboard-card p {
-        color: #666;
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-
-    .stat-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-radius: 15px;
-        padding: 30px;
-        text-align: center;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-card h3 {
-        color: #47a644;
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    .stat-card p {
-        color: #666;
-        font-size: 0.95rem;
-        line-height: 1.6;
-    }
-
-    @@media (max-width: 768px) {
-        .cards-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .hero-card h1 {
-            font-size: 1.8rem;
-        }
-
-        .hero-buttons {
-            flex-direction: column;
-        }
-    }
-</style>
-
-<div class="dashboard-container">
-    <!-- Hero Section -->
-    <div class="hero-card">
+<link href="~/css/premium-ui.css" rel="stylesheet" />
+<section class="eco-dashboard-hero reveal reveal-up">
+    <div>
+        <span class="eco-dashboard-kicker">
+            <i class="fa-solid fa-leaf"></i>
+            Green Life Operations
+        </span>
         <h1>لوحة تحكم إعادة التدوير</h1>
-        <p>مساحة عمل حديثة لمتابعة النفايات والمنتجات والموظفين والتقارير من مكان واحد بتجربة سريعة وواضحة.</p>
-        <div class="hero-buttons">
-            <a href="/Admin/Statistics/Index" class="hero-btn hero-btn-primary">
-                <i class="fa-solid fa-chart-simple"></i>
+        <p>
+            مساحة عمل حديثة لمتابعة النفايات والمنتجات والموظفين والتقارير من مكان واحد بتجربة سريعة وواضحة.
+        </p>
+        <div class="d-flex flex-wrap gap-2 mt-4">
+            <a href="/Admin/Statistics/Index" class="btn btn-light fw-bold">
+                <i class="fa-solid fa-chart-simple me-1"></i>
                 @Resource1.Statistics
             </a>
-            <a href="/Admin/MainWastes/Index" class="hero-btn hero-btn-secondary">
-                <i class="fa-solid fa-recycle"></i>
+            <a href="/Admin/MainWastes/Index" class="btn btn-outline-light fw-bold">
+                <i class="fa-solid fa-recycle me-1"></i>
                 إدارة النفايات
             </a>
         </div>
     </div>
 
-    <!-- Stats Section -->
-    <h2 class="section-title">مؤشرات العمل</h2>
-    <p class="section-subtitle">نظرة سريعة على أهم وحدات النظام</p>
-
-    <div class="cards-grid">
-        <div class="stat-card">
-            <div class="card-icon green">
-                <i class="fa-solid fa-trash-can-arrow-up"></i>
+    <div class="eco-hero-panel">
+        <div class="d-flex align-items-center justify-content-between gap-3">
+            <div>
+                <div class="fw-bold text-white-50">System Readiness</div>
+                <h2 class="text-white my-1 fw-bold">Premium UI Active</h2>
             </div>
-            <h3>Waste Flow</h3>
-            <p>تنظيم أنواع النفايات الرئيسية والفرعية وربطها بعمليات إعادة التدوير.</p>
-        </div>
-        <div class="stat-card">
-            <div class="card-icon blue">
-                <i class="fa-solid fa-boxes-stacked"></i>
+            <div class="eco-card-icon m-0">
+                <i class="fa-solid fa-seedling"></i>
             </div>
-            <h3>Products</h3>
-            <p>إدارة المنتجات الناتجة ومتابعة تصنيفات المنتجات الرئيسية والفرعية.</p>
         </div>
-        <div class="stat-card">
-            <div class="card-icon purple">
-                <i class="fa-solid fa-users-gear"></i>
-            </div>
-            <h3>Teams</h3>
-            <p>إدارة الموظفين والمستخدمين والصلاحيات من تجربة Dashboard موحدة.</p>
+        <div class="progress my-4">
+            <div class="progress-bar" role="progressbar" style="width: 86%;" aria-valuenow="86" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
-        <div class="stat-card">
-            <div class="card-icon orange">
-                <i class="fa-solid fa-chart-line"></i>
-            </div>
-            <h3>Reports</h3>
-            <p>جداول وتقارير أكثر وضوحا مع دعم الطباعة والتصدير عند توفره.</p>
-        </div>
+        <p class="mb-0 text-white-50">
+            واجهة محسنة للعرض، البحث، الجداول، النماذج، والتنقل الإداري.
+        </p>
     </div>
+</section>
 
-    <!-- Quick Links Section -->
-    <h2 class="section-title">اختصارات سريعة</h2>
-    <p class="section-subtitle">انتقال مباشر إلى أكثر صفحات الإدارة استخداما</p>
-
-    <div class="cards-grid">
-        @if (PermissionScanner.ValidatePermission("Statistics", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/Statistics/Index">
-                <div class="card-icon blue">
-                    <i class="fa-solid fa-chart-simple"></i>
-                </div>
-                <h3>@Resource1.Statistics</h3>
-                <p>عرض الإحصائيات والتقارير العامة.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("Trainer", "Index") || PermissionScanner.ValidatePermission("Member", "Index") || PermissionScanner.ValidatePermission("Course", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/Member">
-                <div class="card-icon green">
-                    <i class="ri-contacts-book-3-fill"></i>
-                </div>
-                <h3>@Resource2.MembersOption</h3>
-                <p>إدارة الأعضاء والمشتركين.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("Course", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/Course">
-                <div class="card-icon purple">
-                    <i class="ri-book-2-fill"></i>
-                </div>
-                <h3>@Resource1.CoursesList</h3>
-                <p>قائمة الدورات المتاحة.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("Activity", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/Activity">
-                <div class="card-icon orange">
-                    <i class="ri-list-check"></i>
-                </div>
-                <h3>@Resource1.EventsList</h3>
-                <p>قائمة الفعاليات والأنشطة.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("OrderBuyFromClients", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/OrderBuyFromClients">
-                <div class="card-icon red">
-                    <i class="ri-list-check"></i>
-                </div>
-                <h3>طلبات الشراء من العملاء</h3>
-                <p>قائمة طلبات الشراء من العملاء.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("MainWastes", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/MainWastes/Index">
-                <div class="card-icon green">
-                    <i class="fa-solid fa-recycle"></i>
-                </div>
-                <h3>إدارة النفايات</h3>
-                <p>عرض وإضافة وتعديل تصنيفات النفايات داخل النظام.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("MainProducts", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/MainProducts/Index">
-                <div class="card-icon blue">
-                    <i class="fa-solid fa-cubes"></i>
-                </div>
-                <h3>إدارة المنتجات</h3>
-                <p>متابعة المنتجات الرئيسية والفرعية الخاصة بعمليات التدوير.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("Employees", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/Employees/Index">
-                <div class="card-icon purple">
-                    <i class="fa-solid fa-user-tie"></i>
-                </div>
-                <h3>@Resource1.EmployeesManagement</h3>
-                <p>إدارة بيانات الموظفين والملفات المرتبطة بهم.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("SMS", "Members"))
-        {
-            <a class="dashboard-card" href="/Admin/SMS/Members">
-                <div class="card-icon yellow">
-                    <i class="fa-solid fa-sms"></i>
-                </div>
-                <h3>SMS</h3>
-                <p>إرسال رسائل SMS للأعضاء.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("Account", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/Account/Index">
-                <div class="card-icon">
-                    <i class="ri-group-fill"></i>
-                </div>
-                <h3>المستخدمين</h3>
-                <p>إدارة المستخدمين في النظام.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("Roles", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/Roles/Index">
-                <div class="card-icon red">
-                    <i class="ri-shield-user-fill"></i>
-                </div>
-                <h3>المجموعات</h3>
-                <p>إدارة مجموعات المستخدمين والصلاحيات.</p>
-            </a>
-        }
-
-        @if (PermissionScanner.ValidatePermission("LogHistory", "Index"))
-        {
-            <a class="dashboard-card" href="/Admin/LogHistory">
-                <div class="card-icon orange">
-                    <i class="ri-pages-line"></i>
-                </div>
-                <h3>سجل العمليات</h3>
-                <p>عرض سجل العمليات والأنشطة.</p>
-            </a>
-        }
+<section class="eco-section-title reveal reveal-up">
+    <div>
+        <h2>مؤشرات العمل</h2>
+        <span>نظرة سريعة على أهم وحدات النظام</span>
     </div>
+</section>
 
-    <!-- Process Section -->
-    <h2 class="section-title">مسار العمل</h2>
-    <p class="section-subtitle">تجربة مرتبة من الإدخال إلى التقرير</p>
+<section class="eco-stat-grid">
+    <article class="eco-stat-card reveal reveal-up">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-trash-can-arrow-up"></i>
+        </div>
+        <h3>Waste Flow</h3>
+        <p>تنظيم أنواع النفايات الرئيسية والفرعية وربطها بعمليات إعادة التدوير.</p>
+    </article>
+    <article class="eco-stat-card reveal reveal-up">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-boxes-stacked"></i>
+        </div>
+        <h3>Products</h3>
+        <p>إدارة المنتجات الناتجة ومتابعة تصنيفات المنتجات الرئيسية والفرعية.</p>
+    </article>
+    <article class="eco-stat-card reveal reveal-up">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-users-gear"></i>
+        </div>
+        <h3>Teams</h3>
+        <p>إدارة الموظفين والمستخدمين والصلاحيات من تجربة Dashboard موحدة.</p>
+    </article>
+    <article class="eco-stat-card reveal reveal-up">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <h3>Reports</h3>
+        <p>جداول وتقارير أكثر وضوحا مع دعم الطباعة والتصدير عند توفره.</p>
+    </article>
+</section>
 
-    <div class="cards-grid">
-        <div class="stat-card">
-            <div class="card-icon blue">
-                <i class="fa-solid fa-clipboard-list"></i>
-            </div>
-            <h3>1. تسجيل البيانات</h3>
-            <p>إدخال وتصنيف البيانات من خلال النماذج الحالية بدون تغيير آلية الحفظ.</p>
-        </div>
-        <div class="stat-card">
-            <div class="card-icon green">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
-            </div>
-            <h3>2. المتابعة</h3>
-            <p>جداول محسنة للقراءة والبحث والمراجعة مع تأثيرات تفاعلية خفيفة.</p>
-        </div>
-        <div class="stat-card">
-            <div class="card-icon purple">
-                <i class="fa-solid fa-file-export"></i>
-            </div>
-            <h3>3. التقارير</h3>
-            <p>واجهات أكثر نظافة لصفحات الإحصائيات والطباعة والتصدير.</p>
-        </div>
+<section class="eco-section-title reveal reveal-up">
+    <div>
+        <h2>اختصارات سريعة</h2>
+        <span>انتقال مباشر إلى أكثر صفحات الإدارة استخداما</span>
     </div>
-</div>
+</section>
+
+<section class="eco-action-grid">
+    <a class="eco-action-card reveal reveal-up" href="/Admin/MainWastes/Index">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-recycle"></i>
+        </div>
+        <h3>إدارة النفايات</h3>
+        <p>عرض وإضافة وتعديل تصنيفات النفايات داخل النظام.</p>
+    </a>
+    <a class="eco-action-card reveal reveal-up" href="/Admin/MainProducts/Index">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-cubes"></i>
+        </div>
+        <h3>إدارة المنتجات</h3>
+        <p>متابعة المنتجات الرئيسية والفرعية الخاصة بعمليات التدوير.</p>
+    </a>
+    <a class="eco-action-card reveal reveal-up" href="/Admin/Employees/Index">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-user-tie"></i>
+        </div>
+        <h3>@Resource1.EmployeesManagement</h3>
+        <p>إدارة بيانات الموظفين والملفات المرتبطة بهم.</p>
+    </a>
+</section>
+
+<section class="eco-section-title reveal reveal-up">
+    <div>
+        <h2>مسار العمل</h2>
+        <span>تجربة مرتبة من الإدخال إلى التقرير</span>
+    </div>
+</section>
+
+<section class="eco-process-grid">
+    <article class="eco-process-card reveal reveal-up">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-clipboard-list"></i>
+        </div>
+        <h3>1. تسجيل البيانات</h3>
+        <p>إدخال وتصنيف البيانات من خلال النماذج الحالية بدون تغيير آلية الحفظ.</p>
+    </article>
+    <article class="eco-process-card reveal reveal-up">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+        </div>
+        <h3>2. المتابعة</h3>
+        <p>جداول محسنة للقراءة والبحث والمراجعة مع تأثيرات تفاعلية خفيفة.</p>
+    </article>
+    <article class="eco-process-card reveal reveal-up">
+        <div class="eco-card-icon">
+            <i class="fa-solid fa-file-export"></i>
+        </div>
+        <h3>3. التقارير</h3>
+        <p>واجهات أكثر نظافة لصفحات الإحصائيات والطباعة والتصدير.</p>
+    </article>
+</section>

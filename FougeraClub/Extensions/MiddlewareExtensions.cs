@@ -78,12 +78,9 @@ namespace KhaledTeamRecycling.Extensions
                 name: "areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
-            app.MapGet("/", context =>
-            {
-                //context.Response.Redirect("/member/home/index");
-                context.Response.Redirect("admin/Home/Index");
-                return Task.CompletedTask;
-            });
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages();
         }

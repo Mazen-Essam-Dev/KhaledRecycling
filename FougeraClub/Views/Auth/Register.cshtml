@@ -51,20 +51,13 @@
         <nav class="d-flex align-items-center justify-content-end" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 py-2 flex-nowrap">
 
-                <li class="breadcrumb-item">
-                    <a href="#">@ViewData["Title pakage"]</a>
-                </li>
-                <li class="breadcrumb-item"><a href="/Admin/Account/Index">@ViewData["Title ListIndex"]</a></li>
-                <li class="breadcrumb-item">
-                    <a href="#">@ViewData["Title Single"]</a>
-                </li>
             </ol>
         </nav>
     </div>
 </div>
 <div class="card all-borders p-3">
     <div class="c-edit-form  rounded">
-        <form asp-action="AddEdit" id="mainForm" method="post" class="row" enctype="multipart/form-data">
+        <form asp-action="Register" id="mainForm" method="post" class="row" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="col-md-6 mb-2">
@@ -246,18 +239,11 @@
             <button type="submit" class="btn btn-success me-1" id="mainFormSubmit">
                 <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
             </button>
-            @if (canEditRole)
-                {
-            <a asp-action="Index" class="btn btn-cancel-search">
-                @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
-            </a>
-                }
-            else
-            {
-                <a asp-action="Index" asp-controller="Statistics" class="btn btn-cancel-search">
+
+                <a href="/" class="btn btn-cancel-search">
                     @Resource2.Back <i class="fa-solid fa-arrow-left me-1"></i>
                 </a>
-            }
+           
         </div>
 
     </div>

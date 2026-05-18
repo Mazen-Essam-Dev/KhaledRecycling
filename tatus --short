@@ -1,0 +1,5 @@
+warning: in the working copy of 'FougeraClub/Areas/Admin/Controllers/AccountController.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'FougeraClub/Areas/Admin/Controllers/EmployeesController.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'FougeraClub/Areas/Admin/Controllers/HomeController.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'FougeraClub/Areas/Admin/Controllers/MainProductsController.cs', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'FougeraClub/Areas/Admin/Controllers/MainWastesController.cs', LF will be replaced by CRLF the next time Git touches it
