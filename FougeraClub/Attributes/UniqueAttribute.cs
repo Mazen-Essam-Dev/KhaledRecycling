@@ -50,14 +50,14 @@ namespace KhaledTeamRecycling.Attributes
             if (!isUniqueOriginal)
                 return new ValidationResult(ErrorMessage);
 
-            // 2️⃣ If original is unique → prepend 971 and check again
-            string newValue = "971" + value.ToString()?.Trim();
+            // 2️⃣ If original is unique → prepend 20 and check again
+            string newValue = "20" + value.ToString()?.Trim();
 
-            bool isUniqueWith971 = (bool)method!.Invoke(remoteHelper,
+            bool isUniqueWith20 = (bool)method!.Invoke(remoteHelper,
                 new object?[] { _propertyName, newValue, id })!;
 
-            // ❌ if 971 + value is NOT unique → also error
-            if (!isUniqueWith971)
+            // ❌ if 20 + value is NOT unique → also error
+            if (!isUniqueWith20)
                 return new ValidationResult(ErrorMessage);
 
             // ✔ Both checks passed

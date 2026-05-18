@@ -7,7 +7,7 @@ namespace Application.Helpers
     public static class PhoneHelper
     {
 
-        public static async Task<string?> CheckAndDoPhoneStart971(string? phone)
+        public static async Task<string?> CheckAndDoPhoneStart20(string? phone)
         {
             if (string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(phone))
             {
@@ -16,10 +16,10 @@ namespace Application.Helpers
             // //Phone Dubai
             var PhoneNumber = phone?.Replace(" ", "");
             if (!string.IsNullOrEmpty(PhoneNumber) && PhoneNumber.StartsWith("0")) { PhoneNumber = PhoneNumber.Substring(1); }
-            if (PhoneNumber != null && !PhoneNumber.StartsWith("971"))
+            if (PhoneNumber != null && !PhoneNumber.StartsWith("20"))
             {
-                if (!string.IsNullOrEmpty(PhoneNumber) && PhoneNumber.StartsWith("9710")) { PhoneNumber = PhoneNumber.Substring(4); }
-                PhoneNumber = "971" + PhoneNumber;
+                if (!string.IsNullOrEmpty(PhoneNumber) && PhoneNumber.StartsWith("200")) { PhoneNumber = PhoneNumber.Substring(4); }
+                PhoneNumber = "20" + PhoneNumber;
             }
 
             return PhoneNumber;

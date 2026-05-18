@@ -105,7 +105,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var nationalities = await _unitOfWork.Nationalities.GetAllAsync();
             vm.NationalitiesList = SelectListHelper.BindSelectList(nationalities.ToList(), vm.NationalityId).ToList();
 
-            if (vm.PhoneNumber != null && vm.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+            if (vm.PhoneNumber != null && vm.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                 vm.PhoneNumber = vm.PhoneNumber.Substring(3);
 
             vm.Photo_OldPath = vm.PhotoPath;
@@ -162,7 +162,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 var nationalities = await _unitOfWork.Nationalities.GetAllAsync();
                 model.NationalitiesList = SelectListHelper.BindSelectList(nationalities.ToList(), model.NationalityId).ToList();
 
-                if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+                if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                     model.PhoneNumber = model.PhoneNumber.Substring(3);
 
                 TempData.Keep(); // for safety if re-rendered
@@ -203,7 +203,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
 
             // //Phone Dubai
-            model.PhoneNumber = await PhoneHelper.CheckAndDoPhoneStart971(model.PhoneNumber);
+            model.PhoneNumber = await PhoneHelper.CheckAndDoPhoneStart20(model.PhoneNumber);
             
             var entity = _mapper.Map<Employee>(model);
             entity.PhotoPath = model.PhotoPath;

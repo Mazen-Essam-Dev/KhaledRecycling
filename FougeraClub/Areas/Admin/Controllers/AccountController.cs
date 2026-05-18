@@ -116,7 +116,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             vm.RolesList = SelectListHelper.BindSelectListIdString(allRoles, vm.RoleId, "Id", "Name", "Name");
 
-            if (vm.PhoneNumber != null && vm.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+            if (vm.PhoneNumber != null && vm.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                 vm.PhoneNumber = vm.PhoneNumber.Substring(3);
 
             return View(vm);
@@ -148,13 +148,13 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             //// //Phone Dubai
             //model.PhoneNumber = model.PhoneNumber?.Replace(" ", "");
             //if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("0")){model.PhoneNumber = model.PhoneNumber.Substring(1);}
-            //if (model.PhoneNumber != null && !model.PhoneNumber.StartsWith("971"))
+            //if (model.PhoneNumber != null && !model.PhoneNumber.StartsWith("20"))
             //{
-            //    if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("9710")) { model.PhoneNumber = model.PhoneNumber.Substring(4); }
-            //    model.PhoneNumber = "971" + model.PhoneNumber;
+            //    if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("200")) { model.PhoneNumber = model.PhoneNumber.Substring(4); }
+            //    model.PhoneNumber = "20" + model.PhoneNumber;
             //}
             // //Phone Dubai
-            model.PhoneNumber = await PhoneHelper.CheckAndDoPhoneStart971(model.PhoneNumber);
+            model.PhoneNumber = await PhoneHelper.CheckAndDoPhoneStart20(model.PhoneNumber);
 
             if (string.IsNullOrEmpty(model.Id)) // Create
             {
@@ -168,7 +168,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     foreach (var error in result.Errors)
                         ModelState.AddModelError("", error.Description);
                     model.Id = "";
-                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                         model.PhoneNumber = model.PhoneNumber.Substring(3);
 
                     return View(model);
@@ -208,7 +208,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                         foreach (var error in passwordResult.Errors)
                             ModelState.AddModelError("", error.Description);
 
-                        if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+                        if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                             model.PhoneNumber = model.PhoneNumber.Substring(3);
 
                         return View(model);
@@ -222,7 +222,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     foreach (var error in result.Errors)
                         ModelState.AddModelError("", error.Description);
 
-                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                         model.PhoneNumber = model.PhoneNumber.Substring(3);
 
                     return View(model);
@@ -272,7 +272,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             vm.RolesList = SelectListHelper.BindSelectListIdString(allRoles, vm.RoleId, "Id", "Name", "Name");
 
-            if (vm.PhoneNumber != null && vm.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+            if (vm.PhoneNumber != null && vm.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                 vm.PhoneNumber = vm.PhoneNumber.Substring(3);
 
             return View(vm);
@@ -303,13 +303,13 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             //// //Phone Dubai
             //model.PhoneNumber = model.PhoneNumber?.Replace(" ", "");
             //if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("0")){model.PhoneNumber = model.PhoneNumber.Substring(1);}
-            //if (model.PhoneNumber != null && !model.PhoneNumber.StartsWith("971"))
+            //if (model.PhoneNumber != null && !model.PhoneNumber.StartsWith("20"))
             //{
-            //    if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("9710")) { model.PhoneNumber = model.PhoneNumber.Substring(4); }
-            //    model.PhoneNumber = "971" + model.PhoneNumber;
+            //    if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("200")) { model.PhoneNumber = model.PhoneNumber.Substring(4); }
+            //    model.PhoneNumber = "20" + model.PhoneNumber;
             //}
             // //Phone Dubai
-            model.PhoneNumber = await PhoneHelper.CheckAndDoPhoneStart971(model.PhoneNumber);
+            model.PhoneNumber = await PhoneHelper.CheckAndDoPhoneStart20(model.PhoneNumber);
 
             if (string.IsNullOrEmpty(model.Id)) // Create
             {
@@ -323,7 +323,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     foreach (var error in result.Errors)
                         ModelState.AddModelError("", error.Description);
                     model.Id = "";
-                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                         model.PhoneNumber = model.PhoneNumber.Substring(3);
 
                     return View(model);
@@ -363,7 +363,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                         foreach (var error in passwordResult.Errors)
                             ModelState.AddModelError("", error.Description);
 
-                        if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+                        if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                             model.PhoneNumber = model.PhoneNumber.Substring(3);
 
                         return View(model);
@@ -377,7 +377,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     foreach (var error in result.Errors)
                         ModelState.AddModelError("", error.Description);
 
-                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("971")) // Is Phone StartsWith 971 Remove it
+                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
                         model.PhoneNumber = model.PhoneNumber.Substring(3);
 
                     return View(model);
