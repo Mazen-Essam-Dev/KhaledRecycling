@@ -95,6 +95,18 @@
             </div>
 
             <div class="col-md-6 mb-2">
+                <label asp-for="Phone2" class="form-label mb-1">@Resource2.PhoneNumber 2</label>
+                <input asp-for="Phone2" class="form-control" inputmode="numeric" pattern="\\d*" oninput="this.value=this.value.replace(/\\D/g,'')" placeholder="@Resource1.PhonePlaceholder_10" />
+                <span asp-validation-for="Phone2" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
+                <label asp-for="Address" class="form-label asteriskRequired mb-1">العنوان الرئيسي</label>
+                <textarea asp-for="Address" class="form-control" placeholder="Address" rows="3"></textarea>
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-2">
                 <label asp-for="PasswordHash" class="form-label asteriskRequired mb-1">
                     @Resource2.Password &nbsp;&nbsp; (<span class="text-danger small" style="font-size:12px;">@Resource1.PasswordShouldBe3</span>)
                 </label>

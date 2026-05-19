@@ -43,6 +43,12 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Account
         [LocalizedRequired("Required"), LocalizedMaxLength(10, "PhoneInCorrect") /*, LocalizedMinLength(10, "PhoneInCorrect")*/]
         public string? PhoneNumber { get; set; }
 
+        [Phone(ErrorMessageResourceType = typeof(Resource1), ErrorMessageResourceName = "PhoneNumberisNotValid")]
+        [LocalizedMaxLength(10, "PhoneInCorrect")]
+        public string? Phone2 { get; set; }
+        [LocalizedRequired("Required")]
+        [LocalizedMaxLength(500, "MaxLength_500")]
+        public string? Address { get; set; }
 
         [LocalizedRequired("Required")]
         public string? RoleId { get; set; }
