@@ -128,6 +128,10 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (isClientUser)
             {
                 vm.FKUserId = loggedInUserId;
+                if (!id.HasValue || id.Value == 0)
+                {
+                    vm.Address = loggedInUser?.Address;
+                }
             }
 
             vm.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), vm.FKMainWasteId).ToList();
@@ -393,6 +397,22 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 buyPriceKilo = subWaste.BuyPriceKilo,
                 buyPriceTon = subWaste.BuyPriceTon
             });
+        }
+
+        [IgnoreAction]
+        [HttpGet]
+        public async Task<IActionResult> GetUserAddress(string userId)
+        {
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false });
+            }
+            var user = await _unitOfWork.Users.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return Json(new { success = false });
+            }
+            return Json(new { success = true, address = user.Address });
         }
 
         [IgnoreAction]

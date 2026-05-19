@@ -71,18 +71,25 @@
 
                     @if (Model.IsClientUser)
                     {
-                        <input type="hidden" asp-for="FKUserId" />
+                        <input type="hidden" asp-for="FKUserId" id="FKUserId" />
                     }
                     else
                     {
                         <div class="col-md-6">
                             <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (افراد)</label>
-                            <select asp-for="FKUserId" class="form-select" asp-items="Model.UsersList">
+                            <select asp-for="FKUserId" class="form-select" id="FKUserId" asp-items="Model.UsersList">
                                 <option value="">-- Select User --</option>
                             </select>
                             <span asp-validation-for="FKUserId" class="text-danger"></span>
                         </div>
                     }
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
+                        <input asp-for="Address" class="form-control" id="Address" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
@@ -186,7 +193,7 @@
             </div>
 
             <div class="d-flex align-items-center justify-content-end gap-2 mb-4">
-                <button type="submit" class="btn-cancel-search btn-sm btn">
+                <button type="submit" class="btn-cancel-search btn-sm btn" id="submitBtn">
                     <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
                 </button>
             </div>
@@ -200,6 +207,15 @@
     }
     <script>
         var currentLang = '@lang';
+
+        function updateSubmitButtonState() {
+            const isUnits = document.getElementById('IsUnitsSelected').checked;
+            const isKilos = document.getElementById('IsKilosSelected').checked;
+            const isTon = document.getElementById('IsTonSelected').checked;
+            
+            document.getElementById('submitBtn').disabled = !(isUnits || isKilos || isTon);
+        }
+
         function toggleDiv(type, isChecked) {
             const div = document.getElementById(type + 'Div');
             const input = div.querySelector('.quantity-input');
@@ -270,6 +286,12 @@
         }
 
         $(document).ready(function () {
+            // Check submit button state initially
+            updateSubmitButtonState();
+
+            // Bind change event to checkboxes for submit button state
+            $('#IsUnitsSelected, #IsKilosSelected, #IsTonSelected').on('change', updateSubmitButtonState);
+
             // Initialize div states based on checkboxes
             if (document.getElementById('IsUnitsSelected').checked) {
                 toggleDiv('units', true);
@@ -342,6 +364,22 @@
                     });
                 } else {
                     updatePrices({ buyPriceUnit: 0, buyPriceKilo: 0, buyPriceTon: 0 });
+                }
+            });
+
+            // User change - load address
+            $('#FKUserId').on('change', function () {
+                const userId = $(this).val();
+                if (userId) {
+                    $.get('/Admin/OrderBuyFromClients/GetUserAddress?userId=' + userId, function(data) {
+                        if (data.success) {
+                            $('#Address').val(data.address);
+                        } else {
+                            $('#Address').val('');
+                        }
+                    });
+                } else {
+                    $('#Address').val('');
                 }
             });
 

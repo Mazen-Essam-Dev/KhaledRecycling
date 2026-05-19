@@ -18,6 +18,8 @@ public class OrderBuyFromFactory
     public double? DiscountRatio { get; set; }
     public double? DiscountValue { get; set; }
     public double? Total { get; set; }
+    public string? Address { get; set; }
+
 
     public int? StatusId { get; set; }
 

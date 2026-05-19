@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities.Waste;
 
@@ -6,6 +6,7 @@ public class OrderBuyFromClient
 {
     public int Id { get; set; }
     public string? FKUserId { get; set; }
+    public string? Address { get; set; }
     public int? FKSubWasteId { get; set; }
 
     public int? CountUnits { get; set; }

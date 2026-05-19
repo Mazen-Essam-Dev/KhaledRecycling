@@ -21,6 +21,9 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient
         public string? UserName { get; set; }
         public bool IsClientUser { get; set; }
         public List<SelectListItem>? UsersList { get; set; } = new();
+        [LocalizedRequired("Required")]
+        [LocalizedMaxLength(500, "MaxLength_500")]
+        public string? Address { get; set; }
 
         [LocalizedRequired("Required")]
         public int? FKSubWasteId { get; set; }
