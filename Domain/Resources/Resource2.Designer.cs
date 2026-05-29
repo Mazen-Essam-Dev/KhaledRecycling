@@ -1374,6 +1374,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Done.
+        /// </summary>
+        public static string DoneStatus {
+            get {
+                return ResourceManager.GetString("DoneStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Don&apos;t have an account.
         /// </summary>
         public static string DontHaveAccount {
@@ -2913,6 +2922,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pending.
+        /// </summary>
+        public static string Pending {
+            get {
+                return ResourceManager.GetString("Pending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Performed an operation.
         /// </summary>
         public static string PerformedAnOperation {
@@ -3305,6 +3323,15 @@ namespace Domain.Resources {
         public static string Records {
             get {
                 return ResourceManager.GetString("Records", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refund.
+        /// </summary>
+        public static string Refund {
+            get {
+                return ResourceManager.GetString("Refund", resourceCulture);
             }
         }
         

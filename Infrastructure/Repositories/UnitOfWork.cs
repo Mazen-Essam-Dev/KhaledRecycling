@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Entities.Contract;
 using Domain.Entities.Employees;
 using Domain.Entities.Gallary;
@@ -48,6 +48,7 @@ namespace Infrastructure.Repositories
         private IGenericRepository<SubProduct> _SubProducts;
 
         private IGenericRepository<OrderBuyFromClient> _OrderBuyFromClients;
+        private IGenericRepository<OrderBuyFromClientAttachment> _OrderBuyFromClientAttachments;
         private IGenericRepository<OrderSellToFactory> _OrderSellToFactories;
         private IGenericRepository<OrderBuyFromFactory> _OrderBuyFromFactories;
         private IGenericRepository<OrderSellToClient> _OrderSellToClients;
@@ -107,6 +108,7 @@ namespace Infrastructure.Repositories
         public IGenericRepository<SubProduct> SubProducts => _SubProducts ??= new GenericRepository<SubProduct>(_context);
 
         public IGenericRepository<OrderBuyFromClient> OrderBuyFromClients => _OrderBuyFromClients ??= new GenericRepository<OrderBuyFromClient>(_context);
+        public IGenericRepository<OrderBuyFromClientAttachment> OrderBuyFromClientAttachments => _OrderBuyFromClientAttachments ??= new GenericRepository<OrderBuyFromClientAttachment>(_context);
         public IGenericRepository<OrderSellToFactory> OrderSellToFactories => _OrderSellToFactories ??= new GenericRepository<OrderSellToFactory>(_context);
         public IGenericRepository<OrderBuyFromFactory> OrderBuyFromFactories => _OrderBuyFromFactories ??= new GenericRepository<OrderBuyFromFactory>(_context);
         public IGenericRepository<OrderSellToClient> OrderSellToClients => _OrderSellToClients ??= new GenericRepository<OrderSellToClient>(_context);

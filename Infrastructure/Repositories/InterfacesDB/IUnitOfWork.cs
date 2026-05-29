@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Entities.Contract;
 using Domain.Entities.Employees;
 using Domain.Entities.Gallary;
@@ -51,6 +51,7 @@ namespace Infrastructure.Repositories.InterfacesDB
 
         // Orders
         IGenericRepository<OrderBuyFromClient> OrderBuyFromClients { get; }
+        IGenericRepository<OrderBuyFromClientAttachment> OrderBuyFromClientAttachments { get; }
         IGenericRepository<OrderSellToFactory> OrderSellToFactories { get; }
         IGenericRepository<OrderBuyFromFactory> OrderBuyFromFactories { get; }
         IGenericRepository<OrderSellToClient> OrderSellToClients { get; }

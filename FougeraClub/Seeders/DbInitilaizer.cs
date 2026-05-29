@@ -2,14 +2,15 @@
 using CsvHelper.Configuration;
 using Domain.Entities;
 using Domain.Enums;
-using KhaledTeamRecycling.Helpers;
 using Humanizer.Localisation;
 using Infrastructure.Identity;
 using Infrastructure.Persistence;
+using KhaledTeamRecycling.Helpers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Security.Claims;
+using Tensorflow;
 using CsvReader = CsvHelper.CsvReader;
 
 namespace KhaledTeamRecycling.Seeders
@@ -84,10 +85,27 @@ namespace KhaledTeamRecycling.Seeders
             ////    await context.SaveChangesAsync();
             ////}
 
+            // Seed ReportType Enum Data
+            if (!context.Statuses.Any())
+            {
+                var list = Enum.GetValues(typeof(StatusEnum))
+                    .Cast<StatusEnum>()
+                    .Select(e => new Domain.Entities.Status
+                    {
+                        //Id = (int)e,
+                        ShortChar = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("en"))?.Substring(0,1),
+                        NameEn = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("en")),
+                        NameAr = Domain.Resources.Resource2.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("ar"))
+                    })
+                    .ToList();
+
+                await context.Statuses.AddRangeAsync(list);
+                await context.SaveChangesAsync();
+            }
 
 
 
-          
+
 
             // Get all Permissions Of This Application System
             var allPermissions = PermissionScanner.GetAllActionPermissions();

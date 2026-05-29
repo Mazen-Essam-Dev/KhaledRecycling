@@ -1547,4 +1547,16 @@ Registration for any event constitutes implicit acceptance of these terms and co
     <value>Subscriber</value>
     <comment>مشترك</comment>
   </data>
+  <data name="Refund" xml:space="preserve">
+    <value>Refund</value>
+    <comment>تم الالغاء</comment>
+  </data>
+  <data name="DoneStatus" xml:space="preserve">
+    <value>Done</value>
+    <comment>تم التنفيذ</comment>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Pending</value>
+    <comment>قيد التنفيذ</comment>
+  </data>
 </root>

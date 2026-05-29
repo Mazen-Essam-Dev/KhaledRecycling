@@ -273,7 +273,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (model.Id == 0)
             {
                 await _orderBuyFromClientService.AddAsync(entity);
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AddEdit), new { id = model.Id });
             }
 
             await _orderBuyFromClientService.UpdateAsync(entity);
@@ -494,6 +495,90 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 bytes,
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 $"OrderBuyFromClients_{AppDubaiTime.Now:yyyyMMdd_HHmmss}.xlsx");
+        }
+
+        [IgnoreAction]
+        [HttpGet]
+        public async Task<IActionResult> GetOrderAttachments(int id)
+        {
+            var attachments = await _unitOfWork.OrderBuyFromClientAttachments.Table
+                .Where(a => a.OrderBuyFromClientId == id)
+                .ToListAsync();
+
+            var vm = new OrderBuyFromClientAttachmentsVM
+            {
+                OrderBuyFromClientId = id,
+                Attachments = attachments
+            };
+
+            return PartialView("_OrderAttachmentsModal", vm);
+        }
+
+        [IgnoreAction]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UploadOrderFiles(OrderBuyFromClientAttachmentsVM model)
+        {
+            var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Files", "Orders");
+            if (!Directory.Exists(uploadDir))
+            {
+                Directory.CreateDirectory(uploadDir);
+            }
+
+            // 1. Get existing attachments from DB
+            var existingAttachments = await _unitOfWork.OrderBuyFromClientAttachments.Table
+                .Where(a => a.OrderBuyFromClientId == model.OrderBuyFromClientId)
+                .ToListAsync();
+
+            // 2. Identify attachments that were removed in the UI
+            var submittedPaths = model.Attachments?.Where(a => a.Path != null).Select(a => a.Path).ToList() ?? new List<string>();
+            var attachmentsToRemove = existingAttachments.Where(ea => !submittedPaths.Contains(ea.Path)).ToList();
+
+            // 3. Remove them from DB & File System
+            foreach (var toRemove in attachmentsToRemove)
+            {
+                if (!string.IsNullOrEmpty(toRemove.Path))
+                {
+                    var fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", toRemove.Path.TrimStart('/', '\\'));
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+                }
+                _unitOfWork.OrderBuyFromClientAttachments.Delete(toRemove);
+            }
+
+            // 4. Save new files
+            if (model.Attachments != null)
+            {
+                foreach (var attachment in model.Attachments)
+                {
+                    if (attachment.File != null && attachment.File.Length > 0)
+                    {
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(attachment.File.FileName);
+                        var filePath = Path.Combine(uploadDir, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await attachment.File.CopyToAsync(stream);
+                        }
+
+                        var newAttachment = new Domain.Entities.Waste.OrderBuyFromClientAttachment
+                        {
+                            Name = attachment.Name ?? attachment.File.FileName,
+                            Path = $"Files/Orders/{fileName}",
+                            OrderBuyFromClientId = model.OrderBuyFromClientId
+                        };
+
+                        await _unitOfWork.OrderBuyFromClientAttachments.AddAsync(newAttachment);
+                    }
+                }
+            }
+
+            await _unitOfWork.CompleteAsync();
+
+            TempData["Success"] = Domain.Resources.Resource2.ToastDone;
+            return RedirectToAction(nameof(AddEdit), new { id = model.OrderBuyFromClientId });
         }
     }
 }

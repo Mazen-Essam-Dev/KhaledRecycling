@@ -1538,4 +1538,13 @@
   <data name="Subscriber" xml:space="preserve">
     <value>مشترك</value>
   </data>
+  <data name="Refund" xml:space="preserve">
+    <value>تم الالغاء</value>
+  </data>
+  <data name="DoneStatus" xml:space="preserve">
+    <value>تم التنفيذ</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+  </data>
 </root>

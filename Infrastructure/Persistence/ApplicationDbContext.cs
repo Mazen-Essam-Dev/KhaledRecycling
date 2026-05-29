@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Entities.Contract;
 using Domain.Entities.Employees;
 using Domain.Entities.Gallary;
@@ -54,6 +54,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<SubProduct> SubProducts { get; set; }
 
     public DbSet<OrderBuyFromClient> OrderBuyFromClients { get; set; }
+    public DbSet<OrderBuyFromClientAttachment> OrderBuyFromClientAttachments { get; set; }
     public DbSet<OrderSellToFactory> OrderSellToFactories { get; set; }
     public DbSet<OrderBuyFromFactory> OrderBuyFromFactories { get; set; }
     public DbSet<OrderSellToClient> OrderSellToClients { get; set; }
