@@ -94,6 +94,20 @@ namespace KhaledTeamRecycling.Areas
             // إضافة الدور المختار
             var role = roles.FirstOrDefault(r => r.Id == model.RoleId);
 
+
+            // Set FKUserType = 1 if role is Individual
+            if (!string.IsNullOrWhiteSpace(role?.Name) &&( role.Name.Contains("Individual", StringComparison.OrdinalIgnoreCase) || role.Name.Contains("فرد", StringComparison.OrdinalIgnoreCase)))
+                {
+                user.FKUserType = 1;
+                await _userManager.UpdateAsync(user);
+            }
+            // Set FKUserType = 2 if role is شركة - corporation
+            if (!string.IsNullOrWhiteSpace(role?.Name) && (role.Name.Contains("corporation", StringComparison.OrdinalIgnoreCase) || role.Name.Contains("شركة", StringComparison.OrdinalIgnoreCase)))
+            {
+                user.FKUserType = 2;
+                await _userManager.UpdateAsync(user);
+            }
+
             if (role != null)
                 await _userManager.AddToRoleAsync(user, role.Name);
 

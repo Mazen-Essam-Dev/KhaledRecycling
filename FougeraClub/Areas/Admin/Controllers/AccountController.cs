@@ -180,7 +180,24 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(roleName))
                         ModelState.AddModelError(nameof(model.RoleId), Resource1.RoleRequired);
                     else
+                    {
                         await _userManager.AddToRoleAsync(newUser, roleName);
+
+                        // Set FKUserType = 1 if role is Individual
+                        if (roleName.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                            roleName.Contains("فرد", StringComparison.OrdinalIgnoreCase))
+                        {
+                            newUser.FKUserType = 1;
+                            await _userManager.UpdateAsync(newUser);
+                        }
+                        // Set FKUserType = 2 if role is شركة - corporation
+                        if (roleName.Contains("corporation", StringComparison.OrdinalIgnoreCase) ||
+                            roleName.Contains("شركة", StringComparison.OrdinalIgnoreCase))
+                        {
+                            newUser.FKUserType = 2;
+                            await _userManager.UpdateAsync(newUser);
+                        }
+                    }
                 }
                 return RedirectToAction(nameof(Index)); // After Add New
             }
@@ -240,6 +257,20 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                 await _userManager.AddToRolesAsync(user, selectedRole);
 
+                // Set FKUserType = 1 if role is Individual
+                if (selectedRole.Any(r => r.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                                        r.Contains("فرد", StringComparison.OrdinalIgnoreCase)))
+                {
+                    user.FKUserType = 1;
+                    await _userManager.UpdateAsync(user);
+                }
+                // Set FKUserType = 2 if role is شركة - corporation
+                if (selectedRole.Any(r => r.Contains("corporation", StringComparison.OrdinalIgnoreCase) ||
+                    r.Contains("شركة", StringComparison.OrdinalIgnoreCase)))
+                {
+                    user.FKUserType = 2;
+                    await _userManager.UpdateAsync(user);
+                }
                 return RedirectToAction(nameof(AddEdit), new { id = model.Id });  // After Edit 
             }
 
@@ -335,7 +366,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     if (string.IsNullOrEmpty(roleName))
                         ModelState.AddModelError(nameof(model.RoleId), Resource1.RoleRequired);
                     else
+                    {
                         await _userManager.AddToRoleAsync(newUser, roleName);
+
+                        // Set FKUserType = 1 if role is Individual
+                        if (roleName.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                            roleName.Contains("فرد", StringComparison.OrdinalIgnoreCase))
+                        {
+                            newUser.FKUserType = 1;
+                            await _userManager.UpdateAsync(newUser);
+                        }
+                    }
                 }
                 return RedirectToAction(nameof(Index)); // After Add New
             }
@@ -395,6 +436,14 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                 await _userManager.AddToRolesAsync(user, selectedRole);
 
+                // Set FKUserType = 1 if role is Individual
+                if (selectedRole.Any(r => r.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
+                                        r.Contains("فرد", StringComparison.OrdinalIgnoreCase)))
+                {
+                    user.FKUserType = 1;
+                    await _userManager.UpdateAsync(user);
+                }
+
                 return RedirectToAction(nameof(AddEdit), new { id = model.Id });  // After Edit 
             }
 
@@ -417,16 +466,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = @User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (loggedInUserId != user.Id  && !(thisRoleName == Role.SuperAdmin.ToString()) && (roleNumber == (int)RoleNumber.NormalUser || roleNumber > (int)RoleNumber.Accountant)) // RoleNumber==1 or more than 4
+            if (loggedInUserId != user.Id && !(thisRoleName == Role.SuperAdmin.ToString()) && (roleNumber == (int)RoleNumber.NormalUser || roleNumber > (int)RoleNumber.Accountant)) // RoleNumber==1 or more than 4
             {
-                var signatures = await  _unitOfWork.Signatures.Table.Where(s => s.UserId == user.Id).ToListAsync();
+                var signatures = await _unitOfWork.Signatures.Table.Where(s => s.UserId == user.Id).ToListAsync();
                 foreach (var sign in signatures)
                 {
                     FileHelper.DeleteImageFile(sign.ImagePath);
                 }
                 _unitOfWork.Signatures.RemoveRange(signatures);
                 await _unitOfWork.CompleteAsync();
-                await _userManager.DeleteAsync(user); 
+                await _userManager.DeleteAsync(user);
             }
 
             return RedirectToAction(nameof(Index));
