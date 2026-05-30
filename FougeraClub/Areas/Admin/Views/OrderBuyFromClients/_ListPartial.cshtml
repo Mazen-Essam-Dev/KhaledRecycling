@@ -39,7 +39,12 @@
                 foreach (var item in Model.Items)
                 {
                     x++;
-                    <tr>
+                    var rowColorClass = "";
+                    if (item.Status?.ShortChar == "P") rowColorClass = "background-color:#ffff001f"; // yellow
+                    else if (item.Status?.ShortChar == "D") rowColorClass = "background-color:#0000ff2b"; //blue
+                    else if (item.Status?.ShortChar == "R") rowColorClass = "background-color:#ff00001c"; // red
+
+                    <tr style="@rowColorClass">
                         <td>@(x)</td>
                         <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.SubWaste?.MainWaste?.NameAr : item.SubWaste?.MainWaste?.NameEn)</td>
                         <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.SubWaste?.NameAr : item.SubWaste?.NameEn)</td>
@@ -55,16 +60,31 @@
                             }
                             @if (editPermission)
                             {
-                                 <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                                if (item.Status?.ShortChar == "P" || Model.IsClientUser !=true)
+                                {
+                                    <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                                }
+                                else
+                                {
+                                    <a href="#" disable class="btn btn-sm btn-control-dis btn-primary">Edit</a>
+                                }
                             }
                             @if (deletePermission)
                             {
-                                <button type="button"
-                                        class="btn btn-sm btn-danger open-delete-modal"
-                                        data-id="@item.Id"
-                                        data-name="Order #@item.Id">
-                                    Delete
-                                </button>
+                                if (item.Status?.ShortChar == "P" || Model.IsClientUser != true)
+                                {
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger open-delete-modal"
+                                            data-id="@item.Id"
+                                            data-name="Order #@item.Id">
+                                        Delete
+                                    </button>
+                                }
+                                else
+                                {
+                                    <a href="#" disable class="btn btn-sm btn-control-dis btn-primary">Delete</a>
+                                }
+
                             }
                         </td>
                     </tr>

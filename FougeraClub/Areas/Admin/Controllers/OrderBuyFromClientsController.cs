@@ -1,4 +1,4 @@
-using Application.Helpers;
+﻿using Application.Helpers;
 using Application.Interfaces.Admin;
 using AutoMapper;
 using Domain.DTOs;
@@ -34,14 +34,14 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         public async Task<IActionResult> Index(string? searchTerm, int? mainWasteId, int? subWasteId, int page = 1, int pageSize = 50)
         {
             var query = _unitOfWork.OrderBuyFromClients.Table
-                .Include(x => x.SubWaste)
-                .ThenInclude(x => x.MainWaste)
-                .Include(x => x.Status)
+                .Include(x => x.SubWaste!)
+                .ThenInclude(x => x.MainWaste!)
+                .Include(x => x.Status!)
                 .AsQueryable();
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             if (isClientUser)
             {
@@ -88,6 +88,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var vm = new OrderBuyFromClientVM
             {
+                IsClientUser = isClientUser,
                 Items = items,
                 SearchString = searchTerm,
                 MainWasteFilterId = mainWasteId,
@@ -114,6 +115,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> AddEdit(int? id)
         {
+
             var vm = new OrderBuyFromClientVM();
             var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
             var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
@@ -122,7 +124,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             vm.IsClientUser = isClientUser;
             if (isClientUser)
@@ -133,6 +135,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     vm.Address = loggedInUser?.Address;
                 }
             }
+
+            var DoneStatus = await _unitOfWork.Statuses.GetByIdAsync(x => x.ShortChar == "D");
+            if(vm.StatusId == DoneStatus?.Id && vm.StatusId >0) vm.isDisabled=true;
 
             vm.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), vm.FKMainWasteId).ToList();
             vm.SubWastesList = new List<SelectListItem>();
@@ -202,7 +207,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         {
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             if (isClientUser)
             {
@@ -299,7 +304,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             vm.IsClientUser = isClientUser;
             if (isClientUser)
@@ -424,7 +429,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             if (isClientUser)
             {
@@ -458,7 +463,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
+            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             if (isClientUser)
             {

@@ -49,6 +49,8 @@ namespace Application.Services.Admin
 
         public async Task<int> AddAsync(OrderBuyFromClient entity)
         {
+            var pendingStatus = await _unitOfWork.Statuses.GetByIdAsync(x=>x.ShortChar=="P");
+            entity.StatusId = pendingStatus?.Id;
             var created = await _unitOfWork.OrderBuyFromClients.AddAsync(entity);
             await _unitOfWork.CompleteAsync();
             return created.Id;

@@ -69,5 +69,6 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient
         public string? SearchString { get; set; }
         public int? MainWasteFilterId { get; set; }
         public int? SubWasteFilterId { get; set; }
+        public bool isDisabled { get; set; } = false;
     }
 }
