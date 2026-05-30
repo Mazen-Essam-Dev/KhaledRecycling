@@ -1,4 +1,7 @@
 ﻿using Domain.Resources;
+using Infrastructure.Identity;
+using KhaledTeamRecycling.Attributes;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Account
@@ -15,5 +18,8 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Account
         [DataType(DataType.Password)]
         [Compare("Password",ErrorMessageResourceName = "PasswordMismatch", ErrorMessageResourceType = typeof(Resource2))]
         public string? ConfirmPassword { get; set; }
+
+        [LocalizedRequired("Required")]
+        public string? Username { get; set; }
     }
 }

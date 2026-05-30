@@ -1,4 +1,4 @@
-﻿using Application.Helpers;
+using Application.Helpers;
 using Application.Interfaces.Admin;
 using Application.Services.Admin;
 using AutoMapper;
@@ -85,195 +85,6 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             }
 
             return View(paginated);
-        }
-
-        [IgnoreAction]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register(string? id)
-        {
-            var allRoles = _roleManager.Roles.ToList();
-
-            var vm = new AdminVM();
-            if (!string.IsNullOrEmpty(id))
-            {
-                var user = await _userManager.FindByIdAsync(id);
-                if (user == null) return NotFound();
-                vm = _mapper.Map<AdminVM>(user);
-
-                var userRole = await _userManager.GetRolesAsync(user);
-                vm.RoleId = allRoles
-                    .Where(r => userRole.Contains(r.Name))
-                    .Select(r => r.Id)
-                    .FirstOrDefault();
-
-                // Retrieve the latest signature for the user
-                var allSignatures = await _accountService.GetAllSignaturesAsync(id);
-                var latestSignature = allSignatures
-                    .OrderByDescending(s => s.CreatedAt)
-                    .FirstOrDefault();
-                vm.Signature = _mapper.Map<SignatureVM>(latestSignature);
-            }
-
-            vm.RolesList = SelectListHelper.BindSelectListIdString(allRoles, vm.RoleId, "Id", "Name", "Name");
-
-            if (vm.PhoneNumber != null && vm.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
-                vm.PhoneNumber = vm.PhoneNumber.Substring(3);
-
-            return View(vm);
-        }
-
-        // Add or Edit (POST)
-        [IgnoreAction]
-        [AllowAnonymous]
-        [HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(AdminVM model)
-        {
-            var allRoles = _roleManager.Roles.ToList();
-            model.RolesList = SelectListHelper.BindSelectListIdString(allRoles, model.RoleId, "Id", "Name", "Name");
-
-            bool isAdd = string.IsNullOrEmpty(model.Id);
-            if (isAdd)
-            {
-                if (string.IsNullOrWhiteSpace(model.PasswordHash))
-                    ModelState.AddModelError(nameof(model.PasswordHash), Resource1.PasswordRequired);
-
-                if (string.IsNullOrWhiteSpace(model.ConfirmPassword))
-                    ModelState.AddModelError(nameof(model.ConfirmPassword), Resource1.PasswordRequiredConfirm);
-            }
-
-            if (!ModelState.IsValid || model == null)
-                return View(model);
-
-            //// //Phone Dubai
-            //model.PhoneNumber = model.PhoneNumber?.Replace(" ", "");
-            //if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("0")){model.PhoneNumber = model.PhoneNumber.Substring(1);}
-            //if (model.PhoneNumber != null && !model.PhoneNumber.StartsWith("20"))
-            //{
-            //    if (!string.IsNullOrEmpty(model.PhoneNumber) && model.PhoneNumber.StartsWith("200")) { model.PhoneNumber = model.PhoneNumber.Substring(4); }
-            //    model.PhoneNumber = "20" + model.PhoneNumber;
-            //}
-            // //Phone Dubai
-            model.PhoneNumber = await PhoneHelper.CheckAndDoPhoneStart20(model.PhoneNumber);
-
-            if (string.IsNullOrEmpty(model.Id)) // Create
-            {
-                model.Id = Guid.NewGuid().ToString();
-                var newUser = _mapper.Map<ApplicationUser>(model);
-
-                var result = await _userManager.CreateAsync(newUser, model.PasswordHash);
-
-                if (!result.Succeeded)
-                {
-                    foreach (var error in result.Errors)
-                        ModelState.AddModelError("", error.Description);
-                    model.Id = "";
-                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
-                        model.PhoneNumber = model.PhoneNumber.Substring(3);
-
-                    return View(model);
-                }
-
-                if (!string.IsNullOrEmpty(model.RoleId))
-                {
-                    var roleName = model.RolesList.FirstOrDefault(r => r.Selected)?.Text;
-                    if (string.IsNullOrEmpty(roleName))
-                        ModelState.AddModelError(nameof(model.RoleId), Resource1.RoleRequired);
-                    else
-                    {
-                        await _userManager.AddToRoleAsync(newUser, roleName);
-
-                        // Set FKUserType = 1 if role is Individual
-                        if (roleName.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
-                            roleName.Contains("فرد", StringComparison.OrdinalIgnoreCase))
-                        {
-                            newUser.FKUserType = 1;
-                            await _userManager.UpdateAsync(newUser);
-                        }
-                        // Set FKUserType = 2 if role is شركة - corporation
-                        if (roleName.Contains("corporation", StringComparison.OrdinalIgnoreCase) ||
-                            roleName.Contains("شركة", StringComparison.OrdinalIgnoreCase))
-                        {
-                            newUser.FKUserType = 2;
-                            await _userManager.UpdateAsync(newUser);
-                        }
-                    }
-                }
-                return RedirectToAction(nameof(Index)); // After Add New
-            }
-            else // Update
-            {
-                var user = await _userManager.FindByIdAsync(model.Id);
-                if (user == null)
-                    return NotFound();
-
-
-                // Do not copy PasswordHash from the model because this field is for the encrypted password
-                var oldPasswordHash = user.PasswordHash; // Keep the old password
-
-                _mapper.Map(model, user);
-                user.PasswordHash = oldPasswordHash; // Do not change it unless the user enters a new password
-
-                // If User Update Password
-                if (!string.IsNullOrEmpty(model.PasswordHash))
-                {
-                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var passwordResult = await _userManager.ResetPasswordAsync(user, token, model.PasswordHash);
-
-                    if (!passwordResult.Succeeded)
-                    {
-                        foreach (var error in passwordResult.Errors)
-                            ModelState.AddModelError("", error.Description);
-
-                        if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
-                            model.PhoneNumber = model.PhoneNumber.Substring(3);
-
-                        return View(model);
-                    }
-                }
-
-                var result = await _userManager.UpdateAsync(user);
-
-                if (!result.Succeeded)
-                {
-                    foreach (var error in result.Errors)
-                        ModelState.AddModelError("", error.Description);
-
-                    if (model.PhoneNumber != null && model.PhoneNumber.StartsWith("20")) // Is Phone StartsWith 20 Remove it
-                        model.PhoneNumber = model.PhoneNumber.Substring(3);
-
-                    return View(model);
-                }
-
-                // Update Roles
-                var existingRole = await _userManager.GetRolesAsync(user);
-                await _userManager.RemoveFromRolesAsync(user, existingRole);
-
-                var selectedRole = model.RolesList
-                    .Where(r => r.Selected)
-                    .Select(r => r.Text)
-                    .ToList();
-
-
-                await _userManager.AddToRolesAsync(user, selectedRole);
-
-                // Set FKUserType = 1 if role is Individual
-                if (selectedRole.Any(r => r.Contains("Individual", StringComparison.OrdinalIgnoreCase) ||
-                                        r.Contains("فرد", StringComparison.OrdinalIgnoreCase)))
-                {
-                    user.FKUserType = 1;
-                    await _userManager.UpdateAsync(user);
-                }
-                // Set FKUserType = 2 if role is شركة - corporation
-                if (selectedRole.Any(r => r.Contains("corporation", StringComparison.OrdinalIgnoreCase) ||
-                    r.Contains("شركة", StringComparison.OrdinalIgnoreCase)))
-                {
-                    user.FKUserType = 2;
-                    await _userManager.UpdateAsync(user);
-                }
-                return RedirectToAction(nameof(AddEdit), new { id = model.Id });  // After Edit 
-            }
-
         }
 
         public async Task<IActionResult> AddEdit(string? id)
@@ -648,8 +459,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         #endregion
 
         #region remote attributes
-        [AcceptVerbs("GET", "POST")]
         [IgnoreAction]
+        [AllowAnonymous]
+        [AcceptVerbs("GET", "POST")]
         public async Task<IActionResult> CheckUsernameIfExists(string username, string id)
         {
             bool exists = await _accountService.CheckUsernameIfExistsAsync(username, id);

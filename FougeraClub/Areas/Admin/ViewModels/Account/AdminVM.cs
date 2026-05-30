@@ -21,7 +21,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Account
         [LocalizedRequired("Required")]
         [Remote(action: "CheckUsernameIfExists", controller: "Account", areaName: "Admin", AdditionalFields = nameof(Id))]
         [Unique(typeof(ApplicationUser), nameof(Username), ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EnterAnotherUserName")]
-        public string Username { get; set; }
+        public string? Username { get; set; }
 
         [LocalizedRequired("Required")]
         [EmailAddress(ErrorMessageResourceType = typeof(Resource2), ErrorMessageResourceName = "EmailInvalid")]

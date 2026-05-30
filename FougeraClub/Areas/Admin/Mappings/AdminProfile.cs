@@ -16,14 +16,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Mappings
 
             // Allow reverse mapping normally (e.g., ApplicationUser to AdminVM)
             CreateMap<ApplicationUser, AdminVM>()
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName))
-                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
                 .ReverseMap();
 
             CreateMap<Signature, SignatureVM>().ReverseMap();
 
             CreateMap<ApplicationUser, ResetPasswordVM>()
-                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.UserName)).ReverseMap();
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.UserName))
+                .ReverseMap();
 
 
         }

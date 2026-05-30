@@ -1,4 +1,4 @@
-﻿using Infrastructure.Repositories.InterfacesDB;
+using Infrastructure.Repositories.InterfacesDB;
 using System.Linq.Expressions;
 
 namespace KhaledTeamRecycling.Helpers
@@ -16,8 +16,20 @@ namespace KhaledTeamRecycling.Helpers
             var repository = _unitOfWork.GetRepository<T>();
             var parameter = Expression.Parameter(typeof(T), "x");
             var property = Expression.Property(parameter, propertyName);
-            var constant = Expression.Constant(value);
-            var equality = Expression.Equal(property, constant);
+            
+            Expression equality;
+            if (property.Type == typeof(string) && value is string stringValue)
+            {
+                var toLowerMethod = typeof(string).GetMethod("ToLower", Type.EmptyTypes);
+                var lowerProperty = Expression.Call(property, toLowerMethod!);
+                var lowerConstant = Expression.Constant(stringValue.ToLower());
+                equality = Expression.Equal(lowerProperty, lowerConstant);
+            }
+            else
+            {
+                var constant = Expression.Constant(value);
+                equality = Expression.Equal(property, constant);
+            }
 
             Expression finalExpression = equality;
 
