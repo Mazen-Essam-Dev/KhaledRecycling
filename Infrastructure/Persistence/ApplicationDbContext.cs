@@ -56,8 +56,13 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
     public DbSet<OrderBuyFromClient> OrderBuyFromClients { get; set; }
     public DbSet<OrderBuyFromClientAttachment> OrderBuyFromClientAttachments { get; set; }
     public DbSet<OrderSellToFactory> OrderSellToFactories { get; set; }
+    public DbSet<OrderSellToFactoryAttachment> OrderSellToFactoryAttachments { get; set; }
+
     public DbSet<OrderBuyFromFactory> OrderBuyFromFactories { get; set; }
+    public DbSet<OrderBuyFromFactoryAttachment> OrderBuyFromFactoryAttachments { get; set; }
+
     public DbSet<OrderSellToClient> OrderSellToClients { get; set; }
+    public DbSet<OrderSellToClientAttachment> OrderSellToClientAttachments { get; set; }
 
     public DbSet<Financial> Financials { get; set; }
     public DbSet<Status> Statuses { get; set; }
@@ -67,6 +72,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
     public DbSet<Inventory> Inventories { get; set; }
     public DbSet<RoomInventory> RoomInventories { get; set; }
+
+    public DbSet<UserPoints> UserPointss { get; set; }
+    public DbSet<MoneyPushed> MoneyPusheds { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

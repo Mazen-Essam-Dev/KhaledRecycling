@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260531161844_AddedTableUserPoints")]
+    partial class AddedTableUserPoints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -399,31 +402,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("RoomInventories");
                 });
 
-            modelBuilder.Entity("Domain.Entities.MoneyPushed", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("FKUserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal?>("Money")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("TypeTransaction")
-                        .HasColumnType("nvarchar(1)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("MoneyPusheds");
-                });
-
             modelBuilder.Entity("Domain.Entities.Nationality", b =>
                 {
                     b.Property<int>("Id")
@@ -587,30 +565,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("OrderSellToClients");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Product.OrderSellToClientAttachment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("OrderSellToClientId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Path")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrderSellToClientAttachments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product.SubProduct", b =>
@@ -875,31 +829,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("UserNotifications");
                 });
 
-            modelBuilder.Entity("Domain.Entities.UserPoints", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("FKUserId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("Points")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Totals")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("TotalsReNew")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UserPointss");
-                });
-
             modelBuilder.Entity("Domain.Entities.UserType", b =>
                 {
                     b.Property<int>("Id")
@@ -1011,30 +940,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("OrderBuyFromClientAttachments");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Waste.OrderBuyFromFactoryAttachment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("OrderBuyFromFactoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Path")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrderBuyFromFactoryAttachments");
-                });
-
             modelBuilder.Entity("Domain.Entities.Waste.OrderSellToFactory", b =>
                 {
                     b.Property<int>("Id")
@@ -1085,30 +990,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("OrderSellToFactories");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Waste.OrderSellToFactoryAttachment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("OrderSellToFactoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Path")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrderSellToFactoryAttachments");
                 });
 
             modelBuilder.Entity("Domain.Entities.Waste.SubWaste", b =>

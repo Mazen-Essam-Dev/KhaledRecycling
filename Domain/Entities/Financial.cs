@@ -8,6 +8,8 @@ public class Financial
 {
     public int Id { get; set; }
     public string? TableType { get; set; }
+    public string? FKUserId { get; set; }
+
     public int? ItsId { get; set; }
     public char? TypeTransaction { get; set; }
     public double? Total { get; set; }
