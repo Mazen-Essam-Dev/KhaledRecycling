@@ -4,11 +4,13 @@ namespace Domain.Enums
 {
     public enum StatusEnum
     {
-        [Display(Name = "Pending", ResourceType = typeof(Resources.Resource2))]
-        Pending,
-        [Display(Name = "DoneStatus", ResourceType = typeof(Resources.Resource2))]
-        DoneStatus,
-        [Display(Name = "Refund", ResourceType = typeof(Resources.Resource2))]
-        Refund
+        [Display(Name = "PendingStatus", ResourceType = typeof(Resources.Resource2))]
+        PendingStatus,
+        [Display(Name = "DoneWillDeleviryStatus", ResourceType = typeof(Resources.Resource2))]
+        DoneWillDeleviryStatus,
+        [Display(Name = "Canceled", ResourceType = typeof(Resources.Resource2))]
+        Canceled,
+        [Display(Name = "SuccessDoneStatus", ResourceType = typeof(Resources.Resource2))]
+        Success
     }
 }

@@ -3422,4 +3422,8 @@ in accordance with the standards of Fujairah Science Club.</value>
     <value>Order Buy From Clients</value>
     <comment>قائمة طلبات الشراء من العملاء</comment>
   </data>
+  <data name="UpdateStatus" xml:space="preserve">
+    <value>Update Status</value>
+    <comment>تحديث الحالة </comment>
+  </data>
 </root>

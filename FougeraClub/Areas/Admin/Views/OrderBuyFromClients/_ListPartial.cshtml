@@ -2,6 +2,7 @@
 @{
     var addPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Add");
     var editPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Edit");
+    var UpdateStatusPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "UpdateStatus");
     var DetailsPermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Details");
     var deletePermission = PermissionScanner.ValidatePermission("OrderBuyFromClients", "Delete");
 }
@@ -42,7 +43,7 @@
                     var rowColorClass = "";
                     if (item.Status?.ShortChar == "P") rowColorClass = "background-color:#ffff001f"; // yellow
                     else if (item.Status?.ShortChar == "D") rowColorClass = "background-color:#0000ff2b"; //blue
-                    else if (item.Status?.ShortChar == "R") rowColorClass = "background-color:#ff00001c"; // red
+                    else if (item.Status?.ShortChar == "C") rowColorClass = "background-color:#ff00001c"; // red
 
                     <tr style="@rowColorClass">
                         <td>@(x)</td>
@@ -58,9 +59,20 @@
                             {
                                  <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Details</a>
                             }
+                            @if (UpdateStatusPermission)
+                            {
+                                if (item.Status?.ShortChar != "S" && item.Status?.ShortChar != "C" && Model.IsClientUser != true)
+                                {
+                                    <a asp-action="UpdateStatus" asp-route-id="@item.Id" class="btn btn-sm btn-primary">تحديث الحالة</a>
+                                }
+                                else
+                                {
+                                    <a href="#" disable class="btn btn-sm btn-control-dis btn-primary">تحديث الحالة</a>
+                                }
+                            }
                             @if (editPermission)
                             {
-                                if (item.Status?.ShortChar == "P" || Model.IsClientUser !=true)
+                                if ((item.Status?.ShortChar != "S" && item.Status?.ShortChar != "C") && (item.Status?.ShortChar == "P" || Model.IsClientUser !=true))
                                 {
                                     <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
                                 }
@@ -71,7 +83,7 @@
                             }
                             @if (deletePermission)
                             {
-                                if (item.Status?.ShortChar == "P" || Model.IsClientUser != true)
+                                if ((item.Status?.ShortChar != "S" && item.Status?.ShortChar != "C") && (item.Status?.ShortChar == "P" || Model.IsClientUser != true))
                                 {
                                     <button type="button"
                                             class="btn btn-sm btn-danger open-delete-modal"
@@ -84,7 +96,6 @@
                                 {
                                     <a href="#" disable class="btn btn-sm btn-control-dis btn-primary">Delete</a>
                                 }
-
                             }
                         </td>
                     </tr>

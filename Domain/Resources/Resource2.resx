@@ -1551,12 +1551,20 @@ Registration for any event constitutes implicit acceptance of these terms and co
     <value>Refund</value>
     <comment>تم الالغاء</comment>
   </data>
-  <data name="DoneStatus" xml:space="preserve">
+  <data name="SuccessDoneStatus" xml:space="preserve">
     <value>Done</value>
     <comment>تم التنفيذ</comment>
   </data>
-  <data name="Pending" xml:space="preserve">
+  <data name="PendingStatus" xml:space="preserve">
     <value>Pending</value>
-    <comment>قيد التنفيذ</comment>
+    <comment>في انتظار الموافقة</comment>
+  </data>
+  <data name="DoneWillDeleviryStatus" xml:space="preserve">
+    <value>In Progress</value>
+    <comment>جاري التنفيذ</comment>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Canceled</value>
+    <comment>تم الالغاء</comment>
   </data>
 </root>

@@ -1541,10 +1541,16 @@
   <data name="Refund" xml:space="preserve">
     <value>تم الالغاء</value>
   </data>
-  <data name="DoneStatus" xml:space="preserve">
+  <data name="SuccessDoneStatus" xml:space="preserve">
     <value>تم التنفيذ</value>
   </data>
-  <data name="Pending" xml:space="preserve">
-    <value>قيد التنفيذ</value>
+  <data name="PendingStatus" xml:space="preserve">
+    <value>في انتظار الموافقة</value>
+  </data>
+  <data name="DoneWillDeleviryStatus" xml:space="preserve">
+    <value>جاري التنفيذ</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>تم الالغاء</value>
   </data>
 </root>

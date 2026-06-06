@@ -1,4 +1,4 @@
-﻿using Application.Helpers;
+using Application.Helpers;
 using Application.Interfaces.Admin;
 using AutoMapper;
 using Domain.DTOs;
@@ -155,6 +155,12 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            var currentStatusObj = await _unitOfWork.Statuses.GetByIdAsync(entity.StatusId);
+            if (currentStatusObj != null && (currentStatusObj.ShortChar == "C" || currentStatusObj.ShortChar == "S"))
+            {
+                TempData["Error"] = "Cannot edit this order because it is in a restricted status.";
+                return RedirectToAction(nameof(Index));
+            }
 
             vm = _mapper.Map<OrderBuyFromClientVM>(entity);
             vm.IsClientUser = isClientUser;
@@ -207,7 +213,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         {
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+            var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
 
             if (isClientUser)
             {
@@ -220,7 +226,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
                 var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
                 var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x=>x.FKUserType==1);
+                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
 
                 model.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), model.FKMainWasteId).ToList();
                 model.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == model.FKMainWasteId).ToList(), model.FKSubWasteId).ToList();
@@ -283,8 +289,197 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             }
 
             await _orderBuyFromClientService.UpdateAsync(entity);
+
+            var financial = await _unitOfWork.Financials.Table.FirstOrDefaultAsync(x => x.TableType == "OrderBuyFromClient" && x.ItsId == model.Id);
+            if (financial != null)
+            {
+                financial.Total = entity.Total;
+                _unitOfWork.Financials.Update(financial);
+                await _unitOfWork.CompleteAsync();
+            }
+
             return RedirectToAction(nameof(AddEdit), new { id = model.Id });
         }
+
+
+        [YesGet]
+        public async Task<IActionResult> UpdateStatus(int? id)
+        {
+
+            var vm = new OrderBuyFromClientVM();
+            var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
+            var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
+            var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
+
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+
+            vm.IsClientUser = isClientUser;
+            if (isClientUser)
+            {
+                vm.FKUserId = loggedInUserId;
+                if (!id.HasValue || id.Value == 0)
+                {
+                    vm.Address = loggedInUser?.Address;
+                }
+            }
+
+            var DoneStatus = await _unitOfWork.Statuses.GetByIdAsync(x => x.ShortChar == "D");
+            if (vm.StatusId == DoneStatus?.Id && vm.StatusId > 0) vm.isDisabled = true;
+
+            vm.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), vm.FKMainWasteId).ToList();
+            vm.SubWastesList = new List<SelectListItem>();
+            vm.StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), vm.StatusId).ToList();
+            vm.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+
+            if (!id.HasValue || id.Value == 0)
+            {
+                vm.OrderDate = AppDubaiTime.Now;
+                return View(vm);
+            }
+
+            var entity = await _orderBuyFromClientService.GetByIdAsync(id.Value);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            var currentStatusObj = await _unitOfWork.Statuses.GetByIdAsync(entity.StatusId);
+            if (currentStatusObj != null && (currentStatusObj.ShortChar == "C" || currentStatusObj.ShortChar == "S"))
+            {
+                TempData["Error"] = "Cannot update status of this order because it is in a restricted status.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            vm = _mapper.Map<OrderBuyFromClientVM>(entity);
+            vm.IsClientUser = isClientUser;
+            if (isClientUser)
+            {
+                vm.FKUserId = loggedInUserId;
+            }
+            if (entity.SubWaste != null)
+            {
+                vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;
+                vm.BuyPriceUnit = entity.SubWaste.BuyPriceUnit;
+                vm.BuyPriceKilo = entity.SubWaste.BuyPriceKilo;
+                vm.BuyPriceTon = entity.SubWaste.BuyPriceTon;
+            }
+
+            // Determine which checkboxes should be checked based on stored values
+            if (entity.CountUnits.HasValue && entity.CountUnits.Value > 0)
+            {
+                vm.IsUnitsSelected = true;
+                vm.UnitsValue = entity.CountUnits.Value;
+            }
+
+            if (entity.Kilo.HasValue && entity.Kilo.Value > 0)
+            {
+                // Check if kilo value is less than 1000, treat as kilos
+                if (entity.Kilo.Value < 1000)
+                {
+                    vm.IsKilosSelected = true;
+                    vm.KilosValue = entity.Kilo.Value;
+                }
+                else
+                {
+                    // If kilo value is 1000 or more, treat as tons
+                    vm.IsTonSelected = true;
+                    vm.TonValue = entity.Kilo.Value / 1000;
+                }
+            }
+
+            vm.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), vm.FKMainWasteId).ToList();
+            vm.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == vm.FKMainWasteId).ToList(), vm.FKSubWasteId).ToList();
+            var statusesToBind = allStatuses.ToList();
+            if (currentStatusObj != null && currentStatusObj.ShortChar == "D")
+            {
+                statusesToBind = statusesToBind.Where(s => s.ShortChar == "S" || s.ShortChar == "C" || s.Id == currentStatusObj.Id).ToList();
+            }
+            vm.StatusesList = SelectListHelper.BindSelectList(statusesToBind, vm.StatusId).ToList();
+            vm.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+
+            return View(vm);
+        }
+
+        [IgnoreAction]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateStatus(OrderBuyFromClientVM model)
+        {
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+
+            if (isClientUser)
+            {
+                model.FKUserId = loggedInUserId;
+                model.IsClientUser = true;
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
+                var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
+                var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
+                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
+
+                model.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), model.FKMainWasteId).ToList();
+                model.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == model.FKMainWasteId).ToList(), model.FKSubWasteId).ToList();
+                model.StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), model.StatusId).ToList();
+                model.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+
+                return View(model);
+            }
+
+            var entity = _mapper.Map<Domain.Entities.Waste.OrderBuyFromClient>(model);
+
+
+            var oldEntity = await _unitOfWork.OrderBuyFromClients.Table
+                .Include(x => x.Status)
+                //.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == model.Id);
+            if (oldEntity==null)
+            {
+                return NotFound();
+            }
+            oldEntity.StatusId = model.StatusId;
+            await _orderBuyFromClientService.UpdateAsync(oldEntity);
+
+            var newStatus = await _unitOfWork.Statuses.Table.FirstOrDefaultAsync(x => x.Id == model.StatusId);
+
+            if (oldEntity != null && newStatus != null)
+            {
+                var financial = await _unitOfWork.Financials.Table.FirstOrDefaultAsync(x => x.TableType == "OrderBuyFromClient" && x.ItsId == model.Id);
+
+                if (oldEntity.Status?.ShortChar == "P" && newStatus.ShortChar == "D" && financial == null)
+                {
+                    await _unitOfWork.Financials.AddAsync(new Domain.Entities.Financial
+                    {
+                        TableType = "OrderBuyFromClient",
+                        ItsId = model.Id,
+                        TypeTransaction = 'A',
+                        StatusId = model.StatusId,
+                        Total = oldEntity.Total
+                    });
+                    await _unitOfWork.CompleteAsync();
+                }
+                else if (financial != null)
+                {
+                    financial.StatusId = model.StatusId;
+                    financial.Total = oldEntity.Total;
+                    if (oldEntity.Status?.ShortChar == "P" && newStatus.ShortChar == "D")
+                    {
+                        financial.TypeTransaction = 'A';
+                    }
+                    _unitOfWork.Financials.Update(financial);
+                    await _unitOfWork.CompleteAsync();
+                }
+            }
+
+            return RedirectToAction(nameof(UpdateStatus), new { id = model.Id });
+        }
+
 
         [YesGet]
         public async Task<IActionResult> Details(int id)

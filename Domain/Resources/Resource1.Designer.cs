@@ -7496,6 +7496,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Status.
+        /// </summary>
+        public static string UpdateStatus {
+            get {
+                return ResourceManager.GetString("UpdateStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Member Subscription From Table.
         /// </summary>
         public static string UpdateSubscribe {

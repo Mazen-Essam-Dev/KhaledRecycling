@@ -760,6 +760,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Canceled.
+        /// </summary>
+        public static string Canceled {
+            get {
+                return ResourceManager.GetString("Canceled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel Suspend.
         /// </summary>
         public static string CancelSuspend {
@@ -1374,11 +1383,11 @@ namespace Domain.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Done.
+        ///   Looks up a localized string similar to In Progress.
         /// </summary>
-        public static string DoneStatus {
+        public static string DoneWillDeleviryStatus {
             get {
-                return ResourceManager.GetString("DoneStatus", resourceCulture);
+                return ResourceManager.GetString("DoneWillDeleviryStatus", resourceCulture);
             }
         }
         
@@ -2924,9 +2933,9 @@ namespace Domain.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Pending.
         /// </summary>
-        public static string Pending {
+        public static string PendingStatus {
             get {
-                return ResourceManager.GetString("Pending", resourceCulture);
+                return ResourceManager.GetString("PendingStatus", resourceCulture);
             }
         }
         
@@ -3935,6 +3944,15 @@ namespace Domain.Resources {
         public static string SubscriptionStatus {
             get {
                 return ResourceManager.GetString("SubscriptionStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Done.
+        /// </summary>
+        public static string SuccessDoneStatus {
+            get {
+                return ResourceManager.GetString("SuccessDoneStatus", resourceCulture);
             }
         }
         

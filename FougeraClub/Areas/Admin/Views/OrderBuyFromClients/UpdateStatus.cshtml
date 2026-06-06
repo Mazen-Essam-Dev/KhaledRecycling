@@ -47,12 +47,14 @@
     </div>
 
     <div class="container">
-        <form asp-action="AddEdit" method="post" id="orderForm">
+        <form asp-action="UpdateStatus" method="post" id="orderForm">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
             <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
             <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
+
+            <input type="hidden" asp-for="FKUserId" />
 
             <div class="row">
                 <div class="col-md-12">
@@ -92,24 +94,30 @@
                     {
                         <div class="col-md-6">
                             <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (افراد)</label>
-                            <select asp-for="FKUserId" class="form-select" id="FKUserId" asp-items="Model.UsersList">
-                                <option value="">-- Select User --</option>
-                            </select>
-                            <span asp-validation-for="FKUserId" class="text-danger"></span>
+                            <input type="hidden" asp-for="FKUserId" id="FKUserId" />
+                            <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Value == Model.FKUserId)?.Text)" disabled />
                         </div>
                     }
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
-                        <input asp-for="Address" class="form-control" id="Address" />
-                        <span asp-validation-for="Address" class="text-danger"></span>
+                        <input value="@Model.Address" class="form-control" disabled />
+                        <input type="hidden" asp-for="Address" id="Address" />
                     </div>
-
-                    <div class="col-md-12">
+                    @if (userIsClient)
+                    {
                         <input type="hidden" asp-for="StatusId" id="StatusId" />
-                        <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
-                        <input id="StatusName" class="form-control my-0 " value="@Model.StatusesList?.Where(c => c.Selected == true).FirstOrDefault()?.Text" disabled />
-                    </div>
+                    }
+                    @if (!userIsClient) // Admin can set status, but client users cannot
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
+                            <select asp-for="StatusId" class="form-select" asp-items="Model.StatusesList">
+                                <option value="">--</option>
+                            </select>
+                            <span asp-validation-for="StatusId" class="text-danger"></span>
+                        </div>
+                    }
                         
                     <input asp-for="ApprovalDate" hidden type="date" class="form-control" />
                     <input asp-for="OrderDate" hidden type="date" class="form-control" />
@@ -145,7 +153,7 @@
                     <!-- Units Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" onchange="toggleDiv('units', this.checked)">
+                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" disabled>
                             <label class="form-check-label" for="IsUnitsSelected">Units</label>
                         </div>
                         <div class="mb-2">
@@ -159,7 +167,7 @@
                     <!-- Kilos Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" onchange="toggleDiv('kilos', this.checked)">
+                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" disabled>
                             <label class="form-check-label" for="IsKilosSelected">Kilos</label>
                         </div>
                         <div class="mb-2">
@@ -173,7 +181,7 @@
                     <!-- Ton Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" onchange="toggleDiv('ton', this.checked)">
+                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" disabled>
                             <label class="form-check-label" for="IsTonSelected">Ton</label>
                         </div>
                         <div class="mb-2">
@@ -188,17 +196,17 @@
                 <div class="row g-3 mt-3">
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
-                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" />
+                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" disabled />
                         <span asp-validation-for="DiscountRatio" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountValue">Discount Value</label>
-                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" readonly />
+                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
                         <span asp-validation-for="DiscountValue" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Total</label>
-                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" readonly />
+                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" disabled />
                         <input type="hidden" asp-for="Total" id="TotalHidden" />
                     </div>
                 </div>

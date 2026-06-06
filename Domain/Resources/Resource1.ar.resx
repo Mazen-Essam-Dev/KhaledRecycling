@@ -2805,4 +2805,7 @@
   <data name="OrderBuyFromClients" xml:space="preserve">
     <value>قائمة طلبات الشراء من العملاء</value>
   </data>
+  <data name="UpdateStatus" xml:space="preserve">
+    <value>تحديث الحالة </value>
+  </data>
 </root>
