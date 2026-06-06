@@ -85,6 +85,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 subWastesList = new List<SelectListItem>();
             }
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
             var vm = new OrderBuyFromClientVM
             {
@@ -101,7 +102,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 HasPreviousPage = page > 1,
                 MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), mainWasteId).ToList(),
                 SubWastesList = subWastesList,
-                StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), null).ToList()
+                StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), null).ToList(),
+                UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList()
             };
 
             if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
@@ -120,7 +122,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
             var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x=>x.FKUserType==1);
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x=>x.FKUserType==1 || x.FKUserType == 2);
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
@@ -147,6 +149,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (!id.HasValue || id.Value == 0)
             {
                 vm.OrderDate = AppDubaiTime.Now;
+
+                if (isClientUser && !string.IsNullOrEmpty(loggedInUserId))
+                {
+                    var userPointsTable = _unitOfWork.Context.Set<Domain.Entities.UserPoints>();
+                    var userPoints = await userPointsTable.FirstOrDefaultAsync(x => x.FKUserId == loggedInUserId);
+                    if (userPoints != null && userPoints.Points.HasValue && userPoints.Points.Value > 0)
+                    {
+                        vm.MaxDiscountRatioAllowed = Math.Min(30, (userPoints.Points.Value / 50));
+                    }
+                }
+
                 return View(vm);
             }
 
@@ -226,7 +239,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
                 var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
                 var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
+                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
                 model.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), model.FKMainWasteId).ToList();
                 model.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == model.FKMainWasteId).ToList(), model.FKSubWasteId).ToList();
@@ -268,13 +281,41 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 total += model.TonValue.Value * model.BuyPriceTon.Value;
             }
 
-            // Apply discount
-            if (model.DiscountRatio.HasValue && model.DiscountRatio.Value > 0)
+            // Points discount logic: only for new orders by Client
+            bool pointsDiscountApplied = false;
+            if (model.Id == 0 && isClientUser && model.UsePointsDiscount && !string.IsNullOrEmpty(loggedInUserId))
             {
-                entity.DiscountValue = total * (model.DiscountRatio.Value / 100);
+                var userPointsTable = _unitOfWork.Context.Set<Domain.Entities.UserPoints>();
+                var userPoints = await userPointsTable.FirstOrDefaultAsync(x => x.FKUserId == loggedInUserId);
+                if (userPoints != null && userPoints.Points.HasValue && userPoints.Points.Value > 0)
+                {
+                    int maxDiscount = Math.Min(30, userPoints.Points.Value / 50);
+                    if (maxDiscount > 0)
+                    {
+                        entity.DiscountRatio = maxDiscount;
+                        pointsDiscountApplied = true;
+
+                        // Reset points and TotalsReNew
+                        userPoints.Points = 0;
+                        userPoints.TotalsReNew = 0;
+                        userPointsTable.Update(userPoints);
+                    }
+                }
+            }
+
+            if (!pointsDiscountApplied)
+            {
+                // Clients cannot set DiscountRatio manually
+                entity.DiscountRatio = isClientUser ? null : model.DiscountRatio;
+            }
+
+            // Apply discount
+            if (entity.DiscountRatio.HasValue && entity.DiscountRatio.Value > 0)
+            {
+                entity.DiscountValue = total * (entity.DiscountRatio.Value / 100);
                 total -= entity.DiscountValue.Value;
             }
-            else if (model.DiscountValue.HasValue && model.DiscountValue.Value > 0)
+            else if (!isClientUser && model.DiscountValue.HasValue && model.DiscountValue.Value > 0)
             {
                 total -= model.DiscountValue.Value;
             }
@@ -284,8 +325,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (model.Id == 0)
             {
                 await _orderBuyFromClientService.AddAsync(entity);
-                //return RedirectToAction(nameof(Index));
-                return RedirectToAction(nameof(AddEdit), new { id = model.Id });
+                if (pointsDiscountApplied)
+                    await _unitOfWork.CompleteAsync();
+                return RedirectToAction(nameof(AddEdit), new { id = entity.Id });
             }
 
             await _orderBuyFromClientService.UpdateAsync(entity);
@@ -310,7 +352,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
             var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
@@ -422,7 +464,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
                 var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
                 var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
+                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
                 model.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), model.FKMainWasteId).ToList();
                 model.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == model.FKMainWasteId).ToList(), model.FKSubWasteId).ToList();
@@ -443,6 +485,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+
+            string oldStatusChar = oldEntity.Status?.ShortChar;
+
             oldEntity.StatusId = model.StatusId;
             await _orderBuyFromClientService.UpdateAsync(oldEntity);
 
@@ -452,7 +497,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 var financial = await _unitOfWork.Financials.Table.FirstOrDefaultAsync(x => x.TableType == "OrderBuyFromClient" && x.ItsId == model.Id);
 
-                if (oldEntity.Status?.ShortChar == "P" && newStatus.ShortChar == "D" && financial == null)
+                if (oldStatusChar == "P" && newStatus.ShortChar == "D" && financial == null)
                 {
                     await _unitOfWork.Financials.AddAsync(new Domain.Entities.Financial
                     {
@@ -468,13 +513,52 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 {
                     financial.StatusId = model.StatusId;
                     financial.Total = oldEntity.Total;
-                    if (oldEntity.Status?.ShortChar == "P" && newStatus.ShortChar == "D")
+                    if (oldStatusChar == "P" && newStatus.ShortChar == "D")
                     {
                         financial.TypeTransaction = 'A';
                     }
                     _unitOfWork.Financials.Update(financial);
-                    await _unitOfWork.CompleteAsync();
                 }
+
+                // UserPoints logic: Add points when status becomes "S"
+                if (oldStatusChar != "S" && newStatus.ShortChar == "S")
+                {
+                    var userId = oldEntity.FKUserId;
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        var userPointsTable = _unitOfWork.Context.Set<Domain.Entities.UserPoints>();
+                        var userPoints = await userPointsTable.FirstOrDefaultAsync(x => x.FKUserId == userId);
+                        
+                        if (userPoints == null)
+                        {
+                            userPoints = new Domain.Entities.UserPoints
+                            {
+                                FKUserId = userId,
+                                Totals = 0,
+                                TotalsReNew = 0,
+                                Points = 0
+                            };
+                            await userPointsTable.AddAsync(userPoints);
+                        }
+
+                        decimal currentTotal = (decimal)(oldEntity.Total ?? 0);
+                        userPoints.Totals = (userPoints.Totals ?? 0) + currentTotal;
+                        userPoints.TotalsReNew = (userPoints.TotalsReNew ?? 0) + currentTotal;
+
+                        // Calculate points: Every 1000 = 20 points
+                        userPoints.Points = (int)Math.Floor(((userPoints.TotalsReNew ?? 0) / 1000m) * 20m);
+
+                        userPointsTable.Update(userPoints);
+                    }
+                }
+
+                await _unitOfWork.CompleteAsync();
+            }
+
+            if (newStatus != null && (newStatus.ShortChar == "S" || newStatus.ShortChar == "C"))
+            {
+                TempData["Success"] = "Status updated successfully.";
+                return RedirectToAction(nameof(Index));
             }
 
             return RedirectToAction(nameof(UpdateStatus), new { id = model.Id });
@@ -539,7 +623,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
             var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1);
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
             vm.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), vm.FKMainWasteId).ToList();
             vm.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == vm.FKMainWasteId).ToList(), vm.FKSubWasteId).ToList();
@@ -634,6 +718,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
             var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
             var vm = new OrderBuyFromClientVM
             {
@@ -644,7 +729,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 TotalCount = items.Count(),
                 MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), mainWasteId).ToList(),
                 SubWastesList = SelectListHelper.BindSelectList(allSubWastes.ToList(), subWasteId).ToList(),
-                StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), null).ToList()
+                StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), null).ToList(),
+                UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList()
             };
 
             return View(vm);
@@ -666,26 +752,29 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             }
 
             var list = items.ToList();
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
+            var usersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
 
             if (!list.Any())
             {
                 return RedirectToAction(nameof(Index), new { searchTerm, mainWasteId, subWasteId });
             }
 
-            var titles = new List<string> { "Sub Waste", "Main Waste", "Order Date", "Units", "Kilo", "Discount", "Total", "Status" };
+            var titles = new List<string> { "Client", "Sub Waste", "Main Waste", "Order Date", "Units", "Kilo", "Discount", "Total", "Status" };
             var excelData = list.Select(x => new ExcelDataDTO
             {
-                t1 = SessionHelper.GetCurrentLanguage() == "ar" ? x.SubWaste?.NameAr ?? string.Empty : x.SubWaste?.NameEn ?? string.Empty,
-                t2 = SessionHelper.GetCurrentLanguage() == "ar" ? x.SubWaste?.MainWaste?.NameAr ?? string.Empty : x.SubWaste?.MainWaste?.NameEn ?? string.Empty,
-                t3 = x.OrderDate?.ToString("yyyy-MM-dd") ?? string.Empty,
-                t4 = x.CountUnits?.ToString() ?? string.Empty,
-                t5 = x.Kilo?.ToString() ?? string.Empty,
-                t6 = x.DiscountValue?.ToString() ?? string.Empty,
-                t7 = x.Total?.ToString() ?? string.Empty,
-                t8 = SessionHelper.GetCurrentLanguage() == "ar" ? x.Status?.NameAr ?? string.Empty : x.Status?.NameEn ?? string.Empty
+                t1 = usersList.FirstOrDefault(u => u.Value == x.FKUserId)?.Text ?? string.Empty,
+                t2 = SessionHelper.GetCurrentLanguage() == "ar" ? x.SubWaste?.NameAr ?? string.Empty : x.SubWaste?.NameEn ?? string.Empty,
+                t3 = SessionHelper.GetCurrentLanguage() == "ar" ? x.SubWaste?.MainWaste?.NameAr ?? string.Empty : x.SubWaste?.MainWaste?.NameEn ?? string.Empty,
+                t4 = x.OrderDate?.ToString("yyyy-MM-dd") ?? string.Empty,
+                t5 = x.CountUnits?.ToString() ?? string.Empty,
+                t6 = x.Kilo?.ToString("F2") ?? string.Empty,
+                t7 = x.DiscountValue?.ToString("F2") ?? string.Empty,
+                t8 = x.Total?.ToString("F2") ?? string.Empty,
+                t9 = SessionHelper.GetCurrentLanguage() == "ar" ? x.Status?.NameAr ?? string.Empty : x.Status?.NameEn ?? string.Empty
             }).ToList();
 
-            var (ok, bytes) = ExcelStaticReport.ExcelReportArEn_(excelData, titles, 0, "en");
+            var (ok, bytes) = ExcelStaticReport.ExcelReportArEn_(excelData, titles, 0, "ar");
             if (!ok || bytes == null || bytes.Length == 0)
             {
                 return RedirectToAction(nameof(Index), new { searchTerm, mainWasteId, subWasteId });

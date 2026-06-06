@@ -23,11 +23,13 @@
         <thead>
             <tr>
                 <th style="width: 80px;">No.</th>
+                <th>العميل</th>
                 <th>Main Waste</th>
                 <th>Sub Waste</th>
                 <th>Order Date</th>
                 <th>Units</th>
                 <th>Kilo</th>
+                <th>Discount</th>
                 <th>Total</th>
                 <th>Status</th>
                 <th style="width: 200px;">Actions</th>
@@ -47,11 +49,13 @@
 
                     <tr style="@rowColorClass">
                         <td>@(x)</td>
+                        <td>@Model.UsersList?.Where(x=>x.Value==item.FKUserId).FirstOrDefault()?.Text</td>
                         <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.SubWaste?.MainWaste?.NameAr : item.SubWaste?.MainWaste?.NameEn)</td>
                         <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.SubWaste?.NameAr : item.SubWaste?.NameEn)</td>
                         <td>@(item.OrderDate?.ToString("yyyy-MM-dd"))</td>
                         <td>@(item.CountUnits?.ToString() ?? "-")</td>
                         <td>@(item.Kilo?.ToString() ?? "-")</td>
+                        <td>@(item.DiscountValue?.ToString("F2") ?? "-")</td>
                         <td>@(item.Total?.ToString("F2") ?? "-")</td>
                         <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.Status?.NameAr : item.Status?.NameEn)</td>
                         <td>
@@ -104,7 +108,7 @@
             else
             {
                 <tr>
-                    <td colspan="9" class="text-center p-5">No data found.</td>
+                    <td colspan="10" class="text-center p-5">No data found.</td>
                 </tr>
             }
         </tbody>

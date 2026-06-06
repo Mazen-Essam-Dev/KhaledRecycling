@@ -42,6 +42,7 @@
             <thead class="table-dark">
                 <tr>
                     <th>No.</th>
+                    <th>Client</th>
                     <th>Main Waste</th>
                     <th>Sub Waste</th>
                     <th>Order Date</th>
@@ -56,7 +57,7 @@
                 @if (Model.Items == null || !Model.Items.Any())
                 {
                     <tr>
-                        <td colspan="4" class="text-center p-5">No results found</td>
+                        <td colspan="10" class="text-center p-5">No results found</td>
                     </tr>
                 }
                 else
@@ -68,6 +69,7 @@
                         x++;
                         <tr>
                             <td>@x</td>
+                            <td>@Model.UsersList?.FirstOrDefault(u => u.Value == item.FKUserId)?.Text</td>
                             <td>@(lang == "ar" ? item.SubWaste?.MainWaste?.NameAr : item.SubWaste?.MainWaste?.NameEn)</td>
                             <td>@(lang == "ar" ? item.SubWaste?.NameAr : item.SubWaste?.NameEn)</td>
                             <td>@(item.OrderDate?.ToString("yyyy-MM-dd"))</td>

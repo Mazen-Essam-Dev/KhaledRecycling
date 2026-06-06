@@ -70,5 +70,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient
         public int? MainWasteFilterId { get; set; }
         public int? SubWasteFilterId { get; set; }
         public bool isDisabled { get; set; } = false;
+        public bool UsePointsDiscount { get; set; }
+        public int MaxDiscountRatioAllowed { get; set; }
     }
 }

@@ -186,9 +186,34 @@
                 </div>
 
                 <div class="row g-3 mt-3">
+                    @if (userIsClient && !isEdit && Model.MaxDiscountRatioAllowed > 0)
+                    {
+                        <!-- Points Discount Checkbox (only for new orders by client) -->
+                        <div class="col-md-12">
+                            <div class="form-check form-switch d-flex align-items-center gap-3 p-3 rounded-3" style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;">
+                                <input class="form-check-input mt-0" type="checkbox" role="switch"
+                                       asp-for="UsePointsDiscount"
+                                       id="UsePointsDiscount"
+                                       style="width:3em;height:1.5em;cursor:pointer; margin-inline-start: 2px !important;"
+                                       onchange="togglePointsDiscount(this.checked)">
+                                <label class="form-check-label fw-semibold text-success fs-6" for="UsePointsDiscount">
+                                    <i class="fa-solid fa-star me-1 text-warning"></i>
+                                    لك خصم <strong>@Model.MaxDiscountRatioAllowed%</strong> هل تريده ؟
+                                </label>
+                            </div>
+                            <input type="hidden" id="MaxDiscountRatioAllowed" value="@Model.MaxDiscountRatioAllowed" />
+                        </div>
+                    }
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
-                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" />
+                        @if (userIsClient)
+                        {
+                            <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" readonly style="background:#f0f0f0;cursor:not-allowed;" />
+                        }
+                        else
+                        {
+                            <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" />
+                        }
                         <span asp-validation-for="DiscountRatio" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
@@ -243,43 +268,56 @@
             calculateTotal();
         }
 
-        function calculateTotal() {
-            let total = 0;
-            
-            // Units
-            if (document.getElementById('IsUnitsSelected').checked) {
-                const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
-                const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
-                total += quantity * price;
+            // Toggle points discount checkbox
+            function togglePointsDiscount(isChecked) {
+                const maxDiscount = parseFloat(document.getElementById('MaxDiscountRatioAllowed')?.value) || 0;
+                const discountRatioInput = document.getElementById('DiscountRatio');
+                if (isChecked) {
+                    discountRatioInput.value = maxDiscount;
+                } else {
+                    discountRatioInput.value = '';
+                }
+                calculateTotal();
             }
-            
-            // Kilos
-            if (document.getElementById('IsKilosSelected').checked) {
-                const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
-                const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
-                total += quantity * price;
+
+            function calculateTotal() {
+                let total = 0;
+
+                // Units
+                if (document.getElementById('IsUnitsSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
+                    const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Kilos
+                if (document.getElementById('IsKilosSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
+                    const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Ton
+                if (document.getElementById('IsTonSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
+                    const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Apply discount ratio
+                const discountRatioEl = document.getElementById('DiscountRatio');
+                const discountRatio = discountRatioEl ? parseFloat(discountRatioEl.value) || 0 : 0;
+                if (discountRatio > 0) {
+                    const discountValue = total * (discountRatio / 100);
+                    document.getElementById('DiscountValue').value = discountValue.toFixed(2);
+                    total -= discountValue;
+                } else {
+                    document.getElementById('DiscountValue').value = '';
+                }
+
+                document.getElementById('TotalDisplay').value = total.toFixed(2);
+                document.getElementById('TotalHidden').value = total.toFixed(2);
             }
-            
-            // Ton
-            if (document.getElementById('IsTonSelected').checked) {
-                const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
-                const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
-                total += quantity * price;
-            }
-            
-            // Apply discount ratio
-            const discountRatio = parseFloat(document.getElementById('DiscountRatio').value) || 0;
-            if (discountRatio > 0) {
-                const discountValue = total * (discountRatio / 100);
-                document.getElementById('DiscountValue').value = discountValue.toFixed(2);
-                total -= discountValue;
-            } else {
-                document.getElementById('DiscountValue').value = '';
-            }
-            
-            document.getElementById('TotalDisplay').value = total.toFixed(2);
-            document.getElementById('TotalHidden').value = total.toFixed(2);
-        }
 
         function updatePrices(prices) {
             document.getElementById('BuyPriceUnitHidden').value = prices.buyPriceUnit || 0;
