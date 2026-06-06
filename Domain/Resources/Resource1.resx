@@ -3426,4 +3426,10 @@ in accordance with the standards of Fujairah Science Club.</value>
     <value>Update Status</value>
     <comment>تحديث الحالة </comment>
   </data>
+  <data name="Inventories" xml:space="preserve">
+    <value>Inventories List</value>
+  </data>
+  <data name="RoomInventories" xml:space="preserve">
+    <value>Room Inventories List</value>
+  </data>
 </root>

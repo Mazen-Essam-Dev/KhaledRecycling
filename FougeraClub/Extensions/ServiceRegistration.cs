@@ -36,6 +36,8 @@ namespace KhaledTeamRecycling.Extensions
             services.AddScoped<IEmployeeService, EmployeeService>();
             services.AddScoped<IMainWasteService, MainWasteService>();
             services.AddScoped<ISubWasteService, SubWasteService>();
+            services.AddScoped<IInventoryService, InventoryService>();
+            services.AddScoped<IRoomInventoryService, RoomInventoryService>();
             services.AddScoped<IMainProductService, MainProductService>();
             services.AddScoped<ISubProductService, SubProductService>();
             services.AddScoped<INotificationService , NotificationService>();

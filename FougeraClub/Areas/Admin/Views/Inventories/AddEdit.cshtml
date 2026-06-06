@@ -1,0 +1,79 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.Inventory.InventoryVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? "Edit Inventory" : "Add Inventory";
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="/Admin/Inventories/Index">Inventories</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-6 d-flex justify-content-end align-items-center gap-2">
+        <a asp-action="Index" class="btn btn-success btn-sm">
+            Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3 mb-3">
+    <div class="d-flex justify-content-center c-pro border p-3 mb-3">
+        <div class="flex-grow-1 d-flex justify-content-start align-items-center">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-edit me-2 text-ico"></span>@ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+
+    <div class="container">
+        <form asp-action="AddEdit" method="post">
+            @Html.AntiForgeryToken()
+            <input hidden asp-for="Id" />
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="Name">Name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="NoRooms">No Rooms</label>
+                        <input asp-for="NoRooms" type="number" class="form-control" />
+                        <span asp-validation-for="NoRooms" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" asp-for="Location">Location</label>
+                        <input asp-for="Location" class="form-control" />
+                        <span asp-validation-for="Location" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" asp-for="Description">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end gap-2 mb-4">
+                <button type="submit" class="btn-cancel-search btn-sm btn">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

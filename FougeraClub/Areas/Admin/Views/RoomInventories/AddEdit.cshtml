@@ -1,0 +1,111 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.RoomInventory.RoomInventoryVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? "Edit Room Inventory" : "Add Room Inventory";
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="/Admin/RoomInventories/Index">Room Inventories</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-6 d-flex justify-content-end align-items-center gap-2">
+        <a asp-action="Index" class="btn btn-success btn-sm">
+            Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3 mb-3">
+    <div class="d-flex justify-content-center c-pro border p-3 mb-3">
+        <div class="flex-grow-1 d-flex justify-content-start align-items-center">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-edit me-2 text-ico"></span>@ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+
+    <div class="container">
+        <form asp-action="AddEdit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            @if (Model.Id > 0)
+            {
+                <div class="row g-3 mb-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Id</label>
+                        <input type="text" class="form-control bg-light" value="@Model.Id" readonly disabled />
+                    </div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource1.BasicData</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FkInventory">Inventory</label>
+                        <select asp-for="FkInventory" class="form-select" asp-items="Model.InventoriesList">
+                            <option value="">-- Select Inventory --</option>
+                        </select>
+                        <span asp-validation-for="FkInventory" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FKSubWaste">Sub Waste</label>
+                        <select asp-for="FKSubWaste" class="form-select" asp-items="Model.SubWastesList">
+                            <option value="">-- Select Sub Waste --</option>
+                        </select>
+                        <span asp-validation-for="FKSubWaste" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="GenCode">Code</label>
+                        <input asp-for="GenCode" class="form-control" />
+                        <span asp-validation-for="GenCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="MaxKilo">Max Kilo</label>
+                        <input asp-for="MaxKilo" type="number" step="any" placeholder="0" class="form-control only-decimal" />
+                        <span asp-validation-for="MaxKilo" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <label class="form-label" asp-for="Description">Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end gap-2 mb-4">
+                <button type="submit" class="btn-cancel-search btn-sm btn">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

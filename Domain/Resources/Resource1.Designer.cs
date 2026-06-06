@@ -3778,6 +3778,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inventories List.
+        /// </summary>
+        public static string Inventories {
+            get {
+                return ResourceManager.GetString("Inventories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inventory Details.
         /// </summary>
         public static string InventoryDetails {
@@ -6367,6 +6376,15 @@ namespace Domain.Resources {
         public static string Roless {
             get {
                 return ResourceManager.GetString("Roless", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Room Inventories List.
+        /// </summary>
+        public static string RoomInventories {
+            get {
+                return ResourceManager.GetString("RoomInventories", resourceCulture);
             }
         }
         

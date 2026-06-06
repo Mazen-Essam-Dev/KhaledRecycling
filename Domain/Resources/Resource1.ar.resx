@@ -2808,4 +2808,10 @@
   <data name="UpdateStatus" xml:space="preserve">
     <value>تحديث الحالة </value>
   </data>
+  <data name="Inventories" xml:space="preserve">
+    <value>قائمة المخازن</value>
+  </data>
+  <data name="RoomInventories" xml:space="preserve">
+    <value>قائمة غرف المخازن</value>
+  </data>
 </root>

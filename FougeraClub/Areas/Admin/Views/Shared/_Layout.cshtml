@@ -450,18 +450,20 @@
             @* --- MainWastes --- *@
 
             @if ((PermissionScanner.ValidatePermission("MainWastes", "Index") || PermissionScanner.ValidatePermission("MainWastes", "Add") || PermissionScanner.ValidatePermission("MainWastes", "Edit"))
-                        || (PermissionScanner.ValidatePermission("SubWastes", "Index") || PermissionScanner.ValidatePermission("SubWastes", "Add") || PermissionScanner.ValidatePermission("SubWastes", "Edit")))
+                        || (PermissionScanner.ValidatePermission("SubWastes", "Index") || PermissionScanner.ValidatePermission("SubWastes", "Add") || PermissionScanner.ValidatePermission("SubWastes", "Edit"))
+                        || (PermissionScanner.ValidatePermission("Inventories", "Index") || PermissionScanner.ValidatePermission("Inventories", "Add") || PermissionScanner.ValidatePermission("Inventories", "Edit"))
+                        || (PermissionScanner.ValidatePermission("RoomInventories", "Index") || PermissionScanner.ValidatePermission("RoomInventories", "Add") || PermissionScanner.ValidatePermission("RoomInventories", "Edit")))
             {
                 <li class="side-nav-item">
                     <a data-bs-toggle="collapse" href="#sidebarMainWastes"
-                       aria-expanded="@IsAriaExpanded(new[] { "MainWastes","SubWastes" }, "Index", "AddEdit","Add","Edit")"
+                       aria-expanded="@IsAriaExpanded(new[] { "MainWastes","SubWastes","Inventories","RoomInventories" }, "Index", "AddEdit","Add","Edit")"
                        aria-controls="sidebarMainWastes"
                        class="side-nav-link">
                         <span class="menu-icon"><i class="ri-calendar-schedule-fill"></i></span>
                         <span class="fw menu-text"> إدارة النفايات</span>
                         <span class="menu-arrow"></span>
                     </a>
-                    <div class="collapse @IsExpanded(new[] { "MainWastes" }, "Index", "AddEdit","Add","Edit")" id="sidebarMainWastes">
+                    <div class="collapse @IsExpanded(new[] { "MainWastes","SubWastes","Inventories","RoomInventories" }, "Index", "AddEdit","Add","Edit")" id="sidebarMainWastes">
                         <ul class="sub-menu  border-start-0 ">
                             @if (PermissionScanner.ValidatePermission("MainWastes", "Index"))
                             {
@@ -500,6 +502,46 @@
                                         <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
 
                                         <span class="fw menu-text @IsActive("SubWastes", "AddEdit","Add","Edit")">إضافة نوع نفاية فرعي</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionScanner.ValidatePermission("Inventories", "Index"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("Inventories", "Index")">
+                                    <a href="/Admin/Inventories" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Inventories", "Index")">قائمة المخازن</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionScanner.ValidatePermission("Inventories", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("Inventories", "AddEdit","Add","Edit")">
+                                    <a href="/Admin/Inventories/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Inventories", "AddEdit","Add","Edit")">إضافة مخزن</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionScanner.ValidatePermission("RoomInventories", "Index"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("RoomInventories", "Index")">
+                                    <a href="/Admin/RoomInventories" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("RoomInventories", "Index")">قائمة غرف المخازن</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionScanner.ValidatePermission("RoomInventories", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("RoomInventories", "AddEdit","Add","Edit")">
+                                    <a href="/Admin/RoomInventories/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("RoomInventories", "AddEdit","Add","Edit")">إضافة غرفة مخزن</span>
                                     </a>
                                 </li>
                             }
