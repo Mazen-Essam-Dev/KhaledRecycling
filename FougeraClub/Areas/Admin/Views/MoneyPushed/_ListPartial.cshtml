@@ -1,0 +1,99 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.MoneyPushed.MoneyPushedVM
+@{
+    //var editPermission = PermissionScanner.ValidatePermission("MoneyPushed", "Edit");
+    //var deletePermission = PermissionScanner.ValidatePermission("MoneyPushed", "Delete");
+    var editPermission = true;
+    var deletePermission = true;
+}
+
+<input type="hidden" id="NewCountRecords" value="@Model.TotalCount" />
+
+<nav class="d-flex justify-content-end w-25 align-items-center gap-2 my-2" style="margin-right: auto !important;">
+    <label for="pageSizeSelect" class="form-label mb-0" style="text-wrap-mode: nowrap;">حجم الصفحة:</label>
+    <select id="pageSizeSelect" name="pageSize" class="form-select form-select-sm w-auto" style="width: 74px;">
+        @foreach (var s in new[] { 50, 100, 150 })
+        {
+            <option value="@s" selected="@(s == Model.PageSize ? "selected" : null)">@s</option>
+        }
+    </select>
+</nav>
+
+<div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead>
+            <tr>
+                <th style="width: 80px;">م</th>
+                <th>اسم المستخدم</th>
+                <th>المبلغ</th>
+                <th>نوع المعاملة</th>
+                <th>تاريخ الإنشاء</th>
+                <th style="width: 200px;">الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items != null && Model.Items.Any())
+            {
+                var x = (Model.CurrentPage - 1) * Model.PageSize;
+                @foreach (var item in Model.Items)
+                {
+                    x++;
+                    <tr>
+                        <td>@(x)</td>
+                        <td>@item.UserName</td>
+                        <td>@item.Money</td>
+                        <td>
+                            @if (item.TypeTransaction == '+') {
+                                <span class="badge bg-success">إيداع</span>
+                            } else if (item.TypeTransaction == '-') {
+                                <span class="badge bg-danger">سحب</span>
+                            } else {
+                                <span>@item.TypeTransaction</span>
+                            }
+                        </td>
+                        <td>@(item.CreatedDate?.ToString("yyyy-MM-dd HH:mm"))</td>
+                        <td>
+                            @if (editPermission)
+                            {
+                            <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">تعديل</a>
+                            }
+                            @if (deletePermission)
+                            {
+                            <button type="button"
+                                    class="btn btn-sm btn-danger open-delete-modal"
+                                    data-id="@item.Id"
+                                    data-name="@(item.UserName ?? "المستخدم")">
+                                حذف
+                            </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center p-5">لا توجد بيانات.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
+    <ul class="pagination my-1">
+        <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.CurrentPage - 1)">السابق</a>
+        </li>
+
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+            </li>
+        }
+
+        <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+            <a href="javascript:void(0)" class="page-link ajax-page" data-page="@(Model.CurrentPage + 1)">التالي</a>
+        </li>
+    </ul>
+</nav>

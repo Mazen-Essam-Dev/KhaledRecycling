@@ -4624,6 +4624,33 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Money Push List.
+        /// </summary>
+        public static string MoneyPushed {
+            get {
+                return ResourceManager.GetString("MoneyPushed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Money Push List.
+        /// </summary>
+        public static string MoneyPushedList {
+            get {
+                return ResourceManager.GetString("MoneyPushedList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Money Pushed Management.
+        /// </summary>
+        public static string MoneyPushedManagement {
+            get {
+                return ResourceManager.GetString("MoneyPushedManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Month.
         /// </summary>
         public static string Month {

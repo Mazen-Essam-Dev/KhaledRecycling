@@ -1,4 +1,4 @@
-﻿  @functions {
+  @functions {
     // Returns active class for single or multiple actions within a controller
     public string IsActive(string controller, params string[] actions)
     {
@@ -614,6 +614,40 @@
                 </li>
             }
 
+            @* --- MoneyPushed --- *@
+            @if (PermissionScanner.ValidatePermission("MoneyPushed", "Index") || PermissionScanner.ValidatePermission("MoneyPushed", "Add") || PermissionScanner.ValidatePermission("MoneyPushed", "Edit"))
+            {
+                <li class="side-nav-item">
+                    <a data-bs-toggle="collapse" href="#sidebarMoneyPushed"
+                       aria-expanded="@IsAriaExpanded(new[] { "MoneyPushed" }, "Index", "AddEdit")"
+                       aria-controls="sidebarMoneyPushed"
+                       class="side-nav-link">
+                        <span class="menu-icon"><i class="fa-solid fa-user-tie"></i></span>
+                        <span class="fw menu-text"> @Resource1.MoneyPushedManagement</span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse @IsExpanded(new[] { "MoneyPushed" }, "Index", "AddEdit")" id="sidebarMoneyPushed">
+                        <ul class="sub-menu  border-start-0 ">
+                            <li class="side-nav-item @IsActiveBG("MoneyPushed", "Index")">
+                                <a href="/Admin/MoneyPushed/Index" class="side-nav-link">
+                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
+                                    <span class="fw menu-text @IsActive("MoneyPushed", "Index")">@Resource1.MoneyPushedList</span>
+                                </a>
+                            </li>
+                            @if (PermissionScanner.ValidatePermission("MoneyPushed", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("MoneyPushed", "AddEdit")">
+                                    <a href="/Admin/MoneyPushed/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("MoneyPushed", "AddEdit")">@Resource1.AddNewEmployee</span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
 
             @* --- Employees --- *@
             @if (PermissionScanner.ValidatePermission("Employees", "Index") || PermissionScanner.ValidatePermission("Employees", "Add") || PermissionScanner.ValidatePermission("Employees", "Edit"))

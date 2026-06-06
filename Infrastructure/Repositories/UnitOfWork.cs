@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories
 
         private IGenericRepository<Inventory> _Inventories;
         private IGenericRepository<RoomInventory> _RoomInventories;
-
+        private IGenericRepository<MoneyPushed> _MoneyPusheds;
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -122,6 +122,7 @@ namespace Infrastructure.Repositories
 
         public IGenericRepository<Inventory> Inventories => _Inventories ??= new GenericRepository<Inventory>(_context);
         public IGenericRepository<RoomInventory> RoomInventories => _RoomInventories ??= new GenericRepository<RoomInventory>(_context);
+        public IGenericRepository<MoneyPushed> MoneyPusheds => _MoneyPusheds ??= new GenericRepository<MoneyPushed>(_context);
 
 
 

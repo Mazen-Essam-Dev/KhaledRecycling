@@ -2814,4 +2814,13 @@
   <data name="RoomInventories" xml:space="preserve">
     <value>قائمة غرف المخازن</value>
   </data>
+  <data name="MoneyPushedManagement" xml:space="preserve">
+    <value>ادارة الاموال</value>
+  </data>
+  <data name="MoneyPushedList" xml:space="preserve">
+    <value>قائمة ضخ الاموال والتغذية</value>
+  </data>
+  <data name="MoneyPushed" xml:space="preserve">
+    <value>قائمة ضخ الاموال والتغذية</value>
+  </data>
 </root>

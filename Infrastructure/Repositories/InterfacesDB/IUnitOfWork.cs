@@ -70,6 +70,8 @@ namespace Infrastructure.Repositories.InterfacesDB
         IGenericRepository<Inventory> Inventories { get; }
         IGenericRepository<RoomInventory> RoomInventories { get; }
 
+        IGenericRepository<MoneyPushed> MoneyPusheds { get; }
+
 
 
 

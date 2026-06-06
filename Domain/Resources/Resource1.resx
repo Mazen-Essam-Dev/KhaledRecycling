@@ -3432,4 +3432,16 @@ in accordance with the standards of Fujairah Science Club.</value>
   <data name="RoomInventories" xml:space="preserve">
     <value>Room Inventories List</value>
   </data>
+  <data name="MoneyPushedManagement" xml:space="preserve">
+    <value>Money Pushed Management</value>
+    <comment>ادارة الاموال</comment>
+  </data>
+  <data name="MoneyPushedList" xml:space="preserve">
+    <value>Money Push List</value>
+    <comment>قائمة ضخ الاموال والتغذية</comment>
+  </data>
+  <data name="MoneyPushed" xml:space="preserve">
+    <value>Money Push List</value>
+    <comment>قائمة ضخ الاموال والتغذية</comment>
+  </data>
 </root>
