@@ -12,6 +12,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.MoneyPushed
 
         [Display(Name = "المبلغ")]
         [Required(ErrorMessage = "المبلغ مطلوب")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "يجب أن يكون المبلغ أكبر من صفر")]
         public decimal? Money { get; set; }
 
         [Display(Name = "نوع المعاملة")]

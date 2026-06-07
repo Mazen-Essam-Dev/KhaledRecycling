@@ -37,8 +37,8 @@
 
             <div class="c-edit-form mb-3">
                     <div class="col-md-6">
-                        <label class="form-label" asp-for="Money">المبلغ</label>
-                        <input asp-for="Money" class="form-control" type="number" step="0.01" />
+                        <label class="form-label asteriskRequired" asp-for="Money">المبلغ</label>
+                        <input asp-for="Money" class="form-control" type="number" step="0.01" min="0.01" required />
                         <span asp-validation-for="Money" class="text-danger"></span>
                     </div>
 
