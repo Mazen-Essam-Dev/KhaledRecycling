@@ -5,7 +5,62 @@
     var lang = SessionHelper.GetCurrentLanguage();
 }
 
-<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+<style>
+    @@media print {
+        .custom-navbar,
+        .sidenav-menu,
+        .footer,
+        .print-none,
+        #loadingScreen,
+        #spinner {
+            display: none !important;
+        }
+
+        html, body {
+            width: 100%;
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-content,
+        #page-container {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        #printArea {
+            width: 100% !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        #printArea input,
+        #printArea .form-control {
+            border: none !important;
+            background: transparent !important;
+            color: #000 !important;
+            -webkit-text-fill-color: #000 !important;
+            box-shadow: none !important;
+        }
+
+        #printArea input[type="checkbox"] {
+            -webkit-appearance: auto !important;
+            appearance: auto !important;
+        }
+
+        #printArea input::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+        }
+    }
+</style>
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap print-none">
     <div class="col-md-6">
         <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 py-2 flex-nowrap">
@@ -15,13 +70,16 @@
         </nav>
     </div>
     <div class="col-6 d-flex justify-content-end align-items-center gap-2">
+        <button type="button" onclick="printOrderDetails()" class="btn btn-primary btn-sm">
+            <i class="fa fa-print me-1"></i> @Resource2.Print
+        </button>
         <a asp-action="Index" class="btn btn-success btn-sm">
             Back <i class="fa-solid fa-arrow-left me-1"></i>
         </a>
     </div>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3 mb-3">
+<div class="card border-0 shadow-sm rounded-3 mb-3" id="printArea">
     <div class="d-flex justify-content-center c-pro border p-3 mb-3">
         <div class="flex-grow-1 d-flex justify-content-start align-items-center">
             <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
@@ -177,6 +235,29 @@
     }
     <script>
         var currentLang = '@lang';
+        var savedPrintPlaceholders = [];
+
+        function clearPrintPlaceholders() {
+            savedPrintPlaceholders = [];
+            document.querySelectorAll('#printArea input[placeholder]').forEach(function (input) {
+                savedPrintPlaceholders.push({ el: input, placeholder: input.getAttribute('placeholder') });
+                input.removeAttribute('placeholder');
+            });
+        }
+
+        function restorePrintPlaceholders() {
+            savedPrintPlaceholders.forEach(function (item) {
+                item.el.setAttribute('placeholder', item.placeholder);
+            });
+            savedPrintPlaceholders = [];
+        }
+
+        function printOrderDetails() {
+            window.print();
+        }
+
+        window.addEventListener('beforeprint', clearPrintPlaceholders);
+        window.addEventListener('afterprint', restorePrintPlaceholders);
         function toggleDiv(type, isChecked) {
             const div = document.getElementById(type + 'Div');
             

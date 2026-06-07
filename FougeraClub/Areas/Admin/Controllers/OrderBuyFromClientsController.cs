@@ -461,39 +461,50 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
-                var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
-                var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-                var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
+                var oldEntityForView = await _unitOfWork.OrderBuyFromClients.Table
+                    .Include(x => x.Status)
+                    .Include(x => x.SubWaste)
+                    .FirstOrDefaultAsync(x => x.Id == model.Id);
 
-                model.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), model.FKMainWasteId).ToList();
-                model.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == model.FKMainWasteId).ToList(), model.FKSubWasteId).ToList();
-                model.StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), model.StatusId).ToList();
-                model.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+                if (oldEntityForView != null)
+                {
+                    await PopulateUpdateStatusViewModelAsync(model, oldEntityForView);
+                }
 
                 return View(model);
             }
 
-            var entity = _mapper.Map<Domain.Entities.Waste.OrderBuyFromClient>(model);
-
-
             var oldEntity = await _unitOfWork.OrderBuyFromClients.Table
                 .Include(x => x.Status)
-                //.AsNoTracking()
+                .Include(x => x.SubWaste)
                 .FirstOrDefaultAsync(x => x.Id == model.Id);
-            if (oldEntity==null)
+            if (oldEntity == null)
             {
                 return NotFound();
             }
 
-            string oldStatusChar = oldEntity.Status?.ShortChar;
+            string oldStatusChar = oldEntity.Status?.ShortChar ?? string.Empty;
+
+            var newStatus = await _unitOfWork.Statuses.Table.FirstOrDefaultAsync(x => x.Id == model.StatusId);
+
+            StatusTransitionValidationResult? transitionValidation = null;
+            var requiresValidation = OrderBuyFromClientStatusValidator.RequiresBalanceAndRoomValidation(newStatus?.ShortChar, oldStatusChar);
+            if (requiresValidation)
+            {
+                transitionValidation = await OrderBuyFromClientStatusValidator.ValidateTransitionToDoneAsync(_unitOfWork, oldEntity);
+                if (!transitionValidation.Success)
+                {
+                    ModelState.AddModelError(string.Empty, transitionValidation.ErrorMessage!);
+                    model.StatusId = oldEntity.StatusId;
+                    await PopulateUpdateStatusViewModelAsync(model, oldEntity);
+                    return View(model);
+                }
+            }
 
             oldEntity.StatusId = model.StatusId;
             await _orderBuyFromClientService.UpdateAsync(oldEntity);
 
-            var newStatus = await _unitOfWork.Statuses.Table.FirstOrDefaultAsync(x => x.Id == model.StatusId);
-
-            if (oldEntity != null && newStatus != null)
+            if (newStatus != null)
             {
                 var financial = await _unitOfWork.Financials.Table.FirstOrDefaultAsync(x => x.TableType == "OrderBuyFromClient" && x.ItsId == model.Id);
 
@@ -503,7 +514,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     {
                         TableType = "OrderBuyFromClient",
                         ItsId = model.Id,
-                        TypeTransaction = 'A',
+                        TypeTransaction = '-',
                         StatusId = model.StatusId,
                         Total = oldEntity.Total
                     });
@@ -515,7 +526,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     financial.Total = oldEntity.Total;
                     if (oldStatusChar == "P" && newStatus.ShortChar == "D")
                     {
-                        financial.TypeTransaction = 'A';
+                        financial.TypeTransaction = '-';
                     }
                     _unitOfWork.Financials.Update(financial);
                 }
@@ -549,6 +560,18 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                         userPoints.Points = (int)Math.Floor(((userPoints.TotalsReNew ?? 0) / 1000m) * 20m);
 
                         userPointsTable.Update(userPoints);
+                    }
+                }
+
+                if (transitionValidation?.Success == true
+                    && transitionValidation.SelectedRoomId.HasValue
+                    && OrderBuyFromClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    var room = await _unitOfWork.RoomInventories.GetByIdAsync(transitionValidation.SelectedRoomId.Value);
+                    if (room != null)
+                    {
+                        room.MaxKilo = (room.MaxKilo ?? 0) - transitionValidation.RequiredKilos;
+                        _unitOfWork.RoomInventories.Update(room);
                     }
                 }
 
@@ -788,7 +811,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
         [IgnoreAction]
         [HttpGet]
-        public async Task<IActionResult> GetOrderAttachments(int id)
+        public async Task<IActionResult> GetOrderAttachments(int id, string returnAction = "AddEdit")
         {
             var attachments = await _unitOfWork.OrderBuyFromClientAttachments.Table
                 .Where(a => a.OrderBuyFromClientId == id)
@@ -797,6 +820,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var vm = new OrderBuyFromClientAttachmentsVM
             {
                 OrderBuyFromClientId = id,
+                ReturnAction = returnAction,
                 Attachments = attachments
             };
 
@@ -867,7 +891,74 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             await _unitOfWork.CompleteAsync();
 
             TempData["Success"] = Domain.Resources.Resource2.ToastDone;
+
+            if (string.Equals(model.ReturnAction, nameof(UpdateStatus), StringComparison.OrdinalIgnoreCase))
+            {
+                return RedirectToAction(nameof(UpdateStatus), new { id = model.OrderBuyFromClientId });
+            }
+
             return RedirectToAction(nameof(AddEdit), new { id = model.OrderBuyFromClientId });
+        }
+
+        private async Task PopulateUpdateStatusViewModelAsync(OrderBuyFromClientVM model, OrderBuyFromClient entity)
+        {
+            var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
+            var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
+            var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
+
+            model.FKSubWasteId ??= entity.FKSubWasteId;
+            model.Total ??= entity.Total;
+            model.Address ??= entity.Address;
+            model.DiscountRatio ??= entity.DiscountRatio;
+            model.DiscountValue ??= entity.DiscountValue;
+
+            if (entity.SubWaste != null)
+            {
+                model.FKMainWasteId = entity.SubWaste.FKMainWasteId;
+                model.BuyPriceUnit = entity.SubWaste.BuyPriceUnit;
+                model.BuyPriceKilo = entity.SubWaste.BuyPriceKilo;
+                model.BuyPriceTon = entity.SubWaste.BuyPriceTon;
+            }
+
+            model.IsUnitsSelected = false;
+            model.IsKilosSelected = false;
+            model.IsTonSelected = false;
+            model.UnitsValue = null;
+            model.KilosValue = null;
+            model.TonValue = null;
+
+            if (entity.CountUnits.HasValue && entity.CountUnits.Value > 0)
+            {
+                model.IsUnitsSelected = true;
+                model.UnitsValue = entity.CountUnits.Value;
+            }
+
+            if (entity.Kilo.HasValue && entity.Kilo.Value > 0)
+            {
+                if (entity.Kilo.Value < 1000)
+                {
+                    model.IsKilosSelected = true;
+                    model.KilosValue = entity.Kilo.Value;
+                }
+                else
+                {
+                    model.IsTonSelected = true;
+                    model.TonValue = entity.Kilo.Value / 1000;
+                }
+            }
+
+            model.MainWastesList = SelectListHelper.BindSelectList(allMainWastes.ToList(), model.FKMainWasteId).ToList();
+            model.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.Where(x => x.FKMainWasteId == model.FKMainWasteId).ToList(), model.FKSubWasteId).ToList();
+
+            var statusesToBind = allStatuses.ToList();
+            if (entity.Status?.ShortChar == "D")
+            {
+                statusesToBind = statusesToBind.Where(s => s.ShortChar == "S" || s.ShortChar == "C" || s.Id == entity.StatusId).ToList();
+            }
+
+            model.StatusesList = SelectListHelper.BindSelectList(statusesToBind, model.StatusId).ToList();
+            model.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
         }
     }
 }

@@ -49,10 +49,23 @@
     <div class="container">
         <form asp-action="UpdateStatus" method="post" id="orderForm">
             @Html.AntiForgeryToken()
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="All" class="alert alert-danger mb-3"></div>
+            }
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
             <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
             <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
+            <input type="hidden" asp-for="IsUnitsSelected" />
+            <input type="hidden" asp-for="IsKilosSelected" />
+            <input type="hidden" asp-for="IsTonSelected" />
+            <input type="hidden" asp-for="TotalCount" />
+            <input type="hidden" asp-for="Total" id="TotalHidden" />
+            <input type="hidden" asp-for="ApprovalDate" />
+            <input type="hidden" asp-for="OrderDate" />
+            <input type="hidden" asp-for="DiscountRatio" />
+            <input type="hidden" asp-for="DiscountValue" />
 
             <input type="hidden" asp-for="FKUserId" />
 
@@ -72,20 +85,17 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="FKMainWasteId">نفايات اساسي</label>
-                        <select asp-for="FKMainWasteId" class="form-select" id="FKMainWasteId" asp-items="Model.MainWastesList">
-                            <option value="">-- Select Main Waste --</option>
-                        </select>
+                        <input type="hidden" asp-for="FKMainWasteId" id="FKMainWasteId" />
+                        <input type="text" class="form-control" value="@(Model.MainWastesList?.FirstOrDefault(x => x.Value == Model.FKMainWasteId?.ToString())?.Text)" disabled />
                         <span asp-validation-for="FKMainWasteId" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="FKSubWasteId">نفاية فرعي</label>
-                        <select asp-for="FKSubWasteId" class="form-select" id="FKSubWasteId" asp-items="Model.SubWastesList">
-                            <option value="">-- Select Sub Waste --</option>
-                        </select>
+                        <input type="hidden" asp-for="FKSubWasteId" id="FKSubWasteId" />
+                        <input type="text" class="form-control" value="@(Model.SubWastesList?.FirstOrDefault(x => x.Value == Model.FKSubWasteId?.ToString())?.Text)" disabled />
                         <span asp-validation-for="FKSubWasteId" class="text-danger"></span>
                     </div>
-
                     @if (Model.IsClientUser)
                     {
                         <input type="hidden" asp-for="FKUserId" id="FKUserId" />
@@ -160,8 +170,8 @@
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="UnitsPriceHidden" value="0">
-                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">0</span></div>
+                        <input type="hidden" id="UnitsPriceHidden" value="@(Model.BuyPriceUnit ?? 0)">
+                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">@((Model.BuyPriceUnit ?? 0).ToString("0.##"))</span></div>
                     </div>
 
                     <!-- Kilos Div -->
@@ -174,8 +184,8 @@
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="KilosPriceHidden" value="0">
-                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">0</span></div>
+                        <input type="hidden" id="KilosPriceHidden" value="@(Model.BuyPriceKilo ?? 0)">
+                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">@((Model.BuyPriceKilo ?? 0).ToString("0.##"))</span></div>
                     </div>
 
                     <!-- Ton Div -->
@@ -188,8 +198,8 @@
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="TonPriceHidden" value="0">
-                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">0</span></div>
+                        <input type="hidden" id="TonPriceHidden" value="@(Model.BuyPriceTon ?? 0)">
+                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">@((Model.BuyPriceTon ?? 0).ToString("0.##"))</span></div>
                     </div>
                 </div>
 
@@ -206,8 +216,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Total</label>
-                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" disabled />
-                        <input type="hidden" asp-for="Total" id="TotalHidden" />
+                        <input type="text" class="form-control bg-light" value="@(Model.Total?.ToString("0.##") ?? "0")" id="TotalDisplay" disabled />
                     </div>
                 </div>
             </div>
@@ -229,191 +238,57 @@
         var currentLang = '@lang';
 
         function updateSubmitButtonState() {
-            const isUnits = document.getElementById('IsUnitsSelected').checked;
-            const isKilos = document.getElementById('IsKilosSelected').checked;
-            const isTon = document.getElementById('IsTonSelected').checked;
-            
-            document.getElementById('submitBtn').disabled = !(isUnits || isKilos || isTon);
+            const total = parseFloat(document.getElementById('TotalHidden')?.value) || 0;
+            document.getElementById('submitBtn').disabled = total <= 0;
         }
 
-        function toggleDiv(type, isChecked) {
+        function styleQuantityDiv(type, isChecked) {
             const div = document.getElementById(type + 'Div');
-            const input = div.querySelector('.quantity-input');
-            
-            if (isChecked) {
-                input.disabled = false;
-                div.style.backgroundColor = '#f8f9fa';
-            } else {
-                input.disabled = true;
-                input.value = '';
-                div.style.backgroundColor = '';
-            }
-            calculateTotal();
+            div.style.backgroundColor = isChecked ? '#f8f9fa' : '';
         }
 
-        function calculateTotal() {
-            let total = 0;
-            
-            // Units
-            if (document.getElementById('IsUnitsSelected').checked) {
-                const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
-                const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
-                total += quantity * price;
-            }
-            
-            // Kilos
-            if (document.getElementById('IsKilosSelected').checked) {
-                const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
-                const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
-                total += quantity * price;
-            }
-            
-            // Ton
-            if (document.getElementById('IsTonSelected').checked) {
-                const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
-                const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
-                total += quantity * price;
-            }
-            
-            // Apply discount ratio
-            const discountRatio = parseFloat(document.getElementById('DiscountRatio').value) || 0;
-            if (discountRatio > 0) {
-                const discountValue = total * (discountRatio / 100);
-                document.getElementById('DiscountValue').value = discountValue.toFixed(2);
-                total -= discountValue;
-            } else {
-                document.getElementById('DiscountValue').value = '';
-            }
-            
-            document.getElementById('TotalDisplay').value = total.toFixed(2);
-            document.getElementById('TotalHidden').value = total.toFixed(2);
+        function initializePricesFromModel() {
+            const unitPrice = parseFloat(document.getElementById('BuyPriceUnitHidden').value) || 0;
+            const kiloPrice = parseFloat(document.getElementById('BuyPriceKiloHidden').value) || 0;
+            const tonPrice = parseFloat(document.getElementById('BuyPriceTonHidden').value) || 0;
+
+            document.getElementById('UnitsPriceHidden').value = unitPrice;
+            document.getElementById('KilosPriceHidden').value = kiloPrice;
+            document.getElementById('TonPriceHidden').value = tonPrice;
+
+            document.getElementById('UnitsPriceDisplay').textContent = unitPrice.toFixed(2);
+            document.getElementById('KilosPriceDisplay').textContent = kiloPrice.toFixed(2);
+            document.getElementById('TonPriceDisplay').textContent = tonPrice.toFixed(2);
         }
 
-        function updatePrices(prices) {
-            document.getElementById('BuyPriceUnitHidden').value = prices.buyPriceUnit || 0;
-            document.getElementById('BuyPriceKiloHidden').value = prices.buyPriceKilo || 0;
-            document.getElementById('BuyPriceTonHidden').value = prices.buyPriceTon || 0;
-            
-            document.getElementById('UnitsPriceHidden').value = prices.buyPriceUnit || 0;
-            document.getElementById('KilosPriceHidden').value = prices.buyPriceKilo || 0;
-            document.getElementById('TonPriceHidden').value = prices.buyPriceTon || 0;
-            
-            document.getElementById('UnitsPriceDisplay').textContent = (prices.buyPriceUnit || 0).toFixed(2);
-            document.getElementById('KilosPriceDisplay').textContent = (prices.buyPriceKilo || 0).toFixed(2);
-            document.getElementById('TonPriceDisplay').textContent = (prices.buyPriceTon || 0).toFixed(2);
-            
-            calculateTotal();
+        function initializeTotalFromModel() {
+            const totalHidden = document.getElementById('TotalHidden');
+            const totalDisplay = document.getElementById('TotalDisplay');
+            if (totalHidden?.value) {
+                totalDisplay.value = parseFloat(totalHidden.value).toFixed(2);
+            }
         }
 
         $(document).ready(function () {
-            // Check submit button state initially
+            initializePricesFromModel();
+            initializeTotalFromModel();
             updateSubmitButtonState();
 
-            // Bind change event to checkboxes for submit button state
-            $('#IsUnitsSelected, #IsKilosSelected, #IsTonSelected').on('change', updateSubmitButtonState);
-
-            // Initialize div states based on checkboxes
             if (document.getElementById('IsUnitsSelected').checked) {
-                toggleDiv('units', true);
-                // Set the value from the model
-                const unitsValue = document.getElementById('UnitsValue').value;
-                if (unitsValue) {
-                    document.getElementById('UnitsValue').value = unitsValue;
-                }
+                styleQuantityDiv('units', true);
             }
             if (document.getElementById('IsKilosSelected').checked) {
-                toggleDiv('kilos', true);
-                // Set the value from the model
-                const kilosValue = document.getElementById('KilosValue').value;
-                if (kilosValue) {
-                    document.getElementById('KilosValue').value = kilosValue;
-                }
+                styleQuantityDiv('kilos', true);
             }
             if (document.getElementById('IsTonSelected').checked) {
-                toggleDiv('ton', true);
-                // Set the value from the model
-                const tonValue = document.getElementById('TonValue').value;
-                if (tonValue) {
-                    document.getElementById('TonValue').value = tonValue;
-                }
+                styleQuantityDiv('ton', true);
             }
-
-            // Load initial prices if subWaste is selected
-            const subWasteId = document.getElementById('FKSubWasteId').value;
-            if (subWasteId) {
-                $.get('/Admin/OrderBuyFromClients/GetSubWastePrices?subWasteId=' + subWasteId, function(data) {
-                    if (data.success) {
-                        updatePrices(data);
-                    }
-                });
-            }
-
-            // Calculate total on page load if in edit mode
-            const isEditMode = document.getElementById('Id').value > 0;
-            if (isEditMode) {
-                calculateTotal();
-            }
-
-            // Main Waste change - load sub wastes
-            $('#FKMainWasteId').on('change', function () {
-                const mainWasteId = $(this).val();
-                if (mainWasteId) {
-                    $.get('/Admin/OrderBuyFromClients/GetSubWastesByMainWaste?mainWasteId=' + mainWasteId, function(data) {
-                        const subWasteSelect = $('#FKSubWasteId');
-                        subWasteSelect.empty();
-                        subWasteSelect.append('<option value="">-- Select Sub Waste --</option>');
-                        
-                        $.each(data, function (i, item) {
-                            subWasteSelect.append('<option value="' + item.id + '">' + 
-                                (currentLang === 'ar' ? item.nameAr : item.nameEn) + '</option>');
-                        });
-                    });
-                } else {
-                    $('#FKSubWasteId').empty().append('<option value="">-- Select Sub Waste --</option>');
-                }
-            });
-
-            // Sub Waste change - load prices
-            $('#FKSubWasteId').on('change', function () {
-                const subWasteId = $(this).val();
-                if (subWasteId) {
-                    $.get('/Admin/OrderBuyFromClients/GetSubWastePrices?subWasteId=' + subWasteId, function(data) {
-                        if (data.success) {
-                            updatePrices(data);
-                        }
-                    });
-                } else {
-                    updatePrices({ buyPriceUnit: 0, buyPriceKilo: 0, buyPriceTon: 0 });
-                }
-            });
-
-            // User change - load address
-            $('#FKUserId').on('change', function () {
-                const userId = $(this).val();
-                if (userId) {
-                    $.get('/Admin/OrderBuyFromClients/GetUserAddress?userId=' + userId, function(data) {
-                        if (data.success) {
-                            $('#Address').val(data.address);
-                        } else {
-                            $('#Address').val('');
-                        }
-                    });
-                } else {
-                    $('#Address').val('');
-                }
-            });
-
-            // Quantity inputs change - recalculate total
-            $('.quantity-input').on('input', calculateTotal);
-            
-            // Discount ratio change - recalculate total
-            $('#DiscountRatio').on('input', calculateTotal);
 
             // Attachments Modal Logic
             document.querySelectorAll('.open-attachments').forEach(btn => {
               btn.addEventListener('click', async function () {
                 const orderId = this.getAttribute('data-order-id');
-                let response = await fetch('/Admin/OrderBuyFromClients/GetOrderAttachments?id=' + orderId);
+                let response = await fetch('/Admin/OrderBuyFromClients/GetOrderAttachments?id=' + orderId + '&returnAction=UpdateStatus');
                 let html = await response.text();
                 document.getElementById('attachmentsContent').innerHTML = html;
 
