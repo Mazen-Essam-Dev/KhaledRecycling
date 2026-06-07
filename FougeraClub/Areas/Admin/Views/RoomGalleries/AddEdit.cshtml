@@ -1,15 +1,15 @@
-@model KhaledTeamRecycling.Areas.Admin.ViewModels.RoomInventory.RoomInventoryVM
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.RoomGallery.RoomGalleryVM
 
 @{
     var isEdit = Model?.Id > 0;
-    ViewData["Title"] = isEdit ? "Edit Room Inventory" : "Add Room Inventory";
+    ViewData["Title"] = isEdit ? "Edit Room Gallery" : "Add Room Gallery";
 }
 
 <div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
     <div class="col-md-6">
         <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 py-2 flex-nowrap">
-                <li class="breadcrumb-item"><a href="/Admin/RoomInventories/Index">Room Inventories</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/RoomGalleries/Index">Room Galleries</a></li>
                 <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
             </ol>
         </nav>
@@ -60,19 +60,19 @@
             <div class="c-edit-form mb-3">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label asteriskRequired" asp-for="FkInventory">Inventory</label>
-                        <select asp-for="FkInventory" class="form-select" asp-items="Model.InventoriesList">
-                            <option value="">-- Select Inventory --</option>
+                        <label class="form-label asteriskRequired" asp-for="FkGallery">Gallery</label>
+                        <select asp-for="FkGallery" class="form-select" asp-items="Model.GalleriesList">
+                            <option value="">-- Select Gallery --</option>
                         </select>
-                        <span asp-validation-for="FkInventory" class="text-danger"></span>
+                        <span asp-validation-for="FkGallery" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label asteriskRequired" asp-for="FKSubWaste">Sub Waste</label>
-                        <select asp-for="FKSubWaste" class="form-select" asp-items="Model.SubWastesList">
+                        <label class="form-label asteriskRequired" asp-for="FkSubProduct">Sub Waste</label>
+                        <select asp-for="FkSubProduct" class="form-select" asp-items="Model.SubProductsList">
                             <option value="">-- Select Sub Waste --</option>
                         </select>
-                        <span asp-validation-for="FKSubWaste" class="text-danger"></span>
+                        <span asp-validation-for="FkSubProduct" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6">

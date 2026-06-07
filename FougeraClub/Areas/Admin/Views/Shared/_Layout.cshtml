@@ -609,6 +609,47 @@
                                     </a>
                                 </li>
                             }
+
+                            @if (PermissionScanner.ValidatePermission("Galleries", "Index"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("Galleries", "Index")">
+                                    <a href="/Admin/Galleries" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Galleries", "Index")">قائمة المعارض</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionScanner.ValidatePermission("Galleries", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("Galleries", "AddEdit","Add","Edit")">
+                                    <a href="/Admin/Galleries/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("Galleries", "AddEdit","Add","Edit")">إضافة معرض</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionScanner.ValidatePermission("RoomGalleries", "Index"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("RoomGalleries", "Index")">
+                                    <a href="/Admin/RoomGalleries" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                        <span class="fw menu-text @IsActive("RoomGalleries", "Index")">قائمة غرف المعارض</span>
+                                    </a>
+                                </li>
+                            }
+                            @if (PermissionScanner.ValidatePermission("RoomGalleries", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("RoomGalleries", "AddEdit","Add","Edit")">
+                                    <a href="/Admin/RoomGalleries/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("RoomGalleries", "AddEdit","Add","Edit")">إضافة غرفة معرض</span>
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </li>

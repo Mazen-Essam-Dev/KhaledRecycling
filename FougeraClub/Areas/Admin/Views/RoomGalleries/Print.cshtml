@@ -1,0 +1,107 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.RoomGallery.RoomGalleryVM
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    Layout = null;
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+    var title = "Room Galleries List";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title>@title</title>
+    @if (SessionHelper.GetCurrentLanguage() == "ar")
+    {
+        <link href="~/ar/assets/css/report-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/ar/assets/css/report-ltr.css" rel="stylesheet" />
+    }
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="~/css/prints/report.css" rel="stylesheet">
+</head>
+<div id="report">
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2 class="text-danger">@title</h2>
+        </div>
+
+        <table class="table table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Code</th>
+                    <th>Gallery</th>
+                    <th>Sub Waste</th>
+                    <th>Max Kilo</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items == null || !Model.Items.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center p-5">No results found</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.GenCode</td>
+                            <td>@item.Gallery?.Name</td>
+                            <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.SubProduct?.NameAr : item.SubProduct?.NameEn)</td>
+                            <td>@item.MaxKilo</td>
+                            <td>@item.Description</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="print-footer">
+            <div class="footer-top">
+                <div class="right">Time: @AppDubaiTime.Now.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="center">Date: @AppDubaiTime.Now.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="left">
+                    Printed by:
+                    @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)
+                </div>
+            </div>
+            <hr class="footer-line">
+            <div class="footer-bottom">
+                @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+            </div>
+        </div>
+
+        <div class="text-center no-print mt-3">
+            <button class="btn btn-primary" onclick="window.print()">Print Report</button>
+            <button class="btn btn-danger ms-2" onclick="window.close()">Close Window</button>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+        window.onafterprint = function () {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        };
+    </script>
+</div>
