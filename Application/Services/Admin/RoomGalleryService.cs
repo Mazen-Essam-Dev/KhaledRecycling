@@ -18,7 +18,9 @@ namespace Application.Services.Admin
         {
             var query = _unitOfWork.RoomGalleries.Table
                 .Include(x => x.Gallery)
-                .Include(x => x.SubProduct)
+                .Include(x => x.SubProduct!)
+                    .ThenInclude(x => x.MainProduct)
+                .OrderByDescending(x => x.FkGallery)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -38,7 +40,7 @@ namespace Application.Services.Admin
                 query = query.Where(x => x.FkSubProduct == subProductId.Value);
             }
 
-            return await query.OrderBy(x => x.Id).ToListAsync();
+            return await query/*.OrderBy(x => x.Id)*/.ToListAsync();
         }
 
         public async Task<RoomGallery?> GetByIdAsync(int id)

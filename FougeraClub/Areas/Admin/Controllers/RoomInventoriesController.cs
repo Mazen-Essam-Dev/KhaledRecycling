@@ -33,7 +33,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         {
             var query = _unitOfWork.RoomInventories.Table
                 .Include(x => x.Inventory)
-                .Include(x => x.SubWaste)
+                .Include(x => x.SubWaste!)
+                    .ThenInclude(x => x.MainWaste)
+                .OrderByDescending(x => x.FkInventory)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -55,7 +57,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var totalRecords = await query.CountAsync();
             var items = await query
-                .OrderBy(x => x.Id)
+                //.OrderBy(x => x.Id)
+                .OrderBy(x => x.FkInventory)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -190,7 +193,11 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 t1 = x.GenCode ?? string.Empty,
                 t2 = x.Inventory?.Name ?? string.Empty,
-                t3 = SessionHelper.GetCurrentLanguage() == "ar" ? x.SubWaste?.NameAr ?? string.Empty : x.SubWaste?.NameEn ?? string.Empty,
+                t3 = DisplayHelper.FormatMainSubName(
+                    x.SubWaste?.MainWaste?.NameAr,
+                    x.SubWaste?.MainWaste?.NameEn,
+                    x.SubWaste?.NameAr,
+                    x.SubWaste?.NameEn),
                 t4 = x.MaxKilo?.ToString() ?? string.Empty,
                 t5 = x.Description ?? string.Empty
             }).ToList();
@@ -210,9 +217,18 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         private async Task BindLists(RoomInventoryVM vm)
         {
             var allInventories = await _unitOfWork.Inventories.GetAllAsync();
-            var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
+            var allSubWastes = await _unitOfWork.SubWastes.Table
+                .Include(x => x.MainWaste)
+                .ToListAsync();
             vm.InventoriesList = SelectListHelper.BindSelectList(allInventories.ToList(), vm.FkInventory, "Id", "Name", "Name").ToList();
-            vm.SubWastesList = SelectListHelper.BindSelectList(allSubWastes.ToList(), vm.FKSubWaste).ToList();
+            vm.SubWastesList = SelectListHelper.BindMainSubSelectList(
+                allSubWastes,
+                vm.FKSubWaste,
+                x => x.MainWaste?.NameAr,
+                x => x.MainWaste?.NameEn,
+                x => x.NameAr,
+                x => x.NameEn,
+                x => x.Id).ToList();
         }
     }
 }

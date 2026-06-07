@@ -86,6 +86,29 @@ namespace KhaledTeamRecycling.Helpers
                 Selected = valueProp.GetValue(item)?.ToString() == selected
             });
         }
+        public static IEnumerable<SelectListItem> BindMainSubSelectList<T>(
+            List<T> list,
+            int? selected,
+            Func<T, string?> getMainAr,
+            Func<T, string?> getMainEn,
+            Func<T, string?> getSubAr,
+            Func<T, string?> getSubEn,
+            Func<T, int> getId)
+        {
+            var selectedValueStr = selected?.ToString();
+
+            return list.Select(item => new SelectListItem
+            {
+                Value = getId(item).ToString(),
+                Text = DisplayHelper.FormatMainSubName(
+                    getMainAr(item),
+                    getMainEn(item),
+                    getSubAr(item),
+                    getSubEn(item)),
+                Selected = selectedValueStr != null && getId(item).ToString() == selectedValueStr
+            });
+        }
+
         public static IEnumerable<SelectListItem> BindSelectListWithDataFromUsers<TItem, TUser>(
      List<TItem> items,
      List<TUser> users,

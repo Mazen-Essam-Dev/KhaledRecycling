@@ -18,7 +18,9 @@ namespace Application.Services.Admin
         {
             var query = _unitOfWork.RoomInventories.Table
                 .Include(x => x.Inventory)
-                .Include(x => x.SubWaste)
+                .Include(x => x.SubWaste!)
+                    .ThenInclude(x => x.MainWaste)
+                .OrderByDescending(x => x.FkInventory)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -38,7 +40,7 @@ namespace Application.Services.Admin
                 query = query.Where(x => x.FKSubWaste == subWasteId.Value);
             }
 
-            return await query.OrderBy(x => x.Id).ToListAsync();
+            return await query/*.OrderBy(x => x.Id)*/.ToListAsync();
         }
 
         public async Task<RoomInventory?> GetByIdAsync(int id)

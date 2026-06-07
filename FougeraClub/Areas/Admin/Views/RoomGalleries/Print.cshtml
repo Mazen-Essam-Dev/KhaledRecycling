@@ -63,7 +63,7 @@
                             <td>@item.Id</td>
                             <td>@item.GenCode</td>
                             <td>@item.Gallery?.Name</td>
-                            <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.SubProduct?.NameAr : item.SubProduct?.NameEn)</td>
+                            <td>@DisplayHelper.FormatMainSubName(item.SubProduct?.MainProduct?.NameAr, item.SubProduct?.MainProduct?.NameEn, item.SubProduct?.NameAr, item.SubProduct?.NameEn)</td>
                             <td>@item.MaxKilo</td>
                             <td>@item.Description</td>
                         </tr>

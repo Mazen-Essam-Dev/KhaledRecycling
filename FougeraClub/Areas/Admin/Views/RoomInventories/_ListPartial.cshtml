@@ -40,7 +40,7 @@
                         <td>@x</td>
                         <td>@item.GenCode</td>
                         <td>@item.Inventory?.Name</td>
-                        <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.SubWaste?.NameAr : item.SubWaste?.NameEn)</td>
+                        <td>@DisplayHelper.FormatMainSubName(item.SubWaste?.MainWaste?.NameAr, item.SubWaste?.MainWaste?.NameEn, item.SubWaste?.NameAr, item.SubWaste?.NameEn)</td>
                         <td>@item.MaxKilo</td>
                         <td>@item.Description</td>
                         <td>

@@ -33,7 +33,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         {
             var query = _unitOfWork.RoomGalleries.Table
                 .Include(x => x.Gallery)
-                .Include(x => x.SubProduct)
+                .Include(x => x.SubProduct!)
+                    .ThenInclude(x => x.MainProduct)
+                .OrderByDescending(x => x.FkGallery)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -55,7 +57,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var totalRecords = await query.CountAsync();
             var items = await query
-                .OrderBy(x => x.Id)
+                //.OrderBy(x => x.Id)
+                .OrderBy(x => x.FkGallery)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
@@ -190,7 +193,11 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 t1 = x.GenCode ?? string.Empty,
                 t2 = x.Gallery?.Name ?? string.Empty,
-                t3 = SessionHelper.GetCurrentLanguage() == "ar" ? x.SubProduct?.NameAr ?? string.Empty : x.SubProduct?.NameEn ?? string.Empty,
+                t3 = DisplayHelper.FormatMainSubName(
+                    x.SubProduct?.MainProduct?.NameAr,
+                    x.SubProduct?.MainProduct?.NameEn,
+                    x.SubProduct?.NameAr,
+                    x.SubProduct?.NameEn),
                 t4 = x.MaxKilo?.ToString() ?? string.Empty,
                 t5 = x.Description ?? string.Empty
             }).ToList();
@@ -210,9 +217,18 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         private async Task BindLists(RoomGalleryVM vm)
         {
             var allGalleries = await _unitOfWork.Galleries.GetAllAsync();
-            var allSubProducts = await _unitOfWork.SubProducts.GetAllAsync();
+            var allSubProducts = await _unitOfWork.SubProducts.Table
+                .Include(x => x.MainProduct)
+                .ToListAsync();
             vm.GalleriesList = SelectListHelper.BindSelectList(allGalleries.ToList(), vm.FkGallery, "Id", "Name", "Name").ToList();
-            vm.SubProductsList = SelectListHelper.BindSelectList(allSubProducts.ToList(), vm.FkSubProduct).ToList();
+            vm.SubProductsList = SelectListHelper.BindMainSubSelectList(
+                allSubProducts,
+                vm.FkSubProduct,
+                x => x.MainProduct?.NameAr,
+                x => x.MainProduct?.NameEn,
+                x => x.NameAr,
+                x => x.NameEn,
+                x => x.Id).ToList();
         }
     }
 }

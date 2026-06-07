@@ -33,6 +33,7 @@
     <div class="container">
         <form asp-action="AddEdit" method="post">
             @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger mb-2"></div>
             <input type="hidden" asp-for="Id" />
 
             @* @if (Model.Id > 0)
@@ -88,7 +89,7 @@
                     </div>
 
                     <div class="col-md-12">
-                        <label class="form-label" asp-for="Description">Description</label>
+                        <label class="form-label" asp-for="Description">Name</label>
                         <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
