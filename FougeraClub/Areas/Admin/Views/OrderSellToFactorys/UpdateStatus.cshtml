@@ -1,0 +1,441 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToFactory.OrderSellToFactoryVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? "تعديل طلب بيع لمصنع" : "إضافة طلب بيع لمصنع";
+    var lang = SessionHelper.GetCurrentLanguage();
+    var userIsClient = Model?.IsFactoryUser ?? false;
+
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="/Admin/OrderSellToFactorys/Index">Order Buy From Clients</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-6 d-flex justify-content-end align-items-center gap-2">
+        @if (isEdit)
+        {
+            <button type="button" class="btn btn-primary btn-sm open-attachments" data-order-id="@Model.Id">
+                <i class="fa-solid fa-paperclip me-1"></i> Attachments
+            </button>
+        }
+        <a asp-action="Index" class="btn btn-success btn-sm">
+            Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Attachments Modal -->
+<div class="modal fade" id="uploadFilesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div id="attachmentsContent"></div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3 mb-3">
+    <div class="d-flex justify-content-center c-pro border p-3 mb-3">
+        <div class="flex-grow-1 d-flex justify-content-start align-items-center">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-edit me-2 text-ico"></span>@ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+
+    <div class="container">
+        <form asp-action="UpdateStatus" method="post" id="orderForm">
+            @Html.AntiForgeryToken()
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="All" class="alert alert-danger mb-3"></div>
+            }
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
+            <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
+            <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
+            <input type="hidden" asp-for="IsUnitsSelected" />
+            <input type="hidden" asp-for="IsKilosSelected" />
+            <input type="hidden" asp-for="IsTonSelected" />
+            <input type="hidden" asp-for="TotalCount" />
+            <input type="hidden" asp-for="Total" id="TotalHidden" />
+            <input type="hidden" asp-for="ApprovalDate" />
+            <input type="hidden" asp-for="OrderDate" />
+            <input type="hidden" asp-for="DiscountRatio" />
+            <input type="hidden" asp-for="DiscountValue" />
+
+            <input type="hidden" asp-for="FKUserId" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource1.BasicData</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FKMainWasteId">نفايات اساسي</label>
+                        <input type="hidden" asp-for="FKMainWasteId" id="FKMainWasteId" />
+                        <input type="text" class="form-control" value="@(Model.MainWastesList?.FirstOrDefault(x => x.Value == Model.FKMainWasteId?.ToString())?.Text)" disabled />
+                        <span asp-validation-for="FKMainWasteId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FKSubWasteId">نفاية فرعي</label>
+                        <input type="hidden" asp-for="FKSubWasteId" id="FKSubWasteId" />
+                        <input type="text" class="form-control" value="@(Model.SubWastesList?.FirstOrDefault(x => x.Value == Model.FKSubWasteId?.ToString())?.Text)" disabled />
+                        <span asp-validation-for="FKSubWasteId" class="text-danger"></span>
+                    </div>
+                    @if (Model.IsFactoryUser)
+                    {
+                        <input type="hidden" asp-for="FKUserId" id="FKUserId" />
+                    }
+                    else
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (مصانع)</label>
+                            <input type="hidden" asp-for="FKUserId" id="FKUserId" />
+                            <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Value == Model.FKUserId)?.Text)" disabled />
+                        </div>
+                    }
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
+                        <input value="@Model.Address" class="form-control" disabled />
+                        <input type="hidden" asp-for="Address" id="Address" />
+                    </div>
+                    @if (userIsClient)
+                    {
+                        <input type="hidden" asp-for="StatusId" id="StatusId" />
+                    }
+                    @if (!userIsClient) // Admin can set status, but client users cannot
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
+                            <select asp-for="StatusId" class="form-select" asp-items="Model.StatusesList">
+                                <option value="">--</option>
+                            </select>
+                            <span asp-validation-for="StatusId" class="text-danger"></span>
+                        </div>
+                    }
+                        
+                    <input asp-for="ApprovalDate" hidden type="date" class="form-control" />
+                    <input asp-for="OrderDate" hidden type="date" class="form-control" />
+
+                    @* <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="OrderDate">Order Date</label>
+                        <input asp-for="OrderDate" type="date" class="form-control" />
+                        <span asp-validation-for="OrderDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" asp-for="ApprovalDate">Approval Date</label>
+                        <input asp-for="ApprovalDate" type="date" class="form-control" />
+                        <span asp-validation-for="ApprovalDate" class="text-danger"></span>
+                    </div> *@
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>Quantities & Prices</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div style="display:flex; gap:20px;">
+                    <!-- Units Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" disabled>
+                            <label class="form-check-label" for="IsUnitsSelected">Units</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="UnitsPriceHidden" value="@(Model.BuyPriceUnit ?? 0)">
+                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">@((Model.BuyPriceUnit ?? 0).ToString("0.##"))</span></div>
+                    </div>
+
+                    <!-- Kilos Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" disabled>
+                            <label class="form-check-label" for="IsKilosSelected">Kilos</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="KilosPriceHidden" value="@(Model.BuyPriceKilo ?? 0)">
+                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">@((Model.BuyPriceKilo ?? 0).ToString("0.##"))</span></div>
+                    </div>
+
+                    <!-- Ton Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" disabled>
+                            <label class="form-check-label" for="IsTonSelected">Ton</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="TonPriceHidden" value="@(Model.BuyPriceTon ?? 0)">
+                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">@((Model.BuyPriceTon ?? 0).ToString("0.##"))</span></div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
+                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" disabled />
+                        <span asp-validation-for="DiscountRatio" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="DiscountValue">Discount Value</label>
+                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
+                        <span asp-validation-for="DiscountValue" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total</label>
+                        <input type="text" class="form-control bg-light" value="@(Model.Total?.ToString("0.##") ?? "0")" id="TotalDisplay" disabled />
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end gap-2 mb-4">
+                <button type="submit" class="btn-cancel-search btn-sm btn" id="submitBtn">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var currentLang = '@lang';
+
+        function updateSubmitButtonState() {
+            const total = parseFloat(document.getElementById('TotalHidden')?.value) || 0;
+            document.getElementById('submitBtn').disabled = total <= 0;
+        }
+
+        function styleQuantityDiv(type, isChecked) {
+            const div = document.getElementById(type + 'Div');
+            div.style.backgroundColor = isChecked ? '#f8f9fa' : '';
+        }
+
+        function initializePricesFromModel() {
+            const unitPrice = parseFloat(document.getElementById('BuyPriceUnitHidden').value) || 0;
+            const kiloPrice = parseFloat(document.getElementById('BuyPriceKiloHidden').value) || 0;
+            const tonPrice = parseFloat(document.getElementById('BuyPriceTonHidden').value) || 0;
+
+            document.getElementById('UnitsPriceHidden').value = unitPrice;
+            document.getElementById('KilosPriceHidden').value = kiloPrice;
+            document.getElementById('TonPriceHidden').value = tonPrice;
+
+            document.getElementById('UnitsPriceDisplay').textContent = unitPrice.toFixed(2);
+            document.getElementById('KilosPriceDisplay').textContent = kiloPrice.toFixed(2);
+            document.getElementById('TonPriceDisplay').textContent = tonPrice.toFixed(2);
+        }
+
+        function initializeTotalFromModel() {
+            const totalHidden = document.getElementById('TotalHidden');
+            const totalDisplay = document.getElementById('TotalDisplay');
+            if (totalHidden?.value) {
+                totalDisplay.value = parseFloat(totalHidden.value).toFixed(2);
+            }
+        }
+
+        $(document).ready(function () {
+            initializePricesFromModel();
+            initializeTotalFromModel();
+            updateSubmitButtonState();
+
+            if (document.getElementById('IsUnitsSelected').checked) {
+                styleQuantityDiv('units', true);
+            }
+            if (document.getElementById('IsKilosSelected').checked) {
+                styleQuantityDiv('kilos', true);
+            }
+            if (document.getElementById('IsTonSelected').checked) {
+                styleQuantityDiv('ton', true);
+            }
+
+            // Attachments Modal Logic
+            document.querySelectorAll('.open-attachments').forEach(btn => {
+              btn.addEventListener('click', async function () {
+                const orderId = this.getAttribute('data-order-id');
+                let response = await fetch('/Admin/OrderSellToFactorys/GetOrderAttachments?id=' + orderId + '&returnAction=UpdateStatus');
+                let html = await response.text();
+                document.getElementById('attachmentsContent').innerHTML = html;
+
+                const modalEl = document.getElementById('uploadFilesModal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                initAttachmentsModal(modalEl, orderId);
+              });
+            });
+
+            function initAttachmentsModal(modalEl, orderId) {
+              const form = modalEl.querySelector('#attachmentsForm');
+              const preview = modalEl.querySelector('#attachmentsPreview');
+              const addFileBtn = modalEl.querySelector('#addFileBtn');
+              const fileNameInput = modalEl.querySelector('#fileNameInput');
+              const fileInput = modalEl.querySelector('#fileInput');
+
+              if (!form || !preview) return;
+
+              let empHidden = form.querySelector('input[name="OrderSellToFactoryId"]');
+              if (!empHidden) {
+                empHidden = document.createElement('input');
+                empHidden.type = 'hidden';
+                empHidden.name = 'OrderSellToFactoryId';
+                form.appendChild(empHidden);
+              }
+              empHidden.value = orderId;
+
+              function updateIndices() {
+                const cards = preview.querySelectorAll('.file-card');
+                cards.forEach((card, idx) => {
+                  card.dataset.index = idx;
+                  card.querySelectorAll('input, select, textarea').forEach(el => {
+                    if (!el.name) return;
+                    el.name = el.name.replace(/\[\d+\]/, `[${idx}]`);
+                  });
+                });
+              }
+
+              preview.querySelectorAll('.file-card').forEach((card, idx) => {
+                card.dataset.index = idx;
+                if (!card.querySelector('.remove-btn')) {
+                  const removeBtn = document.createElement('button');
+                  removeBtn.type = 'button';
+                  removeBtn.className = 'remove-btn';
+                  removeBtn.title = 'Remove';
+                  removeBtn.innerHTML = '&times;';
+                  removeBtn.style.position = 'absolute';
+                  removeBtn.style.top = '4px';
+                  removeBtn.style.right = '4px';
+                  card.appendChild(removeBtn);
+                }
+              });
+
+              let index = preview.querySelectorAll('.file-card').length;
+
+              preview.addEventListener('click', function (e) {
+                const removeBtn = e.target.closest('.remove-btn');
+                if (!removeBtn) return;
+                const card = removeBtn.closest('.file-card');
+                if (!card) return;
+
+                const img = card.querySelector('img');
+                if (img && img.src && img.src.startsWith('blob:')) {
+                  URL.revokeObjectURL(img.src);
+                }
+
+                card.remove();
+                updateIndices();
+                index = preview.querySelectorAll('.file-card').length;
+              });
+
+              addFileBtn?.addEventListener('click', function () {
+                const name = (fileNameInput?.value || '').trim();
+                const file = fileInput?.files?.[0];
+
+                if (!name) {
+                    $('#fileNameSpan').text('Required');
+                    return;
+                } else {
+                    $('#fileNameSpan').text('');
+                }
+                if (!file) {
+                    $('#fileInputSpan').text('Required');
+                    return;
+                } else {
+                    $('#fileInputSpan').text('');
+                }
+
+                const fileType = (file.type || '').toLowerCase();
+                const isImage = fileType.startsWith('image/');
+                const isPdf = fileType === 'application/pdf';
+
+                const container = document.createElement('div');
+                container.className = 'file-card text-center position-relative';
+                container.dataset.index = index;
+
+                let previewHTML = '';
+                if (isImage) {
+                  const imgUrl = URL.createObjectURL(file);
+                  previewHTML = `<img src="${imgUrl}" class="img-thumbnail" style="width:90px;height:90px;object-fit:cover;border-radius:8px;">`;
+                } else if (isPdf) {
+                  previewHTML = `<i class="fa-solid fa-file-pdf fa-5x text-danger"></i>`;
+                } else {
+                  previewHTML = `<i class="fa-solid fa-file fa-5x text-secondary"></i>`;
+                }
+
+                container.innerHTML = `
+                  <button type="button" class="remove-btn" title="Remove">&times;</button>
+                  ${previewHTML}
+                  <div class="fw-medium mt-2">${escapeHtml(name)}</div>
+                `;
+
+                const tempFileInput = document.createElement('input');
+                tempFileInput.type = 'file';
+                tempFileInput.name = `Attachments[${index}].File`;
+                tempFileInput.classList.add('d-none');
+
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                tempFileInput.files = dt.files;
+
+                const nameField = document.createElement('input');
+                nameField.type = 'hidden';
+                nameField.name = `Attachments[${index}].Name`;
+                nameField.value = name;
+
+                container.appendChild(tempFileInput);
+                container.appendChild(nameField);
+                preview.appendChild(container);
+
+                fileNameInput.value = '';
+                fileInput.value = '';
+
+                index++;
+                updateIndices();
+              });
+
+              function escapeHtml(str) {
+                return str.replace(/[&<>"']/g, function (m) {
+                  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+                });
+              }
+
+              updateIndices();
+            }
+        });
+    </script>
+}

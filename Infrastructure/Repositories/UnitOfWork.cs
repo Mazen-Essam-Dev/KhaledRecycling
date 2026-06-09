@@ -50,8 +50,11 @@ namespace Infrastructure.Repositories
         private IGenericRepository<OrderBuyFromClient> _OrderBuyFromClients;
         private IGenericRepository<OrderBuyFromClientAttachment> _OrderBuyFromClientAttachments;
         private IGenericRepository<OrderSellToFactory> _OrderSellToFactories;
+        private IGenericRepository<OrderSellToFactoryAttachment> _OrderSellToFactoryAttachments;
         private IGenericRepository<OrderBuyFromFactory> _OrderBuyFromFactories;
+        private IGenericRepository<OrderBuyFromFactoryAttachment> _OrderBuyFromFactoryAttachments;
         private IGenericRepository<OrderSellToClient> _OrderSellToClients;
+        private IGenericRepository<OrderSellToClientAttachment> _OrderSellToClientAttachments;
 
         private IGenericRepository<Financial> _Financials;
 
@@ -109,9 +112,14 @@ namespace Infrastructure.Repositories
 
         public IGenericRepository<OrderBuyFromClient> OrderBuyFromClients => _OrderBuyFromClients ??= new GenericRepository<OrderBuyFromClient>(_context);
         public IGenericRepository<OrderBuyFromClientAttachment> OrderBuyFromClientAttachments => _OrderBuyFromClientAttachments ??= new GenericRepository<OrderBuyFromClientAttachment>(_context);
-        public IGenericRepository<OrderSellToFactory> OrderSellToFactories => _OrderSellToFactories ??= new GenericRepository<OrderSellToFactory>(_context);
-        public IGenericRepository<OrderBuyFromFactory> OrderBuyFromFactories => _OrderBuyFromFactories ??= new GenericRepository<OrderBuyFromFactory>(_context);
+        public IGenericRepository<OrderSellToFactory> OrderSellToFactorys => _OrderSellToFactories ??= new GenericRepository<OrderSellToFactory>(_context);
+        public IGenericRepository<OrderSellToFactoryAttachment> OrderSellToFactoryAttachments => _OrderSellToFactoryAttachments ??= new GenericRepository<OrderSellToFactoryAttachment>(_context);
+
+        public IGenericRepository<OrderBuyFromFactory> OrderBuyFromFactorys => _OrderBuyFromFactories ??= new GenericRepository<OrderBuyFromFactory>(_context);
+        public IGenericRepository<OrderBuyFromFactoryAttachment> OrderBuyFromFactoryAttachments => _OrderBuyFromFactoryAttachments ??= new GenericRepository<OrderBuyFromFactoryAttachment>(_context);
+
         public IGenericRepository<OrderSellToClient> OrderSellToClients => _OrderSellToClients ??= new GenericRepository<OrderSellToClient>(_context);
+        public IGenericRepository<OrderSellToClientAttachment> OrderSellToClientAttachments => _OrderSellToClientAttachments ??= new GenericRepository<OrderSellToClientAttachment>(_context);
 
         public IGenericRepository<Financial> Financials => _Financials ??= new GenericRepository<Financial>(_context);
 

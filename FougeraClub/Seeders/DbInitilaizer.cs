@@ -104,6 +104,22 @@ namespace KhaledTeamRecycling.Seeders
             }
 
 
+            // Seed UserTypes Enum Data
+            if (!context.UserTypes.Any())
+            {
+                var list = Enum.GetValues(typeof(UserTypesEnum))
+                    .Cast<UserTypesEnum>()
+                    .Select(e => new Domain.Entities.UserType
+                    {
+                        Id = (int)e,
+                        NameEn = Domain.Resources.Resource1.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("en")),
+                        NameAr = Domain.Resources.Resource1.ResourceManager.GetString(e.GetDisplayKey(), new CultureInfo("ar"))
+                    })
+                    .ToList();
+
+                await context.UserTypes.AddRangeAsync(list);
+                await context.SaveChangesAsync();
+            }
 
 
 

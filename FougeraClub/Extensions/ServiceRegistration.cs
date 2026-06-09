@@ -54,6 +54,7 @@ namespace KhaledTeamRecycling.Extensions
 
             services.AddScoped<ISalaryManagementService, SalaryManagementService>();
             services.AddScoped<IOrderBuyFromClientService, OrderBuyFromClientService>();
+            services.AddScoped<IOrderSellToFactoryService, OrderSellToFactoryService>();
 
 
         }

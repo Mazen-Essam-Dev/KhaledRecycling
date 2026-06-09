@@ -2523,8 +2523,9 @@
   <data name="Add_New_ScientificProject3" xml:space="preserve">
     <value>إدخال بطاقة فنية مشروع علمى</value>
   </data>
-  <data name="CourseCannotSubscribed" xml:space="preserve">
-    <value> لا يمكن الاشتراك بالدورة</value>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="CourseCannotSubscribed" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
   <data name="CourseCannotSubscribedExbired" xml:space="preserve">
     <value> لا يمكن الاشتراك بدورة منتهية</value>
@@ -2822,5 +2823,17 @@
   </data>
   <data name="MoneyPushed" xml:space="preserve">
     <value>قائمة ضخ الاموال والتغذية</value>
+  </data>
+  <data name="Factory" xml:space="preserve">
+    <value>مصنع</value>
+  </data>
+  <data name="corporation" xml:space="preserve">
+    <value>شركة</value>
+  </data>
+  <data name="Individual" xml:space="preserve">
+    <value>فرد</value>
+  </data>
+  <data name="corporationNotClient" xml:space="preserve">
+    <value>شركة ليست عميل</value>
   </data>
 </root>

@@ -187,6 +187,20 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                             newUser.FKUserType = 1;
                             await _userManager.UpdateAsync(newUser);
                         }
+                        // Set FKUserType = 2 if role is company
+                        else if (roleName.Contains("corporation", StringComparison.OrdinalIgnoreCase) ||
+                            roleName.Contains("شركة", StringComparison.OrdinalIgnoreCase))
+                        {
+                            newUser.FKUserType = 2;
+                            await _userManager.UpdateAsync(newUser);
+                        }
+                        // Set FKUserType = 3 if role is Factory
+                        else if (roleName.Contains("Factory", StringComparison.OrdinalIgnoreCase) ||
+                            roleName.Contains("مصنع", StringComparison.OrdinalIgnoreCase))
+                        {
+                            newUser.FKUserType = 3;
+                            await _userManager.UpdateAsync(newUser);
+                        }
                     }
                 }
                 return RedirectToAction(nameof(Index)); // After Add New
@@ -254,7 +268,20 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     user.FKUserType = 1;
                     await _userManager.UpdateAsync(user);
                 }
-
+                // Set FKUserType = 2 if role is company
+                else if (selectedRole.Any(r => r.Contains("corporation", StringComparison.OrdinalIgnoreCase) ||
+                                        r.Contains("شركة", StringComparison.OrdinalIgnoreCase)))
+                {
+                    user.FKUserType = 2;
+                    await _userManager.UpdateAsync(user);
+                }
+                // Set FKUserType = 3 if role is Factory
+                else if (selectedRole.Any(r => r.Contains("Factory", StringComparison.OrdinalIgnoreCase) ||
+                    r.Contains("مصنع", StringComparison.OrdinalIgnoreCase)))
+                {
+                    user.FKUserType = 3;
+                    await _userManager.UpdateAsync(user);
+                }
                 return RedirectToAction(nameof(AddEdit), new { id = model.Id });  // After Edit 
             }
 

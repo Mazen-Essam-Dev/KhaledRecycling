@@ -1744,6 +1744,24 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to corporation.
+        /// </summary>
+        public static string corporation {
+            get {
+                return ResourceManager.GetString("corporation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to corporation But Not Client.
+        /// </summary>
+        public static string corporationNotClient {
+            get {
+                return ResourceManager.GetString("corporationNotClient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Course Data.
         /// </summary>
         public static string Course_Data {
@@ -3274,6 +3292,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Factory.
+        /// </summary>
+        public static string Factory {
+            get {
+                return ResourceManager.GetString("Factory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed in Validation of age.
         /// </summary>
         public static string Failedcheckage {
@@ -3747,6 +3774,15 @@ namespace Domain.Resources {
         public static string Index1 {
             get {
                 return ResourceManager.GetString("Index1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Individual.
+        /// </summary>
+        public static string Individual {
+            get {
+                return ResourceManager.GetString("Individual", resourceCulture);
             }
         }
         

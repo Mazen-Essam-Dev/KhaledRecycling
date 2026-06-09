@@ -52,9 +52,15 @@ namespace Infrastructure.Repositories.InterfacesDB
         // Orders
         IGenericRepository<OrderBuyFromClient> OrderBuyFromClients { get; }
         IGenericRepository<OrderBuyFromClientAttachment> OrderBuyFromClientAttachments { get; }
-        IGenericRepository<OrderSellToFactory> OrderSellToFactories { get; }
-        IGenericRepository<OrderBuyFromFactory> OrderBuyFromFactories { get; }
+        IGenericRepository<OrderSellToFactory> OrderSellToFactorys { get; }
+        IGenericRepository<OrderSellToFactoryAttachment> OrderSellToFactoryAttachments { get; }
+
+        IGenericRepository<OrderBuyFromFactory> OrderBuyFromFactorys { get; }
+        IGenericRepository<OrderBuyFromFactoryAttachment> OrderBuyFromFactoryAttachments { get; }
+
         IGenericRepository<OrderSellToClient> OrderSellToClients { get; }
+        IGenericRepository<OrderSellToClientAttachment> OrderSellToClientAttachments { get; }
+
 
         // Financial
         IGenericRepository<Financial> Financials { get; }

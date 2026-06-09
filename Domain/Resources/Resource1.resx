@@ -3444,4 +3444,16 @@ in accordance with the standards of Fujairah Science Club.</value>
     <value>Money Push List</value>
     <comment>قائمة ضخ الاموال والتغذية</comment>
   </data>
+  <data name="Factory" xml:space="preserve">
+    <value>Factory</value>
+  </data>
+  <data name="corporation" xml:space="preserve">
+    <value>corporation</value>
+  </data>
+  <data name="Individual" xml:space="preserve">
+    <value>Individual</value>
+  </data>
+  <data name="corporationNotClient" xml:space="preserve">
+    <value>corporation But Not Client</value>
+  </data>
 </root>
