@@ -17,4 +17,9 @@ public class Financial
 
     [ForeignKey("StatusId")]
     public Status? Status { get; set; }
+
+    public int? FKUserType { get; set; }
+
+    [ForeignKey("FKUserType")]
+    public UserType? UserType { get; set; }
 }

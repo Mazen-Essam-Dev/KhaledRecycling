@@ -1,17 +1,19 @@
 using Application.Helpers;
 using Application.Interfaces.Admin;
+using Application.Services.Admin;
 using AutoMapper;
+using DocumentFormat.OpenXml.Vml.Office;
 using Domain.DTOs;
 using Domain.Entities.Waste;
+using Infrastructure.Repositories.InterfacesDB;
 using KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient;
 using KhaledTeamRecycling.Attributes;
 using KhaledTeamRecycling.Helpers;
 using KhaledTeamRecycling.Middelware;
-using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Application.Services.Admin;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
@@ -22,12 +24,14 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         private readonly IOrderBuyFromClientService _orderBuyFromClientService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly PermissionScanner _PermissionScanner;
 
-        public OrderBuyFromClientsController(IOrderBuyFromClientService orderBuyFromClientService, IUnitOfWork unitOfWork, IMapper mapper)
+        public OrderBuyFromClientsController(IOrderBuyFromClientService orderBuyFromClientService, PermissionScanner PermissionScanner, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _orderBuyFromClientService = orderBuyFromClientService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _PermissionScanner = PermissionScanner;
         }
 
         [YesGet]
@@ -227,7 +231,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
             var isClientUser = loggedInUser != null && loggedInUser.FKUserType == 1;
-
+            var FKUserId = "";
             if (isClientUser)
             {
                 model.FKUserId = loggedInUserId;
@@ -329,6 +333,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     await _unitOfWork.CompleteAsync();
                 return RedirectToAction(nameof(AddEdit), new { id = entity.Id });
             }
+            FKUserId = entity.FKUserId;
 
             await _orderBuyFromClientService.UpdateAsync(entity);
 
@@ -336,6 +341,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (financial != null)
             {
                 financial.Total = entity.Total;
+                var FKUserType = await _PermissionScanner.GetFKUserType(FKUserId);
+                financial.FKUserType = FKUserType;
+                financial.FKUserId = FKUserId;
                 _unitOfWork.Financials.Update(financial);
                 await _unitOfWork.CompleteAsync();
             }
@@ -452,7 +460,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
             var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
-
+            var FKUserId = "";
             if (isClientUser)
             {
                 model.FKUserId = loggedInUserId;
@@ -502,6 +510,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             }
 
             oldEntity.StatusId = model.StatusId;
+            FKUserId = oldEntity.FKUserId;
             await _orderBuyFromClientService.UpdateAsync(oldEntity);
 
             if (newStatus != null)
@@ -510,13 +519,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                 if (oldStatusChar == "P" && newStatus.ShortChar == "D" && financial == null)
                 {
+                    var FKUserType = await _PermissionScanner.GetFKUserType(FKUserId);
                     await _unitOfWork.Financials.AddAsync(new Domain.Entities.Financial
                     {
                         TableType = "OrderBuyFromClient",
                         ItsId = model.Id,
                         TypeTransaction = '-',
                         StatusId = model.StatusId,
-                        Total = oldEntity.Total
+                        Total = oldEntity.Total,
+                        FKUserType = FKUserType,
+                        FKUserId = FKUserId,
                     });
                     await _unitOfWork.CompleteAsync();
                 }

@@ -1,17 +1,18 @@
 using Application.Helpers;
 using Application.Interfaces.Admin;
+using Application.Services.Admin;
 using AutoMapper;
 using Domain.DTOs;
 using Domain.Entities.Waste;
+using Infrastructure.Repositories.InterfacesDB;
 using KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToFactory;
 using KhaledTeamRecycling.Attributes;
 using KhaledTeamRecycling.Helpers;
 using KhaledTeamRecycling.Middelware;
-using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Application.Services.Admin;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
@@ -22,12 +23,14 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         private readonly IOrderSellToFactoryService _orderSellToFactoryService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly PermissionScanner _PermissionScanner;
 
-        public OrderSellToFactorysController(IOrderSellToFactoryService orderSellToFactoryService, IUnitOfWork unitOfWork, IMapper mapper)
+        public OrderSellToFactorysController(IOrderSellToFactoryService orderSellToFactoryService,PermissionScanner PermissionScanner, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _orderSellToFactoryService = orderSellToFactoryService;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _PermissionScanner = PermissionScanner;
         }
 
         [YesGet]
@@ -228,6 +231,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
             var isFactoryUser = loggedInUser != null && loggedInUser.FKUserType == 1;
 
+            var FkUserId = "";
+
             if (isFactoryUser)
             {
                 model.FKUserId = loggedInUserId;
@@ -330,12 +335,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 return RedirectToAction(nameof(AddEdit), new { id = entity.Id });
             }
 
+            FkUserId = entity.FKUserId;
             await _orderSellToFactoryService.UpdateAsync(entity);
+
 
             var financial = await _unitOfWork.Financials.Table.FirstOrDefaultAsync(x => x.TableType == "OrderSellToFactory" && x.ItsId == model.Id);
             if (financial != null)
             {
                 financial.Total = entity.Total;
+                var FKUserType = await _PermissionScanner.GetFKUserType(FkUserId);
+                financial.FKUserType = FKUserType;
+                financial.FKUserId = FkUserId;
                 _unitOfWork.Financials.Update(financial);
                 await _unitOfWork.CompleteAsync();
             }
@@ -453,6 +463,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
             var isFactoryUser = loggedInUser != null && (loggedInUser.FKUserType == 3); // مصنع فقط
 
+            var FkUserId = "";
+
             if (isFactoryUser)
             {
                 model.FKUserId = loggedInUserId;
@@ -465,7 +477,6 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     .Include(x => x.Status)
                     .Include(x => x.SubWaste)
                     .FirstOrDefaultAsync(x => x.Id == model.Id);
-
                 if (oldEntityForView != null)
                 {
                     await PopulateUpdateStatusViewModelAsync(model, oldEntityForView);
@@ -482,6 +493,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            FkUserId = oldEntity.FKUserId;
 
             string oldStatusChar = oldEntity.Status?.ShortChar ?? string.Empty;
 
@@ -510,13 +522,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                 if (oldStatusChar == "P" && newStatus.ShortChar == "D" && financial == null)
                 {
+                    var FKUserType = await _PermissionScanner.GetFKUserType(FkUserId);
                     await _unitOfWork.Financials.AddAsync(new Domain.Entities.Financial
                     {
                         TableType = "OrderSellToFactory",
                         ItsId = model.Id,
                         TypeTransaction = '-',
                         StatusId = model.StatusId,
-                        Total = oldEntity.Total
+                        Total = oldEntity.Total,
+                        FKUserType = FKUserType,
+                        FKUserId = FkUserId,
                     });
                     await _unitOfWork.CompleteAsync();
                 }

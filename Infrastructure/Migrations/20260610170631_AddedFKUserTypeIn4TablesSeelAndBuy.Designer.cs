@@ -4,6 +4,7 @@ using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260610170631_AddedFKUserTypeIn4TablesSeelAndBuy")]
+    partial class AddedFKUserTypeIn4TablesSeelAndBuy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -263,9 +266,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("FKUserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("FKUserType")
-                        .HasColumnType("int");
-
                     b.Property<int?>("ItsId")
                         .HasColumnType("int");
 
@@ -282,8 +282,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(1)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FKUserType");
 
                     b.HasIndex("StatusId");
 
@@ -1505,17 +1503,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Financial", b =>
                 {
-                    b.HasOne("Domain.Entities.UserType", "UserType")
-                        .WithMany()
-                        .HasForeignKey("FKUserType");
-
                     b.HasOne("Domain.Entities.Status", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId");
 
                     b.Navigation("Status");
-
-                    b.Navigation("UserType");
                 });
 
             modelBuilder.Entity("Domain.Entities.Gallary.RoomGallery", b =>

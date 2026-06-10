@@ -1,6 +1,7 @@
-﻿using Domain.Enums;
-using KhaledTeamRecycling.Attributes;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using Domain.Enums;
 using Infrastructure.Repositories.InterfacesDB;
+using KhaledTeamRecycling.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
@@ -87,6 +88,18 @@ namespace KhaledTeamRecycling.Helpers
             }
             return RoleNumber.NormalUser;
         }
+        public async Task<int?> GetFKUserType(string? userId)
+        {
+            var thisUser = !string.IsNullOrEmpty(userId) ? await _unitOfWork.Users.GetByIdAsync(userId) : null;
+            return thisUser?.FKUserType;
+        }
+        public async Task<int?> GetFKUserTypeOfLoggedInUser()
+        {
+            var User = _httpContextAccessor.HttpContext?.User;
+            var UserEMail = User?.Identity?.Name;
+            var loggedInUser = !string.IsNullOrEmpty(UserEMail) ? await _unitOfWork.Users.GetByIdAsync(x => x.Email == UserEMail) : null;
+            return loggedInUser?.FKUserType;
+        }
 
         public async Task<bool> CheckLoggedUserIfTrainer()
         {
@@ -96,7 +109,7 @@ namespace KhaledTeamRecycling.Helpers
 
             int ThisTrainerId = 0;
             if (UserEMail == null) return false;
-            var ThisUser = await _unitOfWork.Users.GetByIdAsync(x => x.UserName == UserEMail);
+            var ThisUser = await _unitOfWork.Users.GetByIdAsync(x => x.Email == UserEMail);
 
             if (ThisTrainerId > 0) return true;
 
@@ -109,7 +122,7 @@ namespace KhaledTeamRecycling.Helpers
             var email = user?.Identity?.Name;
 
             if (email == null) return false;
-            var userEntity = await _unitOfWork.Users.GetByIdAsync(x => x.UserName == email);
+            var userEntity = await _unitOfWork.Users.GetByIdAsync(x => x.Email == email);
             if (userEntity != null)
             {
                 var signature = await _unitOfWork.Signatures.GetByColumnAsync(s => s.UserId == userEntity.Id);
