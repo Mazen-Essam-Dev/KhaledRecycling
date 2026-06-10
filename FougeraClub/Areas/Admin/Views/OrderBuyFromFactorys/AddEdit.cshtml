@@ -1,10 +1,10 @@
-@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToClient.OrderSellToClientVM
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromFactory.OrderBuyFromFactoryVM
 
 @{
     var isEdit = Model?.Id > 0;
-    ViewData["Title"] = isEdit ? "تحديث الحالة لطلب بيع منتج للعميل" : "إضافة طلب بيع منتج للعميل";
+    ViewData["Title"] = isEdit ? "تعديل طلب شراء منتج من المصنع" : "إضافة طلب شراء منتج من المصنع";
     var lang = SessionHelper.GetCurrentLanguage();
-    var userIsClient = Model?.IsClientUser ?? false;
+    var userIsClient = Model?.IsFactoryUser ?? false;
 
 }
 
@@ -12,7 +12,7 @@
     <div class="col-md-6">
         <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 py-2 flex-nowrap">
-                <li class="breadcrumb-item"><a href="/Admin/OrderSellToClients/Index">Order Sell From Clients</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/OrderBuyFromFactorys/Index">Order Buy From Clients</a></li>
                 <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
             </ol>
         </nav>
@@ -47,27 +47,12 @@
     </div>
 
     <div class="container">
-        <form asp-action="UpdateStatus" method="post" id="orderForm">
+        <form asp-action="AddEdit" method="post" id="orderForm">
             @Html.AntiForgeryToken()
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div asp-validation-summary="All" class="alert alert-danger mb-3"></div>
-            }
             <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="SellPriceUnit" id="SellPriceUnitHidden" />
-            <input type="hidden" asp-for="SellPriceKilo" id="SellPriceKiloHidden" />
-            <input type="hidden" asp-for="SellPriceTon" id="SellPriceTonHidden" />
-            <input type="hidden" asp-for="IsUnitsSelected" />
-            <input type="hidden" asp-for="IsKilosSelected" />
-            <input type="hidden" asp-for="IsTonSelected" />
-            <input type="hidden" asp-for="TotalCount" />
-            <input type="hidden" asp-for="Total" id="TotalHidden" />
-            <input type="hidden" asp-for="ApprovalDate" />
-            <input type="hidden" asp-for="OrderDate" />
-            <input type="hidden" asp-for="DiscountRatio" />
-            <input type="hidden" asp-for="DiscountValue" />
-
-            <input type="hidden" asp-for="FKUserId" />
+            <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
+            <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
+            <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
 
             <div class="row">
                 <div class="col-md-12">
@@ -85,50 +70,47 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="FKMainProductId">اقسام المنتجات اساسي</label>
-                        <input type="hidden" asp-for="FKMainProductId" id="FKMainProductId" />
-                        <input type="text" class="form-control" value="@(Model.MainProductsList?.FirstOrDefault(x => x.Value == Model.FKMainProductId?.ToString())?.Text)" disabled />
+                        <select asp-for="FKMainProductId" class="form-select" id="FKMainProductId" asp-items="Model.MainProductsList">
+                            <option value="">-- Select Main Product --</option>
+                        </select>
                         <span asp-validation-for="FKMainProductId" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="FKSubProductId">منتج فرعي</label>
-                        <input type="hidden" asp-for="FKSubProductId" id="FKSubProductId" />
-                        <input type="text" class="form-control" value="@(Model.SubProductsList?.FirstOrDefault(x => x.Value == Model.FKSubProductId?.ToString())?.Text)" disabled />
+                        <select asp-for="FKSubProductId" class="form-select" id="FKSubProductId" asp-items="Model.SubProductsList">
+                            <option value="">-- Select Sub Product --</option>
+                        </select>
                         <span asp-validation-for="FKSubProductId" class="text-danger"></span>
                     </div>
-                    @if (Model.IsClientUser)
+
+                    @if (Model.IsFactoryUser)
                     {
                         <input type="hidden" asp-for="FKUserId" id="FKUserId" />
                     }
                     else
                     {
                         <div class="col-md-6">
-                            <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (افراد)</label>
-                            <input type="hidden" asp-for="FKUserId" id="FKUserId" />
-                            <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Value == Model.FKUserId)?.Text)" disabled />
+                            <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (مصانع)</label>
+                            <select asp-for="FKUserId" class="form-select" id="FKUserId" asp-items="Model.UsersList">
+                                <option value="">-- Select User --</option>
+                            </select>
+                            <span asp-validation-for="FKUserId" class="text-danger"></span>
                         </div>
                     }
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
-                        <input value="@Model.Address" class="form-control" disabled />
-                        <input type="hidden" asp-for="Address" id="Address" />
+                        <input asp-for="Address" class="form-control" id="Address" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
                     </div>
-                    @if (userIsClient)
-                    {
+
+                    <div class="col-md-12">
                         <input type="hidden" asp-for="StatusId" id="StatusId" />
-                    }
-                    @if (!userIsClient) // Admin can set status, but client users cannot
-                    {
-                        <div class="col-md-6">
-                            <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
-                            <select asp-for="StatusId" class="form-select" asp-items="Model.StatusesList">
-                                <option value="">--</option>
-                            </select>
-                            <span asp-validation-for="StatusId" class="text-danger"></span>
-                        </div>
-                    }
-                        
+                        <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
+                        <input id="StatusName" class="form-control my-0 " value="@Model.StatusesList?.Where(c => c.Selected == true).FirstOrDefault()?.Text" disabled />
+                    </div>
+
                     <input asp-for="ApprovalDate" hidden type="date" class="form-control" />
                     <input asp-for="OrderDate" hidden type="date" class="form-control" />
 
@@ -163,60 +145,86 @@
                     <!-- Units Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" disabled>
+                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" onchange="toggleDiv('units', this.checked)">
                             <label class="form-check-label" for="IsUnitsSelected">Units</label>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="UnitsPriceHidden" value="@(Model.SellPriceUnit ?? 0)">
-                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">@((Model.SellPriceUnit ?? 0).ToString("0.##"))</span></div>
+                        <input type="hidden" id="UnitsPriceHidden" value="0">
+                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">0</span></div>
                     </div>
 
                     <!-- Kilos Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" disabled>
+                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" onchange="toggleDiv('kilos', this.checked)">
                             <label class="form-check-label" for="IsKilosSelected">Kilos</label>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="KilosPriceHidden" value="@(Model.SellPriceKilo ?? 0)">
-                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">@((Model.SellPriceKilo ?? 0).ToString("0.##"))</span></div>
+                        <input type="hidden" id="KilosPriceHidden" value="0">
+                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">0</span></div>
                     </div>
 
                     <!-- Ton Div -->
                     <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
                         <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" disabled>
+                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" onchange="toggleDiv('ton', this.checked)">
                             <label class="form-check-label" for="IsTonSelected">Ton</label>
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="TonPriceHidden" value="@(Model.SellPriceTon ?? 0)">
-                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">@((Model.SellPriceTon ?? 0).ToString("0.##"))</span></div>
+                        <input type="hidden" id="TonPriceHidden" value="0">
+                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">0</span></div>
                     </div>
                 </div>
 
                 <div class="row g-3 mt-3">
+                    @if (userIsClient && !isEdit && Model.MaxDiscountRatioAllowed > 0)
+                    {
+                        <!-- Points Discount Checkbox (only for new orders by client) -->
+                        <div class="col-md-12">
+                            <div class="form-check form-switch d-flex align-items-center gap-3 p-3 rounded-3" style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;">
+                                <input class="form-check-input mt-0" type="checkbox" role="switch"
+                                       asp-for="UsePointsDiscount"
+                                       id="UsePointsDiscount"
+                                       style="width:3em;height:1.5em;cursor:pointer; margin-inline-start: 2px !important;"
+                                       onchange="togglePointsDiscount(this.checked)">
+                                <label class="form-check-label fw-semibold text-success fs-6" for="UsePointsDiscount">
+                                    <i class="fa-solid fa-star me-1 text-warning"></i>
+                                    لك خصم <strong>@Model.MaxDiscountRatioAllowed%</strong> هل تريده ؟
+                                </label>
+                            </div>
+                            <input type="hidden" id="MaxDiscountRatioAllowed" value="@Model.MaxDiscountRatioAllowed" />
+                        </div>
+                    }
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
-                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" disabled />
+                        @if (userIsClient)
+                        {
+                            <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" readonly style="background:#f0f0f0;cursor:not-allowed;" />
+                        }
+                        else
+                        {
+                            <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" />
+                        }
                         <span asp-validation-for="DiscountRatio" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountValue">Discount Value</label>
-                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
+                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" readonly />
                         <span asp-validation-for="DiscountValue" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Total</label>
-                        <input type="text" class="form-control bg-light" value="@(Model.Total?.ToString("0.##") ?? "0")" id="TotalDisplay" disabled />
+                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" readonly />
+                        <input type="hidden" asp-for="Total" id="TotalHidden" />
                     </div>
                 </div>
             </div>
@@ -238,57 +246,204 @@
         var currentLang = '@lang';
 
         function updateSubmitButtonState() {
-            const total = parseFloat(document.getElementById('TotalHidden')?.value) || 0;
-            document.getElementById('submitBtn').disabled = total <= 0;
+            const isUnits = document.getElementById('IsUnitsSelected').checked;
+            const isKilos = document.getElementById('IsKilosSelected').checked;
+            const isTon = document.getElementById('IsTonSelected').checked;
+
+            document.getElementById('submitBtn').disabled = !(isUnits || isKilos || isTon);
         }
 
-        function styleQuantityDiv(type, isChecked) {
+        function toggleDiv(type, isChecked) {
             const div = document.getElementById(type + 'Div');
-            div.style.backgroundColor = isChecked ? '#f8f9fa' : '';
-        }
+            const input = div.querySelector('.quantity-input');
 
-        function initializePricesFromModel() {
-            const unitPrice = parseFloat(document.getElementById('SellPriceUnitHidden').value) || 0;
-            const kiloPrice = parseFloat(document.getElementById('SellPriceKiloHidden').value) || 0;
-            const tonPrice = parseFloat(document.getElementById('SellPriceTonHidden').value) || 0;
-
-            document.getElementById('UnitsPriceHidden').value = unitPrice;
-            document.getElementById('KilosPriceHidden').value = kiloPrice;
-            document.getElementById('TonPriceHidden').value = tonPrice;
-
-            document.getElementById('UnitsPriceDisplay').textContent = unitPrice.toFixed(2);
-            document.getElementById('KilosPriceDisplay').textContent = kiloPrice.toFixed(2);
-            document.getElementById('TonPriceDisplay').textContent = tonPrice.toFixed(2);
-        }
-
-        function initializeTotalFromModel() {
-            const totalHidden = document.getElementById('TotalHidden');
-            const totalDisplay = document.getElementById('TotalDisplay');
-            if (totalHidden?.value) {
-                totalDisplay.value = parseFloat(totalHidden.value).toFixed(2);
+            if (isChecked) {
+                input.disabled = false;
+                div.style.backgroundColor = '#f8f9fa';
+            } else {
+                input.disabled = true;
+                input.value = '';
+                div.style.backgroundColor = '';
             }
+            calculateTotal();
+        }
+
+            // Toggle points discount checkbox
+            function togglePointsDiscount(isChecked) {
+                const maxDiscount = parseFloat(document.getElementById('MaxDiscountRatioAllowed')?.value) || 0;
+                const discountRatioInput = document.getElementById('DiscountRatio');
+                if (isChecked) {
+                    discountRatioInput.value = maxDiscount;
+                } else {
+                    discountRatioInput.value = '';
+                }
+                calculateTotal();
+            }
+
+            function calculateTotal() {
+                let total = 0;
+
+                // Units
+                if (document.getElementById('IsUnitsSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
+                    const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Kilos
+                if (document.getElementById('IsKilosSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
+                    const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Ton
+                if (document.getElementById('IsTonSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
+                    const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Apply discount ratio
+                const discountRatioEl = document.getElementById('DiscountRatio');
+                const discountRatio = discountRatioEl ? parseFloat(discountRatioEl.value) || 0 : 0;
+                if (discountRatio > 0) {
+                    const discountValue = total * (discountRatio / 100);
+                    document.getElementById('DiscountValue').value = discountValue.toFixed(2);
+                    total -= discountValue;
+                } else {
+                    document.getElementById('DiscountValue').value = '';
+                }
+
+                document.getElementById('TotalDisplay').value = total.toFixed(2);
+                document.getElementById('TotalHidden').value = total.toFixed(2);
+            }
+
+        function updatePrices(prices) {
+            document.getElementById('BuyPriceUnitHidden').value = prices.buyPriceUnit || 0;
+            document.getElementById('BuyPriceKiloHidden').value = prices.buyPriceKilo || 0;
+            document.getElementById('BuyPriceTonHidden').value = prices.buyPriceTon || 0;
+
+            document.getElementById('UnitsPriceHidden').value = prices.buyPriceUnit || 0;
+            document.getElementById('KilosPriceHidden').value = prices.buyPriceKilo || 0;
+            document.getElementById('TonPriceHidden').value = prices.buyPriceTon || 0;
+
+            document.getElementById('UnitsPriceDisplay').textContent = (prices.buyPriceUnit || 0).toFixed(2);
+            document.getElementById('KilosPriceDisplay').textContent = (prices.buyPriceKilo || 0).toFixed(2);
+            document.getElementById('TonPriceDisplay').textContent = (prices.buyPriceTon || 0).toFixed(2);
+
+            calculateTotal();
         }
 
         $(document).ready(function () {
-            initializePricesFromModel();
-            initializeTotalFromModel();
+            // Check submit button state initially
             updateSubmitButtonState();
 
+            // Bind change event to checkboxes for submit button state
+            $('#IsUnitsSelected, #IsKilosSelected, #IsTonSelected').on('change', updateSubmitButtonState);
+
+            // Initialize div states based on checkboxes
             if (document.getElementById('IsUnitsSelected').checked) {
-                styleQuantityDiv('units', true);
+                toggleDiv('units', true);
+                // Set the value from the model
+                const unitsValue = document.getElementById('UnitsValue').value;
+                if (unitsValue) {
+                    document.getElementById('UnitsValue').value = unitsValue;
+                }
             }
             if (document.getElementById('IsKilosSelected').checked) {
-                styleQuantityDiv('kilos', true);
+                toggleDiv('kilos', true);
+                // Set the value from the model
+                const kilosValue = document.getElementById('KilosValue').value;
+                if (kilosValue) {
+                    document.getElementById('KilosValue').value = kilosValue;
+                }
             }
             if (document.getElementById('IsTonSelected').checked) {
-                styleQuantityDiv('ton', true);
+                toggleDiv('ton', true);
+                // Set the value from the model
+                const tonValue = document.getElementById('TonValue').value;
+                if (tonValue) {
+                    document.getElementById('TonValue').value = tonValue;
+                }
             }
+
+            // Load initial prices if subProduct is selected
+            const subProductId = document.getElementById('FKSubProductId').value;
+            if (subProductId) {
+                $.get('/Admin/OrderBuyFromFactorys/GetSubProductPrices?subProductId=' + subProductId, function(data) {
+                    if (data.success) {
+                        updatePrices(data);
+                    }
+                });
+            }
+
+            // Calculate total on page load if in edit mode
+            const isEditMode = document.getElementById('Id').value > 0;
+            if (isEditMode) {
+                calculateTotal();
+            }
+
+            // Main Product change - load sub wastes
+            $('#FKMainProductId').on('change', function () {
+                const mainProductId = $(this).val();
+                if (mainProductId) {
+                    $.get('/Admin/OrderBuyFromFactorys/GetSubProductsByMainProduct?mainProductId=' + mainProductId, function(data) {
+                        const subProductSelect = $('#FKSubProductId');
+                        subProductSelect.empty();
+                        subProductSelect.append('<option value="">-- Select Sub Product --</option>');
+
+                        $.each(data, function (i, item) {
+                            subProductSelect.append('<option value="' + item.id + '">' +
+                                (currentLang === 'ar' ? item.nameAr : item.nameEn) + '</option>');
+                        });
+                    });
+                } else {
+                    $('#FKSubProductId').empty().append('<option value="">-- Select Sub Product --</option>');
+                }
+            });
+
+            // Sub Product change - load prices
+            $('#FKSubProductId').on('change', function () {
+                const subProductId = $(this).val();
+                if (subProductId) {
+                    $.get('/Admin/OrderBuyFromFactorys/GetSubProductPrices?subProductId=' + subProductId, function(data) {
+                        if (data.success) {
+                            updatePrices(data);
+                        }
+                    });
+                } else {
+                    updatePrices({ buyPriceUnit: 0, buyPriceKilo: 0, buyPriceTon: 0 });
+                }
+            });
+
+            // User change - load address
+            $('#FKUserId').on('change', function () {
+                const userId = $(this).val();
+                if (userId) {
+                    $.get('/Admin/OrderBuyFromFactorys/GetUserAddress?userId=' + userId, function(data) {
+                        if (data.success) {
+                            $('#Address').val(data.address);
+                        } else {
+                            $('#Address').val('');
+                        }
+                    });
+                } else {
+                    $('#Address').val('');
+                }
+            });
+
+            // Quantity inputs change - recalculate total
+            $('.quantity-input').on('input', calculateTotal);
+
+            // Discount ratio change - recalculate total
+            $('#DiscountRatio').on('input', calculateTotal);
 
             // Attachments Modal Logic
             document.querySelectorAll('.open-attachments').forEach(btn => {
               btn.addEventListener('click', async function () {
                 const orderId = this.getAttribute('data-order-id');
-                let response = await fetch('/Admin/OrderSellToClients/GetOrderAttachments?id=' + orderId + '&returnAction=UpdateStatus');
+                let response = await fetch('/Admin/OrderBuyFromFactorys/GetOrderAttachments?id=' + orderId + '&returnAction=AddEdit');
                 let html = await response.text();
                 document.getElementById('attachmentsContent').innerHTML = html;
 
@@ -309,11 +464,11 @@
 
               if (!form || !preview) return;
 
-              let empHidden = form.querySelector('input[name="OrderSellToClientId"]');
+              let empHidden = form.querySelector('input[name="OrderBuyFromFactoryId"]');
               if (!empHidden) {
                 empHidden = document.createElement('input');
                 empHidden.type = 'hidden';
-                empHidden.name = 'OrderSellToClientId';
+                empHidden.name = 'OrderBuyFromFactoryId';
                 form.appendChild(empHidden);
               }
               empHidden.value = orderId;

@@ -1,0 +1,89 @@
+using Application.Interfaces.Admin;
+using Domain.Entities.Product;
+using Infrastructure.Repositories.InterfacesDB;
+using Microsoft.EntityFrameworkCore;
+
+namespace Application.Services.Admin
+{
+    public class OrderBuyFromFactoryService : IOrderBuyFromFactoryService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public OrderBuyFromFactoryService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<IEnumerable<OrderBuyFromFactory>> GetAllAsync(string? search = null, int? mainProductId = null, int? subProductId = null)
+        {
+            var query = _unitOfWork.OrderBuyFromFactorys.Table
+                .Include(x => x.SubProduct)
+                .ThenInclude(x => x.MainProduct)
+                .Include(x => x.Status)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(x =>
+                    (x.SubProduct != null && x.SubProduct.NameAr != null && x.SubProduct.NameAr.Contains(search)) ||
+                    (x.SubProduct != null && x.SubProduct.NameEn != null && x.SubProduct.NameEn.Contains(search)));
+            }
+
+            if (mainProductId.HasValue && mainProductId.Value > 0)
+            {
+                query = query.Where(x => x.SubProduct != null && x.SubProduct.FKMainProductId == mainProductId.Value);
+            }
+
+            if (subProductId.HasValue && subProductId.Value > 0)
+            {
+                query = query.Where(x => x.FKSubProductId == subProductId.Value);
+            }
+
+            return await query.OrderByDescending(x => x.OrderDate).ToListAsync();
+        }
+
+        public async Task<OrderBuyFromFactory?> GetByIdAsync(int id)
+        {
+            return await _unitOfWork.OrderBuyFromFactorys.GetByIdAsync(x => x.Id == id,c=>c.SubProduct!);
+        }
+
+        public async Task<int> AddAsync(OrderBuyFromFactory entity)
+        {
+            var pendingStatus = await _unitOfWork.Statuses.GetByIdAsync(x=>x.ShortChar=="P");
+            entity.StatusId = pendingStatus?.Id;
+            var created = await _unitOfWork.OrderBuyFromFactorys.AddAsync(entity);
+            await _unitOfWork.CompleteAsync();
+            return created.Id;
+        }
+
+        public async Task UpdateAsync(OrderBuyFromFactory entity)
+        {
+            var existing = await _unitOfWork.OrderBuyFromFactorys.GetByIdAsync(entity.Id);
+            if (existing == null)
+            {
+                return;
+            }
+
+            _unitOfWork.OrderBuyFromFactorys.UpdateValues(existing, entity);
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var existing = await _unitOfWork.OrderBuyFromFactorys.GetByIdAsync(id);
+            if (existing == null)
+            {
+                return;
+            }
+
+            _unitOfWork.OrderBuyFromFactorys.Delete(existing);
+            await _unitOfWork.CompleteAsync();
+        }
+
+        public async Task<bool> HasRelatedObjectsInDb(int id)
+        {
+            // Check if this order has any related records
+            return false;
+        }
+    }
+}

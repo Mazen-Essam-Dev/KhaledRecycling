@@ -533,6 +533,48 @@
                 </li>
             }
 
+            @* --- OrderBuyFromFactorys --- *@
+
+            @if (PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Index") || PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Add") || PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Edit"))
+            {
+                <li class="side-nav-item">
+                    <a data-bs-toggle="collapse" href="#sidebarOrderBuyFromFactorys"
+                       aria-expanded="@IsAriaExpanded(new[] { "OrderBuyFromFactorys" }, "Index", "AddEdit")"
+                       aria-controls="sidebarOrderBuyFromFactorys"
+                       class="side-nav-link">
+                        <span class="menu-icon"><i class="ri-calendar-schedule-fill"></i></span>
+                        <span class="fw menu-text">
+                            أدارة طلبات شراء المنتجات من المصانع
+                        </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse @IsExpanded(new[] { "OrderBuyFromFactorys" }, "Index", "AddEdit")" id="sidebarOrderBuyFromFactorys">
+                        <ul class="sub-menu  border-start-0 ">
+                            <li class="side-nav-item @IsActiveBG("OrderBuyFromFactorys", "Index")">
+                                <a href="/Admin/OrderBuyFromFactorys" class="side-nav-link">
+                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                    <span class="fw menu-text @IsActive("OrderBuyFromFactorys", "Index")">
+                                        قائمة طلبات شراء المنتجات من المصانع
+                                    </span>
+                                </a>
+                            </li>
+                            @if (PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("OrderBuyFromFactorys", "AddEdit")">
+                                    <a href="/Admin/OrderBuyFromFactorys/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("OrderBuyFromFactorys", "AddEdit")">
+                                            إضافة طلب شراء منتج من المصنع
+                                        </span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
 
 
             @* --- MainWastes --- *@

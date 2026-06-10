@@ -2,7 +2,7 @@
 
 @{
     var isEdit = Model?.Id > 0;
-    ViewData["Title"] = isEdit ? "تعديل طلب بيع لمصنع" : "إضافة طلب بيع لمصنع";
+    ViewData["Title"] = isEdit ? "تحديث الحالة لطلب بيع لمصنع" : "إضافة طلب بيع لمصنع";
     var lang = SessionHelper.GetCurrentLanguage();
     var userIsClient = Model?.IsFactoryUser ?? false;
 

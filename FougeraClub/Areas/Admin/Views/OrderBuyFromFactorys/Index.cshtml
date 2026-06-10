@@ -1,0 +1,229 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromFactory.OrderBuyFromFactoryVM
+@{
+    ViewData["Title"] = "Order Buy From Clients";
+    var lang = SessionHelper.GetCurrentLanguage();
+
+    var addPermission = PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Add");
+    var editPermission = PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Edit");
+    var DetailsPermission = PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Details");
+    var deletePermission = PermissionScanner.ValidatePermission("OrderBuyFromFactorys", "Delete");
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6 mb-2">
+        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+            <span class="fa fa-list me-2 text-ico"></span>قائمة طلبات شراء المنتجات من المصانع
+        </h4>
+    </div>
+    <div class="col-md-6 mb-2 d-flex justify-content-end gap-2">
+        @if (addPermission)
+        {         
+        <a asp-action="AddEdit" class="btn btn-success btn-sm">
+            <i class="fa-solid fa-plus me-1"></i>Add New
+        </a>
+        }
+        <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
+            <i class="fa fa-print me-1"></i>Print
+        </button>
+        <button type="button" class="btn btn-success btn-sm" onclick="openExcelPage()">
+            <i class="fa-solid fa-file-excel me-1"></i>Excel
+        </button>
+    </div>
+</div>
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="records-count-box bg-opacity-10 rounded border-opacity-25 px-2 py-1 mb-3 justify-content-end d-flex">
+    <span id="countRecords"> @Model.TotalCount </span>
+    <span> : Records Count </span>
+</div>
+
+<div class="card all-borders p-3">
+    <form method="get" asp-action="Index" class="row g-2 mb-3 filterOrderBuyFromFactory">
+        <div class="col-md-3">
+            <input asp-for="SearchString" id="searchTermInput" name="searchTerm" class="form-control" placeholder="Search by Sub Product name" />
+        </div>
+        <div class="col-md-3">
+            <select asp-for="MainProductFilterId" id="mainProductFilterId" class="form-select" asp-items="Model.MainProductsList">
+                <option value="">All Main Product</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select asp-for="SubProductFilterId" id="subProductFilterId" class="form-select" asp-items="Model.SubProductsList">
+                <option value="">All Sub Product</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-outline-success btn-sm flex-fill">Search</button>
+            <button type="button" id="btnClearFilters" class="btn-cancel-search btn-sm btn flex-fill">Clear</button>
+        </div>
+    </form>
+
+    <div id="PartialNewListContainer">
+        @await Html.PartialAsync("_ListPartial", Model)
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">@Resource1.Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="@Resource1.Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <p>@Resource1.are_you_sure_Delete <strong id="orderName"></strong>؟</p>
+            </div>
+
+            <div class="modal-footer">
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="orderId" />
+                    <button type="button" class="btn btn-success btn-sm" data-bs-dismiss="modal">@Resource1.Cancel</button>
+                    <button type="submit" class="btn-cancel-search btn-sm btn">@Resource1.Yes_delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var currentLang = '@lang';
+
+        function openPrintPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput')?.value || '');
+            const mainProductId = encodeURIComponent(document.getElementById('mainProductFilterId')?.value || '');
+            const subProductId = encodeURIComponent(document.getElementById('subProductFilterId')?.value || '');
+            const url = `/Admin/OrderBuyFromFactorys/Print?searchTerm=${searchTerm}&mainProductId=${mainProductId}&subProductId=${subProductId}`;
+            window.open(url, 'printWindow', 'width=1000,height=800,noopener,noreferrer');
+        }
+
+        function openExcelPage() {
+            const searchTerm = encodeURIComponent(document.getElementById('searchTermInput')?.value || '');
+            const mainProductId = encodeURIComponent(document.getElementById('mainProductFilterId')?.value || '');
+            const subProductId = encodeURIComponent(document.getElementById('subProductFilterId')?.value || '');
+            const url = `/Admin/OrderBuyFromFactorys/createExcelReport_Download?searchTerm=${searchTerm}&mainProductId=${mainProductId}&subProductId=${subProductId}`;
+            window.open(url, '_self');
+        }
+
+        $(document).ready(function () {
+            const pageKey = window.location.pathname + "_filters";
+
+            // Main Product change - load sub wastes
+            $('#mainProductFilterId').on('change', function () {
+                const mainProductId = $(this).val();
+                if (mainProductId) {
+                    $.get('/Admin/OrderBuyFromFactorys/GetSubProductsByMainProduct?mainProductId=' + mainProductId, function(data) {
+                        const subProductSelect = $('#subProductFilterId');
+                        subProductSelect.empty();
+                        subProductSelect.append('<option value="">All Sub Product</option>');
+
+                        $.each(data, function (i, item) {
+                            subProductSelect.append('<option value="' + item.id + '">' +
+                                (currentLang === 'ar' ? item.nameAr : item.nameEn) + '</option>');
+                        });
+                    });
+                } else {
+                    $('#subProductFilterId').empty().append('<option value="">All Sub Product</option>');
+                }
+            });
+
+            // Load sub wastes on page load if main waste is selected
+            const initialMainProductId = $('#mainProductFilterId').val();
+            if (initialMainProductId) {
+                $.get('/Admin/OrderBuyFromFactorys/GetSubProductsByMainProduct?mainProductId=' + initialMainProductId, function(data) {
+                    const subProductSelect = $('#subProductFilterId');
+                    const currentSubProductId = subProductSelect.val();
+                    subProductSelect.empty();
+                    subProductSelect.append('<option value="">All Sub Product</option>');
+
+                    $.each(data, function (i, item) {
+                        subProductSelect.append('<option value="' + item.id + '">' +
+                            (currentLang === 'ar' ? item.nameAr : item.nameEn) + '</option>');
+                    });
+
+                    // Restore selected sub waste
+                    if (currentSubProductId) {
+                        subProductSelect.val(currentSubProductId);
+                    }
+                });
+            }
+
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#mainProductFilterId').val(filters.mainProductId);
+                $('#subProductFilterId').val(filters.subProductId);
+                $('#pageSizeSelect').val(filters.pageSize);
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            $('form.filterOrderBuyFromFactory').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#mainProductFilterId').val('');
+                $('#subProductFilterId').empty().append('<option value="">All Sub Product</option>');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            $(document).on('click', '.open-delete-modal', function () {
+                const id = $(this).data('id');
+                const name = $(this).data('name');
+                $('#orderId').val(id);
+                $('#orderName').text(name);
+
+                const modalEl = document.getElementById('deleteModal');
+                if (modalEl && window.bootstrap) {
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    modal.show();
+                }
+            });
+
+            function saveFilters(page, pageSizeOverride) {
+                const filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    mainProductId: $('#mainProductFilterId').val(),
+                    subProductId: $('#subProductFilterId').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                const searchTerm = $('#searchTermInput').val();
+                const mainProductId = $('#mainProductFilterId').val();
+                const subProductId = $('#subProductFilterId').val();
+                const pageSize = pageSizeOverride || $('#pageSizeSelect').val();
+
+                $.ajax({
+                    url: '/Admin/OrderBuyFromFactorys/Index',
+                    type: 'GET',
+                    data: { searchTerm, mainProductId, subProductId, page, pageSize },
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">Loading...</div>');
+                    },
+                    success: function (data) {
+                        $('#PartialNewListContainer').html(data);
+                        const newCountRecords = $('#NewCountRecords').val();
+                        $('#countRecords').text(newCountRecords);
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">Error loading data</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

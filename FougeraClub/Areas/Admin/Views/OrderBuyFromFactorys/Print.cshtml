@@ -1,0 +1,119 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromFactory.OrderBuyFromFactoryVM
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    Layout = null;
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+    var title = "قائمة طلبات شراء المنتجات من المصانع";
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+
+<head>
+    <meta charset="utf-8">
+    <title>@title</title>
+    @if (SessionHelper.GetCurrentLanguage() == "ar")
+    {
+        <link href="~/ar/assets/css/report-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/ar/assets/css/report-ltr.css" rel="stylesheet" />
+    }
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="~/css/prints/report.css" rel="stylesheet">
+</head>
+<div id="report">
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2 class="text-danger">@title</h2>
+        </div>
+
+        <table class="table table-bordered  align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>No.</th>
+                    <th>Factory</th>
+                    <th>Main Product</th>
+                    <th>Sub Product</th>
+                    <th>Order Date</th>
+                    <th>Units</th>
+                    <th>Kilo</th>
+                    <th>Discount</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items == null || !Model.Items.Any())
+                {
+                    <tr>
+                        <td colspan="10" class="text-center p-5">No results found</td>
+                    </tr>
+                }
+                else
+                {
+                   
+                    var x = 0;
+                    foreach (var item in Model.Items)
+                    {
+                        x++;
+                        <tr>
+                            <td>@x</td>
+                            <td>@Model.UsersList?.FirstOrDefault(u => u.Value == item.FKUserId)?.Text</td>
+                            <td>@(lang == "ar" ? item.SubProduct?.MainProduct?.NameAr : item.SubProduct?.MainProduct?.NameEn)</td>
+                            <td>@(lang == "ar" ? item.SubProduct?.NameAr : item.SubProduct?.NameEn)</td>
+                            <td>@(item.OrderDate?.ToString("yyyy-MM-dd"))</td>
+                            <td>@(item.CountUnits?.ToString() ?? "-")</td>
+                            <td>@(item.Kilo?.ToString() ?? "-")</td>
+                            <td>@(item.DiscountValue?.ToString("F2") ?? "-")</td>
+                            <td>@(item.Total?.ToString("F2") ?? "-")</td>
+                            <td>@(lang == "ar" ? item.Status?.NameAr : item.Status?.NameEn)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="print-footer">
+            <div class="footer-top">
+                <div class="right">Time: @AppDubaiTime.Now.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="center">Date: @AppDubaiTime.Now.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="left">
+                    Printed by:
+                    @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)
+                </div>
+            </div>
+            <hr class="footer-line">
+            <div class="footer-bottom">
+                @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+            </div>
+        </div>
+
+        <div class="text-center no-print mt-3">
+            <button class="btn btn-primary" onclick="window.print()">طباعة التقرير</button>
+            <button class="btn btn-danger ms-2" onclick="window.close()">إغلاق النافذة</button>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+        window.onafterprint = function () {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        };
+    </script>
+</div>

@@ -1,0 +1,367 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromFactory.OrderBuyFromFactoryVM
+
+@{
+    ViewData["Title"] = "تفاصيل طلب شراء منتج من المصنع";
+    var lang = SessionHelper.GetCurrentLanguage();
+}
+
+<style>
+    @@media print {
+        .custom-navbar,
+        .sidenav-menu,
+        .footer,
+        .print-none,
+        #loadingScreen,
+        #spinner {
+            display: none !important;
+        }
+
+        html, body {
+            width: 100%;
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .page-content,
+        #page-container {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        #printArea {
+            width: 100% !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        #printArea input,
+        #printArea .form-control {
+            border: none !important;
+            background: transparent !important;
+            color: #000 !important;
+            -webkit-text-fill-color: #000 !important;
+            box-shadow: none !important;
+        }
+
+        #printArea input[type="checkbox"] {
+            -webkit-appearance: auto !important;
+            appearance: auto !important;
+        }
+
+        #printArea input::placeholder {
+            color: transparent !important;
+            opacity: 0 !important;
+        }
+    }
+</style>
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap print-none">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="/Admin/OrderBuyFromFactorys/Index">Order Buy From Clients</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-6 d-flex justify-content-end align-items-center gap-2">
+        <button type="button" onclick="printOrderDetails()" class="btn btn-primary btn-sm">
+            <i class="fa fa-print me-1"></i> @Resource2.Print
+        </button>
+        <a asp-action="Index" class="btn btn-success btn-sm">
+            Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3 mb-3" id="printArea">
+    <div class="d-flex justify-content-center c-pro border p-3 mb-3">
+        <div class="flex-grow-1 d-flex justify-content-start align-items-center">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-info-circle me-2 text-ico"></span>@ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+
+    <div class="container">
+        <form id="orderForm">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
+            <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
+            <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource1.BasicData</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FKMainProductId">اقسام المنتجات اساسي</label>
+                        <input type="hidden" asp-for="FKMainProductId" id="FKMainProductId" />
+                        <input type="text" class="form-control" value="@(Model.MainProductsList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FKSubProductId">منتج فرعي</label>
+                        <input type="hidden" asp-for="FKSubProductId" id="FKSubProductId" />
+                        <input type="text" class="form-control" value="@(Model.SubProductsList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
+                    </div>
+
+                    @if (Model.IsFactoryUser)
+                    {
+                        <input type="hidden" asp-for="FKUserId" />
+                    }
+                    else
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (مصانع)</label>
+                            <input type="hidden" asp-for="FKUserId" id="FKUserId" />
+                            <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Value == Model.FKUserId)?.Text)" disabled />
+                        </div>
+                    }
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
+                        <input type="text" class="form-control" asp-for="Address" disabled />
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
+                        <input type="hidden" asp-for="StatusId" id="StatusId" />
+                        <input type="text" class="form-control" value="@(Model.StatusesList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
+                    </div>
+
+                    <input asp-for="ApprovalDate" hidden type="date" class="form-control" disabled />
+                    <input asp-for="OrderDate" hidden type="date" class="form-control" disabled />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>Quantities & Prices</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div style="display:flex; gap:20px;">
+                    <!-- Units Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" disabled>
+                            <label class="form-check-label" for="IsUnitsSelected">Units</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="UnitsPriceHidden" value="0">
+                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">0</span></div>
+                    </div>
+
+                    <!-- Kilos Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" disabled>
+                            <label class="form-check-label" for="IsKilosSelected">Kilos</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="KilosPriceHidden" value="0">
+                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">0</span></div>
+                    </div>
+
+                    <!-- Ton Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" disabled>
+                            <label class="form-check-label" for="IsTonSelected">Ton</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="TonPriceHidden" value="0">
+                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">0</span></div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
+                        <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" disabled />
+                        <span asp-validation-for="DiscountRatio" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="DiscountValue">Discount Value</label>
+                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
+                        <span asp-validation-for="DiscountValue" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total</label>
+                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" disabled />
+                        <input type="hidden" asp-for="Total" id="TotalHidden" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var currentLang = '@lang';
+        var savedPrintPlaceholders = [];
+
+        function clearPrintPlaceholders() {
+            savedPrintPlaceholders = [];
+            document.querySelectorAll('#printArea input[placeholder]').forEach(function (input) {
+                savedPrintPlaceholders.push({ el: input, placeholder: input.getAttribute('placeholder') });
+                input.removeAttribute('placeholder');
+            });
+        }
+
+        function restorePrintPlaceholders() {
+            savedPrintPlaceholders.forEach(function (item) {
+                item.el.setAttribute('placeholder', item.placeholder);
+            });
+            savedPrintPlaceholders = [];
+        }
+
+        function printOrderDetails() {
+            window.print();
+        }
+
+        window.addEventListener('beforeprint', clearPrintPlaceholders);
+        window.addEventListener('afterprint', restorePrintPlaceholders);
+        function toggleDiv(type, isChecked) {
+            const div = document.getElementById(type + 'Div');
+            
+            if (isChecked) {
+                div.style.backgroundColor = '#f8f9fa';
+            } else {
+                div.style.backgroundColor = '';
+            }
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            
+            // Units
+            if (document.getElementById('IsUnitsSelected').checked) {
+                const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
+                const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
+                total += quantity * price;
+            }
+            
+            // Kilos
+            if (document.getElementById('IsKilosSelected').checked) {
+                const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
+                const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
+                total += quantity * price;
+            }
+            
+            // Ton
+            if (document.getElementById('IsTonSelected').checked) {
+                const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
+                const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
+                total += quantity * price;
+            }
+            
+            // Apply discount ratio
+            const discountRatio = parseFloat(document.getElementById('DiscountRatio').value) || 0;
+            if (discountRatio > 0) {
+                const discountValue = total * (discountRatio / 100);
+                document.getElementById('DiscountValue').value = discountValue.toFixed(2);
+                total -= discountValue;
+            } else {
+                // If it already has a discount value, subtract it
+                const discountVal = parseFloat(document.getElementById('DiscountValue').value) || 0;
+                if (discountVal > 0) {
+                    total -= discountVal;
+                }
+            }
+            
+            document.getElementById('TotalDisplay').value = total.toFixed(2);
+            document.getElementById('TotalHidden').value = total.toFixed(2);
+        }
+
+        function updatePrices(prices) {
+            document.getElementById('BuyPriceUnitHidden').value = prices.buyPriceUnit || 0;
+            document.getElementById('BuyPriceKiloHidden').value = prices.buyPriceKilo || 0;
+            document.getElementById('BuyPriceTonHidden').value = prices.buyPriceTon || 0;
+            
+            document.getElementById('UnitsPriceHidden').value = prices.buyPriceUnit || 0;
+            document.getElementById('KilosPriceHidden').value = prices.buyPriceKilo || 0;
+            document.getElementById('TonPriceHidden').value = prices.buyPriceTon || 0;
+            
+            document.getElementById('UnitsPriceDisplay').textContent = (prices.buyPriceUnit || 0).toFixed(2);
+            document.getElementById('KilosPriceDisplay').textContent = (prices.buyPriceKilo || 0).toFixed(2);
+            document.getElementById('TonPriceDisplay').textContent = (prices.buyPriceTon || 0).toFixed(2);
+            
+            calculateTotal();
+        }
+
+        $(document).ready(function () {
+            // Initialize div states based on checkboxes
+            if (document.getElementById('IsUnitsSelected').checked) {
+                toggleDiv('units', true);
+                const unitsValue = document.getElementById('UnitsValue').value;
+                if (unitsValue) {
+                    document.getElementById('UnitsValue').value = unitsValue;
+                }
+            }
+            if (document.getElementById('IsKilosSelected').checked) {
+                toggleDiv('kilos', true);
+                const kilosValue = document.getElementById('KilosValue').value;
+                if (kilosValue) {
+                    document.getElementById('KilosValue').value = kilosValue;
+                }
+            }
+            if (document.getElementById('IsTonSelected').checked) {
+                toggleDiv('ton', true);
+                const tonValue = document.getElementById('TonValue').value;
+                if (tonValue) {
+                    document.getElementById('TonValue').value = tonValue;
+                }
+            }
+
+            // Load initial prices if subProduct is selected
+            const subProductId = document.getElementById('FKSubProductId').value;
+            if (subProductId) {
+                $.get('/Admin/OrderBuyFromFactorys/GetSubProductPrices?subProductId=' + subProductId, function(data) {
+                    if (data.success) {
+                        updatePrices(data);
+                    }
+                });
+            }
+
+            // Calculate total on page load
+            calculateTotal();
+        });
+    </script>
+}

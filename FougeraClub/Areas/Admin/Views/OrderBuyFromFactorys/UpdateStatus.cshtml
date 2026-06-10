@@ -1,10 +1,10 @@
-@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromClient.OrderBuyFromClientVM
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderBuyFromFactory.OrderBuyFromFactoryVM
 
 @{
     var isEdit = Model?.Id > 0;
-    ViewData["Title"] = isEdit ? "تحديث الحالة لطلب شراء من عميل" : "إضافة طلب شراء من عميل";
+    ViewData["Title"] = isEdit ? "تحديث الحالة لطلب شراء منتج من المصنع" : "إضافة طلب شراء منتج من المصنع";
     var lang = SessionHelper.GetCurrentLanguage();
-    var userIsClient = Model?.IsClientUser ?? false;
+    var userIsClient = Model?.IsFactoryUser ?? false;
 
 }
 
@@ -12,7 +12,7 @@
     <div class="col-md-6">
         <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 py-2 flex-nowrap">
-                <li class="breadcrumb-item"><a href="/Admin/OrderBuyFromClients/Index">Order Buy From Clients</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/OrderBuyFromFactorys/Index">Order Buy From Clients</a></li>
                 <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
             </ol>
         </nav>
@@ -84,26 +84,26 @@
             <div class="c-edit-form mb-3">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <label class="form-label asteriskRequired" asp-for="FKMainWasteId">نفايات اساسي</label>
-                        <input type="hidden" asp-for="FKMainWasteId" id="FKMainWasteId" />
-                        <input type="text" class="form-control" value="@(Model.MainWastesList?.FirstOrDefault(x => x.Value == Model.FKMainWasteId?.ToString())?.Text)" disabled />
-                        <span asp-validation-for="FKMainWasteId" class="text-danger"></span>
+                        <label class="form-label asteriskRequired" asp-for="FKMainProductId">اقسام المنتجات اساسي</label>
+                        <input type="hidden" asp-for="FKMainProductId" id="FKMainProductId" />
+                        <input type="text" class="form-control" value="@(Model.MainProductsList?.FirstOrDefault(x => x.Value == Model.FKMainProductId?.ToString())?.Text)" disabled />
+                        <span asp-validation-for="FKMainProductId" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label asteriskRequired" asp-for="FKSubWasteId">نفاية فرعي</label>
-                        <input type="hidden" asp-for="FKSubWasteId" id="FKSubWasteId" />
-                        <input type="text" class="form-control" value="@(Model.SubWastesList?.FirstOrDefault(x => x.Value == Model.FKSubWasteId?.ToString())?.Text)" disabled />
-                        <span asp-validation-for="FKSubWasteId" class="text-danger"></span>
+                        <label class="form-label asteriskRequired" asp-for="FKSubProductId">منتج فرعي</label>
+                        <input type="hidden" asp-for="FKSubProductId" id="FKSubProductId" />
+                        <input type="text" class="form-control" value="@(Model.SubProductsList?.FirstOrDefault(x => x.Value == Model.FKSubProductId?.ToString())?.Text)" disabled />
+                        <span asp-validation-for="FKSubProductId" class="text-danger"></span>
                     </div>
-                    @if (Model.IsClientUser)
+                    @if (Model.IsFactoryUser)
                     {
                         <input type="hidden" asp-for="FKUserId" id="FKUserId" />
                     }
                     else
                     {
                         <div class="col-md-6">
-                            <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (افراد)</label>
+                            <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (مصانع)</label>
                             <input type="hidden" asp-for="FKUserId" id="FKUserId" />
                             <input type="text" class="form-control" value="@(Model.UsersList?.FirstOrDefault(x => x.Value == Model.FKUserId)?.Text)" disabled />
                         </div>
@@ -288,7 +288,7 @@
             document.querySelectorAll('.open-attachments').forEach(btn => {
               btn.addEventListener('click', async function () {
                 const orderId = this.getAttribute('data-order-id');
-                let response = await fetch('/Admin/OrderBuyFromClients/GetOrderAttachments?id=' + orderId + '&returnAction=UpdateStatus');
+                let response = await fetch('/Admin/OrderBuyFromFactorys/GetOrderAttachments?id=' + orderId + '&returnAction=UpdateStatus');
                 let html = await response.text();
                 document.getElementById('attachmentsContent').innerHTML = html;
 
@@ -309,11 +309,11 @@
 
               if (!form || !preview) return;
 
-              let empHidden = form.querySelector('input[name="OrderBuyFromClientId"]');
+              let empHidden = form.querySelector('input[name="OrderBuyFromFactoryId"]');
               if (!empHidden) {
                 empHidden = document.createElement('input');
                 empHidden.type = 'hidden';
-                empHidden.name = 'OrderBuyFromClientId';
+                empHidden.name = 'OrderBuyFromFactoryId';
                 form.appendChild(empHidden);
               }
               empHidden.value = orderId;
