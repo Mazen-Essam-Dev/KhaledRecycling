@@ -490,6 +490,49 @@
             }
 
 
+            @* --- OrderSellToClients --- *@
+
+            @if (PermissionScanner.ValidatePermission("OrderSellToClients", "Index") || PermissionScanner.ValidatePermission("OrderSellToClients", "Add") || PermissionScanner.ValidatePermission("OrderSellToClients", "Edit"))
+            {
+                <li class="side-nav-item">
+                    <a data-bs-toggle="collapse" href="#sidebarOrderSellToClients"
+                       aria-expanded="@IsAriaExpanded(new[] { "OrderSellToClients" }, "Index", "AddEdit")"
+                       aria-controls="sidebarOrderSellToClients"
+                       class="side-nav-link">
+                        <span class="menu-icon"><i class="ri-calendar-schedule-fill"></i></span>
+                        <span class="fw menu-text">
+                            أدارة طلبات بيع المنتجات للعملاء
+                        </span>
+                        <span class="menu-arrow"></span>
+                    </a>
+                    <div class="collapse @IsExpanded(new[] { "OrderSellToClients" }, "Index", "AddEdit")" id="sidebarOrderSellToClients">
+                        <ul class="sub-menu  border-start-0 ">
+                            <li class="side-nav-item @IsActiveBG("OrderSellToClients", "Index")">
+                                <a href="/Admin/OrderSellToClients" class="side-nav-link">
+                                    <span class="menu-icon"><i class="ri-list-check"></i></span>
+
+                                    <span class="fw menu-text @IsActive("OrderSellToClients", "Index")">
+                                        قائمة طلبات بيع المنتجات للعملاء
+                                    </span>
+                                </a>
+                            </li>
+                            @if (PermissionScanner.ValidatePermission("OrderSellToClients", "Add"))
+                            {
+                                <li class="side-nav-item @IsActiveBG("OrderSellToClients", "AddEdit")">
+                                    <a href="/Admin/OrderSellToClients/AddEdit" class="side-nav-link">
+                                        <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
+
+                                        <span class="fw menu-text @IsActive("OrderSellToClients", "AddEdit")">
+                                            إضافة طلب بيع منتج للعميل
+                                        </span>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
 
 
             @* --- MainWastes --- *@

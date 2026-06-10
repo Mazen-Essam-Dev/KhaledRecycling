@@ -1,4 +1,4 @@
-﻿using Domain.Entities.Waste;
+﻿using Domain.Entities.Product;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities.Product;
@@ -7,7 +7,7 @@ public class OrderBuyFromFactory
 {
     public int Id { get; set; }
     public string? FKUserId { get; set; }
-    public int? FKSubWasteId { get; set; }
+    public int? FKSubProductId { get; set; }
 
     public int? CountUnits { get; set; }
     public double? Kilo { get; set; }
@@ -23,8 +23,8 @@ public class OrderBuyFromFactory
 
     public int? StatusId { get; set; }
 
-    [ForeignKey("FKSubWasteId")]
-    public SubWaste? SubWaste { get; set; }
+    [ForeignKey("FKSubProductId")]
+    public SubProduct? SubProduct { get; set; }
 
     [ForeignKey("StatusId")]
     public Status? Status { get; set; }

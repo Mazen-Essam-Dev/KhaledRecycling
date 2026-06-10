@@ -1,0 +1,596 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToClient.OrderSellToClientVM
+
+@{
+    var isEdit = Model?.Id > 0;
+    ViewData["Title"] = isEdit ? "تعديل طلب بيع منتج للعميل" : "إضافة طلب بيع منتج للعميل";
+    var lang = SessionHelper.GetCurrentLanguage();
+    var userIsClient = Model?.IsClientUser ?? false;
+
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6">
+        <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
+                <li class="breadcrumb-item"><a href="/Admin/OrderSellToClients/Index">Order Sell From Clients</a></li>
+                <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
+            </ol>
+        </nav>
+    </div>
+    <div class="col-6 d-flex justify-content-end align-items-center gap-2">
+        @if (isEdit)
+        {
+            <button type="button" class="btn btn-primary btn-sm open-attachments" data-order-id="@Model.Id">
+                <i class="fa-solid fa-paperclip me-1"></i> Attachments
+            </button>
+        }
+        <a asp-action="Index" class="btn btn-success btn-sm">
+            Back <i class="fa-solid fa-arrow-left me-1"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Attachments Modal -->
+<div class="modal fade" id="uploadFilesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div id="attachmentsContent"></div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3 mb-3">
+    <div class="d-flex justify-content-center c-pro border p-3 mb-3">
+        <div class="flex-grow-1 d-flex justify-content-start align-items-center">
+            <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+                <span class="fa fa-edit me-2 text-ico"></span>@ViewData["Title"]
+            </h4>
+        </div>
+    </div>
+
+    <div class="container">
+        <form asp-action="AddEdit" method="post" id="orderForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="SellPriceUnit" id="SellPriceUnitHidden" />
+            <input type="hidden" asp-for="SellPriceKilo" id="SellPriceKiloHidden" />
+            <input type="hidden" asp-for="SellPriceTon" id="SellPriceTonHidden" />
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>@Resource1.BasicData</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FKMainProductId">اقسام المنتجات اساسي</label>
+                        <select asp-for="FKMainProductId" class="form-select" id="FKMainProductId" asp-items="Model.MainProductsList">
+                            <option value="">-- Select Main Product --</option>
+                        </select>
+                        <span asp-validation-for="FKMainProductId" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="FKSubProductId">منتج فرعي</label>
+                        <select asp-for="FKSubProductId" class="form-select" id="FKSubProductId" asp-items="Model.SubProductsList">
+                            <option value="">-- Select Sub Product --</option>
+                        </select>
+                        <span asp-validation-for="FKSubProductId" class="text-danger"></span>
+                    </div>
+
+                    @if (Model.IsClientUser)
+                    {
+                        <input type="hidden" asp-for="FKUserId" id="FKUserId" />
+                    }
+                    else
+                    {
+                        <div class="col-md-6">
+                            <label class="form-label asteriskRequired" asp-for="FKUserId">العميل (افراد)</label>
+                            <select asp-for="FKUserId" class="form-select" id="FKUserId" asp-items="Model.UsersList">
+                                <option value="">-- Select User --</option>
+                            </select>
+                            <span asp-validation-for="FKUserId" class="text-danger"></span>
+                        </div>
+                    }
+
+                    <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
+                        <input asp-for="Address" class="form-control" id="Address" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-12">
+                        <input type="hidden" asp-for="StatusId" id="StatusId" />
+                        <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
+                        <input id="StatusName" class="form-control my-0 " value="@Model.StatusesList?.Where(c => c.Selected == true).FirstOrDefault()?.Text" disabled />
+                    </div>
+
+                    <input asp-for="ApprovalDate" hidden type="date" class="form-control" />
+                    <input asp-for="OrderDate" hidden type="date" class="form-control" />
+
+                    @* <div class="col-md-6">
+                        <label class="form-label asteriskRequired" asp-for="OrderDate">Order Date</label>
+                        <input asp-for="OrderDate" type="date" class="form-control" />
+                        <span asp-validation-for="OrderDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label" asp-for="ApprovalDate">Approval Date</label>
+                        <input asp-for="ApprovalDate" type="date" class="form-control" />
+                        <span asp-validation-for="ApprovalDate" class="text-danger"></span>
+                    </div> *@
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-left sec-title">
+                        <div class="lg-title">
+                            <h1>Quantities & Prices</h1>
+                        </div>
+                        <div class="title-sep-left"></div>
+                        <div class="title-sep-sm-left"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="c-edit-form mb-3">
+                <div style="display:flex; gap:20px;">
+                    <!-- Units Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" onchange="toggleDiv('units', this.checked)">
+                            <label class="form-check-label" for="IsUnitsSelected">Units</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="UnitsPriceHidden" value="0">
+                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">0</span></div>
+                    </div>
+
+                    <!-- Kilos Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" onchange="toggleDiv('kilos', this.checked)">
+                            <label class="form-check-label" for="IsKilosSelected">Kilos</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="KilosPriceHidden" value="0">
+                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">0</span></div>
+                    </div>
+
+                    <!-- Ton Div -->
+                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
+                        <div class="form-check mb-2">
+                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" onchange="toggleDiv('ton', this.checked)">
+                            <label class="form-check-label" for="IsTonSelected">Ton</label>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
+                        </div>
+                        <input type="hidden" id="TonPriceHidden" value="0">
+                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">0</span></div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
+                    @if (userIsClient && !isEdit && Model.MaxDiscountRatioAllowed > 0)
+                    {
+                        <!-- Points Discount Checkbox (only for new orders by client) -->
+                        <div class="col-md-12">
+                            <div class="form-check form-switch d-flex align-items-center gap-3 p-3 rounded-3" style="background:linear-gradient(135deg,#e8f5e9,#f1f8e9);border:1px solid #a5d6a7;">
+                                <input class="form-check-input mt-0" type="checkbox" role="switch"
+                                       asp-for="UsePointsDiscount"
+                                       id="UsePointsDiscount"
+                                       style="width:3em;height:1.5em;cursor:pointer; margin-inline-start: 2px !important;"
+                                       onchange="togglePointsDiscount(this.checked)">
+                                <label class="form-check-label fw-semibold text-success fs-6" for="UsePointsDiscount">
+                                    <i class="fa-solid fa-star me-1 text-warning"></i>
+                                    لك خصم <strong>@Model.MaxDiscountRatioAllowed%</strong> هل تريده ؟
+                                </label>
+                            </div>
+                            <input type="hidden" id="MaxDiscountRatioAllowed" value="@Model.MaxDiscountRatioAllowed" />
+                        </div>
+                    }
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
+                        @if (userIsClient)
+                        {
+                            <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" readonly style="background:#f0f0f0;cursor:not-allowed;" />
+                        }
+                        else
+                        {
+                            <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" />
+                        }
+                        <span asp-validation-for="DiscountRatio" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="DiscountValue">Discount Value</label>
+                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" readonly />
+                        <span asp-validation-for="DiscountValue" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Total</label>
+                        <input type="text" class="form-control bg-light" id="TotalDisplay" value="0" readonly />
+                        <input type="hidden" asp-for="Total" id="TotalHidden" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end gap-2 mb-4">
+                <button type="submit" class="btn-cancel-search btn-sm btn" id="submitBtn">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>@Resource2.Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        var currentLang = '@lang';
+
+        function updateSubmitButtonState() {
+            const isUnits = document.getElementById('IsUnitsSelected').checked;
+            const isKilos = document.getElementById('IsKilosSelected').checked;
+            const isTon = document.getElementById('IsTonSelected').checked;
+
+            document.getElementById('submitBtn').disabled = !(isUnits || isKilos || isTon);
+        }
+
+        function toggleDiv(type, isChecked) {
+            const div = document.getElementById(type + 'Div');
+            const input = div.querySelector('.quantity-input');
+
+            if (isChecked) {
+                input.disabled = false;
+                div.style.backgroundColor = '#f8f9fa';
+            } else {
+                input.disabled = true;
+                input.value = '';
+                div.style.backgroundColor = '';
+            }
+            calculateTotal();
+        }
+
+            // Toggle points discount checkbox
+            function togglePointsDiscount(isChecked) {
+                const maxDiscount = parseFloat(document.getElementById('MaxDiscountRatioAllowed')?.value) || 0;
+                const discountRatioInput = document.getElementById('DiscountRatio');
+                if (isChecked) {
+                    discountRatioInput.value = maxDiscount;
+                } else {
+                    discountRatioInput.value = '';
+                }
+                calculateTotal();
+            }
+
+            function calculateTotal() {
+                let total = 0;
+
+                // Units
+                if (document.getElementById('IsUnitsSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
+                    const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Kilos
+                if (document.getElementById('IsKilosSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
+                    const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Ton
+                if (document.getElementById('IsTonSelected').checked) {
+                    const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
+                    const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
+                    total += quantity * price;
+                }
+
+                // Apply discount ratio
+                const discountRatioEl = document.getElementById('DiscountRatio');
+                const discountRatio = discountRatioEl ? parseFloat(discountRatioEl.value) || 0 : 0;
+                if (discountRatio > 0) {
+                    const discountValue = total * (discountRatio / 100);
+                    document.getElementById('DiscountValue').value = discountValue.toFixed(2);
+                    total -= discountValue;
+                } else {
+                    document.getElementById('DiscountValue').value = '';
+                }
+
+                document.getElementById('TotalDisplay').value = total.toFixed(2);
+                document.getElementById('TotalHidden').value = total.toFixed(2);
+            }
+
+        function updatePrices(prices) {
+            document.getElementById('SellPriceUnitHidden').value = prices.buyPriceUnit || 0;
+            document.getElementById('SellPriceKiloHidden').value = prices.buyPriceKilo || 0;
+            document.getElementById('SellPriceTonHidden').value = prices.buyPriceTon || 0;
+
+            document.getElementById('UnitsPriceHidden').value = prices.buyPriceUnit || 0;
+            document.getElementById('KilosPriceHidden').value = prices.buyPriceKilo || 0;
+            document.getElementById('TonPriceHidden').value = prices.buyPriceTon || 0;
+
+            document.getElementById('UnitsPriceDisplay').textContent = (prices.buyPriceUnit || 0).toFixed(2);
+            document.getElementById('KilosPriceDisplay').textContent = (prices.buyPriceKilo || 0).toFixed(2);
+            document.getElementById('TonPriceDisplay').textContent = (prices.buyPriceTon || 0).toFixed(2);
+
+            calculateTotal();
+        }
+
+        $(document).ready(function () {
+            // Check submit button state initially
+            updateSubmitButtonState();
+
+            // Bind change event to checkboxes for submit button state
+            $('#IsUnitsSelected, #IsKilosSelected, #IsTonSelected').on('change', updateSubmitButtonState);
+
+            // Initialize div states based on checkboxes
+            if (document.getElementById('IsUnitsSelected').checked) {
+                toggleDiv('units', true);
+                // Set the value from the model
+                const unitsValue = document.getElementById('UnitsValue').value;
+                if (unitsValue) {
+                    document.getElementById('UnitsValue').value = unitsValue;
+                }
+            }
+            if (document.getElementById('IsKilosSelected').checked) {
+                toggleDiv('kilos', true);
+                // Set the value from the model
+                const kilosValue = document.getElementById('KilosValue').value;
+                if (kilosValue) {
+                    document.getElementById('KilosValue').value = kilosValue;
+                }
+            }
+            if (document.getElementById('IsTonSelected').checked) {
+                toggleDiv('ton', true);
+                // Set the value from the model
+                const tonValue = document.getElementById('TonValue').value;
+                if (tonValue) {
+                    document.getElementById('TonValue').value = tonValue;
+                }
+            }
+
+            // Load initial prices if subProduct is selected
+            const subProductId = document.getElementById('FKSubProductId').value;
+            if (subProductId) {
+                $.get('/Admin/OrderSellToClients/GetSubProductPrices?subProductId=' + subProductId, function(data) {
+                    if (data.success) {
+                        updatePrices(data);
+                    }
+                });
+            }
+
+            // Calculate total on page load if in edit mode
+            const isEditMode = document.getElementById('Id').value > 0;
+            if (isEditMode) {
+                calculateTotal();
+            }
+
+            // Main Product change - load sub wastes
+            $('#FKMainProductId').on('change', function () {
+                const mainProductId = $(this).val();
+                if (mainProductId) {
+                    $.get('/Admin/OrderSellToClients/GetSubProductsByMainProduct?mainProductId=' + mainProductId, function(data) {
+                        const subProductSelect = $('#FKSubProductId');
+                        subProductSelect.empty();
+                        subProductSelect.append('<option value="">-- Select Sub Product --</option>');
+
+                        $.each(data, function (i, item) {
+                            subProductSelect.append('<option value="' + item.id + '">' +
+                                (currentLang === 'ar' ? item.nameAr : item.nameEn) + '</option>');
+                        });
+                    });
+                } else {
+                    $('#FKSubProductId').empty().append('<option value="">-- Select Sub Product --</option>');
+                }
+            });
+
+            // Sub Product change - load prices
+            $('#FKSubProductId').on('change', function () {
+                const subProductId = $(this).val();
+                if (subProductId) {
+                    $.get('/Admin/OrderSellToClients/GetSubProductPrices?subProductId=' + subProductId, function(data) {
+                        if (data.success) {
+                            updatePrices(data);
+                        }
+                    });
+                } else {
+                    updatePrices({ buyPriceUnit: 0, buyPriceKilo: 0, buyPriceTon: 0 });
+                }
+            });
+
+            // User change - load address
+            $('#FKUserId').on('change', function () {
+                const userId = $(this).val();
+                if (userId) {
+                    $.get('/Admin/OrderSellToClients/GetUserAddress?userId=' + userId, function(data) {
+                        if (data.success) {
+                            $('#Address').val(data.address);
+                        } else {
+                            $('#Address').val('');
+                        }
+                    });
+                } else {
+                    $('#Address').val('');
+                }
+            });
+
+            // Quantity inputs change - recalculate total
+            $('.quantity-input').on('input', calculateTotal);
+
+            // Discount ratio change - recalculate total
+            $('#DiscountRatio').on('input', calculateTotal);
+
+            // Attachments Modal Logic
+            document.querySelectorAll('.open-attachments').forEach(btn => {
+              btn.addEventListener('click', async function () {
+                const orderId = this.getAttribute('data-order-id');
+                let response = await fetch('/Admin/OrderSellToClients/GetOrderAttachments?id=' + orderId + '&returnAction=AddEdit');
+                let html = await response.text();
+                document.getElementById('attachmentsContent').innerHTML = html;
+
+                const modalEl = document.getElementById('uploadFilesModal');
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+
+                initAttachmentsModal(modalEl, orderId);
+              });
+            });
+
+            function initAttachmentsModal(modalEl, orderId) {
+              const form = modalEl.querySelector('#attachmentsForm');
+              const preview = modalEl.querySelector('#attachmentsPreview');
+              const addFileBtn = modalEl.querySelector('#addFileBtn');
+              const fileNameInput = modalEl.querySelector('#fileNameInput');
+              const fileInput = modalEl.querySelector('#fileInput');
+
+              if (!form || !preview) return;
+
+              let empHidden = form.querySelector('input[name="OrderSellToClientId"]');
+              if (!empHidden) {
+                empHidden = document.createElement('input');
+                empHidden.type = 'hidden';
+                empHidden.name = 'OrderSellToClientId';
+                form.appendChild(empHidden);
+              }
+              empHidden.value = orderId;
+
+              function updateIndices() {
+                const cards = preview.querySelectorAll('.file-card');
+                cards.forEach((card, idx) => {
+                  card.dataset.index = idx;
+                  card.querySelectorAll('input, select, textarea').forEach(el => {
+                    if (!el.name) return;
+                    el.name = el.name.replace(/\[\d+\]/, `[${idx}]`);
+                  });
+                });
+              }
+
+              preview.querySelectorAll('.file-card').forEach((card, idx) => {
+                card.dataset.index = idx;
+                if (!card.querySelector('.remove-btn')) {
+                  const removeBtn = document.createElement('button');
+                  removeBtn.type = 'button';
+                  removeBtn.className = 'remove-btn';
+                  removeBtn.title = 'Remove';
+                  removeBtn.innerHTML = '&times;';
+                  removeBtn.style.position = 'absolute';
+                  removeBtn.style.top = '4px';
+                  removeBtn.style.right = '4px';
+                  card.appendChild(removeBtn);
+                }
+              });
+
+              let index = preview.querySelectorAll('.file-card').length;
+
+              preview.addEventListener('click', function (e) {
+                const removeBtn = e.target.closest('.remove-btn');
+                if (!removeBtn) return;
+                const card = removeBtn.closest('.file-card');
+                if (!card) return;
+
+                const img = card.querySelector('img');
+                if (img && img.src && img.src.startsWith('blob:')) {
+                  URL.revokeObjectURL(img.src);
+                }
+
+                card.remove();
+                updateIndices();
+                index = preview.querySelectorAll('.file-card').length;
+              });
+
+              addFileBtn?.addEventListener('click', function () {
+                const name = (fileNameInput?.value || '').trim();
+                const file = fileInput?.files?.[0];
+
+                if (!name) {
+                    $('#fileNameSpan').text('Required');
+                    return;
+                } else {
+                    $('#fileNameSpan').text('');
+                }
+                if (!file) {
+                    $('#fileInputSpan').text('Required');
+                    return;
+                } else {
+                    $('#fileInputSpan').text('');
+                }
+
+                const fileType = (file.type || '').toLowerCase();
+                const isImage = fileType.startsWith('image/');
+                const isPdf = fileType === 'application/pdf';
+
+                const container = document.createElement('div');
+                container.className = 'file-card text-center position-relative';
+                container.dataset.index = index;
+
+                let previewHTML = '';
+                if (isImage) {
+                  const imgUrl = URL.createObjectURL(file);
+                  previewHTML = `<img src="${imgUrl}" class="img-thumbnail" style="width:90px;height:90px;object-fit:cover;border-radius:8px;">`;
+                } else if (isPdf) {
+                  previewHTML = `<i class="fa-solid fa-file-pdf fa-5x text-danger"></i>`;
+                } else {
+                  previewHTML = `<i class="fa-solid fa-file fa-5x text-secondary"></i>`;
+                }
+
+                container.innerHTML = `
+                  <button type="button" class="remove-btn" title="Remove">&times;</button>
+                  ${previewHTML}
+                  <div class="fw-medium mt-2">${escapeHtml(name)}</div>
+                `;
+
+                const tempFileInput = document.createElement('input');
+                tempFileInput.type = 'file';
+                tempFileInput.name = `Attachments[${index}].File`;
+                tempFileInput.classList.add('d-none');
+
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                tempFileInput.files = dt.files;
+
+                const nameField = document.createElement('input');
+                nameField.type = 'hidden';
+                nameField.name = `Attachments[${index}].Name`;
+                nameField.value = name;
+
+                container.appendChild(tempFileInput);
+                container.appendChild(nameField);
+                preview.appendChild(container);
+
+                fileNameInput.value = '';
+                fileInput.value = '';
+
+                index++;
+                updateIndices();
+              });
+
+              function escapeHtml(str) {
+                return str.replace(/[&<>"']/g, function (m) {
+                  return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]);
+                });
+              }
+
+              updateIndices();
+            }
+        });
+    </script>
+}
