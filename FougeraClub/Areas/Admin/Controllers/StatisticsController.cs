@@ -1,10 +1,10 @@
 using KhaledTeamRecycling.Areas.Admin.ViewModels.Statistics;
 using KhaledTeamRecycling.Attributes;
 using KhaledTeamRecycling.Middelware;
-using Infrastructure.Identity;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace KhaledTeamRecycling.Areas.Admin.Controllers
 {
@@ -25,33 +25,51 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var vm = new StatisticsVM();
 
             var trackedUserTypes = new[] { 1, 2, 3 };
+            var loggedInUserTypeId = await GetLoggedInUserTypeIdAsync();
+            var visibleUserTypes = loggedInUserTypeId.HasValue && trackedUserTypes.Contains(loggedInUserTypeId.Value)
+                ? new[] { loggedInUserTypeId.Value }
+                : trackedUserTypes;
+
+            vm.LoggedInUserTypeId = loggedInUserTypeId;
+            vm.VisibleUserTypeIds = visibleUserTypes.ToList();
+
             var userTypeNames = await _context.UserTypes
                 .AsNoTracking()
                 .Where(x => trackedUserTypes.Contains(x.Id))
                 .ToDictionaryAsync(x => x.Id, x => x.NameAr ?? x.NameEn ?? $"نوع {x.Id}");
 
-            vm.TopUsersByType = await BuildTopUsersByTypeAsync(userTypeNames);
-            vm.TopUsersByAmountPerType = await BuildTopUsersByAmountPerTypeAsync(userTypeNames);
-            vm.TopUsersByPendingCountPerType = await BuildTopUsersByPendingCountPerTypeAsync(userTypeNames);
-            vm.TotalUsersWithPoints = await _context.UserPointss
-                .AsNoTracking()
-                .Where(x => x.FKUserId != null)
-                .Select(x => x.FKUserId!)
+            vm.TopUsersByType = await BuildTopUsersByTypeAsync(userTypeNames, visibleUserTypes);
+            vm.TopUsersByAmountPerType = await BuildTopUsersByAmountPerTypeAsync(userTypeNames, visibleUserTypes);
+            vm.TopUsersByPendingCountPerType = await BuildTopUsersByPendingCountPerTypeAsync(userTypeNames, visibleUserTypes);
+            vm.TotalUsersWithPoints = await (
+                from user in _context.Users.AsNoTracking()
+                join points in _context.UserPointss.AsNoTracking() on user.Id equals points.FKUserId
+                where user.FKUserType.HasValue && visibleUserTypes.Contains(user.FKUserType.Value)
+                select user.Id)
                 .Distinct()
                 .CountAsync();
 
-            var pendingFinancials = await _context.Financials
-                .AsNoTracking()
-                .Where(x => x.Status != null && x.Status.ShortChar == "S")
-                .Select(x => new PendingFinancialRow(x.TableType, x.ItsId, x.FKUserType))
+            var pendingFinancials = await (
+                from financial in _context.Financials.AsNoTracking()
+                join user in _context.Users.AsNoTracking() on financial.FKUserId equals user.Id into userGroup
+                from user in userGroup.DefaultIfEmpty()
+                where financial.Status != null && financial.Status.ShortChar == "S"
+                select new PendingFinancialRow(
+                    financial.TableType,
+                    financial.ItsId,
+                    financial.FKUserType ?? user!.FKUserType))
                 .ToListAsync();
 
-            vm.TotalPendingFinancials = pendingFinancials.Count;
-            vm.PendingFinancialsByUserType = trackedUserTypes
+            var pendingFinancialsForVisibleTypes = pendingFinancials
+                .Where(x => x.FKUserType.HasValue && visibleUserTypes.Contains(x.FKUserType.Value))
+                .ToList();
+
+            vm.TotalPendingFinancials = pendingFinancialsForVisibleTypes.Count;
+            vm.PendingFinancialsByUserType = visibleUserTypes
                 .Select(typeId => new SimpleChartItemVM
                 {
                     Label = GetUserTypeName(userTypeNames, typeId),
-                    Count = pendingFinancials.Count(x => x.FKUserType == typeId)
+                    Count = pendingFinancialsForVisibleTypes.Count(x => x.FKUserType == typeId)
                 })
                 .ToList();
 
@@ -163,18 +181,18 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             return View(vm);
         }
 
-        private async Task<List<UserTypeTopChartsVM>> BuildTopUsersByAmountPerTypeAsync(Dictionary<int, string> userTypeNames)
+        private async Task<List<UserTypeTopChartsVM>> BuildTopUsersByAmountPerTypeAsync(Dictionary<int, string> userTypeNames, IReadOnlyCollection<int> visibleUserTypes)
         {
             var topCandidates = await (
                 from financial in _context.Financials.AsNoTracking()
                 join user in _context.Users.AsNoTracking() on financial.FKUserId equals user.Id into userGroup
                 from user in userGroup.DefaultIfEmpty()
                 where financial.FKUserId != null
-                    && financial.FKUserType.HasValue
-                    && (financial.FKUserType == 1 || financial.FKUserType == 2 || financial.FKUserType == 3)
+                    && (financial.FKUserType ?? user!.FKUserType).HasValue
+                    && visibleUserTypes.Contains((financial.FKUserType ?? user!.FKUserType)!.Value)
                 group financial by new
                 {
-                    financial.FKUserType,
+                    EffectiveUserType = financial.FKUserType ?? user!.FKUserType,
                     financial.FKUserId,
                     UserName = user != null
                         ? (user.FullNameAr ?? user.FullNameEn ?? user.UserName ?? financial.FKUserId!)
@@ -183,13 +201,13 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 into g
                 select new TopFinancialAmountCandidateRow
                 {
-                    UserTypeId = g.Key.FKUserType!.Value,
+                    UserTypeId = g.Key.EffectiveUserType!.Value,
                     UserName = g.Key.UserName,
                     TotalAmount = g.Sum(x => x.Total ?? 0d)
                 })
                 .ToListAsync();
 
-            return new[] { 1, 2, 3 }
+            return visibleUserTypes
                 .Select(typeId => new UserTypeTopChartsVM
                 {
                     UserTypeId = typeId,
@@ -209,20 +227,20 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 .ToList();
         }
 
-        private async Task<List<UserTypeTopChartsVM>> BuildTopUsersByPendingCountPerTypeAsync(Dictionary<int, string> userTypeNames)
+        private async Task<List<UserTypeTopChartsVM>> BuildTopUsersByPendingCountPerTypeAsync(Dictionary<int, string> userTypeNames, IReadOnlyCollection<int> visibleUserTypes)
         {
             var topCandidates = await (
                 from financial in _context.Financials.AsNoTracking()
                 join user in _context.Users.AsNoTracking() on financial.FKUserId equals user.Id into userGroup
                 from user in userGroup.DefaultIfEmpty()
                 where financial.FKUserId != null
-                    && financial.FKUserType.HasValue
-                    && (financial.FKUserType == 1 || financial.FKUserType == 2 || financial.FKUserType == 3)
+                    && (financial.FKUserType ?? user!.FKUserType).HasValue
+                    && visibleUserTypes.Contains((financial.FKUserType ?? user!.FKUserType)!.Value)
                     && financial.Status != null
                     && financial.Status.ShortChar == "S"
                 group financial by new
                 {
-                    financial.FKUserType,
+                    EffectiveUserType = financial.FKUserType ?? user!.FKUserType,
                     financial.FKUserId,
                     UserName = user != null
                         ? (user.FullNameAr ?? user.FullNameEn ?? user.UserName ?? financial.FKUserId!)
@@ -231,13 +249,13 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 into g
                 select new TopFinancialCountCandidateRow
                 {
-                    UserTypeId = g.Key.FKUserType!.Value,
+                    UserTypeId = g.Key.EffectiveUserType!.Value,
                     UserName = g.Key.UserName,
                     Count = g.Count()
                 })
                 .ToListAsync();
 
-            return new[] { 1, 2, 3 }
+            return visibleUserTypes
                 .Select(typeId => new UserTypeTopChartsVM
                 {
                     UserTypeId = typeId,
@@ -257,12 +275,12 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 .ToList();
         }
 
-        private async Task<List<TopUserStatVM>> BuildTopUsersByTypeAsync(Dictionary<int, string> userTypeNames)
+        private async Task<List<TopUserStatVM>> BuildTopUsersByTypeAsync(Dictionary<int, string> userTypeNames, IReadOnlyCollection<int> visibleUserTypes)
         {
             var topCandidates = await (
                 from user in _context.Users.AsNoTracking()
                 join points in _context.UserPointss.AsNoTracking() on user.Id equals points.FKUserId
-                where user.FKUserType.HasValue && (user.FKUserType == 1 || user.FKUserType == 2 || user.FKUserType == 3)
+                where user.FKUserType.HasValue && visibleUserTypes.Contains(user.FKUserType.Value)
                 group points by new
                 {
                     user.Id,
@@ -280,7 +298,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 })
                 .ToListAsync();
 
-            return new[] { 1, 2, 3 }
+            return visibleUserTypes
                 .Select(typeId =>
                 {
                     var topItem = topCandidates
@@ -298,6 +316,21 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     };
                 })
                 .ToList();
+        }
+
+        private async Task<int?> GetLoggedInUserTypeIdAsync()
+        {
+            var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(loggedInUserId))
+            {
+                return null;
+            }
+
+            return await _context.Users
+                .AsNoTracking()
+                .Where(x => x.Id == loggedInUserId)
+                .Select(x => x.FKUserType)
+                .FirstOrDefaultAsync();
         }
 
         private static string GetUserTypeName(Dictionary<int, string> userTypeNames, int typeId)

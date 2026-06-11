@@ -6,6 +6,8 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Statistics
         public int TotalInCourses { get; set; }
         public int TotalPendingFinancials { get; set; }
         public int TotalUsersWithPoints { get; set; }
+        public int? LoggedInUserTypeId { get; set; }
+        public List<int> VisibleUserTypeIds { get; set; } = new();
         public List<AgeGroupStatVM> AgeGroupStats { get; set; } = new();
         public List<CourseCategoryStatVM> CourseDepartmentCategoryStats { get; set; } = new();
         public List<GenderStatVM> GenderStats { get; set; } = new();

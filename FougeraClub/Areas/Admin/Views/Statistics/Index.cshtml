@@ -6,7 +6,7 @@
     ViewData["Title"] = "الإحصائيات بالرسومات";
     var topUserLabels = Model.TopUsersByType.Select(x => x.UserTypeName).ToList();
     var topUserTotals = Model.TopUsersByType.Select(x => x.Total).ToList();
-    var trackedTypes = new[] { 1, 2, 3 };
+    var trackedTypes = Model.VisibleUserTypeIds;
 
     var pendingUserTypeLabels = Model.PendingFinancialsByUserType.Select(x => x.Label).ToList();
     var pendingUserTypeCounts = Model.PendingFinancialsByUserType.Select(x => x.Count).ToList();
@@ -24,13 +24,21 @@
     var mainWasteCounts = Model.PendingFinancialsByMainWaste.Select(x => x.Count).ToList();
 }
 
+<style>
+    @@media print {
+        .print-hide {
+            display: none !important;
+        }
+    }
+</style>
+
 <div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
     <div class="col-md-6 mb-2">
         <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
             <span class="fa fa-chart-simple me-2 text-ico"></span>الإحصائيات بالرسومات
         </h4>
     </div>
-    <div class="col-md-6 mb-2 d-flex justify-content-end">
+    <div class="col-md-6 mb-2 d-flex justify-content-end print-hide">
         <button type="button" class="btn btn-success btn-sm" onclick="printCurrentPage()">
             <i class="fa fa-print me-1"></i>طباعة الصفحة
         </button>
