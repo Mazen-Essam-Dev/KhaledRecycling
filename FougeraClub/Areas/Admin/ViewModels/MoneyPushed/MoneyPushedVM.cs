@@ -20,6 +20,8 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.MoneyPushed
 
         [Display(Name = "تاريخ الإنشاء")]
         public DateTime? CreatedDate { get; set; }
+        public string? ItemName { get; set; }
+        public string? Notes { get; set; }
 
         // Pagination & Search properties
         public IEnumerable<MoneyPushedItemDTO> Items { get; set; } = new List<MoneyPushedItemDTO>();
@@ -39,6 +41,8 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.MoneyPushed
         public string? UserName { get; set; }
         public decimal? Money { get; set; }
         public char? TypeTransaction { get; set; }
+        public string? ItemName { get; set; }
+        public string? Notes { get; set; }
         public DateTime? CreatedDate { get; set; }
     }
 }

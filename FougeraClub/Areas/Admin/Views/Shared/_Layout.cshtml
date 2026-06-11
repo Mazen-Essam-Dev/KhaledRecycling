@@ -75,7 +75,10 @@
 }
 @using Application.Interfaces.Admin
 @using Domain.Resources
+@using Infrastructure.Persistence
+@using Microsoft.EntityFrameworkCore
 @using System.Security.Claims
+@inject ApplicationDbContext _dbContext
 
 <!DOCTYPE html>
 <html lang="en">
@@ -173,6 +176,12 @@
         }
     </style>
 </head>
+@{
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var currentUserPoints = !string.IsNullOrWhiteSpace(currentUserId)
+        ? await _dbContext.UserPointss.AsNoTracking().FirstOrDefaultAsync(x => x.FKUserId == currentUserId)
+        : null;
+}
 <body>
     <nav class="custom-navbar">
         <!-- Left Section (Toggle + Brand) -->
@@ -193,6 +202,18 @@
 
         <!-- Right Section (Notifications + Login/User) -->
         <div class="d-flex align-items-center">
+            @if (currentUserPoints != null)
+            {
+                <div class="d-flex align-items-center gap-2 me-3">
+                    <span style="font-size: 17px !important; color: #b8661c; background-color: #33800052 !important;"
+                    class="badge bg-success rounded-pill px-3 py-2">
+                        النقاط الحاصل عليها: @(currentUserPoints.Points ?? 0)
+                    </span>
+                    <span style="font-size: 17px !important; color: #b8661c; background-color: #000000d1 !important;" class="badge bg-primary rounded-pill px-3 py-2">
+                        المبالغ المتداولة: @((currentUserPoints.Totals ?? 0).ToString("0.00"))
+                    </span>
+                </div>
+            }
             <!-- Notification bell with dropdown -->
             <div class="nav-notification position-relative dropdown">
                 <a href="#" id="notifBell" class="position-relative dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">

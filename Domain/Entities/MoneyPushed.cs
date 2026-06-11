@@ -15,4 +15,7 @@ public class MoneyPushed
     public decimal? Money { get; set; }
     public char? TypeTransaction { get; set; }
     public DateTime? CreatedDate { get; set; }
+    public string? ItemName { get; set; }
+    public string? Notes { get; set; }
+
 }

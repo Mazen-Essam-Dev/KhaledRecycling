@@ -81,6 +81,8 @@
                     <th>اسم المستخدم</th>
                     <th>المبلغ</th>
                     <th>نوع المعاملة</th>
+                    <th>اسم الصنف</th>
+                    <th>ملاحظات</th>
                     <th>تاريخ الإنشاء</th>
                 </tr>
             </thead>
@@ -88,7 +90,7 @@
                 @if (Model.Items == null || !Model.Items.Any())
                 {
                     <tr>
-                        <td colspan="5" class="text-center p-5">لا توجد بيانات</td>
+                        <td colspan="7" class="text-center p-5">لا توجد بيانات</td>
                     </tr>
                 }
                 else
@@ -110,6 +112,8 @@
                                     <span>@item.TypeTransaction</span>
                                 }
                             </td>
+                            <td>@item.ItemName</td>
+                            <td>@item.Notes</td>
                             <td>@(item.CreatedDate?.ToString("yyyy-MM-dd HH:mm"))</td>
                         </tr>
                     }
@@ -119,7 +123,7 @@
 
             <tfoot>
                 <tr style="border: none;">
-                    <td colspan="5" style="min-height:300px !important;border: none !important;">
+                    <td colspan="7" style="min-height:300px !important;border: none !important;">
                         <div class="footer-container" id="footer-container" style="color: rgba(0, 0, 0, 0) !important;">
                             <div class="footer-top" id="footer-top">
                                 <div class="right">Time: </div>

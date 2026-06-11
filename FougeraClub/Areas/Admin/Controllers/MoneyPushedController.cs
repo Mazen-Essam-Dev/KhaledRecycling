@@ -26,6 +26,11 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             _mapper = mapper;
         }
 
+        private static string? ShortenNotes(string? notes)
+        {
+            return notes?.Length > 100 ? notes.Substring(0, 100) + "....." : notes;
+        }
+
         [YesGet]
         public async Task<IActionResult> Index(string? searchTerm, int page = 1, int pageSize = 50)
         {
@@ -39,7 +44,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                             UserName = u != null ? u.FullNameAr : "مستخدم غير معروف",
                             Money = mp.Money,
                             TypeTransaction = mp.TypeTransaction,
-                            CreatedDate = mp.CreatedDate
+                            ItemName = mp.ItemName,
+                            Notes = ShortenNotes(mp.Notes),
+                            CreatedDate = mp.CreatedDate,
                         };
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
@@ -94,6 +101,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 FKUserId = entity.FKUserId,
                 Money = entity.Money,
                 TypeTransaction = entity.TypeTransaction,
+                ItemName = entity.ItemName,
+                Notes = entity.Notes,
                 CreatedDate = entity.CreatedDate
             };
             
@@ -118,6 +127,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     FKUserId = loggedInUserId,
                     Money = model.Money,
                     TypeTransaction = model.TypeTransaction,
+                    ItemName = model.ItemName,
+                    Notes = model.Notes,
                     CreatedDate = DateTime.Now
                 };
                 await _unitOfWork.MoneyPusheds.AddAsync(entity);
@@ -131,6 +142,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 {
                     entity.Money = model.Money;
                     entity.TypeTransaction = model.TypeTransaction;
+                    entity.ItemName = model.ItemName;
+                    entity.Notes = model.Notes;
                     // CreatedDate and FKUserId should remain unchanged for existing records
                     
                     _unitOfWork.MoneyPusheds.Update(entity);
@@ -173,6 +186,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                             UserName = u != null ? u.FullNameAr : "مستخدم غير معروف",
                             Money = mp.Money,
                             TypeTransaction = mp.TypeTransaction,
+                            ItemName = mp.ItemName,
+                            Notes = ShortenNotes(mp.Notes),
                             CreatedDate = mp.CreatedDate
                         };
 
@@ -206,6 +221,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                             UserName = u != null ? u.FullNameAr : "مستخدم غير معروف",
                             Money = mp.Money,
                             TypeTransaction = mp.TypeTransaction,
+                            ItemName = mp.ItemName,
+                            Notes = ShortenNotes(mp.Notes),
                             CreatedDate = mp.CreatedDate
                         };
 
@@ -222,13 +239,15 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 return RedirectToAction(nameof(Index), new { searchTerm });
             }
 
-            var titles = new List<string> { "اسم المستخدم", "المبلغ", "نوع المعاملة", "تاريخ الإنشاء" };
+            var titles = new List<string> { "اسم المستخدم", "المبلغ", "نوع المعاملة", "اسم الصنف", "ملاحظات", "تاريخ الإنشاء" };
             var excelData = list.Select(x => new ExcelDataDTO
             {
                 t1 = x.UserName ?? string.Empty,
                 t2 = x.Money?.ToString("0.00") ?? string.Empty,
                 t3 = (x.TypeTransaction == '+' ? "إيداع" : (x.TypeTransaction == '-' ? "سحب" : x.TypeTransaction?.ToString())) ?? string.Empty,
-                t4 = x.CreatedDate?.ToString("yyyy-MM-dd HH:mm") ?? string.Empty
+                t4 = x.ItemName ?? string.Empty,
+                t5 = x.Notes ?? string.Empty,
+                t6 = x.CreatedDate?.ToString("yyyy-MM-dd HH:mm") ?? string.Empty
             }).ToList();
 
 

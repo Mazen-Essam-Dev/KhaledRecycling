@@ -26,6 +26,8 @@
                 <th>اسم المستخدم</th>
                 <th>المبلغ</th>
                 <th>نوع المعاملة</th>
+                <th>اسم الصنف</th>
+                <th>ملاحظات</th>
                 <th>تاريخ الإنشاء</th>
                 <th style="width: 200px;">الإجراءات</th>
             </tr>
@@ -50,6 +52,8 @@
                                 <span>@item.TypeTransaction</span>
                             }
                         </td>
+                        <td>@item.ItemName</td>
+                        <td>@item.Notes</td>
                         <td>@(item.CreatedDate?.ToString("yyyy-MM-dd HH:mm"))</td>
                         <td>
                             @if (editPermission)
@@ -72,7 +76,7 @@
             else
             {
                 <tr>
-                    <td colspan="6" class="text-center p-5">لا توجد بيانات.</td>
+                    <td colspan="8" class="text-center p-5">لا توجد بيانات.</td>
                 </tr>
             }
         </tbody>
