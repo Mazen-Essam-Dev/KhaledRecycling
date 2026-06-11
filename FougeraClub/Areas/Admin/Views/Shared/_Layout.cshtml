@@ -285,6 +285,12 @@
                     <span class="fw menu-text @IsActive("Home", "Index")">الرئيسية</span>
                 </a>
             </li>
+            <li class="side-nav-item @IsActiveBG("Statistics", "Index")">
+                <a href="/Admin/Statistics/Index" class="side-nav-link">
+                    <span class="menu-icon"><i class="fa-solid fa-chart-pie"></i></span>
+                    <span class="fw menu-text @IsActive("Statistics", "Index")">الإحصائيات بالرسومات</span>
+                </a>
+            </li>
             @* } *@
 
             @if (PermissionScanner.ValidatePermission("Trainer", "Index")
@@ -838,7 +844,9 @@
                                     <a href="/Admin/MoneyPushed/AddEdit" class="side-nav-link">
                                         <span class="menu-icon"><i class="ri-add-circle-fill"></i></span>
 
-                                        <span class="fw menu-text @IsActive("MoneyPushed", "AddEdit")">@Resource1.AddNewEmployee</span>
+                                        <span class="fw menu-text @IsActive("MoneyPushed", "AddEdit")">
+                                            إضافة مالية جديدة
+                                        </span>
                                     </a>
                                 </li>
                             }

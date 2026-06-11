@@ -1,275 +1,331 @@
-﻿@using KhaledTeamRecycling.Areas.Admin.ViewModels.Statistics
+@using System.Text.Json
+@using KhaledTeamRecycling.Areas.Admin.ViewModels.Statistics
 @model StatisticsVM
+
 @{
-    ViewData["Title"] = Resource1.Statistics;
-    ViewData["Title pakage"] = @Resource1.ActivitiesManagement ?? " ";
-    ViewData["Title Single"] = @Resource1.Statistics ?? " ";
+    ViewData["Title"] = "الإحصائيات بالرسومات";
+    var topUserLabels = Model.TopUsersByType.Select(x => x.UserTypeName).ToList();
+    var topUserTotals = Model.TopUsersByType.Select(x => x.Total).ToList();
+    var trackedTypes = new[] { 1, 2, 3 };
+
+    var pendingUserTypeLabels = Model.PendingFinancialsByUserType.Select(x => x.Label).ToList();
+    var pendingUserTypeCounts = Model.PendingFinancialsByUserType.Select(x => x.Count).ToList();
+
+    var subProductLabels = Model.PendingFinancialsBySubProduct.Select(x => x.Label).ToList();
+    var subProductCounts = Model.PendingFinancialsBySubProduct.Select(x => x.Count).ToList();
+
+    var mainProductLabels = Model.PendingFinancialsByMainProduct.Select(x => x.Label).ToList();
+    var mainProductCounts = Model.PendingFinancialsByMainProduct.Select(x => x.Count).ToList();
+
+    var subWasteLabels = Model.PendingFinancialsBySubWaste.Select(x => x.Label).ToList();
+    var subWasteCounts = Model.PendingFinancialsBySubWaste.Select(x => x.Count).ToList();
+
+    var mainWasteLabels = Model.PendingFinancialsByMainWaste.Select(x => x.Label).ToList();
+    var mainWasteCounts = Model.PendingFinancialsByMainWaste.Select(x => x.Count).ToList();
 }
-<!-- Breadcrumb & Record Count -->
+
 <div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
-    <div class="col-md-6">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0 py-2 flex-nowrap">
-
-                <li class="breadcrumb-item">
-                    <a href="#">@ViewData["Title pakage"]</a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="#">@ViewData["Title Single"]</a>
-                </li>
-            </ol>
-        </nav>
+    <div class="col-md-6 mb-2">
+        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+            <span class="fa fa-chart-simple me-2 text-ico"></span>الإحصائيات بالرسومات
+        </h4>
     </div>
-    <div class="col-md-6 d-flex align-items-center gap-1 flex-wrap justify-content-end">
-
-        @* <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
-            <i class="fa fa-print me-1"></i> @Resource2.Print
-        </button> *@
-        <!-- Print Scripts -->
-        <script>
-            function openPrintPage() {
-                    const url = `/Admin/Statistics/Print`;
-                    window.open(url, 'printWindow', 'width=1000,height=800,noopener,noreferrer');               
-            }
-
-        </script>
+    <div class="col-md-6 mb-2 d-flex justify-content-end">
+        <button type="button" class="btn btn-success btn-sm" onclick="printCurrentPage()">
+            <i class="fa fa-print me-1"></i>طباعة الصفحة
+        </button>
     </div>
-
-
 </div>
-<div class="row">
-    <div class="card">
-    <div class="col-12">
-    
-            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
-                <!-- Page title section -->
-                <div class="flex-grow-1">
-                    <div class="d-flex align-items-center gap-2">
-                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
-                            <span class="fa fa-chart-simple me-2 text-ico"></span>
-                            @ViewData["Title"]
-                        </h4>
-                    </div>
-                </div>
 
+<div class="row g-3 mb-4">
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-2">إجمالي العمليات التي تم تنفيذها</div>
+                <div class="fs-2 fw-bold text-success">@Model.TotalPendingFinancials</div>
             </div>
-        </div>
-
-
-        <div class="container">
-        <div class="row">
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <div class="icon_box_all style_one shadow-sm rounded-3 ">
-                <div class="icon_content  icon_centers ">
-                    <div class="icon">
-                            <span class="fas fa-bullhorn fs-2"></span>
-                    </div>
-                    <div class="txt_content">
-                        <h3> @Resource1.TotalActivityParticipants</h3>
-                        <p class="fw-bold"> @Model.TotalInActivities</p>
-                    </div>
-                </div>
-                <div class="shape-decoration"></div>
-            </div>
-        </div>
-        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-            <div class="icon_box_all style_one shadow-sm rounded-3 ">
-                <div class="icon_content  icon_centers ">
-                    <div class="icon">
-                            <span class="fas fa-book-open fs-2"></span>
-                    </div>
-                    <div class="txt_content">
-                        <h3>@Resource1.TotalCourseParticipants</h3>
-                        <p class="fw-bold">@Model.TotalInCourses</p>
-                    </div>
-                </div>
-                <div class="shape-decoration"></div>
-            </div>
-        </div>
-
         </div>
     </div>
-
-        <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
-
-            <div class="flex-grow-1">
-                <div class="d-flex align-items-center">
-                    <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
-                        <span class="fa fa-chart-pie me-2 text-ico"></span>
-                        @Resource1.AgePercentagesofParticipants
-                    </h4>
-                </div>
+    <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-body">
+                <div class="text-muted small mb-2">إجمالي المستخدمين في الحاصلين على نقاط</div>
+                <div class="fs-2 fw-bold text-primary">@Model.TotalUsersWithPoints</div>
             </div>
-
-
         </div>
-        <div class="container">
-        <div class="row">
-        @foreach (var age in Model.AgeGroupStats)
-        {
-            <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 col-xs-12">
-                <div class="icon_box_all style_one shadow-sm rounded-3 ">
-                        <div class="text-left sec-title">
-                            <div class="lg-title">
-                                <h1>@age.Label</h1>
-                            </div>
-                            <div class="title-sep-left"></div>
-                            <div class="title-sep-sm-left"></div>
-                        </div>
-              
-                    <div>
-                        <h3>@age.Percentage%</h3>
-                        <p class="fw-bold">@age.Count @Resource1.Participants</p>
-                    </div>
-
-                    <div class="shape-decoration"></div>
+    </div>
+    @foreach (var item in Model.TopUsersByType)
+    {
+        <div class="col-xl-2 col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <div class="text-muted small mb-2">الأعلى في فئة @item.UserTypeName</div>
+                    <div class="fw-bold mb-1">@item.UserName</div>
+                    <div class="text-success">@item.Total.ToString("0.##")</div>
                 </div>
             </div>
+        </div>
+    }
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-6 col-lg-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0">أعلى مستخدم حسب النوع بالمبالغ المتداولة</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="topUsersChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0">عدد العمليات التي تم تنفيذها لكل نوع مستخدم</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="pendingByUserTypeChart" height="120"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    @foreach (var typeId in trackedTypes)
+    {
+        var amountChart = Model.TopUsersByAmountPerType.FirstOrDefault(x => x.UserTypeId == typeId);
+        <div class="col-xl-4 col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">أعلى 3 @((amountChart?.UserTypeName) ?? $"نوع {typeId}") حسب مبالغ التداول</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="amountTopType@(typeId)" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row g-4 mb-4">
+    @foreach (var typeId in trackedTypes)
+    {
+        var countChart = Model.TopUsersByPendingCountPerType.FirstOrDefault(x => x.UserTypeId == typeId);
+        <div class="col-xl-4 col-lg-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white border-0 pt-3">
+                    <h5 class="mb-0">أعلى 3 @((countChart?.UserTypeName) ?? $"نوع {typeId}") حسب عدد عمليات تم تنفيذها</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="countTopType@(typeId)" height="180"></canvas>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-xl-6 col-lg-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0">العمليات التي تم تنفيذها على المنتجات الفرعية (فرعي - أساسي)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="subProductsChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0">العمليات التي تم تنفيذها على المنتجات الأساسية</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="mainProductsChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-xl-6 col-lg-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0">العمليات التي تم تنفيذها على النفايات الفرعية (فرعي - أساسي)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="subWastesChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6 col-lg-12">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-white border-0 pt-3">
+                <h5 class="mb-0">العمليات التي تم تنفيذها على النفايات الأساسية</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="mainWastesChart" height="180"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function printCurrentPage() {
+            window.print();
         }
 
-        </div>
-        </div>
+        const palette = [
+            '#198754',
+            '#0d6efd',
+            '#ffc107',
+            '#dc3545',
+            '#6f42c1',
+            '#20c997',
+            '#fd7e14',
+            '#6610f2',
+            '#6c757d',
+            '#198754aa',
+            '#0d6efdaa'
+        ];
 
-        <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
-            <div class="flex-grow-1">
-                <div class="d-flex align-items-center">
-                    <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
-                        <span class="fas fa-bookmark me-2 text-ico"></span>
-                        @Resource1.Courseparticipationforeachdepartment
-                    </h4>
-                </div>
-            </div>
-        </div>
-         <div class="container">
-        <div class="row">
-            @foreach (var course in Model.CourseDepartmentCategoryStats)
-            {
-
-                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 col-xs-12">
-                    <div class="icon_box_all style_one shadow-sm rounded-3 ">
-                        <div class="text-left sec-title">
-                            <div class="lg-title">
-                                <h1>@course.Label</h1>
-                            </div>
-                            <div class="title-sep-left"></div>
-                            <div class="title-sep-sm-left"></div>
-                        </div>
-
-                        <div>
-                            <h3>@course.Percentage%</h3>
-                            <p class="fw-bold">@course.Count @Resource1.Participants</p>
-                        </div>
-
-                        <div class="shape-decoration"></div>
-                    </div>
-                </div>
+        function normalizeChartData(labels, data) {
+            if (!labels || labels.length === 0 || !data || data.length === 0) {
+                return {
+                    labels: ['لا توجد بيانات'],
+                    data: [0]
+                };
             }
 
-        </div>
-        </div>
+            return { labels, data };
+        }
 
+        function createChart(id, type, labels, data, datasetLabel, horizontal = false, integerTicks = true) {
+            const normalized = normalizeChartData(labels, data);
+            const backgroundColors = normalized.labels.map((_, index) => palette[index % palette.length]);
 
-
-
-        <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
-            <div class="flex-grow-1">
-                <div class="d-flex align-items-center">
-                    <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
-                        <span class="fas fa-venus-mars me-2 text-ico"></span>
-                        @Resource1.RatioMalesFemales
-                    </h4>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-         <div class="row">
-       
-            @foreach (var gender in Model.GenderStats)
-            {
-
-                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                    <div class="icon_box_all style_one shadow-sm rounded-3 ">
-                        <div class="text-left sec-title">
-                            <div class="lg-title">
-                                <h1>@gender.Label</h1>
-                            </div>
-                            <div class="title-sep-left"></div>
-                            <div class="title-sep-sm-left"></div>
-                        </div>
-
-                        <div>
-                            <h3>@gender.Percentage%</h3>
-                            <p class="fw-bold">@gender.Count @Resource1.Participants</p>
-                        </div>
-
-                        <div class="shape-decoration"></div>
-                    </div>
-                </div>
-            }
-                </div>
-        </div>
-
-            <div class="card-header border-bottom card-tabs d-flex flex-wrap align-items-start gap-3">
-                <div class="flex-grow-1">
-                    <div class="d-flex align-items-center">
-                        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
-                            <span class="fas fa-globe me-2 text-ico"></span>
-                            @Resource1.RatioResidentsCitizens
-                        </h4>
-                    </div>
-                </div>
-            </div>
-
-        <div class="container">
-            <div class="row">
-                @foreach (var residentsOrCitizen in Model.ResidentsAndCitizensStats)
-                {
-
-                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                        <div class="icon_box_all style_one shadow-sm rounded-3 ">
-                            <div class="text-left sec-title">
-                                <div class="lg-title">
-                                    <h1>@residentsOrCitizen.Label</h1>
-                                </div>
-                                <div class="title-sep-left"></div>
-                                <div class="title-sep-sm-left"></div>
-                            </div>
-
-                            <div>
-                                <h3>@residentsOrCitizen.Percentage%</h3>
-                                <p class="fw-bold">@residentsOrCitizen.Count @Resource1.Participants</p>
-                            </div>
-
-                            <div class="shape-decoration"></div>
-                        </div>
-                    </div>
+            new Chart(document.getElementById(id), {
+                type: type,
+                data: {
+                    labels: normalized.labels,
+                    datasets: [{
+                        label: datasetLabel,
+                        data: normalized.data,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors,
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: horizontal ? 'y' : 'x',
+                    plugins: {
+                        legend: {
+                            display: type === 'doughnut' || type === 'pie'
+                        }
+                    },
+                    scales: type === 'doughnut' || type === 'pie'
+                        ? {}
+                        : {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    precision: integerTicks ? 0 : 2
+                                }
+                            }
+                        }
                 }
-            </div>
-        </div>
-    </div>
-</div>
+            });
+        }
 
-@section Scripts { 
-    
-   
+        createChart(
+            'topUsersChart',
+            'bar',
+            @Html.Raw(JsonSerializer.Serialize(topUserLabels)),
+            @Html.Raw(JsonSerializer.Serialize(topUserTotals)),
+            'إجمالي Totals'
+        );
 
-    @if (ViewData["ShowToastrLoginSuccesfullyLoggedIn_Admin"] != null && (bool)ViewData["ShowToastrLoginSuccesfullyLoggedIn_Admin"] == true)
-    {
-        <script>
-            // Toaster For you Logged In Succesfully
-            function ShowToastrLoginSuccesfullyLoggedIn() {
-              toastr.options = {
-                "closeButton": true,
-                "progressBar": true,
-                "positionClass": "toast-top-center",
-                "timeOut": "3000"
-              };
-              var textmessage ='@Html.Raw(Resource1.HelloYouloggedInSuccessfully)';
+        createChart(
+            'pendingByUserTypeChart',
+            'doughnut',
+            @Html.Raw(JsonSerializer.Serialize(pendingUserTypeLabels)),
+            @Html.Raw(JsonSerializer.Serialize(pendingUserTypeCounts)),
+            'عدد الماليات'
+        );
 
-              toastr.success(textmessage);
-            }
-        </script>
-    }
-    
-} 
+        @foreach (var typeId in trackedTypes)
+        {
+            var amountChart = Model.TopUsersByAmountPerType.FirstOrDefault(x => x.UserTypeId == typeId);
+            var amountLabels = amountChart?.AmountItems.Select(x => x.Label).ToList() ?? new List<string>();
+            var amountValues = amountChart?.AmountItems.Select(x => x.Value).ToList() ?? new List<decimal>();
+            <text>
+        createChart(
+            'amountTopType@(typeId)',
+            'bar',
+            @Html.Raw(JsonSerializer.Serialize(amountLabels)),
+            @Html.Raw(JsonSerializer.Serialize(amountValues)),
+            'إجمالي مبلغ التداول',
+            true,
+            false
+        );
+            </text>
+        }
+
+        @foreach (var typeId in trackedTypes)
+        {
+            var countChart = Model.TopUsersByPendingCountPerType.FirstOrDefault(x => x.UserTypeId == typeId);
+            var countLabels = countChart?.CountItems.Select(x => x.Label).ToList() ?? new List<string>();
+            var countValues = countChart?.CountItems.Select(x => x.Count).ToList() ?? new List<int>();
+            <text>
+        createChart(
+            'countTopType@(typeId)',
+            'bar',
+            @Html.Raw(JsonSerializer.Serialize(countLabels)),
+            @Html.Raw(JsonSerializer.Serialize(countValues)),
+            'عدد عمليات تم تنفيذها',
+            true
+        );
+            </text>
+        }
+
+        createChart(
+            'subProductsChart',
+            'bar',
+            @Html.Raw(JsonSerializer.Serialize(subProductLabels)),
+            @Html.Raw(JsonSerializer.Serialize(subProductCounts)),
+            'عدد الماليات',
+            true
+        );
+
+        createChart(
+            'mainProductsChart',
+            'pie',
+            @Html.Raw(JsonSerializer.Serialize(mainProductLabels)),
+            @Html.Raw(JsonSerializer.Serialize(mainProductCounts)),
+            'عدد الماليات'
+        );
+
+        createChart(
+            'subWastesChart',
+            'bar',
+            @Html.Raw(JsonSerializer.Serialize(subWasteLabels)),
+            @Html.Raw(JsonSerializer.Serialize(subWasteCounts)),
+            'عدد الماليات',
+            true
+        );
+
+        createChart(
+            'mainWastesChart',
+            'pie',
+            @Html.Raw(JsonSerializer.Serialize(mainWasteLabels)),
+            @Html.Raw(JsonSerializer.Serialize(mainWasteCounts)),
+            'عدد الماليات'
+        );
+    </script>
+}
