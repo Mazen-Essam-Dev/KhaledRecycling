@@ -1,5 +1,6 @@
 using Application.Interfaces.Admin;
 using Domain.Entities.Product;
+using Domain.Entities.Waste;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,7 @@ namespace Application.Services.Admin
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<SubProduct>> GetAllAsync(string? search = null, int? mainProductId = null)
+        public async Task<IEnumerable<SubProduct>> GetAllAsync(string? search = null, int? mainProductId = null,bool? isAdd=null)
         {
             var query = _unitOfWork.SubProducts.Table.Include(x => x.MainProduct).AsQueryable();
 
@@ -27,8 +28,12 @@ namespace Application.Services.Admin
 
             if (mainProductId.HasValue && mainProductId.Value > 0)
             {
-                query = query.Where(x => x.FKMainProductId == mainProductId.Value);
+                if (isAdd.HasValue && isAdd == true)
+                    query = query.Where(x => x.FKMainProductId == mainProductId.Value && x.StatusChar == null); // worked Now only
+                else
+                    query = query.Where(x => x.FKMainProductId == mainProductId.Value); // All
             }
+
 
             return await query.OrderBy(x => x.Id).ToListAsync();
         }

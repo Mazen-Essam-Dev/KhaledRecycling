@@ -22,6 +22,8 @@ public class SubProduct
 
     public double? RatioCountFor1Kilo { get; set; }
     public int? StatusId { get; set; }
+    public Char? StatusChar { get; set; }
+
 
     [ForeignKey("FKMainProductId")]
     public MainProduct? MainProduct { get; set; }

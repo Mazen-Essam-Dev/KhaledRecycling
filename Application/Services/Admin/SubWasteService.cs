@@ -14,7 +14,7 @@ namespace Application.Services.Admin
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<SubWaste>> GetAllAsync(string? search = null, int? mainWasteId = null)
+        public async Task<IEnumerable<SubWaste>> GetAllAsync(string? search = null, int? mainWasteId = null,bool? isAdd = null)
         {
             var query = _unitOfWork.SubWastes.Table.Include(x => x.MainWaste).AsQueryable();
 
@@ -27,7 +27,10 @@ namespace Application.Services.Admin
 
             if (mainWasteId.HasValue && mainWasteId.Value > 0)
             {
-                query = query.Where(x => x.FKMainWasteId == mainWasteId.Value);
+                if(isAdd.HasValue && isAdd == true)
+                    query = query.Where(x => x.FKMainWasteId == mainWasteId.Value && x.StatusChar==null); // worked Now only
+                else 
+                    query = query.Where(x => x.FKMainWasteId == mainWasteId.Value); // All
             }
 
             return await query.OrderBy(x => x.Id).ToListAsync();

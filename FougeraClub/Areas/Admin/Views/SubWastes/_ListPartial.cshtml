@@ -30,13 +30,28 @@
                 foreach (var item in Model.Items)
                 {
                     x++;
-                    <tr>
+                    var isStopped = item.StatusChar == 'H';
+                    var stopButtonText = isStopped ? "تفعيل" : "إيقاف";
+                    var stopButtonClass = isStopped ? "btn-success" : "btn-warning";
+                    var confirmMessage = isStopped
+                        ? "هل أنت متأكد من التفعيل؟"
+                        : "سيتم الإيقاف نهائيا، هل أنت متأكد؟";
+                    var rowStyle = isStopped ? "background-color:#fd7e141f;" : string.Empty;
+                    <tr style="@rowStyle">
                         <td>@(x)</td>
                         <td>@(SessionHelper.GetCurrentLanguage() == "ar" ? item.MainWaste?.NameAr : item.MainWaste?.NameEn)</td>
                         <td>@item.NameAr</td>
                         <td>@item.NameEn</td>
                         <td>
                             <a asp-action="AddEdit" asp-route-id="@item.Id" class="btn btn-sm btn-primary">Edit</a>
+                            <form asp-action="ToggleStatus"
+                                  method="post"
+                                  class="d-inline"
+                                  onsubmit="return confirm('@confirmMessage');">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-sm @stopButtonClass">@stopButtonText</button>
+                            </form>
                             <button type="button"
                                     class="btn btn-sm btn-danger open-delete-modal"
                                     data-id="@item.Id"

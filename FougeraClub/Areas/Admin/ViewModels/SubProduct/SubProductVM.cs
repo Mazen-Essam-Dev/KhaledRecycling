@@ -49,6 +49,8 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.SubProduct
 
         public double? RatioCountFor1Kilo { get; set; }
 
+        public Char? StatusChar { get; set; }
+
         public int? StatusId { get; set; }
         public List<SelectListItem>? StatusesList { get; set; } = new();
 

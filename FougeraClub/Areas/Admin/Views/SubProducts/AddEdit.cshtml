@@ -63,7 +63,7 @@
 
             <div class="c-edit-form mb-3">
                 <div class="row g-3">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <label class="form-label asteriskRequired" asp-for="FKMainProductId">Main Product</label>
                         <select asp-for="FKMainProductId" class="form-select" asp-items="Model.MainProductsList">
                             <option value="">-- Select Main Product --</option>
@@ -71,13 +71,13 @@
                         <span asp-validation-for="FKMainProductId" class="text-danger"></span>
                     </div>
 
-                    <div class="col-md-6">
+                    @* <div class="col-md-6">
                         <label class="form-label" asp-for="StatusId">@Resource1.Status</label>
                         <select asp-for="StatusId" class="form-select" asp-items="Model.StatusesList">
                             <option value="">--</option>
                         </select>
                         <span asp-validation-for="StatusId" class="text-danger"></span>
-                    </div>
+                    </div> *@
 
                     <div class="col-md-6">
                         <label class="form-label" asp-for="NameAr">@Resource2.Name (AR)</label>

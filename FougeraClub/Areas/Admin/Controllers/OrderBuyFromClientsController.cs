@@ -693,7 +693,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         public async Task<IActionResult> GetSubWastesByMainWaste(int mainWasteId)
         {
             var subWastes = await _unitOfWork.SubWastes.Table
-                .Where(x => x.FKMainWasteId == mainWasteId)
+                .Where(x => x.FKMainWasteId == mainWasteId && x.StatusChar==null) // only active subwastes
                 .Select(x => new { x.Id, x.NameAr, x.NameEn, x.BuyPriceUnit, x.BuyPriceKilo, x.BuyPriceTon })
                 .ToListAsync();
 

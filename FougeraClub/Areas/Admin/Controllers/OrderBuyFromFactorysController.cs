@@ -696,7 +696,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         public async Task<IActionResult> GetSubProductsByMainProduct(int mainProductId)
         {
             var subProducts = await _unitOfWork.SubProducts.Table
-                .Where(x => x.FKMainProductId == mainProductId)
+                .Where(x => x.FKMainProductId == mainProductId  && x.StatusChar == null) // only active subProduct
                 .Select(x => new { x.Id, x.NameAr, x.NameEn, x.BuyPriceUnit, x.BuyPriceKilo, x.BuyPriceTon })
                 .ToListAsync();
 

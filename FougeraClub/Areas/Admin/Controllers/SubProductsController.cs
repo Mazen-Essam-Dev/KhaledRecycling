@@ -148,6 +148,27 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(int id)
+        {
+            if (id <= 0)
+            {
+                return NotFound();
+            }
+
+            var entity = await _subProductService.GetByIdAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            entity.StatusChar = entity.StatusChar == 'H' ? null : 'H';
+            await _subProductService.UpdateAsync(entity);
+
+            return RedirectToAction(nameof(Index));
+        }
+
         [IgnoreAction]
         [YesGet]
         public async Task<IActionResult> Print(string? searchTerm, int? mainProductId)
