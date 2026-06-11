@@ -22,4 +22,7 @@ public class Financial
 
     [ForeignKey("FKUserType")]
     public UserType? UserType { get; set; }
+    public DateTime? CreatedDate { get; set; }
+    public DateTime? ApprovedDate { get; set; }
+
 }

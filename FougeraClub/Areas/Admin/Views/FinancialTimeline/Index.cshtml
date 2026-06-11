@@ -1,0 +1,181 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.FinancialTimeline.FinancialTimelineVM
+
+@{
+    ViewData["Title"] = "تقرير الحركة المالية";
+}
+
+<div class="row my-3 d-flex justify-content-between align-items-center flex-wrap">
+    <div class="col-md-6 mb-2">
+        <h4 class="ico-header-title my-1 ms-lg-1 ms-md-1">
+            <span class="fa fa-list me-2 text-ico"></span>تقرير الحركة المالية
+        </h4>
+    </div>
+    <div class="col-md-6 mb-2 d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-success btn-sm" onclick="openPrintPage()">
+            <i class="fa fa-print me-1"></i>طباعة
+        </button>
+        <button type="button" class="btn btn-success btn-sm" onclick="openExcelPage()">
+            <i class="fa-solid fa-file-excel me-1"></i>تصدير Excel
+        </button>
+    </div>
+</div>
+
+<div class="records-count-box bg-opacity-10 rounded border-opacity-25 px-2 py-1 mb-3 justify-content-end d-flex">
+    <span id="countRecords"> @Model.TotalCount </span>
+    <span> : عدد السجلات </span>
+</div>
+
+<div class="card all-borders p-3">
+    <form method="get" asp-action="Index" class="row g-2 mb-3 filterFinancialTimeline">
+        <div class="col-md-3">
+            <input asp-for="SearchString" id="searchTermInput" name="searchTerm" class="form-control" placeholder="بحث بالعميل / المصنع / الصنف / الملاحظات" />
+        </div>
+        <div class="col-md-2">
+            <input asp-for="DateFrom" type="date" id="dateFrom" name="dateFrom" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <input asp-for="DateTo" type="date" id="dateTo" name="dateTo" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <select id="transactionFilter" name="transactionFilter" class="form-select">
+                <option value="">كل الحركات</option>
+                <option value="+" selected="@(Model.TransactionFilter == "+" ? "selected" : null)">قبض / إيداع</option>
+                <option value="-" selected="@(Model.TransactionFilter == "-" ? "selected" : null)">دفع / سحب</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <select id="statusFilter" name="statusFilter" class="form-select">
+                <option value="">كل الحالات</option>
+                <option value="D" selected="@(Model.StatusFilter == "D" ? "selected" : null)">تم التنفيذ</option>
+                <option value="S" selected="@(Model.StatusFilter == "S" ? "selected" : null)">تحت الإجراء</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select id="sourceFilter" name="sourceFilter" class="form-select">
+                <option value="">كل المصادر</option>
+                <option value="Financial" selected="@(Model.SourceFilter == "Financial" ? "selected" : null)">Financials</option>
+                <option value="MoneyPushed" selected="@(Model.SourceFilter == "MoneyPushed" ? "selected" : null)">MoneyPusheds</option>
+            </select>
+        </div>
+        <div class="col-md-10 d-grid">
+            <button type="submit" class="btn btn-outline-success btn-sm">بحث</button>
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="button" id="btnClearFilters" class="btn-cancel-search btn-sm btn">مسح</button>
+        </div>
+    </form>
+
+    <div id="PartialNewListContainer">
+        @await Html.PartialAsync("_ListPartial", Model)
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function getFilterValue(id) {
+            return encodeURIComponent(document.getElementById(id)?.value || '');
+        }
+
+        function buildQuery() {
+            return `searchTerm=${getFilterValue('searchTermInput')}&dateFrom=${getFilterValue('dateFrom')}&dateTo=${getFilterValue('dateTo')}&transactionFilter=${getFilterValue('transactionFilter')}&statusFilter=${getFilterValue('statusFilter')}&sourceFilter=${getFilterValue('sourceFilter')}`;
+        }
+
+        function openPrintPage() {
+            const url = `/Admin/FinancialTimeline/Print?${buildQuery()}`;
+            window.open(url, 'printWindow', 'width=1200,height=850,noopener,noreferrer');
+        }
+
+        function openExcelPage() {
+            const url = `/Admin/FinancialTimeline/createExcelReport_Download?${buildQuery()}`;
+            window.open(url, '_self');
+        }
+
+        $(document).ready(function () {
+            const pageKey = window.location.pathname + "_filters";
+
+            if (sessionStorage.getItem(pageKey)) {
+                let filters = JSON.parse(sessionStorage.getItem(pageKey));
+                $('#searchTermInput').val(filters.searchTerm);
+                $('#dateFrom').val(filters.dateFrom);
+                $('#dateTo').val(filters.dateTo);
+                $('#transactionFilter').val(filters.transactionFilter);
+                $('#statusFilter').val(filters.statusFilter);
+                $('#sourceFilter').val(filters.sourceFilter);
+                $('#pageSizeSelect').val(filters.pageSize);
+                loadNewPartialList(filters.page, filters.pageSize);
+            }
+
+            $('form.filterFinancialTimeline').on('submit', function (e) {
+                e.preventDefault();
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            $(document).on('click', '#btnClearFilters', function () {
+                $('#searchTermInput').val('');
+                $('#dateFrom').val('');
+                $('#dateTo').val('');
+                $('#transactionFilter').val('');
+                $('#statusFilter').val('');
+                $('#sourceFilter').val('');
+                saveFilters(1);
+                loadNewPartialList(1);
+            });
+
+            $(document).on('click', '.ajax-page', function () {
+                const page = $(this).data('page');
+                saveFilters(page);
+                loadNewPartialList(page);
+            });
+
+            $(document).on('change', '#pageSizeSelect', function () {
+                const pageSize = $(this).val();
+                saveFilters(1, pageSize);
+                loadNewPartialList(1, pageSize);
+            });
+
+            function saveFilters(page, pageSizeOverride) {
+                const filters = {
+                    searchTerm: $('#searchTermInput').val(),
+                    dateFrom: $('#dateFrom').val(),
+                    dateTo: $('#dateTo').val(),
+                    transactionFilter: $('#transactionFilter').val(),
+                    statusFilter: $('#statusFilter').val(),
+                    sourceFilter: $('#sourceFilter').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+                sessionStorage.setItem(pageKey, JSON.stringify(filters));
+            }
+
+            function loadNewPartialList(page, pageSizeOverride) {
+                const data = {
+                    searchTerm: $('#searchTermInput').val(),
+                    dateFrom: $('#dateFrom').val(),
+                    dateTo: $('#dateTo').val(),
+                    transactionFilter: $('#transactionFilter').val(),
+                    statusFilter: $('#statusFilter').val(),
+                    sourceFilter: $('#sourceFilter').val(),
+                    page: page,
+                    pageSize: pageSizeOverride || $('#pageSizeSelect').val()
+                };
+
+                $.ajax({
+                    url: '/Admin/FinancialTimeline/Index',
+                    type: 'GET',
+                    data,
+                    beforeSend: function () {
+                        $('#PartialNewListContainer').html('<div class="text-center p-5">جاري التحميل...</div>');
+                    },
+                    success: function (html) {
+                        $('#PartialNewListContainer').html(html);
+                        $('#countRecords').text($('#NewCountRecords').val());
+                    },
+                    error: function () {
+                        $('#PartialNewListContainer').html('<div class="alert alert-danger">خطأ في تحميل البيانات</div>');
+                    }
+                });
+            }
+        });
+    </script>
+}

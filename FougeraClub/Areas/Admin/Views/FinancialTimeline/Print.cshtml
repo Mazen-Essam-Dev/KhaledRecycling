@@ -1,0 +1,222 @@
+@model KhaledTeamRecycling.Areas.Admin.ViewModels.FinancialTimeline.FinancialTimelineVM
+@using Infrastructure.Identity
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+@{
+    Layout = null;
+    var currentUser = await UserManager.GetUserAsync(User);
+    var currentUserName = currentUser?.UserName ?? "Unknown User";
+    var title = "تقرير الحركة المالية";
+}
+
+<head>
+    <meta charset="utf-8">
+    <title>@title</title>
+    @if (SessionHelper.GetCurrentLanguage() == "ar")
+    {
+        <link href="~/ar/assets/css/report-rtl.css" rel="stylesheet" />
+    }
+    else
+    {
+        <link href="~/ar/assets/css/report-ltr.css" rel="stylesheet" />
+    }
+    <link href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <link href="~/css/prints/report.css" rel="stylesheet">
+    <style>
+        #report,
+        #report * {
+            print-color-adjust: exact !important;
+            -webkit-print-color-adjust: exact !important;
+        }
+
+        .timeline-row-income {
+            background-color: #19875414 !important;
+        }
+
+        .timeline-row-outcome {
+            background-color: #dc354514 !important;
+        }
+
+        .timeline-badge {
+            border-radius: 50rem;
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            line-height: 1;
+            padding: 6px 10px;
+            white-space: nowrap;
+        }
+
+        .timeline-badge-success {
+            background-color: #198754 !important;
+            color: #fff !important;
+        }
+
+        .timeline-badge-danger {
+            background-color: #dc3545 !important;
+            color: #fff !important;
+        }
+
+        .timeline-badge-secondary {
+            background-color: #6c757d !important;
+            color: #fff !important;
+        }
+
+        .timeline-badge-primary {
+            background-color: #0d6efd !important;
+            color: #fff !important;
+        }
+
+        .timeline-badge-warning {
+            background-color: #ffc107 !important;
+            color: #212529 !important;
+        }
+
+        .timeline-badge-info {
+            background-color: #0dcaf0 !important;
+            color: #212529 !important;
+        }
+
+        .timeline-badge-dark {
+            background-color: #212529 !important;
+            color: #fff !important;
+        }
+
+        @@media print {
+            #report thead th {
+                background-color: #47A644 !important;
+                color: white !important;
+                border-color: #c4c1c1 !important;
+            }
+        }
+    </style>
+</head>
+
+<div id="report">
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">@Resource1.Loading..</span>
+        </div>
+        <p class="loading-text">@Resource1.TheReportIsLoadingpleasewait..</p>
+    </div>
+
+    <div class="container-fluid">
+        <div class="header text-center my-3">
+            <h2 class="text-danger">@title</h2>
+            <p>عدد السجلات: @Model.TotalCount</p>
+        </div>
+
+        <table class="table table-bordered align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>م</th>
+                    <th>التاريخ</th>
+                    <th>المصدر</th>
+                    <th>نوع العملية</th>
+                    <th>الحركة</th>
+                    <th>الطرف</th>
+                    <th>اسم العميل / المصنع</th>
+                    <th>الصنف</th>
+                    <th>ملاحظات</th>
+                    <th>المبلغ</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Items == null || !Model.Items.Any())
+                {
+                    <tr>
+                        <td colspan="11" class="text-center p-5">لا توجد بيانات</td>
+                    </tr>
+                }
+                else
+                {
+                    var x = 0;
+                    foreach (var item in Model.Items)
+                    {
+                        x++;
+                        var rowClass = item.TypeTransaction == '+'
+                            ? "timeline-row-income"
+                            : item.TypeTransaction == '-'
+                                ? "timeline-row-outcome"
+                                : "";
+                        var transactionClass = item.TypeTransaction == '+' ? "timeline-badge-success" : item.TypeTransaction == '-' ? "timeline-badge-danger" : "timeline-badge-secondary";
+                        var statusClass = item.StatusShortChar == "D" ? "timeline-badge-primary" : item.StatusShortChar == "S" ? "timeline-badge-warning" : "timeline-badge-secondary";
+                        var partyClass = item.PartyType == "عميل" ? "timeline-badge-info" : item.PartyType == "مصنع" ? "timeline-badge-dark" : "timeline-badge-secondary";
+
+                        <tr class="@rowClass">
+                            <td>@x</td>
+                            <td>@(item.SortDate?.ToString("yyyy-MM-dd HH:mm"))</td>
+                            <td>@item.SourceName</td>
+                            <td>@item.OperationType</td>
+                            <td>
+                                <span class="timeline-badge @transactionClass">
+                                    @(item.TypeTransaction == '+' ? "قبض / إيداع" : item.TypeTransaction == '-' ? "دفع / سحب" : "-")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="timeline-badge @partyClass">@item.PartyType</span>
+                            </td>
+                            <td>@item.UserName</td>
+                            <td>@item.ItemName</td>
+                            <td>@item.Notes</td>
+                            <td>@(item.Amount?.ToString("0.00"))</td>
+                            <td>
+                                <span class="timeline-badge @statusClass">@item.StatusName</span>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+            <tfoot>
+                <tr style="border: none;">
+                    <td colspan="11" style="min-height:300px !important;border: none !important;">
+                        <div class="footer-container" id="footer-container" style="color: rgba(0, 0, 0, 0) !important;">
+                            <div class="footer-top" id="footer-top">
+                                <div class="right">Time: </div>
+                                <div class="center" style="color: rgba(0, 0, 0, 0) !important;">Date: </div>
+                                <div class="left">Printed by: </div>
+                            </div>
+                            <div class="footer-bottom" id="footer-bottom">
+                                @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <div class="print-footer">
+            <div class="footer-top">
+                <div class="right">Time: @AppDubaiTime.Now.ToString("HH:mm", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="center">Date: @AppDubaiTime.Now.ToString("dd/MM/yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
+                <div class="left">
+                    Printed by:
+                    @((currentUserName.IndexOf("@") > 1) ? currentUserName.Substring(0, currentUserName.IndexOf("@")) : currentUserName)
+                </div>
+            </div>
+            <hr class="footer-line">
+            <div class="footer-bottom">
+                @Resource1.FujairahPrintFooter © @AppDubaiTime.Now.ToString("yyyy")
+            </div>
+        </div>
+
+        <div class="text-center no-print mt-3">
+            <button class="btn btn-primary" onclick="window.print()">طباعة التقرير</button>
+            <button class="btn btn-danger ms-2" onclick="window.close()">إغلاق النافذة</button>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => document.getElementById('loadingOverlay').style.display = 'none', 500);
+            setTimeout(() => window.print(), 800);
+        });
+
+        window.onafterprint = function () {
+            setTimeout(function () {
+                window.close();
+            }, 500);
+        };
+    </script>
+</div>
