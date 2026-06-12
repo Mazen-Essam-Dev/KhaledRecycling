@@ -142,46 +142,20 @@
 
             <div class="c-edit-form mb-3">
                 <div style="display:flex; gap:20px;">
-                    <!-- Units Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" onchange="toggleDiv('units', this.checked)">
-                            <label class="form-check-label" for="IsUnitsSelected">Units</label>
-                        </div>
+                    <input type="hidden" asp-for="IsUnitsSelected" value="true" />
+                    <input type="hidden" asp-for="IsKilosSelected" value="false" />
+                    <input type="hidden" asp-for="IsTonSelected" value="false" />
+                    <input type="hidden" asp-for="KilosValue" />
+                    <input type="hidden" asp-for="TonValue" />
+
+                    <div style="border:1px solid #ccc; padding:10px; flex:1; background-color:#f8f9fa;" id="unitsDiv">
                         <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
+                            <label class="form-label fw-semibold" for="UnitsValue">Units Quantity</label>
+                            <input type="number" step="1" min="1" inputmode="numeric" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity">
+                            <small class="text-muted">يسمح بالأرقام الصحيحة فقط بدون كسور.</small>
                         </div>
                         <input type="hidden" id="UnitsPriceHidden" value="0">
                         <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">0</span></div>
-                    </div>
-
-                    <!-- Kilos Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" onchange="toggleDiv('kilos', this.checked)">
-                            <label class="form-check-label" for="IsKilosSelected">Kilos</label>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
-                        </div>
-                        <input type="hidden" id="KilosPriceHidden" value="0">
-                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">0</span></div>
-                    </div>
-
-                    <!-- Ton Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" onchange="toggleDiv('ton', this.checked)">
-                            <label class="form-check-label" for="IsTonSelected">Ton</label>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
-                        </div>
-                        <input type="hidden" id="TonPriceHidden" value="0">
-                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">0</span></div>
                     </div>
                 </div>
 
@@ -246,26 +220,8 @@
         var currentLang = '@lang';
 
         function updateSubmitButtonState() {
-            const isUnits = document.getElementById('IsUnitsSelected').checked;
-            const isKilos = document.getElementById('IsKilosSelected').checked;
-            const isTon = document.getElementById('IsTonSelected').checked;
-
-            document.getElementById('submitBtn').disabled = !(isUnits || isKilos || isTon);
-        }
-
-        function toggleDiv(type, isChecked) {
-            const div = document.getElementById(type + 'Div');
-            const input = div.querySelector('.quantity-input');
-
-            if (isChecked) {
-                input.disabled = false;
-                div.style.backgroundColor = '#f8f9fa';
-            } else {
-                input.disabled = true;
-                input.value = '';
-                div.style.backgroundColor = '';
-            }
-            calculateTotal();
+            const unitsValue = parseInt(document.getElementById('UnitsValue').value, 10) || 0;
+            document.getElementById('submitBtn').disabled = unitsValue <= 0;
         }
 
             // Toggle points discount checkbox
@@ -283,26 +239,9 @@
             function calculateTotal() {
                 let total = 0;
 
-                // Units
-                if (document.getElementById('IsUnitsSelected').checked) {
-                    const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
-                    const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
-                    total += quantity * price;
-                }
-
-                // Kilos
-                if (document.getElementById('IsKilosSelected').checked) {
-                    const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
-                    const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
-                    total += quantity * price;
-                }
-
-                // Ton
-                if (document.getElementById('IsTonSelected').checked) {
-                    const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
-                    const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
-                    total += quantity * price;
-                }
+                const quantity = parseInt(document.getElementById('UnitsValue').value, 10) || 0;
+                const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
+                total += quantity * price;
 
                 // Apply discount ratio
                 const discountRatioEl = document.getElementById('DiscountRatio');
@@ -325,48 +264,18 @@
             document.getElementById('SellPriceTonHidden').value = prices.buyPriceTon || 0;
 
             document.getElementById('UnitsPriceHidden').value = prices.buyPriceUnit || 0;
-            document.getElementById('KilosPriceHidden').value = prices.buyPriceKilo || 0;
-            document.getElementById('TonPriceHidden').value = prices.buyPriceTon || 0;
 
             document.getElementById('UnitsPriceDisplay').textContent = (prices.buyPriceUnit || 0).toFixed(2);
-            document.getElementById('KilosPriceDisplay').textContent = (prices.buyPriceKilo || 0).toFixed(2);
-            document.getElementById('TonPriceDisplay').textContent = (prices.buyPriceTon || 0).toFixed(2);
 
             calculateTotal();
         }
 
         $(document).ready(function () {
-            // Check submit button state initially
+            $('#IsUnitsSelected').val('true');
+            $('#IsKilosSelected').val('false');
+            $('#IsTonSelected').val('false');
+
             updateSubmitButtonState();
-
-            // Bind change event to checkboxes for submit button state
-            $('#IsUnitsSelected, #IsKilosSelected, #IsTonSelected').on('change', updateSubmitButtonState);
-
-            // Initialize div states based on checkboxes
-            if (document.getElementById('IsUnitsSelected').checked) {
-                toggleDiv('units', true);
-                // Set the value from the model
-                const unitsValue = document.getElementById('UnitsValue').value;
-                if (unitsValue) {
-                    document.getElementById('UnitsValue').value = unitsValue;
-                }
-            }
-            if (document.getElementById('IsKilosSelected').checked) {
-                toggleDiv('kilos', true);
-                // Set the value from the model
-                const kilosValue = document.getElementById('KilosValue').value;
-                if (kilosValue) {
-                    document.getElementById('KilosValue').value = kilosValue;
-                }
-            }
-            if (document.getElementById('IsTonSelected').checked) {
-                toggleDiv('ton', true);
-                // Set the value from the model
-                const tonValue = document.getElementById('TonValue').value;
-                if (tonValue) {
-                    document.getElementById('TonValue').value = tonValue;
-                }
-            }
 
             // Load initial prices if subProduct is selected
             const subProductId = document.getElementById('FKSubProductId').value;
@@ -433,8 +342,20 @@
                 }
             });
 
-            // Quantity inputs change - recalculate total
-            $('.quantity-input').on('input', calculateTotal);
+            // Force integer-only units and recalculate total.
+            $('#UnitsValue').on('input', function () {
+                const value = this.value;
+                if (!value) {
+                    updateSubmitButtonState();
+                    calculateTotal();
+                    return;
+                }
+
+                const normalizedValue = Math.max(0, parseInt(value, 10) || 0);
+                this.value = normalizedValue > 0 ? normalizedValue : '';
+                updateSubmitButtonState();
+                calculateTotal();
+            });
 
             // Discount ratio change - recalculate total
             $('#DiscountRatio').on('input', calculateTotal);

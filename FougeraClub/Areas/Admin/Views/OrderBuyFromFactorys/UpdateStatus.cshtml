@@ -57,9 +57,11 @@
             <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
             <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
             <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
-            <input type="hidden" asp-for="IsUnitsSelected" />
-            <input type="hidden" asp-for="IsKilosSelected" />
-            <input type="hidden" asp-for="IsTonSelected" />
+            <input type="hidden" asp-for="IsUnitsSelected" value="true" />
+            <input type="hidden" asp-for="IsKilosSelected" value="false" />
+            <input type="hidden" asp-for="IsTonSelected" value="false" />
+            <input type="hidden" asp-for="KilosValue" />
+            <input type="hidden" asp-for="TonValue" />
             <input type="hidden" asp-for="TotalCount" />
             <input type="hidden" asp-for="Total" id="TotalHidden" />
             <input type="hidden" asp-for="ApprovalDate" />
@@ -160,46 +162,13 @@
 
             <div class="c-edit-form mb-3">
                 <div style="display:flex; gap:20px;">
-                    <!-- Units Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" disabled>
-                            <label class="form-check-label" for="IsUnitsSelected">Units</label>
-                        </div>
+                    <div style="border:1px solid #ccc; padding:10px; flex:1; background-color:#f8f9fa;" id="unitsDiv">
                         <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
+                            <label class="form-label fw-semibold" for="UnitsValue">Units Quantity</label>
+                            <input type="number" step="1" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
                         </div>
                         <input type="hidden" id="UnitsPriceHidden" value="@(Model.BuyPriceUnit ?? 0)">
                         <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">@((Model.BuyPriceUnit ?? 0).ToString("0.##"))</span></div>
-                    </div>
-
-                    <!-- Kilos Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" disabled>
-                            <label class="form-check-label" for="IsKilosSelected">Kilos</label>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
-                        </div>
-                        <input type="hidden" id="KilosPriceHidden" value="@(Model.BuyPriceKilo ?? 0)">
-                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">@((Model.BuyPriceKilo ?? 0).ToString("0.##"))</span></div>
-                    </div>
-
-                    <!-- Ton Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" disabled>
-                            <label class="form-check-label" for="IsTonSelected">Ton</label>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
-                        </div>
-                        <input type="hidden" id="TonPriceHidden" value="@(Model.BuyPriceTon ?? 0)">
-                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">@((Model.BuyPriceTon ?? 0).ToString("0.##"))</span></div>
                     </div>
                 </div>
 
@@ -242,23 +211,12 @@
             document.getElementById('submitBtn').disabled = total <= 0;
         }
 
-        function styleQuantityDiv(type, isChecked) {
-            const div = document.getElementById(type + 'Div');
-            div.style.backgroundColor = isChecked ? '#f8f9fa' : '';
-        }
-
         function initializePricesFromModel() {
             const unitPrice = parseFloat(document.getElementById('BuyPriceUnitHidden').value) || 0;
-            const kiloPrice = parseFloat(document.getElementById('BuyPriceKiloHidden').value) || 0;
-            const tonPrice = parseFloat(document.getElementById('BuyPriceTonHidden').value) || 0;
 
             document.getElementById('UnitsPriceHidden').value = unitPrice;
-            document.getElementById('KilosPriceHidden').value = kiloPrice;
-            document.getElementById('TonPriceHidden').value = tonPrice;
 
             document.getElementById('UnitsPriceDisplay').textContent = unitPrice.toFixed(2);
-            document.getElementById('KilosPriceDisplay').textContent = kiloPrice.toFixed(2);
-            document.getElementById('TonPriceDisplay').textContent = tonPrice.toFixed(2);
         }
 
         function initializeTotalFromModel() {
@@ -270,19 +228,13 @@
         }
 
         $(document).ready(function () {
+            $('#IsUnitsSelected').val('true');
+            $('#IsKilosSelected').val('false');
+            $('#IsTonSelected').val('false');
+
             initializePricesFromModel();
             initializeTotalFromModel();
             updateSubmitButtonState();
-
-            if (document.getElementById('IsUnitsSelected').checked) {
-                styleQuantityDiv('units', true);
-            }
-            if (document.getElementById('IsKilosSelected').checked) {
-                styleQuantityDiv('kilos', true);
-            }
-            if (document.getElementById('IsTonSelected').checked) {
-                styleQuantityDiv('ton', true);
-            }
 
             // Attachments Modal Logic
             document.querySelectorAll('.open-attachments').forEach(btn => {

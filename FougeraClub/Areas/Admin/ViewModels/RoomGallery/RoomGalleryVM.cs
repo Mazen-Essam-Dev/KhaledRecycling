@@ -10,6 +10,8 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.RoomGallery
         public int PageSize { get; set; } = 50;
         public int TotalPages { get; set; }
         public int TotalCount { get; set; }
+        public int? FilledUnits { get; set; }
+        public int? ReservedUnits { get; set; }
         public bool HasNextPage { get; set; }
         public bool HasPreviousPage { get; set; }
 
@@ -22,7 +24,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.RoomGallery
         public int? FkSubProduct { get; set; }
 
         [LocalizedRequired("Required")]
-        public double? MaxKilo { get; set; }
+        public int? MaxUnits { get; set; }
 
         [LocalizedRequired("Required")]
         public int? FkGallery { get; set; }

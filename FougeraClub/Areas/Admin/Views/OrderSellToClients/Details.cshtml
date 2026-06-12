@@ -169,46 +169,13 @@
 
             <div class="c-edit-form mb-3">
                 <div style="display:flex; gap:20px;">
-                    <!-- Units Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="unitsDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsUnitsSelected" asp-for="IsUnitsSelected" disabled>
-                            <label class="form-check-label" for="IsUnitsSelected">Units</label>
-                        </div>
+                    <div style="border:1px solid #ccc; padding:10px; flex:1; background-color:#f8f9fa;" id="unitsDiv">
                         <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
+                            <label class="form-label fw-semibold" for="UnitsValue">Units Quantity</label>
+                            <input type="number" step="1" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
                         </div>
                         <input type="hidden" id="UnitsPriceHidden" value="0">
                         <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">0</span></div>
-                    </div>
-
-                    <!-- Kilos Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="kilosDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsKilosSelected" asp-for="IsKilosSelected" disabled>
-                            <label class="form-check-label" for="IsKilosSelected">Kilos</label>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
-                        </div>
-                        <input type="hidden" id="KilosPriceHidden" value="0">
-                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">0</span></div>
-                    </div>
-
-                    <!-- Ton Div -->
-                    <div style="border:1px solid #ccc; padding:10px; flex:1;" id="tonDiv">
-                        <div class="form-check mb-2">
-                            <input type="checkbox" class="form-check-input" id="IsTonSelected" asp-for="IsTonSelected" disabled>
-                            <label class="form-check-label" for="IsTonSelected">Ton</label>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Quantity</label>
-                            <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
-                        </div>
-                        <input type="hidden" id="TonPriceHidden" value="0">
-                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">0</span></div>
                     </div>
                 </div>
 
@@ -263,39 +230,12 @@
 
         window.addEventListener('beforeprint', clearPrintPlaceholders);
         window.addEventListener('afterprint', restorePrintPlaceholders);
-        function toggleDiv(type, isChecked) {
-            const div = document.getElementById(type + 'Div');
-            
-            if (isChecked) {
-                div.style.backgroundColor = '#f8f9fa';
-            } else {
-                div.style.backgroundColor = '';
-            }
-        }
-
         function calculateTotal() {
             let total = 0;
-            
-            // Units
-            if (document.getElementById('IsUnitsSelected').checked) {
-                const quantity = parseFloat(document.getElementById('UnitsValue').value) || 0;
-                const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
-                total += quantity * price;
-            }
-            
-            // Kilos
-            if (document.getElementById('IsKilosSelected').checked) {
-                const quantity = parseFloat(document.getElementById('KilosValue').value) || 0;
-                const price = parseFloat(document.getElementById('KilosPriceHidden').value) || 0;
-                total += quantity * price;
-            }
-            
-            // Ton
-            if (document.getElementById('IsTonSelected').checked) {
-                const quantity = parseFloat(document.getElementById('TonValue').value) || 0;
-                const price = parseFloat(document.getElementById('TonPriceHidden').value) || 0;
-                total += quantity * price;
-            }
+
+            const quantity = parseInt(document.getElementById('UnitsValue').value, 10) || 0;
+            const price = parseFloat(document.getElementById('UnitsPriceHidden').value) || 0;
+            total += quantity * price;
             
             // Apply discount ratio
             const discountRatio = parseFloat(document.getElementById('DiscountRatio').value) || 0;
@@ -321,40 +261,13 @@
             document.getElementById('SellPriceTonHidden').value = prices.buyPriceTon || 0;
             
             document.getElementById('UnitsPriceHidden').value = prices.buyPriceUnit || 0;
-            document.getElementById('KilosPriceHidden').value = prices.buyPriceKilo || 0;
-            document.getElementById('TonPriceHidden').value = prices.buyPriceTon || 0;
             
             document.getElementById('UnitsPriceDisplay').textContent = (prices.buyPriceUnit || 0).toFixed(2);
-            document.getElementById('KilosPriceDisplay').textContent = (prices.buyPriceKilo || 0).toFixed(2);
-            document.getElementById('TonPriceDisplay').textContent = (prices.buyPriceTon || 0).toFixed(2);
             
             calculateTotal();
         }
 
         $(document).ready(function () {
-            // Initialize div states based on checkboxes
-            if (document.getElementById('IsUnitsSelected').checked) {
-                toggleDiv('units', true);
-                const unitsValue = document.getElementById('UnitsValue').value;
-                if (unitsValue) {
-                    document.getElementById('UnitsValue').value = unitsValue;
-                }
-            }
-            if (document.getElementById('IsKilosSelected').checked) {
-                toggleDiv('kilos', true);
-                const kilosValue = document.getElementById('KilosValue').value;
-                if (kilosValue) {
-                    document.getElementById('KilosValue').value = kilosValue;
-                }
-            }
-            if (document.getElementById('IsTonSelected').checked) {
-                toggleDiv('ton', true);
-                const tonValue = document.getElementById('TonValue').value;
-                if (tonValue) {
-                    document.getElementById('TonValue').value = tonValue;
-                }
-            }
-
             // Load initial prices if subProduct is selected
             const subProductId = document.getElementById('FKSubProductId').value;
             if (subProductId) {

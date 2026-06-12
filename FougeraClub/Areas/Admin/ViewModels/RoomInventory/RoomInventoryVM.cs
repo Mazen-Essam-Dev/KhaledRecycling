@@ -10,6 +10,8 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.RoomInventory
         public int PageSize { get; set; } = 50;
         public int TotalPages { get; set; }
         public int TotalCount { get; set; }
+        public double? FilledKilo { get; set; }
+        public double? ReservedKilo { get; set; }
         public bool HasNextPage { get; set; }
         public bool HasPreviousPage { get; set; }
 
