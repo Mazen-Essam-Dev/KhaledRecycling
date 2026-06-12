@@ -211,7 +211,8 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" asp-for="DiscountValue">Discount Value</label>
-                        <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
+                        <input asp-for="DiscountValue" hidden type="number" step="any" placeholder="0" class="form-control" id="DiscountValue2" disabled />
+                        <input value="@Model.DiscountValue?.ToString("F2")" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
                         <span asp-validation-for="DiscountValue" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">

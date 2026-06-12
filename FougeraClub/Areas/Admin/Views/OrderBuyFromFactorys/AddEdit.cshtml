@@ -172,14 +172,14 @@
                                        onchange="togglePointsDiscount(this.checked)">
                                 <label class="form-check-label fw-semibold text-success fs-6" for="UsePointsDiscount">
                                     <i class="fa-solid fa-star me-1 text-warning"></i>
-                                    لك خصم <strong>@Model.MaxDiscountRatioAllowed%</strong> هل تريده ؟
+                                    لك هدية <strong>@Model.MaxDiscountRatioAllowed%</strong> هل تريدها ؟
                                 </label>
                             </div>
                             <input type="hidden" id="MaxDiscountRatioAllowed" value="@Model.MaxDiscountRatioAllowed" />
                         </div>
                     }
                     <div class="col-md-4">
-                        <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
+                        <label class="form-label" asp-for="DiscountRatio">معدل الإضافة الهدية (%)</label>
                         @if (userIsClient)
                         {
                             <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" readonly style="background:#f0f0f0;cursor:not-allowed;" />
@@ -191,7 +191,7 @@
                         <span asp-validation-for="DiscountRatio" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" asp-for="DiscountValue">Discount Value</label>
+                        <label class="form-label" asp-for="DiscountValue">القيمة الإضافية</label>
                         <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control bg-light" id="DiscountValue" readonly />
                         <span asp-validation-for="DiscountValue" class="text-danger"></span>
                     </div>
@@ -249,7 +249,7 @@
                 if (discountRatio > 0) {
                     const discountValue = total * (discountRatio / 100);
                     document.getElementById('DiscountValue').value = discountValue.toFixed(2);
-                    total -= discountValue;
+                    total += discountValue;
                 } else {
                     document.getElementById('DiscountValue').value = '';
                 }

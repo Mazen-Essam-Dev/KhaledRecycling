@@ -214,12 +214,12 @@
 
                 <div class="row g-3 mt-3">
                     <div class="col-md-4">
-                        <label class="form-label" asp-for="DiscountRatio">Discount Ratio (%)</label>
+                        <label class="form-label" asp-for="DiscountRatio">معدل الإضافة الهدية (%)</label>
                         <input asp-for="DiscountRatio" type="number" step="any" placeholder="0" class="form-control" id="DiscountRatio" disabled />
                         <span asp-validation-for="DiscountRatio" class="text-danger"></span>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" asp-for="DiscountValue">Discount Value</label>
+                        <label class="form-label" asp-for="DiscountValue">القيمة الإضافية</label>
                         <input asp-for="DiscountValue" type="number" step="any" placeholder="0" class="form-control" id="DiscountValue" disabled />
                         <span asp-validation-for="DiscountValue" class="text-danger"></span>
                     </div>
@@ -302,12 +302,12 @@
             if (discountRatio > 0) {
                 const discountValue = total * (discountRatio / 100);
                 document.getElementById('DiscountValue').value = discountValue.toFixed(2);
-                total -= discountValue;
+                total += discountValue;
             } else {
                 // If it already has a discount value, subtract it
                 const discountVal = parseFloat(document.getElementById('DiscountValue').value) || 0;
                 if (discountVal > 0) {
-                    total -= discountVal;
+                    total += discountVal;
                 }
             }
             
