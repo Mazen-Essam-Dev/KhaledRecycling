@@ -24,7 +24,7 @@
                 <th>Code</th>
                 <th>Gallery</th>
                 <th>Sub Waste</th>
-                <th>Max Kilo</th>
+                <th>Max Units</th>
                 <th>Description</th>
                 <th style="width: 200px;">Actions</th>
             </tr>
@@ -41,7 +41,7 @@
                         <td>@item.GenCode</td>
                         <td>@item.Gallery?.Name</td>
                         <td>@DisplayHelper.FormatMainSubName(item.SubProduct?.MainProduct?.NameAr, item.SubProduct?.MainProduct?.NameEn, item.SubProduct?.NameAr, item.SubProduct?.NameEn)</td>
-                        <td>@item.MaxKilo</td>
+                        <td>@item.MaxUnit</td>
                         <td>@item.Description</td>
                         <td>
                             @if (editPermission)

@@ -83,12 +83,12 @@ namespace KhaledTeamRecycling.Helpers
             }
 
             var rooms = await unitOfWork.RoomGalleries.Table
-                .Where(x => x.FkSubProduct == order.FKSubProductId.Value && x.MaxKilo.HasValue)
+                .Where(x => x.FkSubProduct == order.FKSubProductId.Value && x.MaxUnit.HasValue)
                 .ToListAsync();
 
             var fittingRooms = rooms
-                .Where(x => (x.MaxKilo ?? 0) >= requiredKilos)
-                .OrderByDescending(x => x.MaxKilo)
+                .Where(x => (x.MaxUnit ?? 0) >= requiredKilos)
+                .OrderByDescending(x => x.MaxUnit)
                 .ToList();
 
             if (fittingRooms.Any())
@@ -102,8 +102,8 @@ namespace KhaledTeamRecycling.Helpers
                 };
             }
 
-            var bestRoom = rooms.OrderByDescending(x => x.MaxKilo).FirstOrDefault();
-            var availableKilos = bestRoom?.MaxKilo ?? 0;
+            var bestRoom = rooms.OrderByDescending(x => x.MaxUnit).FirstOrDefault();
+            var availableKilos = bestRoom?.MaxUnit ?? 0;
             var kiloShortage = requiredKilos - availableKilos;
 
             return new StatusTransitionValidationResult

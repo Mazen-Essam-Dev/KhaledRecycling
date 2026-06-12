@@ -9,9 +9,9 @@ public class RoomGallery
     public int Id { get; set; }
     public string? GenCode { get; set; }
     public int? FkSubProduct { get; set; }
-    public double? MaxKilo { get; set; }
-    public double? FilledKilo { get; set; }
-    public double? ReservedKilo { get; set; }
+    public int? MaxUnit { get; set; }
+    public int? FilledUnits { get; set; }
+    public int? ReservedUnits { get; set; }
     public int? FkGallery { get; set; }
     public string? Description { get; set; }
 

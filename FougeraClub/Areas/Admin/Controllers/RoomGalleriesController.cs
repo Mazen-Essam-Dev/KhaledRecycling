@@ -198,7 +198,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     x.SubProduct?.MainProduct?.NameEn,
                     x.SubProduct?.NameAr,
                     x.SubProduct?.NameEn),
-                t4 = x.MaxKilo?.ToString() ?? string.Empty,
+                t4 = x.MaxUnit?.ToString() ?? string.Empty,
                 t5 = x.Description ?? string.Empty
             }).ToList();
 
