@@ -8,5 +8,6 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToClient
         public int OrderSellToClientId { get; set; }
         public string ReturnAction { get; set; } = "AddEdit";
         public List<OrderSellToClientAttachment>? Attachments { get; set; } = new();
+        public bool? IsClientUser { get; set; }
     }
 }

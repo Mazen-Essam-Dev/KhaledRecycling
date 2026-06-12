@@ -629,6 +629,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 vm.FKUserId = loggedInUserId;
             }
 
+            ViewBag.phone = $"{loggedInUser?.PhoneNumber}";
+            ViewBag.phone += loggedInUser?.Phone2?.Length > 2 ? $" - {loggedInUser?.Phone2}" : "";
+
             if (entity.SubWaste != null)
             {
                 vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;
@@ -828,6 +831,10 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrderAttachments(int id, string returnAction = "AddEdit")
         {
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isFactoryUser = loggedInUser != null && (loggedInUser.FKUserType == 3); // مصنع فقط
+
             var attachments = await _unitOfWork.OrderSellToFactoryAttachments.Table
                 .Where(a => a.OrderSellToFactoryId == id)
                 .ToListAsync();
@@ -836,7 +843,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 OrderSellToFactoryId = id,
                 ReturnAction = returnAction,
-                Attachments = attachments
+                Attachments = attachments,
+                IsClientUser = loggedInUser?.FKUserType>0 ? true : false,
             };
 
             return PartialView("_OrderAttachmentsModal", vm);

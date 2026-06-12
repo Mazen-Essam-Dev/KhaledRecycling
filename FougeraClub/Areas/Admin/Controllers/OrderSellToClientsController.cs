@@ -626,6 +626,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 vm.FKUserId = loggedInUserId;
             }
 
+            ViewBag.phone = $"{loggedInUser?.PhoneNumber}";
+            ViewBag.phone += loggedInUser?.Phone2?.Length>2 ? $" - {loggedInUser?.Phone2}" : "";
+
             if (entity.SubProduct != null)
             {
                 vm.FKMainProductId = entity.SubProduct.FKMainProductId;
@@ -824,6 +827,10 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOrderAttachments(int id, string returnAction = "AddEdit")
         {
+            var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+
             var attachments = await _unitOfWork.OrderSellToClientAttachments.Table
                 .Where(a => a.OrderSellToClientId == id)
                 .ToListAsync();
@@ -832,7 +839,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 OrderSellToClientId = id,
                 ReturnAction = returnAction,
-                Attachments = attachments
+                Attachments = attachments,
+                IsClientUser = loggedInUser?.FKUserType > 0 ? true : false,
             };
 
             return PartialView("_OrderAttachmentsModal", vm);

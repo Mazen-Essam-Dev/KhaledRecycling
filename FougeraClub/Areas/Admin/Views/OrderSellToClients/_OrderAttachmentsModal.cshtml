@@ -5,28 +5,33 @@
     <div class="modal-content">
         <form asp-action="UploadOrderFiles" method="post" enctype="multipart/form-data" id="attachmentsForm">
             <div class="modal-header">
-                <h5 class="modal-title">@Resource2.UploadAttachments</h5>
+                <h5 class="modal-title">المرفقات</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <input type="hidden" id="OrderSellToClientId" name="OrderSellToClientId" value="@Model.OrderSellToClientId" />
             <input type="hidden" name="ReturnAction" value="@Model.ReturnAction" />
 
             <div class="modal-body text-center">
-                <!-- Upload new attachment -->
-                <div class="row justify-content-center align-items-center mb-3">
-                    <div class="col-md-5">
-                        <input id="fileNameInput" class="form-control" placeholder="@Resource2.FileName" />
-                        <span id="fileNameSpan" class="text-danger"></span>
+                @if (Model.IsClientUser !=true)
+                    {
+                     <!-- Upload new attachment -->
+                    <div class="row justify-content-center align-items-center mb-3">
+                        <div class="col-md-5">
+                            <input id="fileNameInput" class="form-control" placeholder="@Resource2.FileName" />
+                            <span id="fileNameSpan" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-5">
+                            <input id="fileInput" type="file" class="form-control text-center" accept=".pdf,.jpg,.jpeg,.png" />
+                            <span id="fileInputSpan" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-success w-100" id="addFileBtn"><i class="fa-solid fa-plus me-1"></i>@Resource1.Add</button>
+                        </div>
                     </div>
-                    <div class="col-md-5">
-                        <input id="fileInput" type="file" class="form-control text-center" accept=".pdf,.jpg,.jpeg,.png" />
-                        <span id="fileInputSpan" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-success w-100" id="addFileBtn"><i class="fa-solid fa-plus me-1"></i>@Resource1.Add</button>
-                    </div>
-                </div>
-                <hr />                <!-- Preview added attachments before saving -->
+
+                <hr />                
+                    }
+                <!-- Preview added attachments before saving -->
                 <div id="attachmentsPreview" class="d-flex flex-wrap justify-content-center gap-3 mt-3">
                     @if (Model.Attachments != null && Model.Attachments.Any())
                     {
@@ -39,7 +44,10 @@
                             <div class="file-card text-center position-relative" data-index="@i">
                                 <input hidden name="Attachments[@i].Path" value="@Model.Attachments[i].Path" type="text" />
                                 <input hidden name="Attachments[@i].Name" value="@Model.Attachments[i].Name" type="text" />
-                                <button type="button" class="remove-btn" title="Remove">&times;</button>
+                                    @if (Model.IsClientUser!= true)
+                                    {
+                                        <button type="button" class="remove-btn" title="Remove">&times;</button>
+                                    }
                                 <a href="~/@path" target="_blank">
                                     @if (extension == ".jpg" || extension == ".jpeg" || extension == ".png" || extension == ".gif" || extension == ".bmp" || extension == ".webp")
                                     {
@@ -63,11 +71,14 @@
                     }
                 </div>
             </div>
-
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">@Resource1.Save</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">@Resource1.Cancel</button>
-            </div>
+                @if (Model.IsClientUser != true)
+                {
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">@Resource1.Save</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">@Resource1.Cancel</button>
+                    </div>
+                }
+            
         </form>
     </div>
 </div>

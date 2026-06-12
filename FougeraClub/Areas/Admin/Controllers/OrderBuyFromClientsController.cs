@@ -626,6 +626,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 vm.FKUserId = loggedInUserId;
             }
 
+            ViewBag.phone = $"{loggedInUser?.PhoneNumber}";
+            ViewBag.phone += loggedInUser?.Phone2?.Length > 2 ? $" - {loggedInUser?.Phone2}" : "";
+
             if (entity.SubWaste != null)
             {
                 vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;

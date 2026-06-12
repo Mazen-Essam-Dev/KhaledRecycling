@@ -135,14 +135,20 @@
                     }
 
                     <div class="col-md-6">
-                        <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
-                        <input type="text" class="form-control" asp-for="Address" disabled />
+                        <label class="form-label asteriskRequired" for="phone12">الهاتف</label>
+                        <input type="text" class="form-control" value="@ViewBag.phone" id="phone12" disabled />
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label asteriskRequired" asp-for="StatusId">@Resource1.Status</label>
                         <input type="hidden" asp-for="StatusId" id="StatusId" />
                         <input type="text" class="form-control" value="@(Model.StatusesList?.FirstOrDefault(x => x.Selected)?.Text)" disabled />
+                    </div>
+
+
+                    <div class="col-md-12">
+                        <label class="form-label asteriskRequired" asp-for="Address">العنوان</label>
+                        <input type="text" class="form-control" asp-for="Address" disabled />
                     </div>
 
                     <input asp-for="ApprovalDate" hidden type="date" class="form-control" disabled />
