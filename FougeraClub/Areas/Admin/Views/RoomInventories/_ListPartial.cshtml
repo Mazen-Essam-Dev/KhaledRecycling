@@ -24,7 +24,10 @@
                 <th>Code</th>
                 <th>Inventory</th>
                 <th>Sub Waste</th>
-                <th>Max Kilo</th>
+                <th>اقصى كيلوات</th>
+                <th>ممتليء (ك)</th>
+                <th>محجوز (ك)</th>
+                <th>فارغ (ك)</th>
                 <th>Description</th>
                 <th style="width: 200px;">Actions</th>
             </tr>
@@ -41,7 +44,10 @@
                         <td>@item.GenCode</td>
                         <td>@item.Inventory?.Name</td>
                         <td>@DisplayHelper.FormatMainSubName(item.SubWaste?.MainWaste?.NameAr, item.SubWaste?.MainWaste?.NameEn, item.SubWaste?.NameAr, item.SubWaste?.NameEn)</td>
-                        <td>@item.MaxKilo</td>
+                        <td>@item.MaxKilo?.ToString("F2")</td>
+                        <td>@item.FilledKilo?.ToString("F2")</td>
+                        <td>@item.ReservedKilo?.ToString("F2")</td>
+                        <td>@((item.MaxKilo- item.FilledKilo - item.ReservedKilo)?.ToString("F2")) </td>
                         <td>@item.Description</td>
                         <td>
                             @if (editPermission)

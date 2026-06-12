@@ -509,6 +509,48 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 }
             }
 
+            var reservedToFilledAllocations = new List<RoomAllocationResult>();
+            if (oldStatusChar == "D" && newStatus?.ShortChar == "S" && oldEntity.FKSubWasteId.HasValue)
+            {
+                var requiredKilos = OrderBuyFromClientStatusValidator.CalculateOrderKilos(oldEntity, oldEntity.SubWaste);
+                var roomsWithReserved = await _unitOfWork.RoomInventories.Table
+                    .Where(x => x.FKSubWaste == oldEntity.FKSubWasteId.Value && (x.ReservedKilo ?? 0) > 0)
+                    .OrderBy(x => x.ReservedKilo ?? 0)
+                    .ToListAsync();
+
+                var totalReservedKilos = roomsWithReserved.Sum(x => x.ReservedKilo ?? 0);
+                if (totalReservedKilos < requiredKilos)
+                {
+                    ModelState.AddModelError(string.Empty, $"الكمية المحجوزة في الغرف أقل بمقدار {(requiredKilos - totalReservedKilos):0.##} كيلو");
+                    model.StatusId = oldEntity.StatusId;
+                    await PopulateUpdateStatusViewModelAsync(model, oldEntity);
+                    return View(model);
+                }
+
+                var remainingKilos = requiredKilos;
+                foreach (var room in roomsWithReserved)
+                {
+                    if (remainingKilos <= 0)
+                    {
+                        break;
+                    }
+
+                    var reservedKilos = room.ReservedKilo ?? 0;
+                    if (reservedKilos <= 0)
+                    {
+                        continue;
+                    }
+
+                    var movedKilos = Math.Min(reservedKilos, remainingKilos);
+                    reservedToFilledAllocations.Add(new RoomAllocationResult
+                    {
+                        RoomId = room.Id,
+                        AllocatedKilos = movedKilos
+                    });
+                    remainingKilos -= movedKilos;
+                }
+            }
+
             oldEntity.StatusId = model.StatusId;
             FKUserId = oldEntity.FKUserId;
             await _orderBuyFromClientService.UpdateAsync(oldEntity);
@@ -576,13 +618,46 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 }
 
                 if (transitionValidation?.Success == true
-                    && transitionValidation.SelectedRoomId.HasValue
+                    && newStatus.ShortChar == "D"
                     && OrderBuyFromClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
                 {
-                    var room = await _unitOfWork.RoomInventories.GetByIdAsync(transitionValidation.SelectedRoomId.Value);
-                    if (room != null)
+                    if (transitionValidation.RoomAllocations.Any())
                     {
-                        room.MaxKilo = (room.MaxKilo ?? 0) - transitionValidation.RequiredKilos;
+                        foreach (var allocation in transitionValidation.RoomAllocations)
+                        {
+                            var room = await _unitOfWork.RoomInventories.GetByIdAsync(allocation.RoomId);
+                            if (room == null)
+                            {
+                                continue;
+                            }
+
+                            room.ReservedKilo = (room.ReservedKilo ?? 0) + allocation.AllocatedKilos;
+                            _unitOfWork.RoomInventories.Update(room);
+                        }
+                    }
+                    else if (transitionValidation.SelectedRoomId.HasValue)
+                    {
+                        var room = await _unitOfWork.RoomInventories.GetByIdAsync(transitionValidation.SelectedRoomId.Value);
+                        if (room != null)
+                        {
+                            room.ReservedKilo = (room.ReservedKilo ?? 0) + transitionValidation.RequiredKilos;
+                            _unitOfWork.RoomInventories.Update(room);
+                        }
+                    }
+                }
+
+                if (reservedToFilledAllocations.Any())
+                {
+                    foreach (var allocation in reservedToFilledAllocations)
+                    {
+                        var room = await _unitOfWork.RoomInventories.GetByIdAsync(allocation.RoomId);
+                        if (room == null)
+                        {
+                            continue;
+                        }
+
+                        room.ReservedKilo = (room.ReservedKilo ?? 0) - allocation.AllocatedKilos;
+                        room.FilledKilo = (room.FilledKilo ?? 0) + allocation.AllocatedKilos;
                         _unitOfWork.RoomInventories.Update(room);
                     }
                 }
