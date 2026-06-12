@@ -10,6 +10,8 @@ public class RoomInventory
     public string? GenCode { get; set; }
     public int? FKSubWaste { get; set; }
     public double? MaxKilo { get; set; }
+    public double? FilledKilo { get; set; }
+    public double? ReservedKilo { get; set; }
     public int? FkInventory { get; set; }
     public string? Description { get; set; }
 
