@@ -524,7 +524,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     {
                         TableType = "OrderSellToClient",
                         ItsId = model.Id,
-                        TypeTransaction = '-',
+                        TypeTransaction = '+',
                         StatusId = model.StatusId,
                         Total = oldEntity.Total,
                         FKUserType = FKUserType,
@@ -538,7 +538,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     financial.Total = oldEntity.Total;
                     if (oldStatusChar == "P" && newStatus.ShortChar == "D")
                     {
-                        financial.TypeTransaction = '-';
+                        financial.TypeTransaction = '+';
                     }
                     _unitOfWork.Financials.Update(financial);
                 }
