@@ -625,9 +625,10 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 vm.FKUserId = loggedInUserId;
             }
+            var ThisEntityUser = !string.IsNullOrEmpty(entity.FKUserId) ? await _unitOfWork.Users.GetByIdAsync(entity.FKUserId) : null;
 
-            ViewBag.phone = $"{loggedInUser?.PhoneNumber}";
-            ViewBag.phone += loggedInUser?.Phone2?.Length > 2 ? $" - {loggedInUser?.Phone2}" : "";
+            ViewBag.phone = $"{ThisEntityUser?.PhoneNumber}";
+            ViewBag.phone += ThisEntityUser?.Phone2?.Length > 2 ? $" - {ThisEntityUser?.Phone2}" : "";
 
             if (entity.SubWaste != null)
             {
