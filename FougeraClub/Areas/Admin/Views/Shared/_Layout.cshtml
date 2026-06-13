@@ -176,11 +176,42 @@
         }
     </style>
 </head>
-@{
+    @{
     var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
     var currentUserPoints = !string.IsNullOrWhiteSpace(currentUserId)
         ? await _dbContext.UserPointss.AsNoTracking().FirstOrDefaultAsync(x => x.FKUserId == currentUserId)
         : null;
+
+    // Get current user info to check FKUserType
+    var currentUser = !string.IsNullOrWhiteSpace(currentUserId)
+        ? await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == currentUserId)
+        : null;
+
+    // Calculate balance for users with FKUserType == null (Admin/Employees)
+    double? availableBalance = null;
+    double? reservedBalance = null;
+    if (currentUser?.FKUserType == null && !string.IsNullOrWhiteSpace(currentUserId))
+    {
+        // Available balance: Sum of all 'S' (Success/Approved) transactions
+        var SpentMoney = await _dbContext.Financials
+            .AsNoTracking()
+            .Where(f => f.Status !=null && f.Status.ShortChar == "S")
+            .SumAsync(f => (double?)(f.TypeTransaction == '+' ? f.Total : (f.TypeTransaction == '-' ? -f.Total : 0))) ?? 0;
+
+        // Reserved balance: Sum of all 'D' (Done/Pending) transactions
+        reservedBalance = await _dbContext.Financials
+            .AsNoTracking()
+            .Where(f =>  f.Status !=null && f.Status.ShortChar == "D")
+            .SumAsync(f => (double?)(f.TypeTransaction == '+' ? f.Total : (f.TypeTransaction == '-' ? -f.Total : 0))) ?? 0;
+
+        var pushedBalance = await _dbContext.MoneyPusheds
+            .AsNoTracking()
+            .SumAsync(f => (double?)(f.TypeTransaction == '+' ? f.Money : (f.TypeTransaction == '-' ? -f.Money : 0))) ?? 0;
+
+        reservedBalance = reservedBalance*-1;
+
+        availableBalance = pushedBalance + SpentMoney - reservedBalance;
+    }
 }
 <body>
     <nav class="custom-navbar">
@@ -202,7 +233,7 @@
 
         <!-- Right Section (Notifications + Login/User) -->
         <div class="d-flex align-items-center">
-            @if (currentUserPoints != null)
+            @if (currentUserPoints != null && currentUser?.FKUserType != null)
             {
                 <div class="d-flex align-items-center gap-2 me-3">
                     <span style="font-size: 17px !important; color: #b8661c; background-color: #33800052 !important;"
@@ -211,6 +242,19 @@
                     </span>
                     <span style="font-size: 17px !important; color: #b8661c; background-color: #000000d1 !important;" class="badge bg-primary rounded-pill px-3 py-2">
                         المبالغ المتداولة: @((currentUserPoints.Totals ?? 0).ToString("0.00"))
+                    </span>
+                </div>
+            }
+            @if (currentUser?.FKUserType == null && (availableBalance.HasValue || reservedBalance.HasValue))
+            {
+                <div class="d-flex align-items-center gap-2 me-3">
+                    <span style="font-size: 17px !important; color: #fff; background-color: #198754 !important;"
+                    class="badge rounded-pill px-3 py-2" title="المبالغ المؤكدة والمكتملة">
+                        الرصيد المتاح: @((availableBalance ?? 0).ToString("0.00"))
+                    </span>
+                    <span style="font-size: 17px !important; color: #000; background-color: #ffc107 !important;"
+                    class="badge rounded-pill px-3 py-2" title="المبالغ قيد الانتظار أو المحجوزة">
+                        الرصيد المحجوز: @((reservedBalance ?? 0).ToString("0.00"))
                     </span>
                 </div>
             }
