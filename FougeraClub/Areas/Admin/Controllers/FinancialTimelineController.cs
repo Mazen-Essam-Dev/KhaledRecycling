@@ -115,7 +115,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var titles = new List<string>
             {
-                "التاريخ",
+                "تاريخ الطلب - الموافقة - العملية",
                 "المصدر",
                 "نوع العملية",
                 "الحركة",

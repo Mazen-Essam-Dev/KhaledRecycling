@@ -688,6 +688,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                         Total = oldEntity.Total,
                         FKUserType = FKUserType,
                         FKUserId = FkUserId,
+                        CreatedDate = oldEntity.OrderDate
                     });
                     await _unitOfWork.CompleteAsync();
                 }
@@ -698,6 +699,10 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     if (oldStatusChar == "P" && newStatus.ShortChar == "D")
                     {
                         financial.TypeTransaction = '+';
+                    }
+                    if (newStatus.ShortChar == "S")
+                    {
+                        financial.ApprovedDate = oldEntity.ApprovalDate;
                     }
                     _unitOfWork.Financials.Update(financial);
                 }
