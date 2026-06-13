@@ -80,8 +80,11 @@
 @using System.Security.Claims
 @inject ApplicationDbContext _dbContext
 
+@{
+    var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
+}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@lang" dir="@(lang == "ar" ? "rtl" : "ltr")">
 <head>
     <meta charset="utf-8" />
     <title>@ViewData["Title"]</title>
@@ -95,19 +98,14 @@
     <!-- App icon besid Title in Tab -->
     <link rel="shortcut icon" href="~/assets/images/logo_only.png">
     <link href="~/css/index.css" rel="stylesheet" />
-    <link href="~/css/admin-overrides.css" rel="stylesheet" />
     <!-- Vendor css -->
     <link href="~/assets/css/vendor.min.css" rel="stylesheet" type="text/css" />
-    <link href="~/css/admin-overrides.css" rel="stylesheet" type="text/css" />
     <!-- SweetAlert2  https://cdn.jsdelivr.net/npm/sweetalert2@11-->
     <script src="~/assets/js/sweetalert2@11.js"></script>
 
     <!-- cdn chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- App css -->
-    @{
-        var lang = Context.Session.GetString("CurrentCulture") ?? "ar";
-    }
     @if (lang == "ar")
     {
         <link href="~/assets/css/app-rtl.min.css" rel="stylesheet" type="text/css" id="app-style" />
@@ -116,6 +114,7 @@
     {
         <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" id="app-style" />
     }
+    <link href="~/css/admin-overrides.css" rel="stylesheet" type="text/css" />
     @* <link href="~/css/premium-ui.css" rel="stylesheet" /> *@
     <script>
         window.Resources = {
@@ -213,11 +212,11 @@
         availableBalance = pushedBalance + SpentMoney - reservedBalance;
     }
 }
-<body>
+<body class="admin-shell">
     <nav class="custom-navbar">
         <!-- Left Section (Toggle + Brand) -->
         <div class="navbar-left">
-            <button class="nav-toggle" id="sideBtn2">
+            <button class="nav-toggle" id="sideBtn2" type="button" aria-label="Toggle sidebar" aria-controls="adminSidebar" aria-expanded="true">
                 <i class="ri-menu-5-line"></i>
             </button>
             <a class="navbar-brand" href="/Admin/Home/Index">
@@ -232,10 +231,10 @@
         </div>
 
         <!-- Right Section (Notifications + Login/User) -->
-        <div class="d-flex align-items-center">
+        <div class="nav-right-group d-flex align-items-center">
             @if (currentUserPoints != null && currentUser?.FKUserType != null)
             {
-                <div class="d-flex align-items-center gap-2 me-3">
+                <div class="nav-badge-group d-flex align-items-center gap-2 me-3">
                     <span style="font-size: 17px !important; color: #b8661c; background-color: #33800052 !important;"
                     class="badge bg-success rounded-pill px-3 py-2">
                         النقاط الحاصل عليها: @(currentUserPoints.Points ?? 0)
@@ -247,7 +246,7 @@
             }
             @if (currentUser?.FKUserType == null && (availableBalance.HasValue || reservedBalance.HasValue))
             {
-                <div class="d-flex align-items-center gap-2 me-3">
+                <div class="nav-badge-group d-flex align-items-center gap-2 me-3">
                     <span style="font-size: 17px !important; color: #fff; background-color: #198754 !important;"
                     class="badge rounded-pill px-3 py-2" title="المبالغ المؤكدة والمكتملة">
                         الرصيد المتاح: @((availableBalance ?? 0).ToString("0.00"))
@@ -311,12 +310,21 @@
                 </ul>
                 <!-- Notification fetch handled in jQuery show.bs.dropdown handler below. Removed duplicate vanilla handler to avoid global loaders. -->
             </div>
-            <partial name="_LoginPartialView" />
+            <div class="nav-user-block">
+                <partial name="_LoginPartialView" />
+            </div>
         </div>
     </nav>
 
     <!-- Sidenav Menu Start -->
-    <div class="sidenav-menu">
+    <div class="admin-backdrop" id="adminBackdrop" aria-hidden="true"></div>
+    <div class="sidenav-menu" id="adminSidebar">
+        <div class="sidebar-mobile-header">
+            <span>القائمة الرئيسية</span>
+            <button type="button" class="sidebar-close-btn" id="sideCloseBtn" aria-label="Close sidebar">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
         @* add here  *@
         <!--- Sidenav Menu -->
         <ul class="side-nav">
@@ -1160,35 +1168,165 @@
         }
     </style>
     <script>
-        $(document).ready(function() {
-                    if ($('.side-nav-item').hasClass('active')) {
-            $('.side-nav-item.active .menu-arrow').addClass('rotate'); // example action
-        }
+        document.addEventListener("DOMContentLoaded", function () {
+            if ($('.side-nav-item').hasClass('active')) {
+                $('.side-nav-item.active .menu-arrow').addClass('rotate');
+            }
 
+            const root = document.documentElement;
+            const body = document.body;
+            const sideBtn = document.getElementById("sideBtn2");
+            const closeBtn = document.getElementById("sideCloseBtn");
+            const backdrop = document.getElementById("adminBackdrop");
+            const mobileQuery = window.matchMedia("(max-width: 991.98px)");
+
+            let sidebarOpen = !mobileQuery.matches;
+
+            function syncSidebarState() {
+                const isMobile = mobileQuery.matches;
+
+                body.classList.toggle("menu-open", isMobile && sidebarOpen);
+                body.classList.toggle("sidebar-collapsed", !isMobile && !sidebarOpen);
+                body.classList.remove("menu-collapsed");
+
+                root.classList.toggle("sidebar-enable", sidebarOpen || !isMobile);
+                root.setAttribute("data-sidenav-size", isMobile ? (sidebarOpen ? "full" : "default") : (sidebarOpen ? "full" : "condensed"));
+
+                if (sideBtn) {
+                    sideBtn.setAttribute("aria-expanded", sidebarOpen ? "true" : "false");
+                }
+
+                if (backdrop) {
+                    backdrop.setAttribute("aria-hidden", isMobile && sidebarOpen ? "false" : "true");
+                }
+            }
+
+            function openSidebar() {
+                sidebarOpen = true;
+                syncSidebarState();
+            }
+
+            function closeSidebar() {
+                sidebarOpen = false;
+                syncSidebarState();
+            }
+
+            if (sideBtn) {
+                sideBtn.addEventListener("click", function () {
+                    sidebarOpen = !sidebarOpen;
+                    syncSidebarState();
+                });
+            }
+
+            if (closeBtn) {
+                closeBtn.addEventListener("click", closeSidebar);
+            }
+
+            if (backdrop) {
+                backdrop.addEventListener("click", closeSidebar);
+            }
+
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape" && mobileQuery.matches && sidebarOpen) {
+                    closeSidebar();
+                }
+            });
+
+            const handleBreakpointChange = function () {
+                if (mobileQuery.matches) {
+                    body.classList.remove("sidebar-collapsed");
+                    body.classList.remove("menu-collapsed");
+                }
+                syncSidebarState();
+            };
+
+            if (typeof mobileQuery.addEventListener === "function") {
+                mobileQuery.addEventListener("change", handleBreakpointChange);
+            } else if (typeof mobileQuery.addListener === "function") {
+                mobileQuery.addListener(handleBreakpointChange);
+            }
+
+            syncSidebarState();
+            window.openAdminSidebar = openSidebar;
+            window.closeAdminSidebar = closeSidebar;
         });
 
-        const sideBtn = document.getElementById("sideBtn2");
-        let sideState = false;
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            function getPaginationScope($link) {
+                const $container = $link.closest('#PartialNewListContainer');
+                if ($container.length) {
+                    return $container.closest('.card, .rounded, .shadow-sm, .row, .col-12').first();
+                }
 
-        sideBtn.addEventListener("click", () => {
-        sideState = !sideState;
-        if (sideState) {
-        document.documentElement.setAttribute("data-sidenav-size", "full");
-        document.documentElement.classList.remove("sidebar-enable");
-        }
-        else {
-        if (window.innerWidth <= 768) {
-        document.documentElement.setAttribute("data-sidenav-size", "full");
-        }
-        else {
-        document.documentElement.setAttribute("data-sidenav-size", "default");
+                return $link.closest('.card, .rounded, .shadow-sm, .row, .col-12').first();
+            }
 
-        }
-        document.documentElement.classList.add("sidebar-enable");
+            $(document).on('click', '.ajax-page', function (e) {
+                const $link = $(this);
+                const href = $link.attr('href');
 
-        }
+                if (!href || href === '#' || href.indexOf('javascript:void(0)') === 0) {
+                    return;
+                }
+
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                const $scope = getPaginationScope($link);
+                const $container = $scope.length ? $scope.find('#PartialNewListContainer').first() : $('#PartialNewListContainer').first();
+                let $form = $scope.length ? $scope.find('form[method="get"]').first() : $('form[method="get"]').first();
+                if (!$form.length) {
+                    $form = $scope.length ? $scope.find('form').first() : $('form').first();
+                }
+
+                const data = $form.length ? $form.serializeArray() : [];
+                const page = $link.data('page');
+
+                if (Array.isArray(data)) {
+                    const filtered = data.filter(item => item.name !== 'page' && item.name !== 'pageSize');
+
+                    if (page !== undefined && page !== null && page !== "") {
+                        filtered.push({ name: 'page', value: page });
+                    }
+
+                    const $pageSize = $scope.length ? $scope.find('#pageSizeSelect').first() : $('#pageSizeSelect').first();
+                    if ($pageSize.length && $pageSize.val() !== undefined && $pageSize.val() !== null && $pageSize.val() !== "") {
+                        filtered.push({ name: 'pageSize', value: $pageSize.val() });
+                    }
+
+                    $.ajax({
+                        url: href,
+                        type: 'GET',
+                        data: filtered,
+                        beforeSend: function () {
+                            if ($container.length) {
+                                $container.html('<div class="text-center p-5">Loading...</div>');
+                            }
+                        },
+                        success: function (html) {
+                            if ($container.length) {
+                                $container.html(html);
+                            }
+
+                            const newCountRecords = $('#NewCountRecords').val();
+                            if ($('#countRecords').length) $('#countRecords').text(newCountRecords ?? '');
+                            if ($('#recordsCount').length) $('#recordsCount').text(newCountRecords ?? '');
+
+                            if (typeof initTooltips === 'function') {
+                                initTooltips();
+                            }
+                        },
+                        error: function () {
+                            if ($container.length) {
+                                $container.html('<div class="alert alert-danger">Error loading data</div>');
+                            }
+                        }
+                    });
+                }
+            });
         });
-
     </script>
     <!-- Projects Analytics Dashboard App js -->
     <script src="~/assets/js/pages/dashboard.js"></script>
@@ -1201,14 +1339,6 @@
 
 <script src="~/assets/js/jquery.min.js"></script>
 <script src="~/assets/js/toastr.min.js"></script>
-<script>
-    const sideNav = document.querySelector(".sidenav-menu");
-    const toggleBtn = document.getElementById("sideBtn2");
-    toggleBtn.addEventListener("click", () => {
-      sideNav.classList.toggle("collapsed");
-      document.body.classList.toggle("menu-collapsed");
-    });
-</script>
 @using System.Text.Json
 @using System.Text.Encodings.Web
 @using Infrastructure.Repositories.InterfacesDB
@@ -1492,20 +1622,6 @@
     });
 </script>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const toggleBtn = document.querySelector(".nav-toggle");
-        const body = document.body;
-
-        if (toggleBtn) {
-            toggleBtn.addEventListener("click", function () {
-                body.classList.toggle("menu-collapsed");
-                document.querySelector(".sidenav-menu")?.classList.toggle("active");
-                body.classList.toggle("menu-open");
-            });
-        }
-    });
-</script>
 <script>
 
         $(document).ready(function () {
