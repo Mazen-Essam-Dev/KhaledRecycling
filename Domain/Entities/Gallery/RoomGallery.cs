@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.Entities.Gallary;
+namespace Domain.Entities.Gallery;
 
 public class RoomGallery
 {

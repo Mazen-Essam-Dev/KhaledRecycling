@@ -12,7 +12,7 @@
     <div class="col-md-6">
         <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 py-2 flex-nowrap">
-                <li class="breadcrumb-item"><a href="/Admin/OrderSellToFactorys/Index">Order Buy From Clients</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/OrderSellToFactorys/Index">Order Sell From Clients</a></li>
                 <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
             </ol>
         </nav>
@@ -54,9 +54,9 @@
                 <div asp-validation-summary="All" class="alert alert-danger mb-3"></div>
             }
             <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
-            <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
-            <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
+            <input type="hidden" asp-for="SellPriceUnit" id="SellPriceUnitHidden" />
+            <input type="hidden" asp-for="SellPriceKilo" id="SellPriceKiloHidden" />
+            <input type="hidden" asp-for="SellPriceTon" id="SellPriceTonHidden" />
             <input type="hidden" asp-for="IsUnitsSelected" />
             <input type="hidden" asp-for="IsKilosSelected" />
             <input type="hidden" asp-for="IsTonSelected" />
@@ -170,8 +170,8 @@
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="UnitsValue" asp-for="UnitsValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="UnitsPriceHidden" value="@(Model.BuyPriceUnit ?? 0)">
-                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">@((Model.BuyPriceUnit ?? 0).ToString("0.##"))</span></div>
+                        <input type="hidden" id="UnitsPriceHidden" value="@(Model.SellPriceUnit ?? 0)">
+                        <div class="text-muted small">Price per unit: <span id="UnitsPriceDisplay">@((Model.SellPriceUnit ?? 0).ToString("0.##"))</span></div>
                     </div>
 
                     <!-- Kilos Div -->
@@ -184,8 +184,8 @@
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="KilosValue" asp-for="KilosValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="KilosPriceHidden" value="@(Model.BuyPriceKilo ?? 0)">
-                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">@((Model.BuyPriceKilo ?? 0).ToString("0.##"))</span></div>
+                        <input type="hidden" id="KilosPriceHidden" value="@(Model.SellPriceKilo ?? 0)">
+                        <div class="text-muted small">Price per kilo: <span id="KilosPriceDisplay">@((Model.SellPriceKilo ?? 0).ToString("0.##"))</span></div>
                     </div>
 
                     <!-- Ton Div -->
@@ -198,8 +198,8 @@
                             <label class="form-label">Quantity</label>
                             <input type="number" step="any" class="form-control quantity-input" id="TonValue" asp-for="TonValue" placeholder="Enter quantity" disabled>
                         </div>
-                        <input type="hidden" id="TonPriceHidden" value="@(Model.BuyPriceTon ?? 0)">
-                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">@((Model.BuyPriceTon ?? 0).ToString("0.##"))</span></div>
+                        <input type="hidden" id="TonPriceHidden" value="@(Model.SellPriceTon ?? 0)">
+                        <div class="text-muted small">Price per ton: <span id="TonPriceDisplay">@((Model.SellPriceTon ?? 0).ToString("0.##"))</span></div>
                     </div>
                 </div>
 
@@ -249,9 +249,9 @@
         }
 
         function initializePricesFromModel() {
-            const unitPrice = parseFloat(document.getElementById('BuyPriceUnitHidden').value) || 0;
-            const kiloPrice = parseFloat(document.getElementById('BuyPriceKiloHidden').value) || 0;
-            const tonPrice = parseFloat(document.getElementById('BuyPriceTonHidden').value) || 0;
+            const unitPrice = parseFloat(document.getElementById('SellPriceUnitHidden').value) || 0;
+            const kiloPrice = parseFloat(document.getElementById('SellPriceKiloHidden').value) || 0;
+            const tonPrice = parseFloat(document.getElementById('SellPriceTonHidden').value) || 0;
 
             document.getElementById('UnitsPriceHidden').value = unitPrice;
             document.getElementById('KilosPriceHidden').value = kiloPrice;

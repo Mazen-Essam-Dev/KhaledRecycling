@@ -187,9 +187,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (entity.SubWaste != null)
             {
                 vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;
-                vm.BuyPriceUnit = entity.SubWaste.BuyPriceUnit;
-                vm.BuyPriceKilo = entity.SubWaste.BuyPriceKilo;
-                vm.BuyPriceTon = entity.SubWaste.BuyPriceTon;
+                vm.SellPriceUnit = entity.SubWaste.SellPriceUnit;
+                vm.SellPriceKilo = entity.SubWaste.SellPriceKilo;
+                vm.SellPriceTon = entity.SubWaste.SellPriceTon;
             }
 
             // Determine which checkboxes should be checked based on stored values
@@ -257,15 +257,15 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var entity = _mapper.Map<Domain.Entities.Waste.OrderSellToFactory>(model);
 
             // Calculate total based on selected checkboxes
-            if (model.IsUnitsSelected && model.UnitsValue.HasValue && model.BuyPriceUnit.HasValue)
+            if (model.IsUnitsSelected && model.UnitsValue.HasValue && model.SellPriceUnit.HasValue)
             {
                 entity.CountUnits = (int?)model.UnitsValue.Value;
             }
-            if (model.IsKilosSelected && model.KilosValue.HasValue && model.BuyPriceKilo.HasValue)
+            if (model.IsKilosSelected && model.KilosValue.HasValue && model.SellPriceKilo.HasValue)
             {
                 entity.Kilo = model.KilosValue.Value;
             }
-            if (model.IsTonSelected && model.TonValue.HasValue && model.BuyPriceTon.HasValue)
+            if (model.IsTonSelected && model.TonValue.HasValue && model.SellPriceTon.HasValue)
             {
                 // Convert ton to kilo (1 ton = 1000 kilo)
                 entity.Kilo = (entity.Kilo ?? 0) + (model.TonValue.Value * 1000);
@@ -273,17 +273,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             // Calculate total
             double total = 0;
-            if (model.IsUnitsSelected && model.UnitsValue.HasValue && model.BuyPriceUnit.HasValue)
+            if (model.IsUnitsSelected && model.UnitsValue.HasValue && model.SellPriceUnit.HasValue)
             {
-                total += model.UnitsValue.Value * model.BuyPriceUnit.Value;
+                total += model.UnitsValue.Value * model.SellPriceUnit.Value;
             }
-            if (model.IsKilosSelected && model.KilosValue.HasValue && model.BuyPriceKilo.HasValue)
+            if (model.IsKilosSelected && model.KilosValue.HasValue && model.SellPriceKilo.HasValue)
             {
-                total += model.KilosValue.Value * model.BuyPriceKilo.Value;
+                total += model.KilosValue.Value * model.SellPriceKilo.Value;
             }
-            if (model.IsTonSelected && model.TonValue.HasValue && model.BuyPriceTon.HasValue)
+            if (model.IsTonSelected && model.TonValue.HasValue && model.SellPriceTon.HasValue)
             {
-                total += model.TonValue.Value * model.BuyPriceTon.Value;
+                total += model.TonValue.Value * model.SellPriceTon.Value;
             }
 
             // Points discount logic: only for new orders by Client
@@ -413,9 +413,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (entity.SubWaste != null)
             {
                 vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;
-                vm.BuyPriceUnit = entity.SubWaste.BuyPriceUnit;
-                vm.BuyPriceKilo = entity.SubWaste.BuyPriceKilo;
-                vm.BuyPriceTon = entity.SubWaste.BuyPriceTon;
+                vm.SellPriceUnit = entity.SubWaste.SellPriceUnit;
+                vm.SellPriceKilo = entity.SubWaste.SellPriceKilo;
+                vm.SellPriceTon = entity.SubWaste.SellPriceTon;
             }
 
             // Determine which checkboxes should be checked based on stored values
@@ -855,9 +855,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (entity.SubWaste != null)
             {
                 vm.FKMainWasteId = entity.SubWaste.FKMainWasteId;
-                vm.BuyPriceUnit = entity.SubWaste.BuyPriceUnit;
-                vm.BuyPriceKilo = entity.SubWaste.BuyPriceKilo;
-                vm.BuyPriceTon = entity.SubWaste.BuyPriceTon;
+                vm.SellPriceUnit = entity.SubWaste.SellPriceUnit;
+                vm.SellPriceKilo = entity.SubWaste.SellPriceKilo;
+                vm.SellPriceTon = entity.SubWaste.SellPriceTon;
             }
 
             // Determine which checkboxes should be checked based on stored values
@@ -920,7 +920,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         {
             var subWastes = await _unitOfWork.SubWastes.Table
                 .Where(x => x.FKMainWasteId == mainWasteId /*&& x.StatusChar == null*/) // all SubWastes
-                .Select(x => new { x.Id, x.NameAr, x.NameEn, x.BuyPriceUnit, x.BuyPriceKilo, x.BuyPriceTon })
+                .Select(x => new { x.Id, x.NameAr, x.NameEn, x.SellPriceUnit, x.SellPriceKilo, x.SellPriceTon })
                 .ToListAsync();
 
             return Json(subWastes);
@@ -939,9 +939,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             return Json(new
             {
                 success = true,
-                buyPriceUnit = subWaste.BuyPriceUnit,
-                buyPriceKilo = subWaste.BuyPriceKilo,
-                buyPriceTon = subWaste.BuyPriceTon
+                buyPriceUnit = subWaste.SellPriceUnit,
+                buyPriceKilo = subWaste.SellPriceKilo,
+                buyPriceTon = subWaste.SellPriceTon
             });
         }
 
@@ -1159,9 +1159,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (entity.SubWaste != null)
             {
                 model.FKMainWasteId = entity.SubWaste.FKMainWasteId;
-                model.BuyPriceUnit = entity.SubWaste.BuyPriceUnit;
-                model.BuyPriceKilo = entity.SubWaste.BuyPriceKilo;
-                model.BuyPriceTon = entity.SubWaste.BuyPriceTon;
+                model.SellPriceUnit = entity.SubWaste.SellPriceUnit;
+                model.SellPriceKilo = entity.SubWaste.SellPriceKilo;
+                model.SellPriceTon = entity.SubWaste.SellPriceTon;
             }
 
             model.IsUnitsSelected = false;

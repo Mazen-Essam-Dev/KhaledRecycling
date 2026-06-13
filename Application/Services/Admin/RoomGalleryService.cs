@@ -1,5 +1,5 @@
 using Application.Interfaces.Admin;
-using Domain.Entities.Gallary;
+using Domain.Entities.Gallery;
 using Infrastructure.Repositories.InterfacesDB;
 using Microsoft.EntityFrameworkCore;
 

@@ -288,7 +288,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Financials");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Gallary.Gallery", b =>
+            modelBuilder.Entity("Domain.Entities.Gallery.Gallery", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -313,7 +313,7 @@ namespace Infrastructure.Migrations
                     b.ToTable("Galleries");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Gallary.RoomGallery", b =>
+            modelBuilder.Entity("Domain.Entities.Gallery.RoomGallery", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1490,9 +1490,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Gallary.RoomGallery", b =>
+            modelBuilder.Entity("Domain.Entities.Gallery.RoomGallery", b =>
                 {
-                    b.HasOne("Domain.Entities.Gallary.Gallery", "Gallery")
+                    b.HasOne("Domain.Entities.Gallery.Gallery", "Gallery")
                         .WithMany("Rooms")
                         .HasForeignKey("FkGallery");
 
@@ -1762,7 +1762,7 @@ namespace Infrastructure.Migrations
                     b.Navigation("EmployeeAttachments");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Gallary.Gallery", b =>
+            modelBuilder.Entity("Domain.Entities.Gallery.Gallery", b =>
                 {
                     b.Navigation("Rooms");
                 });

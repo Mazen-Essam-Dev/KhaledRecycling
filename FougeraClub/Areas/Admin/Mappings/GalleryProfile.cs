@@ -7,10 +7,10 @@ namespace KhaledTeamRecycling.Areas.Admin.Mappings
     {
         public GalleryProfile()
         {
-            CreateMap<GalleryVM, Domain.Entities.Gallary.Gallery>()
+            CreateMap<GalleryVM, Domain.Entities.Gallery.Gallery>()
                 .ForMember(d => d.Rooms, o => o.Ignore());
 
-            CreateMap<Domain.Entities.Gallary.Gallery, GalleryVM>()
+            CreateMap<Domain.Entities.Gallery.Gallery, GalleryVM>()
                 .ForMember(d => d.Items, o => o.Ignore())
                 .ForMember(d => d.SearchString, o => o.Ignore())
                 .ForMember(d => d.CurrentPage, o => o.Ignore())

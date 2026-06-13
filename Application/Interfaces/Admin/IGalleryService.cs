@@ -1,4 +1,4 @@
-using Domain.Entities.Gallary;
+using Domain.Entities.Gallery;
 
 namespace Application.Interfaces.Admin
 {

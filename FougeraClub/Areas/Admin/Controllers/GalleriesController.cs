@@ -94,7 +94,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var entity = _mapper.Map<Domain.Entities.Gallary.Gallery>(model);
+            var entity = _mapper.Map<Domain.Entities.Gallery.Gallery>(model);
 
             if (model.Id == 0)
             {

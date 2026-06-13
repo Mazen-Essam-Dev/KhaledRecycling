@@ -12,7 +12,7 @@
     <div class="col-md-6">
         <nav class="d-flex align-items-center justify-content-start" aria-label="breadcrumb">
             <ol class="breadcrumb mb-0 py-2 flex-nowrap">
-                <li class="breadcrumb-item"><a href="/Admin/OrderSellToFactorys/Index">Order Buy From Clients</a></li>
+                <li class="breadcrumb-item"><a href="/Admin/OrderSellToFactorys/Index">Order Sell From Clients</a></li>
                 <li class="breadcrumb-item"><a href="#">@ViewData["Title"]</a></li>
             </ol>
         </nav>
@@ -50,9 +50,9 @@
         <form asp-action="AddEdit" method="post" id="orderForm">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="BuyPriceUnit" id="BuyPriceUnitHidden" />
-            <input type="hidden" asp-for="BuyPriceKilo" id="BuyPriceKiloHidden" />
-            <input type="hidden" asp-for="BuyPriceTon" id="BuyPriceTonHidden" />
+            <input type="hidden" asp-for="SellPriceUnit" id="SellPriceUnitHidden" />
+            <input type="hidden" asp-for="SellPriceKilo" id="SellPriceKiloHidden" />
+            <input type="hidden" asp-for="SellPriceTon" id="SellPriceTonHidden" />
 
             <div class="row">
                 <div class="col-md-12">
@@ -320,9 +320,9 @@
             }
 
         function updatePrices(prices) {
-            document.getElementById('BuyPriceUnitHidden').value = prices.buyPriceUnit || 0;
-            document.getElementById('BuyPriceKiloHidden').value = prices.buyPriceKilo || 0;
-            document.getElementById('BuyPriceTonHidden').value = prices.buyPriceTon || 0;
+            document.getElementById('SellPriceUnitHidden').value = prices.buyPriceUnit || 0;
+            document.getElementById('SellPriceKiloHidden').value = prices.buyPriceKilo || 0;
+            document.getElementById('SellPriceTonHidden').value = prices.buyPriceTon || 0;
 
             document.getElementById('UnitsPriceHidden').value = prices.buyPriceUnit || 0;
             document.getElementById('KilosPriceHidden').value = prices.buyPriceKilo || 0;

@@ -25,7 +25,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.Gallery
         [LocalizedMaxLength(500, "MaxLength_500")]
         public string? Description { get; set; }
 
-        public IEnumerable<Domain.Entities.Gallary.Gallery>? Items { get; set; }
+        public IEnumerable<Domain.Entities.Gallery.Gallery>? Items { get; set; }
         public string? SearchString { get; set; }
     }
 }

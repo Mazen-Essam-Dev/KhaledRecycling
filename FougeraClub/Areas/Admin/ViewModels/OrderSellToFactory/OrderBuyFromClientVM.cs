@@ -46,9 +46,9 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToFactory
         public double? TonValue { get; set; }
 
         // Hidden price values from subWaste
-        public double? BuyPriceUnit { get; set; }
-        public double? BuyPriceKilo { get; set; }
-        public double? BuyPriceTon { get; set; }
+        public double? SellPriceUnit { get; set; }
+        public double? SellPriceKilo { get; set; }
+        public double? SellPriceTon { get; set; }
 
         // Original OrderSellToFactory fields
         public int? CountUnits { get; set; }

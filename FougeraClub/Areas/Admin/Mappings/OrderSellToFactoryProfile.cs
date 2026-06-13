@@ -45,9 +45,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Mappings
                 .ForMember(d => d.UnitsValue, o => o.Ignore())
                 .ForMember(d => d.KilosValue, o => o.Ignore())
                 .ForMember(d => d.TonValue, o => o.Ignore())
-                .ForMember(d => d.BuyPriceUnit, o => o.Ignore())
-                .ForMember(d => d.BuyPriceKilo, o => o.Ignore())
-                .ForMember(d => d.BuyPriceTon, o => o.Ignore());
+                .ForMember(d => d.SellPriceUnit, o => o.Ignore())
+                .ForMember(d => d.SellPriceKilo, o => o.Ignore())
+                .ForMember(d => d.SellPriceTon, o => o.Ignore());
         }
     }
 }

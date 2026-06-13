@@ -7,6 +7,7 @@ using Domain.DTOs;
 using Domain.Entities.Product;
 using Infrastructure.Repositories.InterfacesDB;
 using KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToClient;
+using KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToClient;
 using KhaledTeamRecycling.Attributes;
 using KhaledTeamRecycling.Helpers;
 using KhaledTeamRecycling.Middelware;
@@ -45,7 +46,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             if (isClientUser)
             {
@@ -126,11 +127,11 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allMainProducts = await _unitOfWork.MainProducts.GetAllAsync();
             var allSubProducts = await _unitOfWork.SubProducts.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x=>x.FKUserType==1 || x.FKUserType == 2);
+            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             vm.IsClientUser = isClientUser;
             if (isClientUser)
@@ -143,7 +144,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             }
 
             var DoneStatus = await _unitOfWork.Statuses.GetByIdAsync(x => x.ShortChar == "D");
-            if(vm.StatusId == DoneStatus?.Id && vm.StatusId >0) vm.isDisabled=true;
+            if (vm.StatusId == DoneStatus?.Id && vm.StatusId > 0) vm.isDisabled = true;
 
             vm.MainProductsList = SelectListHelper.BindSelectList(allMainProducts.ToList(), vm.FKMainProductId).ToList();
             vm.SubProductsList = new List<SelectListItem>();
@@ -260,6 +261,10 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 entity.CountUnits = (int?)model.UnitsValue.Value;
             }
+            model.IsKilosSelected = false;
+            model.IsTonSelected = false;
+            model.KilosValue = null;
+            model.TonValue = null;
             //if (model.IsKilosSelected && model.KilosValue.HasValue && model.SellPriceKilo.HasValue)
             //{
             //    entity.Kilo = model.KilosValue.Value;
@@ -275,14 +280,6 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             if (model.IsUnitsSelected && model.UnitsValue.HasValue && model.SellPriceUnit.HasValue)
             {
                 total += model.UnitsValue.Value * model.SellPriceUnit.Value;
-            }
-            if (model.IsKilosSelected && model.KilosValue.HasValue && model.SellPriceKilo.HasValue)
-            {
-                total += model.KilosValue.Value * model.SellPriceKilo.Value;
-            }
-            if (model.IsTonSelected && model.TonValue.HasValue && model.SellPriceTon.HasValue)
-            {
-                total += model.TonValue.Value * model.SellPriceTon.Value;
             }
 
             // Points discount logic: only for new orders by Client
@@ -360,7 +357,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allMainProducts = await _unitOfWork.MainProducts.GetAllAsync();
             var allSubProducts = await _unitOfWork.SubProducts.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
+            var allUserHasClientsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
@@ -382,7 +379,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             vm.MainProductsList = SelectListHelper.BindSelectList(allMainProducts.ToList(), vm.FKMainProductId).ToList();
             vm.SubProductsList = new List<SelectListItem>();
             vm.StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), vm.StatusId).ToList();
-            vm.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+            vm.UsersList = SelectListHelper.BindSelectList(allUserHasClientsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
 
             if (!id.HasValue || id.Value == 0)
             {
@@ -403,6 +400,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             }
 
             vm = _mapper.Map<OrderSellToClientVM>(entity);
+
             vm.IsClientUser = isClientUser;
             if (isClientUser)
             {
@@ -423,22 +421,6 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 vm.UnitsValue = entity.CountUnits.Value;
             }
 
-            //if (entity.Kilo.HasValue && entity.Kilo.Value > 0)
-            //{
-            //    // Check if kilo value is less than 1000, treat as kilos
-            //    if (entity.Kilo.Value < 1000)
-            //    {
-            //        vm.IsKilosSelected = true;
-            //        vm.KilosValue = entity.Kilo.Value;
-            //    }
-            //    else
-            //    {
-            //        // If kilo value is 1000 or more, treat as tons
-            //        vm.IsTonSelected = true;
-            //        vm.TonValue = entity.Kilo.Value / 1000;
-            //    }
-            //}
-
             vm.MainProductsList = SelectListHelper.BindSelectList(allMainProducts.ToList(), vm.FKMainProductId).ToList();
             vm.SubProductsList = SelectListHelper.BindSelectList(allSubProducts.Where(x => x.FKMainProductId == vm.FKMainProductId).ToList(), vm.FKSubProductId).ToList();
             var statusesToBind = allStatuses.ToList();
@@ -447,7 +429,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 statusesToBind = statusesToBind.Where(s => s.ShortChar == "S" || s.ShortChar == "C" || s.Id == currentStatusObj.Id).ToList();
             }
             vm.StatusesList = SelectListHelper.BindSelectList(statusesToBind, vm.StatusId).ToList();
-            vm.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+            vm.UsersList = SelectListHelper.BindSelectList(allUserHasClientsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
 
             return View(vm);
         }
@@ -460,12 +442,18 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
             var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
-            var FKUserId = "";
+
+            model.IsClientUser = isClientUser;
+            var FkUserId = "";
+
             if (isClientUser)
             {
                 model.FKUserId = loggedInUserId;
                 model.IsClientUser = true;
             }
+
+            ModelState.Remove(nameof(OrderSellToClientVM.OrderDate));
+            ModelState.Remove(nameof(OrderSellToClientVM.ApprovalDate));
 
             if (!ModelState.IsValid)
             {
@@ -473,7 +461,6 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     .Include(x => x.Status)
                     .Include(x => x.SubProduct)
                     .FirstOrDefaultAsync(x => x.Id == model.Id);
-
                 if (oldEntityForView != null)
                 {
                     await PopulateUpdateStatusViewModelAsync(model, oldEntityForView);
@@ -490,6 +477,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            FkUserId = oldEntity.FKUserId;
 
             string oldStatusChar = oldEntity.Status?.ShortChar ?? string.Empty;
 
@@ -509,8 +497,160 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 }
             }
 
+            var reservedToRemovedAllocations = new List<RoomAllocationResult>();
+            if (oldStatusChar == "D" && newStatus?.ShortChar == "S" && oldEntity.FKSubProductId.HasValue)
+            {
+                var requiredUnits = OrderSellToClientStatusValidator.CalculateOrderUnits(oldEntity);
+                var roomsWithReserved = await _unitOfWork.RoomGalleries.Table
+                    .Where(x => x.FkSubProduct == oldEntity.FKSubProductId.Value && (x.ReservedUnits ?? 0) > 0)
+                    .OrderByDescending(x => x.ReservedUnits ?? 0)
+                    .ToListAsync();
+
+                var totalReservedUnits = roomsWithReserved.Sum(x => x.ReservedUnits ?? 0);
+                if (totalReservedUnits < requiredUnits)
+                {
+                    ModelState.AddModelError(string.Empty, $"الكمية المحجوزة في الغرف أقل بمقدار {(requiredUnits - totalReservedUnits):0} وحدة");
+                    model.StatusId = oldEntity.StatusId;
+                    await PopulateUpdateStatusViewModelAsync(model, oldEntity);
+                    return View(model);
+                }
+
+                var remainingUnits = requiredUnits;
+                foreach (var room in roomsWithReserved)
+                {
+                    if (remainingUnits <= 0)
+                    {
+                        break;
+                    }
+
+                    var reservedUnits = room.ReservedUnits ?? 0;
+                    if (reservedUnits <= 0)
+                    {
+                        continue;
+                    }
+
+                    var movedUnits = Math.Min(reservedUnits, remainingUnits);
+                    reservedToRemovedAllocations.Add(new RoomAllocationResult
+                    {
+                        RoomId = room.Id,
+                        AllocatedKilos = movedUnits
+                    });
+                    remainingUnits -= movedUnits;
+                }
+            }
+
+            var storeNotesLines = new List<string>();
+            var roomsForNotesIds = new HashSet<int>();
+
+            if (transitionValidation?.Success == true
+                && newStatus?.ShortChar == "D"
+                && OrderSellToClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+            {
+                foreach (var allocation in transitionValidation.RoomAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (reservedToRemovedAllocations.Any())
+            {
+                foreach (var allocation in reservedToRemovedAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (transitionValidation?.Success == true
+                && newStatus?.ShortChar == "S"
+                && oldStatusChar != "D"
+                && OrderSellToClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+            {
+                foreach (var allocation in transitionValidation.RoomAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (roomsForNotesIds.Count > 0)
+            {
+                var roomsForNotes = await _unitOfWork.RoomGalleries.Table
+                    .Where(r => roomsForNotesIds.Contains(r.Id))
+                    .Include(r => r.Gallery)
+                    .ToListAsync();
+
+                var roomsById = roomsForNotes.ToDictionary(r => r.Id);
+
+                static string GetRoomName(Domain.Entities.Gallery.RoomGallery room)
+                {
+                    return !string.IsNullOrWhiteSpace(room.GenCode) ? room.GenCode : room.Id.ToString();
+                }
+
+                static string GetGalleryName(Domain.Entities.Gallery.RoomGallery room)
+                {
+                    if (room.Gallery != null && !string.IsNullOrWhiteSpace(room.Gallery.Name))
+                    {
+                        return room.Gallery.Name;
+                    }
+
+                    return room.FkGallery?.ToString() ?? "غير محدد";
+                }
+
+                static string BuildLine(Domain.Entities.Gallery.RoomGallery room, double units, string verb)
+                {
+                    return $"الغرفة اسمها {GetRoomName(room)} - المعرض الاساسي {GetGalleryName(room)} - {verb} {units:0} وحدة";
+                }
+
+                if (transitionValidation?.Success == true
+                    && newStatus?.ShortChar == "D"
+                    && OrderSellToClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    foreach (var allocation in transitionValidation.RoomAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هناخد منها"));
+                        }
+                    }
+                }
+
+                if (reservedToRemovedAllocations.Any())
+                {
+                    foreach (var allocation in reservedToRemovedAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هناخد منها"));
+                        }
+                    }
+                }
+
+                if (transitionValidation?.Success == true
+                    && newStatus?.ShortChar == "S"
+                    && oldStatusChar != "D"
+                    && OrderSellToClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    foreach (var allocation in transitionValidation.RoomAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هناخد منها"));
+                        }
+                    }
+                }
+            }
+
             oldEntity.StatusId = model.StatusId;
-            FKUserId = oldEntity.FKUserId;
+            if (newStatus?.ShortChar == "D" && oldStatusChar != "D")
+            {
+                oldEntity.ApprovalDate = AppDubaiTime.Now;
+            }
+            if (storeNotesLines.Any())
+            {
+                var notesBlock = string.Join(Environment.NewLine, storeNotesLines);
+                oldEntity.StoreNotes = string.IsNullOrWhiteSpace(oldEntity.StoreNotes)
+                    ? notesBlock
+                    : $"{oldEntity.StoreNotes}{Environment.NewLine}{notesBlock}";
+            }
             await _orderSellToClientService.UpdateAsync(oldEntity);
 
             if (newStatus != null)
@@ -519,7 +659,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                 if (oldStatusChar == "P" && newStatus.ShortChar == "D" && financial == null)
                 {
-                    var FKUserType = await _PermissionScanner.GetFKUserType(FKUserId);
+                    var FKUserType = await _PermissionScanner.GetFKUserType(FkUserId);
                     await _unitOfWork.Financials.AddAsync(new Domain.Entities.Financial
                     {
                         TableType = "OrderSellToClient",
@@ -528,7 +668,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                         StatusId = model.StatusId,
                         Total = oldEntity.Total,
                         FKUserType = FKUserType,
-                        FKUserId = FKUserId,
+                        FKUserId = FkUserId,
                     });
                     await _unitOfWork.CompleteAsync();
                 }
@@ -551,7 +691,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                     {
                         var userPointsTable = _unitOfWork.Context.Set<Domain.Entities.UserPoints>();
                         var userPoints = await userPointsTable.FirstOrDefaultAsync(x => x.FKUserId == userId);
-                        
+
                         if (userPoints == null)
                         {
                             userPoints = new Domain.Entities.UserPoints
@@ -570,20 +710,87 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                         // Calculate points: Every 1000 = 20 points
                         userPoints.Points = (int)Math.Floor(((userPoints.TotalsReNew ?? 0) / 1000m) * 20m);
-
-                        userPointsTable.Update(userPoints);
                     }
                 }
 
                 if (transitionValidation?.Success == true
-                    && transitionValidation.SelectedRoomId.HasValue
+                    && newStatus.ShortChar == "D"
                     && OrderSellToClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
                 {
-                    var room = await _unitOfWork.RoomInventories.GetByIdAsync(transitionValidation.SelectedRoomId.Value);
-                    if (room != null)
+                    if (transitionValidation.RoomAllocations.Any())
                     {
-                        room.MaxKilo = (room.MaxKilo ?? 0) - transitionValidation.RequiredKilos;
-                        _unitOfWork.RoomInventories.Update(room);
+                        foreach (var allocation in transitionValidation.RoomAllocations)
+                        {
+                            var room = await _unitOfWork.RoomGalleries.GetByIdAsync(allocation.RoomId);
+                            if (room == null)
+                            {
+                                continue;
+                            }
+
+                            var units = (int)allocation.AllocatedKilos;
+                            room.ReservedUnits = (room.ReservedUnits ?? 0) + units;
+                            _unitOfWork.RoomGalleries.Update(room);
+                        }
+                    }
+                    else if (transitionValidation.SelectedRoomId.HasValue)
+                    {
+                        var room = await _unitOfWork.RoomGalleries.GetByIdAsync(transitionValidation.SelectedRoomId.Value);
+                        if (room != null)
+                        {
+                            var units = (int)transitionValidation.RequiredKilos;
+                            room.ReservedUnits = (room.ReservedUnits ?? 0) + units;
+                            _unitOfWork.RoomGalleries.Update(room);
+                        }
+                    }
+                }
+
+                if (transitionValidation?.Success == true
+                    && newStatus.ShortChar == "S"
+                    && oldStatusChar != "D"
+                    && OrderSellToClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    foreach (var allocation in transitionValidation.RoomAllocations)
+                    {
+                        var room = await _unitOfWork.RoomGalleries.GetByIdAsync(allocation.RoomId);
+                        if (room == null)
+                        {
+                            continue;
+                        }
+
+                        var units = (int)allocation.AllocatedKilos;
+                        room.FilledUnits = (room.FilledUnits ?? 0) - units;
+                        if (room.FilledUnits < 0)
+                        {
+                            room.FilledUnits = 0;
+                        }
+                        _unitOfWork.RoomGalleries.Update(room);
+                    }
+                }
+
+                if (reservedToRemovedAllocations.Any())
+                {
+                    foreach (var allocation in reservedToRemovedAllocations)
+                    {
+                        var room = await _unitOfWork.RoomGalleries.GetByIdAsync(allocation.RoomId);
+                        if (room == null)
+                        {
+                            continue;
+                        }
+
+                        var units = (int)allocation.AllocatedKilos;
+                        room.ReservedUnits = (room.ReservedUnits ?? 0) - units;
+                        room.FilledUnits = (room.FilledUnits ?? 0) - units;
+
+                        if (room.ReservedUnits < 0)
+                        {
+                            room.ReservedUnits = 0;
+                        }
+                        if (room.FilledUnits < 0)
+                        {
+                            room.FilledUnits = 0;
+                        }
+
+                        _unitOfWork.RoomGalleries.Update(room);
                     }
                 }
 
@@ -618,7 +825,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             vm.IsClientUser = isClientUser;
             if (isClientUser)
@@ -747,7 +954,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             if (isClientUser)
             {
@@ -783,7 +990,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
-            var isClientUser = loggedInUser != null &&( loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
+            var isClientUser = loggedInUser != null && (loggedInUser.FKUserType == 1 || loggedInUser.FKUserType == 2); // شركة او فرد
 
             if (isClientUser)
             {

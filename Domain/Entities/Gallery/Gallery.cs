@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entities.Gallary;
+namespace Domain.Entities.Gallery;
 
 public class Gallery
 {

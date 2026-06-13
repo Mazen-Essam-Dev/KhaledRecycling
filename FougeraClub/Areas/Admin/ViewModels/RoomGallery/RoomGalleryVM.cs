@@ -34,7 +34,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.RoomGallery
 
         public List<SelectListItem>? GalleriesList { get; set; } = new();
         public List<SelectListItem>? SubProductsList { get; set; } = new();
-        public IEnumerable<Domain.Entities.Gallary.RoomGallery>? Items { get; set; }
+        public IEnumerable<Domain.Entities.Gallery.RoomGallery>? Items { get; set; }
         public string? SearchString { get; set; }
         public int? GalleryFilterId { get; set; }
         public int? SubProductFilterId { get; set; }

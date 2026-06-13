@@ -122,7 +122,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var entity = _mapper.Map<Domain.Entities.Gallary.RoomGallery>(model);
+            var entity = _mapper.Map<Domain.Entities.Gallery.RoomGallery>(model);
 
             if (model.Id == 0)
             {

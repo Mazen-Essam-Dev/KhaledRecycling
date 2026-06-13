@@ -1,7 +1,7 @@
 using Domain.Entities;
 using Domain.Entities.Contract;
 using Domain.Entities.Employees;
-using Domain.Entities.Gallary;
+using Domain.Entities.Gallery;
 using Domain.Entities.Inventory;
 using Domain.Entities.Product;
 using Domain.Entities.SalaryManage;
