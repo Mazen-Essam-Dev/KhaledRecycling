@@ -665,7 +665,7 @@ caption {
     padding-top: .75rem;
     padding-bottom: .75rem;
     color: var(--highdmin-secondary-color);
-    text-align: reham
+    text-align: 0;
 }
 
 th {
@@ -749,7 +749,7 @@ fieldset {
 }
 
 legend {
-    float: reham;
+    float: 0;;
     width: 100%;
     padding: 0;
     margin-bottom: .5rem;
@@ -764,7 +764,7 @@ legend {
 }
 
 legend + * {
-    clear: reham
+    clear: 0;
 }
 
 
@@ -778,7 +778,7 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 input[type="time"] {
     position: relative;
     direction: ltr;
-    text-align: reham;
+    text-align: 0;;
     padding-left: 2rem;
     padding-reham: 0 !important;
 }
@@ -2878,7 +2878,7 @@ progress {
 
 .form-control {
     min-height: 36px;
-    text-align: reham;
+    text-align: 0;;
     display: block;
     width: 100%;
     padding: .5rem .77rem;
@@ -3207,7 +3207,7 @@ textarea.form-control-lg {
 }
 
     .form-check .form-check-input {
-        float: reham;
+        float: 0;;
         margin-reham: -1.75em
     }
 
@@ -3307,7 +3307,7 @@ textarea.form-control-lg {
         width: 2em;
         margin-reham: -2.5em;
         background-image: var(--highdmin-form-switch-bg);
-        background-position: reham center;
+        background-position: 0; center;
         border-radius: 2em;
         -webkit-transition: background-position .15s ease-in-out;
         transition: background-position .15s ease-in-out
@@ -4426,7 +4426,7 @@ textarea.form-control-lg {
     margin: 0;
     font-size: var(--highdmin-dropdown-font-size);
     color: var(--highdmin-dropdown-color);
-    text-align: reham;
+    text-align: 0;;
     list-style: none;
     background-color: var(--highdmin-dropdown-bg);
     background-clip: padding-box;
@@ -5828,7 +5828,7 @@ textarea.form-control-lg {
     padding: var(--highdmin-accordion-btn-padding-y) var(--highdmin-accordion-btn-padding-x);
     font-size: .875rem;
     color: var(--highdmin-accordion-btn-color);
-    text-align: reham;
+    text-align: 0;;
     background-color: var(--highdmin-accordion-btn-bg);
     border: 0;
     border-radius: 0;
@@ -5985,7 +5985,7 @@ textarea.form-control-lg {
 
 
 .breadcrumb-item + .breadcrumb-item::before {
-    float: reham;
+    float: 0;;
     padding-reham: var(--highdmin-breadcrumb-item-padding-x);
     color: var(--highdmin-breadcrumb-divider-color);
     content: var(--highdmin-breadcrumb-divider, "\ea6e");
@@ -7231,7 +7231,7 @@ textarea.form-control-lg {
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
-    text-align: reham;
+    text-align: 0;;
     text-align: start;
     text-decoration: none;
     text-shadow: none;
@@ -7344,7 +7344,7 @@ textarea.form-control-lg {
     font-style: normal;
     font-weight: 400;
     line-height: 1.5;
-    text-align: reham;
+    text-align: 0;;
     text-align: start;
     text-decoration: none;
     text-shadow: none;
@@ -7508,7 +7508,7 @@ textarea.form-control-lg {
 .carousel-item {
     position: relative;
     display: none;
-    float: reham;
+    float: 0;;
     width: 100%;
     margin-left: -100%;
     -webkit-backface-visibility: hidden;
@@ -8938,7 +8938,7 @@ textarea.form-control-lg {
 }
 
 .float-start {
-    float: reham !important
+    float: 0; !important
 }
 
 .float-end {
@@ -10401,7 +10401,7 @@ textarea.form-control-lg {
 }
 
 .text-start {
-    text-align: reham !important
+    text-align: 0; !important
 }
 
 .text-end {
@@ -11263,7 +11263,7 @@ textarea.form-control-lg {
 
 @media (min-width:576px) {
     .float-sm-start {
-        float: reham !important
+        float: 0; !important
     }
 
     .float-sm-end {
@@ -12256,7 +12256,7 @@ textarea.form-control-lg {
     }
 
     .text-sm-start {
-        text-align: reham !important
+        text-align: 0; !important
     }
 
     .text-sm-end {
@@ -12270,7 +12270,7 @@ textarea.form-control-lg {
 
 @media (min-width:768px) {
     .float-md-start {
-        float: reham !important
+        float: 0; !important
     }
 
     .float-md-end {
@@ -13263,7 +13263,7 @@ textarea.form-control-lg {
     }
 
     .text-md-start {
-        text-align: reham !important
+        text-align: 0; !important
     }
 
     .text-md-end {
@@ -13277,7 +13277,7 @@ textarea.form-control-lg {
 
 @media (min-width:992px) {
     .float-lg-start {
-        float: reham !important
+        float: 0; !important
     }
 
     .float-lg-end {
@@ -14270,7 +14270,7 @@ textarea.form-control-lg {
     }
 
     .text-lg-start {
-        text-align: reham !important
+        text-align: 0; !important
     }
 
     .text-lg-end {
@@ -14284,7 +14284,7 @@ textarea.form-control-lg {
 
 @media (min-width:1200px) {
     .float-xl-start {
-        float: reham !important
+        float: 0; !important
     }
 
     .float-xl-end {
@@ -15277,7 +15277,7 @@ textarea.form-control-lg {
     }
 
     .text-xl-start {
-        text-align: reham !important
+        text-align: 0; !important
     }
 
     .text-xl-end {
@@ -15291,7 +15291,7 @@ textarea.form-control-lg {
 
 @media (min-width:1500px) {
     .float-xxl-start {
-        float: reham !important
+        float: 0; !important
     }
 
     .float-xxl-end {
@@ -16284,7 +16284,7 @@ textarea.form-control-lg {
     }
 
     .text-xxl-start {
-        text-align: reham !important
+        text-align: 0; !important
     }
 
     .text-xxl-end {
@@ -17240,7 +17240,7 @@ html[data-sidenav-size=sm-hover]:not([data-layout=topnav]) .sidenav-menu .simple
 }
 
 html[data-sidenav-size=sm-hover]:not([data-layout=topnav]) .sidenav-menu .logo {
-    text-align: reham
+    text-align: 0;
 }
 
 html[data-sidenav-size=sm-hover]:not([data-layout=topnav]) .sidenav-menu:hover {
@@ -17299,7 +17299,7 @@ html[data-sidenav-size=sm-hover-active]:not([data-layout=topnav]) .sidenav-toggl
 }
 
 html[data-sidenav-size=sm-hover-active]:not([data-layout=topnav]) .sidenav-menu .logo {
-    text-align: reham
+    text-align: 0;
 }
 
 html[data-sidenav-size=sm-hover-active]:not([data-layout=topnav]) .sidenav-menu .button-sm-hover {
@@ -17322,13 +17322,13 @@ html[data-sidenav-size=full]:not([data-layout=topnav]) .sidenav-menu {
 }
 
     html[data-sidenav-size=full]:not([data-layout=topnav]) .sidenav-menu .logo {
-        text-align: reham
+        text-align: 0;
     }
 
 html[data-sidenav-size=full]:not([data-layout=topnav]).sidebar-enable .sidenav-menu {
     opacity: 1;
     z-index: 1049;
-    margin-reham: 0
+    padding: 0px !important;
 }
 
 html[data-sidenav-size=fullscreen]:not([data-layout=topnav]) .sidenav-menu {
@@ -17527,7 +17527,7 @@ html[data-bs-theme=dark] .app-topbar .logo .logo-dark, html[data-topbar-color=br
     display: none;
     position: relative;
     cursor: pointer;
-    float: reham;
+    float: 0;;
     padding: 0;
     background-color: transparent;
     border: none;
@@ -18134,7 +18134,7 @@ html[data-layout-mode=detached]:not([data-layout=topnav]) .footer .page-containe
 
     .input-icon-left input[type="date"] {
         direction: rtl;
-        text-align: reham;
+        text-align: 0;;
         padding-left: 40px;
         padding-reham: 0;
         font-size: 14px;
@@ -20722,7 +20722,7 @@ th {
         }
 
         .timeline-alt .timeline-item .timeline-icon {
-            float: reham;
+            float: 0;;
             height: 24px;
             width: 24px;
             border-radius: 50%;
@@ -21589,7 +21589,7 @@ div.dataTables_wrapper div.dataTables_filter input {
 }
 
 div.dataTables_wrapper div.dataTables_length {
-    text-align: reham
+    text-align: 0;
 }
 
 @media (max-width:576px) {
@@ -21827,7 +21827,7 @@ div.dataTables_scrollBody {
 }
 
 #external-events .external-event {
-    text-align: reham;
+    text-align: 0;;
     padding: 8px 16px;
     margin: 6px 0
 }
@@ -22432,7 +22432,7 @@ th.gridjs-th-sort:focus, th.gridjs-th-sort:hover {
 
 .gridjs-search {
     position: relative;
-    float: reham
+    float: 0;
 }
 
     .gridjs-search::before {
@@ -22844,7 +22844,7 @@ button.gridjs-sort-asc, button.gridjs-sort-desc {
 }
 
 .img-preview {
-    float: reham;
+    float: 0;;
     margin-bottom: .5rem;
     margin-left: .5rem;
     overflow: hidden
@@ -22892,7 +22892,7 @@ button.gridjs-sort-asc, button.gridjs-sort-desc {
 }
 
 .ql-editor {
-    text-align: reham
+    text-align: 0;
 }
 
     .ql-editor ol, .ql-editor ul {
@@ -23219,7 +23219,7 @@ button.gridjs-sort-asc, button.gridjs-sort-desc {
     width: 100%;
     max-width: 1px;
     position: relative;
-    float: reham;
+    float: 0;;
     max-height: 1px;
     overflow: hidden;
     z-index: -1;
@@ -24063,7 +24063,7 @@ td button i {
     border-radius: 12px;
     padding: 50px 30px 30px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-    text-align: reham;
+    text-align: 0;;
     position: relative;
 }
 

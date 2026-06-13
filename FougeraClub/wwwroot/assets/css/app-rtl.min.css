@@ -17303,7 +17303,8 @@ html[data-sidenav-size=full]:not([data-layout=topnav]) .sidenav-menu {
 html[data-sidenav-size=full]:not([data-layout=topnav]).sidebar-enable .sidenav-menu {
     opacity: 1;
     z-index: 1049;
-    margin-right: 0
+    margin-right: 0 ;
+    padding: 0px !important;
 }
 
 html[data-sidenav-size=fullscreen]:not([data-layout=topnav]) .sidenav-menu {
