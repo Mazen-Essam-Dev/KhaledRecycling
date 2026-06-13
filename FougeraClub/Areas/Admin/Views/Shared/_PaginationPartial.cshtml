@@ -21,7 +21,9 @@
 <nav>
     <ul class="pagination justify-content-center">
         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-            <a class="page-link"
+            <a class="page-link ajax-page"
+               href="@($"{Context.Request.Path}?page={Model.PageIndex - 1}")"
+               data-page="@(Model.PageIndex - 1)"
                asp-area="@area"
                asp-controller="@controller"
                asp-action="Index"
@@ -34,7 +36,9 @@
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
             <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                <a class="page-link"
+                <a class="page-link ajax-page"
+                   href="@($"{Context.Request.Path}?page={i}")"
+                   data-page="@i"
                    asp-area="@area"
                    asp-controller="@controller"
                    asp-action="Index"
@@ -46,7 +50,9 @@
         }
 
         <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-            <a class="page-link"
+            <a class="page-link ajax-page"
+               href="@($"{Context.Request.Path}?page={Model.PageIndex + 1}")"
+               data-page="@(Model.PageIndex + 1)"
                asp-area="@area"
                asp-controller="@controller"
                asp-action="Index"

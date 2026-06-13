@@ -89,7 +89,7 @@
 <nav class="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3">
     <ul class="pagination my-1">
         <li class="page-item @(Model.Paginated.HasPreviousPage ? "" : "disabled")">
-            <a href="javascript:void(0)" class="page-link ajax-page"
+            <a href="@($"{Context.Request.Path}?page={Model.Paginated.PageIndex - 1}")" class="page-link ajax-page"
                data-page="@(Model.Paginated.PageIndex - 1)">
                 @Resource2.Previous
             </a>
@@ -97,11 +97,11 @@
         @for (int i = 1; i <= Model.Paginated.TotalPages; i++)
         {
             <li class="page-item @(i == Model.Paginated.PageIndex ? "active" : "")">
-                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+                <a href="@($"{Context.Request.Path}?page={i}")" class="page-link ajax-page" data-page="@i">@i</a>
             </li>
         }
         <li class="page-item @(Model.Paginated.HasNextPage ? "" : "disabled")">
-            <a href="javascript:void(0)" class="page-link ajax-page"
+            <a href="@($"{Context.Request.Path}?page={Model.Paginated.PageIndex + 1}")" class="page-link ajax-page"
                data-page="@(Model.Paginated.PageIndex + 1)">
                 @Resource2.Next
             </a>

@@ -267,14 +267,14 @@
                 var filters = {
                     memberId : $('#memberId').val(),
                     page: page,
-                    pageSize: pageSizeOverride || $('#pageSizeSelect').length ? $('#pageSizeSelect').val() : "",
+                    pageSize: pageSizeOverride || ($('#pageSizeSelect').length ? $('#pageSizeSelect').val() : ""),
                 };
                 sessionStorage.setItem(pageKey, JSON.stringify(filters));
             }
 
             function loadNewPartialList(page, pageSizeOverride) {
                 var memberId = $('#memberId').val();
-                var pageSize   = pageSizeOverride || $('#pageSizeSelect').length ? $('#pageSizeSelect').val() : "";
+                var pageSize   = pageSizeOverride || ($('#pageSizeSelect').length ? $('#pageSizeSelect').val() : "");
 
                 $.ajax({
                     url: '/Admin/Member/MemberCourses',

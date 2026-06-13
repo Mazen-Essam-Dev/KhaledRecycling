@@ -138,7 +138,7 @@
 <nav class="d-flex justify-content-center align-items-center flex-wrap mt-3">
     <ul class="pagination my-1">
         <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
-            <a href="javascript:void(0)" class="page-link ajax-page"
+            <a href="@($"{Context.Request.Path}?page={Model.CurrentPage - 1}")" class="page-link ajax-page"
                data-page="@(Model.CurrentPage - 1)">
                 @Resource2.Previous
             </a>
@@ -147,12 +147,12 @@
         @for (int i = 1; i <= Model.TotalPages; i++)
         {
             <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                <a href="javascript:void(0)" class="page-link ajax-page" data-page="@i">@i</a>
+                <a href="@($"{Context.Request.Path}?page={i}")" class="page-link ajax-page" data-page="@i">@i</a>
             </li>
         }
 
         <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
-            <a href="javascript:void(0)" class="page-link ajax-page"
+            <a href="@($"{Context.Request.Path}?page={Model.CurrentPage + 1}")" class="page-link ajax-page"
                data-page="@(Model.CurrentPage + 1)">
                 @Resource2.Next
             </a>
