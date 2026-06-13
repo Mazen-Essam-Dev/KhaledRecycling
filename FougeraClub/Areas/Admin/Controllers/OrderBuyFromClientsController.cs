@@ -293,7 +293,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 var userPoints = await userPointsTable.FirstOrDefaultAsync(x => x.FKUserId == loggedInUserId);
                 if (userPoints != null && userPoints.Points.HasValue && userPoints.Points.Value > 0)
                 {
-                    int maxDiscount = Math.Min(30, userPoints.Points.Value / 50);
+                    int maxDiscount = Math.Min(20, userPoints.Points.Value / 500); // 20 is minimum % , 500 points = 1%
                     if (maxDiscount > 0)
                     {
                         entity.DiscountRatio = maxDiscount;
@@ -699,8 +699,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                         userPoints.Totals = (userPoints.Totals ?? 0) + currentTotal;
                         userPoints.TotalsReNew = (userPoints.TotalsReNew ?? 0) + currentTotal;
 
-                        // Calculate points: Every 1000 = 20 points
-                        userPoints.Points = (int)Math.Floor(((userPoints.TotalsReNew ?? 0) / 1000m) * 20m);
+                        // Calculate points: Every 1000 = 100 points
+                        userPoints.Points = (int)Math.Floor(((userPoints.TotalsReNew ?? 0) / 1000m) * 100m); // Evrey 1000$ --> == 100 Points
                     }
                 }
 
