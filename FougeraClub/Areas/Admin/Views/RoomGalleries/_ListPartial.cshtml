@@ -24,7 +24,11 @@
                 <th>Code</th>
                 <th>Gallery</th>
                 <th>Sub Waste</th>
-                <th>Max Units</th>
+                <th>اقصى عدد وحدات</th>
+                <th>ممتليء (ع)</th>
+                <th>محجوز (ع)</th>
+                <th>فارغ (ع)</th>
+                <th>فارغ (%)</th>
                 <th>Description</th>
                 <th style="width: 200px;">Actions</th>
             </tr>
@@ -36,12 +40,18 @@
                 foreach (var item in Model.Items)
                 {
                     x++;
+                    var Free = item.MaxUnit ?? 0 - item.FilledUnits ?? 0 - item.ReservedUnits ?? 0;
+                    var FreePercentage = item.MaxUnit > 0 ? Free / item.MaxUnit * 100 : 0;
                     <tr>
                         <td>@x</td>
                         <td>@item.GenCode</td>
                         <td>@item.Gallery?.Name</td>
                         <td>@DisplayHelper.FormatMainSubName(item.SubProduct?.MainProduct?.NameAr, item.SubProduct?.MainProduct?.NameEn, item.SubProduct?.NameAr, item.SubProduct?.NameEn)</td>
                         <td>@item.MaxUnit</td>
+                        <td>@item.FilledUnits</td>
+                        <td>@item.ReservedUnits</td>
+                        <td>@((Free).ToString("F2")) </td>
+                        <td>@FreePercentage %</td>
                         <td>@item.Description</td>
                         <td>
                             @if (editPermission)

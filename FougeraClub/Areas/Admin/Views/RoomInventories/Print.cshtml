@@ -48,6 +48,7 @@
                     <th>ممتليء (ك)</th>
                     <th>محجوز (ك)</th>
                     <th>فارغ (ك)</th>
+                    <th>فارغ (%)</th>
                     <th>Description</th>
                 </tr>
             </thead>
@@ -62,6 +63,8 @@
                 {
                     foreach (var item in Model.Items)
                     {
+                        var Free = item.MaxKilo ?? 0 - item.FilledKilo ?? 0 - item.ReservedKilo ?? 0;
+                        var FreePercentage = item.MaxKilo > 0 ? Free / item.MaxKilo * 100 : 0;
                         <tr>
                             <td>@item.Id</td>
                             <td>@item.GenCode</td>
@@ -70,7 +73,8 @@
                             <td>@item.MaxKilo?.ToString("F2")</td>
                             <td>@item.FilledKilo?.ToString("F2")</td>
                             <td>@item.ReservedKilo?.ToString("F2")</td>
-                            <td>@((item.MaxKilo - item.FilledKilo - item.ReservedKilo)?.ToString("F2")) </td>
+                            <td>@((Free).ToString("F2")) </td>
+                            <td>@FreePercentage %</td>
                             <td>@item.Description</td>
                         </tr>
                     }
