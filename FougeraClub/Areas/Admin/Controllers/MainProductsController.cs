@@ -129,7 +129,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> Print(string? searchTerm)
         {
-            var items = await _mainProductService.GetAllAsync(searchTerm);
+            var query = _unitOfWork.MainProducts.Table.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.NameAr != null && x.NameAr.Contains(searchTerm)) ||
+                    (x.NameEn != null && x.NameEn.Contains(searchTerm)));
+            }
+
+            var items = await query.OrderBy(x => x.Id).ToListAsync();
             var vm = new MainProductVM
             {
                 Items = items,
@@ -144,8 +153,16 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> createExcelReport_Download(string? searchTerm)
         {
-            var items = await _mainProductService.GetAllAsync(searchTerm);
-            var list = items.ToList();
+            var query = _unitOfWork.MainProducts.Table.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.NameAr != null && x.NameAr.Contains(searchTerm)) ||
+                    (x.NameEn != null && x.NameEn.Contains(searchTerm)));
+            }
+
+            var list = await query.OrderBy(x => x.Id).ToListAsync();
 
             if (!list.Any())
             {

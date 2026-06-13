@@ -181,7 +181,30 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> Print(string? searchTerm, int? galleryId, int? subProductId)
         {
-            var items = await _roomGalleryService.GetAllAsync(searchTerm, galleryId, subProductId);
+            var query = _unitOfWork.RoomGalleries.Table
+                .Include(x => x.Gallery)
+                .Include(x => x.SubProduct!)
+                    .ThenInclude(x => x.MainProduct)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.GenCode != null && x.GenCode.Contains(searchTerm)) ||
+                    (x.Description != null && x.Description.Contains(searchTerm)));
+            }
+
+            if (galleryId.HasValue && galleryId.Value > 0)
+            {
+                query = query.Where(x => x.FkGallery == galleryId.Value);
+            }
+
+            if (subProductId.HasValue && subProductId.Value > 0)
+            {
+                query = query.Where(x => x.FkSubProduct == subProductId.Value);
+            }
+
+            var items = await query.OrderBy(x => x.FkGallery).ToListAsync();
             var allGalleries = await _unitOfWork.Galleries.GetAllAsync();
             var allSubProducts = await _unitOfWork.SubProducts.GetAllAsync();
 
@@ -203,26 +226,78 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> createExcelReport_Download(string? searchTerm, int? galleryId, int? subProductId)
         {
-            var items = await _roomGalleryService.GetAllAsync(searchTerm, galleryId, subProductId);
-            var list = items.ToList();
+            var query = _unitOfWork.RoomGalleries.Table
+                .Include(x => x.Gallery)
+                .Include(x => x.SubProduct!)
+                    .ThenInclude(x => x.MainProduct)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.GenCode != null && x.GenCode.Contains(searchTerm)) ||
+                    (x.Description != null && x.Description.Contains(searchTerm)));
+            }
+
+            if (galleryId.HasValue && galleryId.Value > 0)
+            {
+                query = query.Where(x => x.FkGallery == galleryId.Value);
+            }
+
+            if (subProductId.HasValue && subProductId.Value > 0)
+            {
+                query = query.Where(x => x.FkSubProduct == subProductId.Value);
+            }
+
+            var list = await query.OrderBy(x => x.FkGallery).ToListAsync();
 
             if (!list.Any())
             {
                 return RedirectToAction(nameof(Index), new { searchTerm, galleryId, subProductId });
             }
 
-            var titles = new List<string> { "Code", "Gallery", "Sub Product", "Max Kilo", "Description" };
-            var excelData = list.Select(x => new ExcelDataDTO
+            var titles = new List<string>
             {
-                t1 = x.GenCode ?? string.Empty,
-                t2 = x.Gallery?.Name ?? string.Empty,
-                t3 = DisplayHelper.FormatMainSubName(
-                    x.SubProduct?.MainProduct?.NameAr,
-                    x.SubProduct?.MainProduct?.NameEn,
-                    x.SubProduct?.NameAr,
-                    x.SubProduct?.NameEn),
-                t4 = x.MaxUnit?.ToString() ?? string.Empty,
-                t5 = x.Description ?? string.Empty
+                "Id",
+                "Code",
+                "Gallery",
+                "Sub Product",
+                "Max Units",
+                "Filled Units",
+                "Reserved Units",
+                "Free Units",
+                "Free (%)",
+                "Description"
+            };
+
+            var excelData = list.Select(x =>
+            {
+                int maxUnit = x.MaxUnit ?? 0;
+                int filled = x.FilledUnits ?? 0;
+                int reserved = x.ReservedUnits ?? 0;
+
+                int free = maxUnit - filled - reserved;
+                double freePercentage = maxUnit > 0
+                ? ((double)free / maxUnit) * 100
+                : 100;
+
+                return new ExcelDataDTO
+                {
+                    t1 = x.Id.ToString(),
+                    t2 = x.GenCode ?? string.Empty,
+                    t3 = x.Gallery?.Name ?? string.Empty,
+                    t4 = DisplayHelper.FormatMainSubName(
+                            x.SubProduct?.MainProduct?.NameAr,
+                            x.SubProduct?.MainProduct?.NameEn,
+                            x.SubProduct?.NameAr,
+                            x.SubProduct?.NameEn),
+                    t5 = maxUnit,
+                    t6 = filled,
+                    t7 = reserved,
+                    t8 = free,
+                    t9 = freePercentage.ToString("F2") + "%",
+                    t10 = x.Description ?? string.Empty
+                };
             }).ToList();
 
             var (ok, bytes) = ExcelStaticReport.ExcelReportArEn_(excelData, titles, 0, "en");

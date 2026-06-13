@@ -130,7 +130,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> Print(string? searchTerm)
         {
-            var items = await _inventoryService.GetAllAsync(searchTerm);
+            var query = _unitOfWork.Inventories.Table.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.Name != null && x.Name.Contains(searchTerm)) ||
+                    (x.Location != null && x.Location.Contains(searchTerm)) ||
+                    (x.Description != null && x.Description.Contains(searchTerm)));
+            }
+
+            var items = await query.OrderBy(x => x.Id).ToListAsync();
             var vm = new InventoryVM
             {
                 Items = items,
@@ -145,8 +155,17 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> createExcelReport_Download(string? searchTerm)
         {
-            var items = await _inventoryService.GetAllAsync(searchTerm);
-            var list = items.ToList();
+            var query = _unitOfWork.Inventories.Table.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.Name != null && x.Name.Contains(searchTerm)) ||
+                    (x.Location != null && x.Location.Contains(searchTerm)) ||
+                    (x.Description != null && x.Description.Contains(searchTerm)));
+            }
+
+            var list = await query.OrderBy(x => x.Id).ToListAsync();
 
             if (!list.Any())
             {

@@ -2798,13 +2798,13 @@
     <value>قائمة النفايات الاساسية</value>
   </data>
   <data name="SubWastes" xml:space="preserve">
-    <value>قائمة النفايات الفرعية</value>
+    <value>قائمة النفايات (الفرعية)</value>
   </data>
   <data name="SubProduct" xml:space="preserve">
     <value>قائمة المنتجات الفرعية</value>
   </data>
   <data name="OrderBuyFromClients" xml:space="preserve">
-    <value>قائمة طلبات الشراء من العملاء</value>
+    <value>أدارة طلبات الشراء من العملاء</value>
   </data>
   <data name="UpdateStatus" xml:space="preserve">
     <value>تحديث الحالة </value>
@@ -2835,5 +2835,26 @@
   </data>
   <data name="corporationNotClient" xml:space="preserve">
     <value>شركة ليست عميل</value>
+  </data>
+  <data name="FinancialTimeline" xml:space="preserve">
+    <value>تقرير الحركة المالية</value>
+  </data>
+  <data name="Galleries" xml:space="preserve">
+    <value>قائمة المعارض</value>
+  </data>
+  <data name="RoomGalleries" xml:space="preserve">
+    <value>قائمة غرف المعارض</value>
+  </data>
+  <data name="SubProducts" xml:space="preserve">
+    <value>قائمة المنتجات (الفرعية)</value>
+  </data>
+  <data name="OrderSellToFactorys" xml:space="preserve">
+    <value>أدارة طلبات البيع للمصانع</value>
+  </data>
+  <data name="OrderSellToClients" xml:space="preserve">
+    <value>أدارة طلبات بيع المنتجات للعملاء</value>
+  </data>
+  <data name="OrderBuyFromFactorys" xml:space="preserve">
+    <value>أدارة طلبات شراء المنتجات من المصانع</value>
   </data>
 </root>

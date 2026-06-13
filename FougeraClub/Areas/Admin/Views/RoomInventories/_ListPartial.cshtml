@@ -40,8 +40,16 @@
                 foreach (var item in Model.Items)
                 {
                     x++;
-                    var Free = item.MaxKilo??0 - item.FilledKilo??0 - item.ReservedKilo??0;
-                    var FreePercentage = item.MaxKilo>0 ? Free / item.MaxKilo * 100 : 0;
+                    var maxKilo = item.MaxKilo ?? 0;
+                    var filledKilo = item.FilledKilo ?? 0;
+                    var reservedKilo = item.ReservedKilo ?? 0;
+
+                    var Free = maxKilo - filledKilo - reservedKilo;
+
+                    var FreePercentage = maxKilo > 0
+                    ? (Free / maxKilo) * 100
+                    : 100;
+
                     <tr>
                         <td>@x</td>
                         <td>@item.GenCode</td>
@@ -51,7 +59,7 @@
                         <td>@item.FilledKilo?.ToString("F2")</td>
                         <td>@item.ReservedKilo?.ToString("F2")</td>
                         <td>@((Free).ToString("F2")) </td>
-                        <td>@FreePercentage %</td>
+                        <td>@((FreePercentage).ToString("F2")) %</td>
                         <td>@item.Description</td>
                         <td>
                             @if (editPermission)

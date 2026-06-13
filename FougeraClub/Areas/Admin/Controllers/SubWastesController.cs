@@ -173,7 +173,21 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> Print(string? searchTerm, int? mainWasteId)
         {
-            var items = await _subWasteService.GetAllAsync(searchTerm, mainWasteId);
+            var query = _unitOfWork.SubWastes.Table.Include(x => x.MainWaste).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.NameAr != null && x.NameAr.Contains(searchTerm)) ||
+                    (x.NameEn != null && x.NameEn.Contains(searchTerm)));
+            }
+
+            if (mainWasteId.HasValue && mainWasteId.Value > 0)
+            {
+                query = query.Where(x => x.FKMainWasteId == mainWasteId.Value);
+            }
+
+            var items = await query.OrderBy(x => x.Id).ToListAsync();
             var allMainWastes = await _unitOfWork.MainWastes.GetAllAsync();
 
             var vm = new SubWasteVM
@@ -192,8 +206,21 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> createExcelReport_Download(string? searchTerm, int? mainWasteId)
         {
-            var items = await _subWasteService.GetAllAsync(searchTerm, mainWasteId);
-            var list = items.ToList();
+            var query = _unitOfWork.SubWastes.Table.Include(x => x.MainWaste).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.NameAr != null && x.NameAr.Contains(searchTerm)) ||
+                    (x.NameEn != null && x.NameEn.Contains(searchTerm)));
+            }
+
+            if (mainWasteId.HasValue && mainWasteId.Value > 0)
+            {
+                query = query.Where(x => x.FKMainWasteId == mainWasteId.Value);
+            }
+
+            var list = await query.OrderBy(x => x.Id).ToListAsync();
 
             if (!list.Any())
             {

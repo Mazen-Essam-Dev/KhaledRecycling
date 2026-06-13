@@ -3456,4 +3456,30 @@ in accordance with the standards of Fujairah Science Club.</value>
   <data name="corporationNotClient" xml:space="preserve">
     <value>corporation But Not Client</value>
   </data>
+  <data name="FinancialTimeline" xml:space="preserve">
+    <value>Financial movement report</value>
+    <comment>تقرير الحركة المالية</comment>
+  </data>
+  <data name="Galleries" xml:space="preserve">
+    <value>Galleries</value>
+    <comment>المعارض</comment>
+  </data>
+  <data name="RoomGalleries" xml:space="preserve">
+    <value>Room Galleries List</value>
+  </data>
+  <data name="SubProducts" xml:space="preserve">
+    <value>Sub Products List</value>
+  </data>
+  <data name="OrderSellToFactorys" xml:space="preserve">
+    <value>Managing sales orders for factories</value>
+    <comment>أدارة طلبات البيع للمصانع</comment>
+  </data>
+  <data name="OrderSellToClients" xml:space="preserve">
+    <value>Managing orders to sell products to customers</value>
+    <comment>أدارة طلبات بيع المنتجات للعملاء</comment>
+  </data>
+  <data name="OrderBuyFromFactorys" xml:space="preserve">
+    <value>Managing orders for products from factories</value>
+    <comment>أدارة طلبات شراء المنتجات من المصانع</comment>
+  </data>
 </root>

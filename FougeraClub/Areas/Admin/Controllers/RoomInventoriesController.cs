@@ -181,7 +181,30 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> Print(string? searchTerm, int? inventoryId, int? subWasteId)
         {
-            var items = await _roomInventoryService.GetAllAsync(searchTerm, inventoryId, subWasteId);
+            var query = _unitOfWork.RoomInventories.Table
+                .Include(x => x.Inventory)
+                .Include(x => x.SubWaste!)
+                    .ThenInclude(x => x.MainWaste)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.GenCode != null && x.GenCode.Contains(searchTerm)) ||
+                    (x.Description != null && x.Description.Contains(searchTerm)));
+            }
+
+            if (inventoryId.HasValue && inventoryId.Value > 0)
+            {
+                query = query.Where(x => x.FkInventory == inventoryId.Value);
+            }
+
+            if (subWasteId.HasValue && subWasteId.Value > 0)
+            {
+                query = query.Where(x => x.FKSubWaste == subWasteId.Value);
+            }
+
+            var items = await query.OrderBy(x => x.FkInventory).ToListAsync();
             var allInventories = await _unitOfWork.Inventories.GetAllAsync();
             var allSubWastes = await _unitOfWork.SubWastes.GetAllAsync();
 
@@ -203,26 +226,80 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> createExcelReport_Download(string? searchTerm, int? inventoryId, int? subWasteId)
         {
-            var items = await _roomInventoryService.GetAllAsync(searchTerm, inventoryId, subWasteId);
-            var list = items.ToList();
+            var query = _unitOfWork.RoomInventories.Table
+                .Include(x => x.Inventory)
+                .Include(x => x.SubWaste!)
+                    .ThenInclude(x => x.MainWaste)
+                .AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.GenCode != null && x.GenCode.Contains(searchTerm)) ||
+                    (x.Description != null && x.Description.Contains(searchTerm)));
+            }
+
+            if (inventoryId.HasValue && inventoryId.Value > 0)
+            {
+                query = query.Where(x => x.FkInventory == inventoryId.Value);
+            }
+
+            if (subWasteId.HasValue && subWasteId.Value > 0)
+            {
+                query = query.Where(x => x.FKSubWaste == subWasteId.Value);
+            }
+
+            var list = await query.OrderBy(x => x.FkInventory).ToListAsync();
 
             if (!list.Any())
             {
                 return RedirectToAction(nameof(Index), new { searchTerm, inventoryId, subWasteId });
             }
 
-            var titles = new List<string> { "Code", "Inventory", "Sub Waste", "Max Kilo", "Description" };
-            var excelData = list.Select(x => new ExcelDataDTO
+
+            var titles = new List<string>
+    {
+        "Id",
+        "Code",
+        "Inventory",
+        "Sub Waste",
+        "Max Kilo",
+        "Filled Kilo",
+        "Reserved Kilo",
+        "Free Kilo",
+        "Free (%)",
+        "Description"
+    };
+
+            var excelData = list.Select(x =>
             {
-                t1 = x.GenCode ?? string.Empty,
-                t2 = x.Inventory?.Name ?? string.Empty,
-                t3 = DisplayHelper.FormatMainSubName(
-                    x.SubWaste?.MainWaste?.NameAr,
-                    x.SubWaste?.MainWaste?.NameEn,
-                    x.SubWaste?.NameAr,
-                    x.SubWaste?.NameEn),
-                t4 = x.MaxKilo?.ToString() ?? string.Empty,
-                t5 = x.Description ?? string.Empty
+                var maxKilo = x.MaxKilo ?? 0;
+                var filledKilo = x.FilledKilo ?? 0;
+                var reservedKilo = x.ReservedKilo ?? 0;
+
+                var freeKilo = maxKilo - filledKilo - reservedKilo;
+
+                var freePercentage = maxKilo > 0
+                    ? (freeKilo / maxKilo) * 100
+                    : 100;
+
+                return new ExcelDataDTO
+                {
+                    t1 = x.Id.ToString(),
+                    t2 = x.GenCode ?? string.Empty,
+                    t3 = x.Inventory?.Name ?? string.Empty,
+                    t4 = DisplayHelper.FormatMainSubName(
+                            x.SubWaste?.MainWaste?.NameAr,
+                            x.SubWaste?.MainWaste?.NameEn,
+                            x.SubWaste?.NameAr,
+                            x.SubWaste?.NameEn),
+                    t5 = maxKilo.ToString("F2"),
+                    t6 = filledKilo.ToString("F2"),
+                    t7 = reservedKilo.ToString("F2"),
+                    t8 = freeKilo.ToString("F2"),
+                    t9 = freePercentage.ToString("F2") + "%",
+                    t10 = x.Description ?? string.Empty
+                };
             }).ToList();
 
             var (ok, bytes) = ExcelStaticReport.ExcelReportArEn_(excelData, titles, 0, "en");

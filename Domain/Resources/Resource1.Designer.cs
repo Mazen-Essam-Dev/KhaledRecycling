@@ -3373,6 +3373,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Financial movement report.
+        /// </summary>
+        public static string FinancialTimeline {
+            get {
+                return ResourceManager.GetString("FinancialTimeline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finished course.
         /// </summary>
         public static string Finished_course {
@@ -3486,6 +3495,15 @@ namespace Domain.Resources {
         public static string FullName {
             get {
                 return ResourceManager.GetString("FullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Galleries.
+        /// </summary>
+        public static string Galleries {
+            get {
+                return ResourceManager.GetString("Galleries", resourceCulture);
             }
         }
         
@@ -5263,6 +5281,33 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Managing orders for products from factories.
+        /// </summary>
+        public static string OrderBuyFromFactorys {
+            get {
+                return ResourceManager.GetString("OrderBuyFromFactorys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Managing orders to sell products to customers.
+        /// </summary>
+        public static string OrderSellToClients {
+            get {
+                return ResourceManager.GetString("OrderSellToClients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Managing sales orders for factories.
+        /// </summary>
+        public static string OrderSellToFactorys {
+            get {
+                return ResourceManager.GetString("OrderSellToFactorys", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Other.
         /// </summary>
         public static string Other {
@@ -6443,6 +6488,15 @@ namespace Domain.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Room Galleries List.
+        /// </summary>
+        public static string RoomGalleries {
+            get {
+                return ResourceManager.GetString("RoomGalleries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Room Inventories List.
         /// </summary>
         public static string RoomInventories {
@@ -6916,6 +6970,15 @@ namespace Domain.Resources {
         public static string SubProduct {
             get {
                 return ResourceManager.GetString("SubProduct", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sub Products List.
+        /// </summary>
+        public static string SubProducts {
+            get {
+                return ResourceManager.GetString("SubProducts", resourceCulture);
             }
         }
         

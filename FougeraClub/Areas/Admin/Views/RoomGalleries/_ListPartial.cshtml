@@ -23,7 +23,7 @@
                 <th style="width: 80px;">No.</th>
                 <th>Code</th>
                 <th>Gallery</th>
-                <th>Sub Waste</th>
+                <th>Sub Product</th>
                 <th>اقصى عدد وحدات</th>
                 <th>ممتليء (ع)</th>
                 <th>محجوز (ع)</th>
@@ -40,8 +40,15 @@
                 foreach (var item in Model.Items)
                 {
                     x++;
-                    var Free = item.MaxUnit ?? 0 - item.FilledUnits ?? 0 - item.ReservedUnits ?? 0;
-                    var FreePercentage = item.MaxUnit > 0 ? Free / item.MaxUnit * 100 : 0;
+                    int maxUnit = item.MaxUnit ?? 0;
+                    int filled = item.FilledUnits ?? 0;
+                    int reserved = item.ReservedUnits ?? 0;
+
+                    int Free = maxUnit - filled - reserved;
+                    double FreePercentage = maxUnit > 0
+                    ? ((double)Free / maxUnit) * 100
+                    : 100;
+
                     <tr>
                         <td>@x</td>
                         <td>@item.GenCode</td>
@@ -50,8 +57,8 @@
                         <td>@item.MaxUnit</td>
                         <td>@item.FilledUnits</td>
                         <td>@item.ReservedUnits</td>
-                        <td>@((Free).ToString("F2")) </td>
-                        <td>@FreePercentage %</td>
+                        <td>@((Free)) </td>
+                        <td>@((FreePercentage).ToString("F2")) %</td>
                         <td>@item.Description</td>
                         <td>
                             @if (editPermission)

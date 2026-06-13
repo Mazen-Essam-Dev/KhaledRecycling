@@ -173,7 +173,21 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> Print(string? searchTerm, int? mainProductId)
         {
-            var items = await _subProductService.GetAllAsync(searchTerm, mainProductId);
+            var query = _unitOfWork.SubProducts.Table.Include(x => x.MainProduct).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.NameAr != null && x.NameAr.Contains(searchTerm)) ||
+                    (x.NameEn != null && x.NameEn.Contains(searchTerm)));
+            }
+
+            if (mainProductId.HasValue && mainProductId.Value > 0)
+            {
+                query = query.Where(x => x.FKMainProductId == mainProductId.Value);
+            }
+
+            var items = await query.OrderBy(x => x.Id).ToListAsync();
             var allMainProducts = await _unitOfWork.MainProducts.GetAllAsync();
 
             var vm = new SubProductVM
@@ -192,8 +206,21 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
         [YesGet]
         public async Task<IActionResult> createExcelReport_Download(string? searchTerm, int? mainProductId)
         {
-            var items = await _subProductService.GetAllAsync(searchTerm, mainProductId);
-            var list = items.ToList();
+            var query = _unitOfWork.SubProducts.Table.Include(x => x.MainProduct).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                query = query.Where(x =>
+                    (x.NameAr != null && x.NameAr.Contains(searchTerm)) ||
+                    (x.NameEn != null && x.NameEn.Contains(searchTerm)));
+            }
+
+            if (mainProductId.HasValue && mainProductId.Value > 0)
+            {
+                query = query.Where(x => x.FKMainProductId == mainProductId.Value);
+            }
+
+            var list = await query.OrderBy(x => x.Id).ToListAsync();
 
             if (!list.Any())
             {
