@@ -193,7 +193,7 @@ namespace KhaledTeamRecycling.Helpers
             return new StatusTransitionValidationResult
             {
                 Success = false,
-                ErrorMessage = $"المساحة المتاحة أقل بمقدار {kiloShortage:0.##} كيلو"
+                ErrorMessage = $"المساحة المتاحة فقط ({totalAvailableKilos:0.##}) اي اقل ب  بمقدار {kiloShortage:0.##} كيلو"
             };
         }
 

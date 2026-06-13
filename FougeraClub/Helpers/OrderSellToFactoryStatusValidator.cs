@@ -7,6 +7,13 @@ namespace KhaledTeamRecycling.Helpers
 
     public static class OrderSellToFactoryStatusValidator
     {
+        private static double CalculateAvailableRoomKilos(Domain.Entities.Inventory.RoomInventory room)
+        {
+            var filledKilo = room.FilledKilo ?? 0;
+            var reservedKilo = room.ReservedKilo ?? 0;
+            return Math.Max(0, filledKilo - reservedKilo);
+        }
+
         public static bool RequiresBalanceAndRoomValidation(string? newStatusChar, string oldStatusChar)
         {
             if (newStatusChar is not ("D" or "S") || oldStatusChar == newStatusChar)
@@ -56,15 +63,15 @@ namespace KhaledTeamRecycling.Helpers
 
             var balance = (financialPlus - financialMinus) + (moneyPlus - moneyMinus) - orderTotal;
 
-            if (balance <= 0)
-            {
-                var shortage = Math.Abs(balance);
-                return new StatusTransitionValidationResult
-                {
-                    Success = false,
-                    ErrorMessage = $"الرصيد لا يكفي بسبب فرق {shortage:0.##} جنيه"
-                };
-            }
+            //if (balance <= 0)
+            //{
+            //    var shortage = Math.Abs(balance);
+            //    return new StatusTransitionValidationResult
+            //    {
+            //        Success = false,
+            //        ErrorMessage = $"الرصيد لا يكفي بسبب فرق {shortage:0.##} جنيه"
+            //    };
+            //}
 
             var subWaste = order.SubWaste;
             if (subWaste == null && order.FKSubWasteId.HasValue)
@@ -84,33 +91,93 @@ namespace KhaledTeamRecycling.Helpers
             }
 
             var rooms = await unitOfWork.RoomInventories.Table
-                .Where(x => x.FKSubWaste == order.FKSubWasteId.Value && x.MaxKilo.HasValue)
+                .Where(x => x.FKSubWaste == order.FKSubWasteId.Value)
                 .ToListAsync();
 
             var fittingRooms = rooms
-                .Where(x => (x.MaxKilo ?? 0) >= requiredKilos)
-                .OrderByDescending(x => x.MaxKilo)
+                .Select(x => new
+                {
+                    Room = x,
+                    AvailableKilos = CalculateAvailableRoomKilos(x)
+                })
+                .Where(x => x.AvailableKilos >= requiredKilos)
+                .OrderByDescending(x => x.AvailableKilos)
                 .ToList();
 
             if (fittingRooms.Any())
             {
-                var selectedRoom = fittingRooms.First();
+                var selectedRoom = fittingRooms.First().Room;
                 return new StatusTransitionValidationResult
                 {
                     Success = true,
                     SelectedRoomId = selectedRoom.Id,
-                    RequiredKilos = requiredKilos
+                    RequiredKilos = requiredKilos,
+                    RoomAllocations = new List<RoomAllocationResult>
+                    {
+                        new()
+                        {
+                            RoomId = selectedRoom.Id,
+                            AllocatedKilos = requiredKilos
+                        }
+                    }
                 };
             }
 
-            var bestRoom = rooms.OrderByDescending(x => x.MaxKilo).FirstOrDefault();
-            var availableKilos = bestRoom?.MaxKilo ?? 0;
-            var kiloShortage = requiredKilos - availableKilos;
+            var availableRooms = rooms
+                .Select(x => new
+                {
+                    Room = x,
+                    AvailableKilos = CalculateAvailableRoomKilos(x)
+                })
+                .Where(x => x.AvailableKilos > 0)
+                .OrderByDescending(x => x.AvailableKilos)
+                .ToList();
 
+            var totalAvailableKilos = availableRooms.Sum(x => x.AvailableKilos);
+            if (totalAvailableKilos >= requiredKilos)
+            {
+                var remainingKilos = requiredKilos;
+                var allocations = new List<RoomAllocationResult>();
+
+                foreach (var room in availableRooms)
+                {
+                    if (remainingKilos <= 0)
+                    {
+                        break;
+                    }
+
+                    var roomAvailable = room.AvailableKilos;
+                    if (roomAvailable <= 0)
+                    {
+                        continue;
+                    }
+
+                    var allocated = Math.Min(roomAvailable, remainingKilos);
+                    allocations.Add(new RoomAllocationResult
+                    {
+                        RoomId = room.Room.Id,
+                        AllocatedKilos = allocated
+                    });
+                    remainingKilos -= allocated;
+                }
+
+                if (remainingKilos <= 0 && allocations.Any())
+                {
+                    return new StatusTransitionValidationResult
+                    {
+                        Success = true,
+                        SelectedRoomId = allocations.First().RoomId,
+                        RequiredKilos = requiredKilos,
+                        RoomAllocations = allocations
+                    };
+                }
+            }
+
+            var kiloShortage = requiredKilos - totalAvailableKilos;
             return new StatusTransitionValidationResult
             {
                 Success = false,
-                ErrorMessage = $"المساحة المتاحة أقل بمقدار {kiloShortage:0.##} كيلو"
+                ErrorMessage = $"المساحة المتاحة فقط ({totalAvailableKilos:0.##}) اي اقل ب  بمقدار {kiloShortage:0.##} كيلو"
             };
         }
 

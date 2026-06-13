@@ -467,6 +467,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 model.IsClientUser = true;
             }
 
+            ModelState.Remove(nameof(OrderBuyFromClientVM.OrderDate));
+            ModelState.Remove(nameof(OrderBuyFromClientVM.ApprovalDate));
+
             if (!ModelState.IsValid)
             {
                 var oldEntityForView = await _unitOfWork.OrderBuyFromClients.Table
@@ -551,8 +554,94 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 }
             }
 
+            var storeNotesLines = new List<string>();
+            var roomsForNotesIds = new HashSet<int>();
+
+            if (transitionValidation?.Success == true
+                && newStatus?.ShortChar == "D"
+                && OrderBuyFromClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+            {
+                foreach (var allocation in transitionValidation.RoomAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (reservedToFilledAllocations.Any())
+            {
+                foreach (var allocation in reservedToFilledAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (roomsForNotesIds.Count > 0)
+            {
+                var roomsForNotes = await _unitOfWork.RoomInventories.Table
+                    .Where(r => roomsForNotesIds.Contains(r.Id))
+                    .Include(r => r.Inventory)
+                    .ToListAsync();
+
+                var roomsById = roomsForNotes.ToDictionary(r => r.Id);
+
+                static string GetRoomName(Domain.Entities.Inventory.RoomInventory room)
+                {
+                    return !string.IsNullOrWhiteSpace(room.GenCode) ? room.GenCode : room.Id.ToString();
+                }
+
+                static string GetInventoryName(Domain.Entities.Inventory.RoomInventory room)
+                {
+                    if (room.Inventory != null && !string.IsNullOrWhiteSpace(room.Inventory.Name))
+                    {
+                        return room.Inventory.Name;
+                    }
+
+                    return room.FkInventory?.ToString() ?? "غير محدد";
+                }
+
+                static string BuildLine(Domain.Entities.Inventory.RoomInventory room, double kilos, string verb)
+                {
+                    return $"الغرفة اسمها {GetRoomName(room)} - المخزن الاساسي {GetInventoryName(room)} - {verb} {kilos:0.##} كيلو";
+                }
+
+                if (transitionValidation?.Success == true
+                    && newStatus?.ShortChar == "D"
+                    && OrderBuyFromClientStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    foreach (var allocation in transitionValidation.RoomAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هنضيف"));
+                        }
+                    }
+                }
+
+                if (reservedToFilledAllocations.Any())
+                {
+                    foreach (var allocation in reservedToFilledAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هنضيف"));
+                        }
+                    }
+                }
+            }
+
             oldEntity.StatusId = model.StatusId;
+            if (newStatus?.ShortChar == "D" && oldStatusChar != "D")
+            {
+                oldEntity.ApprovalDate = AppDubaiTime.Now;
+            }
             FKUserId = oldEntity.FKUserId;
+            if (storeNotesLines.Any())
+            {
+                var notesBlock = string.Join(Environment.NewLine, storeNotesLines);
+                oldEntity.StoreNotes = string.IsNullOrWhiteSpace(oldEntity.StoreNotes)
+                    ? notesBlock
+                    : $"{oldEntity.StoreNotes}{Environment.NewLine}{notesBlock}";
+            }
             await _orderBuyFromClientService.UpdateAsync(oldEntity);
 
             if (newStatus != null)
@@ -612,8 +701,6 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                         // Calculate points: Every 1000 = 20 points
                         userPoints.Points = (int)Math.Floor(((userPoints.TotalsReNew ?? 0) / 1000m) * 20m);
-
-                        userPointsTable.Update(userPoints);
                     }
                 }
 

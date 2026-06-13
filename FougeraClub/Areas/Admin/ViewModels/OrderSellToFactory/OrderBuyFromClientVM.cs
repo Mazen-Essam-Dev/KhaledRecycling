@@ -61,6 +61,7 @@ namespace KhaledTeamRecycling.Areas.Admin.ViewModels.OrderSellToFactory
         public double? DiscountRatio { get; set; }
         public double? DiscountValue { get; set; }
         public double? Total { get; set; }
+        public string? StoreNotes { get; set; }
 
         public int? StatusId { get; set; }
         public List<SelectListItem>? StatusesList { get; set; } = new();

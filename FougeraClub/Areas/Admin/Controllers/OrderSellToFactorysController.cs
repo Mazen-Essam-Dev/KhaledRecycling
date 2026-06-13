@@ -471,6 +471,9 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 model.IsFactoryUser = true;
             }
 
+            ModelState.Remove(nameof(OrderSellToFactoryVM.OrderDate));
+            ModelState.Remove(nameof(OrderSellToFactoryVM.ApprovalDate));
+
             if (!ModelState.IsValid)
             {
                 var oldEntityForView = await _unitOfWork.OrderSellToFactorys.Table
@@ -513,7 +516,160 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 }
             }
 
+            var reservedToRemovedAllocations = new List<RoomAllocationResult>();
+            if (oldStatusChar == "D" && newStatus?.ShortChar == "S" && oldEntity.FKSubWasteId.HasValue)
+            {
+                var requiredKilos = OrderSellToFactoryStatusValidator.CalculateOrderKilos(oldEntity, oldEntity.SubWaste);
+                var roomsWithReserved = await _unitOfWork.RoomInventories.Table
+                    .Where(x => x.FKSubWaste == oldEntity.FKSubWasteId.Value && (x.ReservedKilo ?? 0) > 0)
+                    .OrderByDescending(x => x.ReservedKilo ?? 0)
+                    .ToListAsync();
+
+                var totalReservedKilos = roomsWithReserved.Sum(x => x.ReservedKilo ?? 0);
+                if (totalReservedKilos < requiredKilos)
+                {
+                    ModelState.AddModelError(string.Empty, $"الكمية المحجوزة في الغرف أقل بمقدار {(requiredKilos - totalReservedKilos):0.##} كيلو");
+                    model.StatusId = oldEntity.StatusId;
+                    await PopulateUpdateStatusViewModelAsync(model, oldEntity);
+                    return View(model);
+                }
+
+                var remainingKilos = requiredKilos;
+                foreach (var room in roomsWithReserved)
+                {
+                    if (remainingKilos <= 0)
+                    {
+                        break;
+                    }
+
+                    var reservedKilos = room.ReservedKilo ?? 0;
+                    if (reservedKilos <= 0)
+                    {
+                        continue;
+                    }
+
+                    var movedKilos = Math.Min(reservedKilos, remainingKilos);
+                    reservedToRemovedAllocations.Add(new RoomAllocationResult
+                    {
+                        RoomId = room.Id,
+                        AllocatedKilos = movedKilos
+                    });
+                    remainingKilos -= movedKilos;
+                }
+            }
+
+            var storeNotesLines = new List<string>();
+            var roomsForNotesIds = new HashSet<int>();
+
+            if (transitionValidation?.Success == true
+                && newStatus?.ShortChar == "D"
+                && OrderSellToFactoryStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+            {
+                foreach (var allocation in transitionValidation.RoomAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (reservedToRemovedAllocations.Any())
+            {
+                foreach (var allocation in reservedToRemovedAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (transitionValidation?.Success == true
+                && newStatus?.ShortChar == "S"
+                && oldStatusChar != "D"
+                && OrderSellToFactoryStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+            {
+                foreach (var allocation in transitionValidation.RoomAllocations)
+                {
+                    roomsForNotesIds.Add(allocation.RoomId);
+                }
+            }
+
+            if (roomsForNotesIds.Count > 0)
+            {
+                var roomsForNotes = await _unitOfWork.RoomInventories.Table
+                    .Where(r => roomsForNotesIds.Contains(r.Id))
+                    .Include(r => r.Inventory)
+                    .ToListAsync();
+
+                var roomsById = roomsForNotes.ToDictionary(r => r.Id);
+
+                static string GetRoomName(Domain.Entities.Inventory.RoomInventory room)
+                {
+                    return !string.IsNullOrWhiteSpace(room.GenCode) ? room.GenCode : room.Id.ToString();
+                }
+
+                static string GetInventoryName(Domain.Entities.Inventory.RoomInventory room)
+                {
+                    if (room.Inventory != null && !string.IsNullOrWhiteSpace(room.Inventory.Name))
+                    {
+                        return room.Inventory.Name;
+                    }
+
+                    return room.FkInventory?.ToString() ?? "غير محدد";
+                }
+
+                static string BuildLine(Domain.Entities.Inventory.RoomInventory room, double kilos, string verb)
+                {
+                    return $"الغرفة اسمها {GetRoomName(room)} - المخزن الاساسي {GetInventoryName(room)} - {verb} {kilos:0.##} كيلو";
+                }
+
+                if (transitionValidation?.Success == true
+                    && newStatus?.ShortChar == "D"
+                    && OrderSellToFactoryStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    foreach (var allocation in transitionValidation.RoomAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هناخد منها"));
+                        }
+                    }
+                }
+
+                if (reservedToRemovedAllocations.Any())
+                {
+                    foreach (var allocation in reservedToRemovedAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هناخد منها"));
+                        }
+                    }
+                }
+
+                if (transitionValidation?.Success == true
+                    && newStatus?.ShortChar == "S"
+                    && oldStatusChar != "D"
+                    && OrderSellToFactoryStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    foreach (var allocation in transitionValidation.RoomAllocations)
+                    {
+                        if (roomsById.TryGetValue(allocation.RoomId, out var room))
+                        {
+                            storeNotesLines.Add(BuildLine(room, allocation.AllocatedKilos, "هناخد منها"));
+                        }
+                    }
+                }
+            }
+
             oldEntity.StatusId = model.StatusId;
+            if (newStatus?.ShortChar == "D" && oldStatusChar != "D")
+            {
+                oldEntity.ApprovalDate = AppDubaiTime.Now;
+            }
+            if (storeNotesLines.Any())
+            {
+                var notesBlock = string.Join(Environment.NewLine, storeNotesLines);
+                oldEntity.StoreNotes = string.IsNullOrWhiteSpace(oldEntity.StoreNotes)
+                    ? notesBlock
+                    : $"{oldEntity.StoreNotes}{Environment.NewLine}{notesBlock}";
+            }
             await _orderSellToFactoryService.UpdateAsync(oldEntity);
 
             if (newStatus != null)
@@ -573,19 +729,82 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
 
                         // Calculate points: Every 1000 = 20 points
                         userPoints.Points = (int)Math.Floor(((userPoints.TotalsReNew ?? 0) / 1000m) * 20m);
-
-                        userPointsTable.Update(userPoints);
                     }
                 }
 
                 if (transitionValidation?.Success == true
-                    && transitionValidation.SelectedRoomId.HasValue
+                    && newStatus.ShortChar == "D"
                     && OrderSellToFactoryStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
                 {
-                    var room = await _unitOfWork.RoomInventories.GetByIdAsync(transitionValidation.SelectedRoomId.Value);
-                    if (room != null)
+                    if (transitionValidation.RoomAllocations.Any())
                     {
-                        room.MaxKilo = (room.MaxKilo ?? 0) - transitionValidation.RequiredKilos;
+                        foreach (var allocation in transitionValidation.RoomAllocations)
+                        {
+                            var room = await _unitOfWork.RoomInventories.GetByIdAsync(allocation.RoomId);
+                            if (room == null)
+                            {
+                                continue;
+                            }
+
+                            room.ReservedKilo = (room.ReservedKilo ?? 0) + allocation.AllocatedKilos;
+                            _unitOfWork.RoomInventories.Update(room);
+                        }
+                    }
+                    else if (transitionValidation.SelectedRoomId.HasValue)
+                    {
+                        var room = await _unitOfWork.RoomInventories.GetByIdAsync(transitionValidation.SelectedRoomId.Value);
+                        if (room != null)
+                        {
+                            room.ReservedKilo = (room.ReservedKilo ?? 0) + transitionValidation.RequiredKilos;
+                            _unitOfWork.RoomInventories.Update(room);
+                        }
+                    }
+                }
+
+                if (transitionValidation?.Success == true
+                    && newStatus.ShortChar == "S"
+                    && oldStatusChar != "D"
+                    && OrderSellToFactoryStatusValidator.RequiresRoomDeduction(newStatus.ShortChar, oldStatusChar))
+                {
+                    foreach (var allocation in transitionValidation.RoomAllocations)
+                    {
+                        var room = await _unitOfWork.RoomInventories.GetByIdAsync(allocation.RoomId);
+                        if (room == null)
+                        {
+                            continue;
+                        }
+
+                        room.FilledKilo = (room.FilledKilo ?? 0) - allocation.AllocatedKilos;
+                        if (room.FilledKilo < 0)
+                        {
+                            room.FilledKilo = 0;
+                        }
+                        _unitOfWork.RoomInventories.Update(room);
+                    }
+                }
+
+                if (reservedToRemovedAllocations.Any())
+                {
+                    foreach (var allocation in reservedToRemovedAllocations)
+                    {
+                        var room = await _unitOfWork.RoomInventories.GetByIdAsync(allocation.RoomId);
+                        if (room == null)
+                        {
+                            continue;
+                        }
+
+                        room.ReservedKilo = (room.ReservedKilo ?? 0) - allocation.AllocatedKilos;
+                        room.FilledKilo = (room.FilledKilo ?? 0) - allocation.AllocatedKilos;
+
+                        if (room.ReservedKilo < 0)
+                        {
+                            room.ReservedKilo = 0;
+                        }
+                        if (room.FilledKilo < 0)
+                        {
+                            room.FilledKilo = 0;
+                        }
+
                         _unitOfWork.RoomInventories.Update(room);
                     }
                 }
