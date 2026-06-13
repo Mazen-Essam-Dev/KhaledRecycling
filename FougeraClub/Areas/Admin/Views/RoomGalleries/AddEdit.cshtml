@@ -83,13 +83,13 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label asteriskRequired" asp-for="MaxUnits">Max Kilo</label>
-                        <input asp-for="MaxUnits" type="number" step="any" placeholder="0" class="form-control only-decimal" />
+                        <label class="form-label asteriskRequired" asp-for="MaxUnits">Max Units</label>
+                        <input asp-for="MaxUnits" type="number" step="any" placeholder="0" class="form-control " />
                         <span asp-validation-for="MaxUnits" class="text-danger"></span>
                     </div>
 
                     <div class="col-md-12">
-                        <label class="form-label" asp-for="Description">Name</label>
+                        <label class="form-label" asp-for="Description">Description</label>
                         <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>

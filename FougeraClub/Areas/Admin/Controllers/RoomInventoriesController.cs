@@ -122,15 +122,38 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var entity = _mapper.Map<Domain.Entities.Inventory.RoomInventory>(model);
-
             if (model.Id == 0)
             {
+                var entity = _mapper.Map<Domain.Entities.Inventory.RoomInventory>(model);
+                entity.FilledKilo ??= 0;
+                entity.ReservedKilo ??= 0;
                 await _roomInventoryService.AddAsync(entity);
                 return RedirectToAction(nameof(Index));
             }
 
-            await _roomInventoryService.UpdateAsync(entity);
+            var existing = await _unitOfWork.RoomInventories.GetByIdAsync(model.Id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            var minAllowed = (existing.FilledKilo ?? 0) + (existing.ReservedKilo ?? 0);
+            if ((model.MaxKilo ?? 0) < minAllowed)
+            {
+                ModelState.AddModelError(nameof(RoomInventoryVM.MaxKilo), $"لا يمكن أن تكون السعة أقل من {minAllowed:0.##} (الممتلئ + المحجوز)");
+                await BindLists(model);
+                return View(model);
+            }
+
+            existing.GenCode = model.GenCode;
+            existing.FkInventory = model.FkInventory;
+            existing.FKSubWaste = model.FKSubWaste;
+            existing.MaxKilo = model.MaxKilo;
+            existing.Description = model.Description;
+
+            _unitOfWork.RoomInventories.Update(existing);
+            await _unitOfWork.CompleteAsync();
+
             return RedirectToAction(nameof(AddEdit), new { id = model.Id });
         }
 

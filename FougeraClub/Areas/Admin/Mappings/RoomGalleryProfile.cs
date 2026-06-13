@@ -9,7 +9,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Mappings
         {
             CreateMap<RoomGalleryVM, Domain.Entities.Gallery.RoomGallery>()
                 .ForMember(d => d.Gallery, o => o.Ignore())
-                .ForMember(d => d.SubProduct, o => o.Ignore());
+                .ForMember(d => d.SubProduct, o => o.Ignore())
+                .ForMember(d => d.MaxUnit, o => o.MapFrom(s => s.MaxUnits));
 
             CreateMap<Domain.Entities.Gallery.RoomGallery, RoomGalleryVM>()
                 .ForMember(d => d.GalleriesList, o => o.Ignore())
@@ -23,7 +24,8 @@ namespace KhaledTeamRecycling.Areas.Admin.Mappings
                 .ForMember(d => d.TotalPages, o => o.Ignore())
                 .ForMember(d => d.TotalCount, o => o.Ignore())
                 .ForMember(d => d.HasNextPage, o => o.Ignore())
-                .ForMember(d => d.HasPreviousPage, o => o.Ignore());
+                .ForMember(d => d.HasPreviousPage, o => o.Ignore())
+                .ForMember(d => d.MaxUnits, o => o.MapFrom(s => s.MaxUnit));
         }
     }
 }

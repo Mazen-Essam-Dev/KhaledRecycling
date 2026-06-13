@@ -363,7 +363,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             var allMainProducts = await _unitOfWork.MainProducts.GetAllAsync();
             var allSubProducts = await _unitOfWork.SubProducts.GetAllAsync();
             var allStatuses = await _unitOfWork.Statuses.GetAllAsync();
-            var allUserHasIndividualsOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 1 || x.FKUserType == 2);
+            var allUserHasFactorysOnly = await _unitOfWork.Users.GetAllAsync(x => x.FKUserType == 3); // Factory only
 
             var loggedInUserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var loggedInUser = !string.IsNullOrEmpty(loggedInUserId) ? await _unitOfWork.Users.GetByIdAsync(loggedInUserId) : null;
@@ -385,7 +385,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
             vm.MainProductsList = SelectListHelper.BindSelectList(allMainProducts.ToList(), vm.FKMainProductId).ToList();
             vm.SubProductsList = new List<SelectListItem>();
             vm.StatusesList = SelectListHelper.BindSelectList(allStatuses.ToList(), vm.StatusId).ToList();
-            vm.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+            vm.UsersList = SelectListHelper.BindSelectList(allUserHasFactorysOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
 
             if (!id.HasValue || id.Value == 0)
             {
@@ -451,7 +451,7 @@ namespace KhaledTeamRecycling.Areas.Admin.Controllers
                 statusesToBind = statusesToBind.Where(s => s.ShortChar == "S" || s.ShortChar == "C" || s.Id == currentStatusObj.Id).ToList();
             }
             vm.StatusesList = SelectListHelper.BindSelectList(statusesToBind, vm.StatusId).ToList();
-            vm.UsersList = SelectListHelper.BindSelectList(allUserHasIndividualsOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
+            vm.UsersList = SelectListHelper.BindSelectList(allUserHasFactorysOnly.ToList(), null, "Id", "FullNameAr", "FullNameEn").ToList();
 
             return View(vm);
         }
