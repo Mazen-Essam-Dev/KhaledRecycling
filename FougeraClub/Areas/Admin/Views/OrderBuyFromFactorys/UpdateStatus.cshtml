@@ -116,6 +116,11 @@
                         <input value="@Model.Address" class="form-control" disabled />
                         <input type="hidden" asp-for="Address" id="Address" />
                     </div>
+                    <div class="col-md-12">
+                        <label class="form-label" asp-for="StoreNotes">تفاصيل التخزين</label>
+                        <input value="@Model.StoreNotes" class="form-control" disabled />
+                        <input type="hidden" asp-for="StoreNotes" id="StoreNotes" />
+                    </div>
                     @if (userIsClient)
                     {
                         <input type="hidden" asp-for="StatusId" id="StatusId" />

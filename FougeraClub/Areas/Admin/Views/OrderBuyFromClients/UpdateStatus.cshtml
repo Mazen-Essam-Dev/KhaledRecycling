@@ -128,6 +128,12 @@
                             <span asp-validation-for="StatusId" class="text-danger"></span>
                         </div>
                     }
+
+                    <div class="col-md-12 storeNotesDiv">
+                        <label class="form-label" asp-for="StoreNotes">تفاصيل التخزين</label>
+                        <input value="@Model.StoreNotes" class="form-control" disabled />
+                        <input type="hidden" asp-for="StoreNotes" id="StoreNotes" />
+                    </div>
                         
                     <input asp-for="ApprovalDate" hidden type="date" class="form-control" />
                     <input asp-for="OrderDate" hidden type="date" class="form-control" />
